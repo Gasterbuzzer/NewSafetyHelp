@@ -71,6 +71,7 @@ namespace NewSafetyHelp.src.EntryManager
         {
 
             MonsterProfile newMonster = ScriptableObject.CreateInstance<MonsterProfile>();
+            newMonster.name = _monsterName; // Set the name for the inspector
 
             newMonster.monsterName = _monsterName;
             newMonster.monsterDescription = _monsterDescription;

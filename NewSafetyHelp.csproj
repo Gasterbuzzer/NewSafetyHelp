@@ -92,6 +92,7 @@
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
+    <Compile Include="src\JSONParsing\ParseMonster.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

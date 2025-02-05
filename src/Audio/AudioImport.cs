@@ -18,6 +18,8 @@ namespace NewSafetyHelp.src.AudioHandler
         /// <param name="_audioType"> Unity AudioType </param>
         public static IEnumerator LoadAudio(System.Action<AudioClip> callback, string path, AudioType _audioType = AudioType.MPEG)
         {
+            MelonLogger.Msg($"INFO: Attempting to add {path} as audio type {_audioType.ToString()}.");
+
             // First we check if the file exists
             if (!File.Exists(path))
             {

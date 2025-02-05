@@ -2,7 +2,9 @@
 using NewSafetyHelp.src.AudioHandler;
 using NewSafetyHelp.src.EntryManager;
 using NewSafetyHelp.src.ImportFiles;
+using NewSafetyHelp.src.JSONParsing;
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using UnityEngine;
@@ -36,7 +38,6 @@ namespace NewSafetyHelp
         /// <param name="__instance"> Caller of function. </param>
         private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance)
         {
-            // Get the entryUnlockScript
 
             if (__instance == null)
             {
@@ -51,11 +52,8 @@ namespace NewSafetyHelp
                 MelonLogger.Msg("Entries were already added. Skipping adding.");
                 return;
             }
-            else
-            {
-                MelonLogger.Msg("Entries are now being added...");
-                isInitialized = true;
-            }
+
+            MelonLogger.Msg("Entries are now being added...");
 
             // Get the max Monster ID.
             int maxEntryIDMainCampaing = EntryManager.getlargerID(__instance);
@@ -63,33 +61,10 @@ namespace NewSafetyHelp
 
             // Attempt to add one
 
-            string userdatapath = FileImporter.getUserDataFolderPath();
+            ParseMonster.LoadAllMonsters(__instance);
 
-            AudioClip monsterSoundClip = null;
-
-            MelonCoroutines.Start(
-            AudioImport.LoadAudio(
-            (myReturnValue) =>
-            {
-                monsterSoundClip = myReturnValue;
-
-                if (monsterSoundClip == null)
-                {
-                    MelonLogger.Error("ERROR: Sound Clip returned null.");
-                }
-
-                RichAudioClip monsterSound = AudioImport.CreateRichAudioClip(monsterSoundClip);
-
-                MonsterProfile _newMonster = EntryManager.CreateMonster(_monsterID: maxEntryIDMainCampaing, _monsterAudioClip: monsterSound);
-
-                EntryManager.AddMonsterToTheProfile(ref _newMonster, ref __instance.allEntries.monsterProfiles);
-                EntryManager.AddMonsterToTheProfile(ref _newMonster, ref __instance.firstTierUnlocks.monsterProfiles);
-
-                //__instance.allMainCampaignEntries.monsterProfiles.Append<MonsterProfile>(fakeMonster);
-
-                MelonLogger.Msg("Added all entries successfully!");
-            },
-            userdatapath + "\\test.wav", AudioType.WAV));
+            isInitialized = true;
+            MelonLogger.Msg("INFO: Added all entries successfully!");
         }
     }
 
@@ -99,7 +74,7 @@ namespace NewSafetyHelp
     {
 
         /// <summary>
-        /// Update list.
+        /// Update the list when opening.
         /// </summary>
         /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
         /// <param name="__instance"> Caller of function. </param>
