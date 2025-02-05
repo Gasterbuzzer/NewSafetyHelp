@@ -49,7 +49,6 @@ namespace NewSafetyHelp.src.JSONParsing
         public static void CreateMonsterFromJSON(Variant jsonText, int newID = -1, string filePath = "", EntryUnlockController entryUnlockerInstance = null)
         {
 
-            // RichAudioClip _monsterAudioClip = null,
             // bool _spiderPhobia = false, bool _darknessPhobia = false, bool _dogPhobia = false, bool _holesPhobia = false, bool _insectPhobia = false, bool _watchingPhobia = false, bool _tightSpacePhobia = false)
 
             int accessLevel = 0;
@@ -63,6 +62,15 @@ namespace NewSafetyHelp.src.JSONParsing
             string _monsterPortraitLocation = "";
 
             string _monsterAudioClipLocation = "";
+
+            //Phobias
+            bool _spiderPhobia = false;
+            bool _darknessPhobia = false;
+            bool _dogPhobia = false;
+            bool _holesPhobia = false;
+            bool _insectPhobia = false;
+            bool _watchingPhobia = false;
+            bool _tightSpacePhobia = false;
 
             // First we attempt to extract the information;
             if (jsonText is ProxyObject jsonObject)
@@ -90,6 +98,45 @@ namespace NewSafetyHelp.src.JSONParsing
                     _monsterDescription = jsonObject["monster_id"];
                 }
 
+                // Phobias
+
+                if (jsonObject.Keys.Contains("spider_phobia"))
+                {
+                    _spiderPhobia = jsonObject["spider_phobia"];
+                }
+
+                if (jsonObject.Keys.Contains("darkness_phobia"))
+                {
+                    _darknessPhobia = jsonObject["darkness_phobia"];
+                }
+
+                if (jsonObject.Keys.Contains("dog_phobia"))
+                {
+                    _dogPhobia = jsonObject["dog_phobia"];
+                }
+
+                if (jsonObject.Keys.Contains("holes_phobia"))
+                {
+                    _holesPhobia = jsonObject["holes_phobia"];
+                }
+
+                if (jsonObject.Keys.Contains("insect_phobia"))
+                {
+                    _insectPhobia = jsonObject["insect_phobia"];
+                }
+
+                if (jsonObject.Keys.Contains("watching_phobia"))
+                {
+                    _watchingPhobia = jsonObject["watching_phobia"];
+                }
+
+                if (jsonObject.Keys.Contains("tight_space_phobia"))
+                {
+                    _tightSpacePhobia = jsonObject["tight_space_phobia"];
+                }
+
+
+                //Rest
                 if (jsonObject.Keys.Contains("access_level"))
                 {
                     accessLevel = jsonObject["access_level"];
@@ -150,7 +197,9 @@ namespace NewSafetyHelp.src.JSONParsing
             // Create Monster and add him
             // AudioClip is added later
             MonsterProfile _newMonster = EntryManager.EntryManager.CreateMonster(_monsterName: _monsterName, _monsterDescription: _monsterDescription, _monsterID: newID,
-                _arcadeCalls: _arcadeCalls.ToArray(), _monsterPortrait: _monsterPortrait, _monsterAudioClip: null);
+                _arcadeCalls: _arcadeCalls.ToArray(), _monsterPortrait: _monsterPortrait, _monsterAudioClip: null,
+                _spiderPhobia: _spiderPhobia, _darknessPhobia: _darknessPhobia, _dogPhobia: _dogPhobia, _holesPhobia: _holesPhobia, _insectPhobia: _insectPhobia, _watchingPhobia: _watchingPhobia,
+                _tightSpacePhobia: _tightSpacePhobia);
 
             EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
 
