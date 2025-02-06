@@ -121,7 +121,7 @@ namespace NewSafetyHelp.src.EntryManager
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
         {
-            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.name, y.name));
+            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.monsterName, y.monsterName));
         }
     }
 }
