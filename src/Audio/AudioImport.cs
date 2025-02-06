@@ -73,6 +73,10 @@ namespace NewSafetyHelp.src.AudioHandler
             return newRichAudioClip;
         }
 
+        /// <summary>
+        /// Tries to get the Unity's AudioType from a given fileName (path).
+        /// </summary>
+        /// <param name="fileName"> Path / Filename to be given the AudioType for. </param>
         public static AudioType GetAudioType(string fileName)
         {
             if (fileName.ToLower().EndsWith(".wav"))
