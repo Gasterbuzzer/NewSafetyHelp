@@ -10,8 +10,8 @@ namespace NewSafetyHelp.src.EntryManager
         /// Function for adding a monster/entity to the entries. Please note, if you need a specific MonsterProfile list, use the function getters.
         /// Please note, that if the MonsterID is already present, it will replace it instead. This helps avoid duplicated versions being added.
         /// </summary>
-        /// <param name="path"> Path to file. </param>
-        /// <param name="_audioType"> Unity AudioType </param>
+        /// <param name="newProfile"> The new monster to add. </param>
+        /// <param name="monsterProfiles"> Array of monster profiles. </param>
         public static void AddMonsterToTheProfile(ref MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles)
         {
             if (monsterProfiles == null) // Empty MonsterProfile array, so we create a new one.
@@ -113,6 +113,15 @@ namespace NewSafetyHelp.src.EntryManager
             }
 
             
+        }
+
+        /// <summary>
+        /// Function sorting all of the monsterProfiles by alphabetical order.
+        /// </summary>
+        /// <param name="monsterProfiles"> Array of monster profiles. </param>
+        public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
+        {
+            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.name, y.name));
         }
     }
 }

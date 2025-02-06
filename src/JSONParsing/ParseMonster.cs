@@ -233,7 +233,7 @@ namespace NewSafetyHelp.src.JSONParsing
             // Update ID if not given.
             if (newID == -1) //
             {
-                MelonLogger.Msg($"Info: Defaulting to a new Monster ID for file in {filePath}. (This is not a problem, this is recommended.)");
+                MelonLogger.Msg($"Info: Defaulting to a new Monster ID for file in {filePath}.\n (This is not a problem, this is recommended.)");
 
                 // Get the max Monster ID.
                 int maxEntryIDMainCampaing = EntryManager.EntryManager.getlargerID(entryUnlockerInstance);
@@ -343,6 +343,10 @@ namespace NewSafetyHelp.src.JSONParsing
                     EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
                     break;
             }
+
+            // Sort the Entries in alphabetical order
+            EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allEntries.monsterProfiles);
+            EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
         }
 
         /// <summary>
