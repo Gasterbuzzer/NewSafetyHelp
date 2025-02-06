@@ -52,7 +52,7 @@ namespace NewSafetyHelp.src.AudioHandler
                         MelonLogger.Error("Not finished, please wait.");
                     }
 
-                    MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. Results in the error: {www.error} and the response code is: {www.responseCode}. Was the proccess finished?: {www.isDone}");
+                    MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. \n Results in the error: {www.error} and the response code is: {www.responseCode}. Was the proccess finished?: {www.isDone}");
                     yield break; // Rip rip
                 }
             }

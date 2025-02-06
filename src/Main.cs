@@ -55,12 +55,7 @@ namespace NewSafetyHelp
 
             MelonLogger.Msg("Entries are now being added...");
 
-            // Get the max Monster ID.
-            int maxEntryIDMainCampaing = EntryManager.getlargerID(__instance);
-            int maxEntryIDMainDLC = EntryManager.getlargerID(__instance, 1);
-
-            // Attempt to add one
-
+            // Add all monsters
             ParseMonster.LoadAllMonsters(__instance);
 
             isInitialized = true;

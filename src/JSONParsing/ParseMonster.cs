@@ -7,9 +7,8 @@ using NewSafetyHelp.src.AudioHandler;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
-using static MelonLoader.MelonLogger;
-using System;
 using System.Collections.Generic;
+using static MelonLoader.MelonLogger;
 
 namespace NewSafetyHelp.src.JSONParsing
 {
@@ -48,10 +47,13 @@ namespace NewSafetyHelp.src.JSONParsing
 
         public static void CreateMonsterFromJSON(Variant jsonText, int newID = -1, string filePath = "", EntryUnlockController entryUnlockerInstance = null)
         {
-
-            // bool _spiderPhobia = false, bool _darknessPhobia = false, bool _dogPhobia = false, bool _holesPhobia = false, bool _insectPhobia = false, bool _watchingPhobia = false, bool _tightSpacePhobia = false)
-
+            // Values used for storing the information.
             int accessLevel = 0;
+
+            bool onlyDLC = false;
+            bool includeDLC = false;
+
+            bool includeCampaign = false;
 
             string _monsterName = "NO_NAME";
             string _monsterDescription = "NO_DESCRIPTION";
@@ -63,7 +65,7 @@ namespace NewSafetyHelp.src.JSONParsing
 
             string _monsterAudioClipLocation = "";
 
-            //Phobias
+            // Phobias
             bool _spiderPhobia = false;
             bool _darknessPhobia = false;
             bool _dogPhobia = false;
@@ -72,9 +74,10 @@ namespace NewSafetyHelp.src.JSONParsing
             bool _watchingPhobia = false;
             bool _tightSpacePhobia = false;
 
-            // First we attempt to extract the information;
+            // We extract the info and save it
             if (jsonText is ProxyObject jsonObject)
             {
+                // Monster Name
                 if (jsonObject.Keys.Contains("monster_name"))
                 {
                     _monsterName = jsonObject["monster_name"];
@@ -84,6 +87,7 @@ namespace NewSafetyHelp.src.JSONParsing
                     MelonLogger.Warning($"WARNING: No Monster name given for file in {filePath}. Defaulting to NO_NAME.");
                 }
 
+                // Monster Description
                 if (jsonObject.Keys.Contains("monster_description"))
                 {
                     _monsterDescription = jsonObject["monster_description"];
@@ -93,12 +97,14 @@ namespace NewSafetyHelp.src.JSONParsing
                     MelonLogger.Warning($"WARNING: No Monster description given for file in {filePath}. Defaulting to NO_DESCRIPTION.");
                 }
 
+
+                // If the ID is provided we use that one instead. (Usefull for replacing entries)
                 if (jsonObject.Keys.Contains("monster_id"))
                 {
                     _monsterDescription = jsonObject["monster_id"];
                 }
 
-                // Phobias
+                // Phobias, they don't require to be warned, since they optional.
 
                 if (jsonObject.Keys.Contains("spider_phobia"))
                 {
@@ -136,7 +142,23 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
 
 
-                //Rest
+                // DLC xMas
+                if (jsonObject.Keys.Contains("only_dlc"))
+                {
+                    onlyDLC = jsonObject["only_dlc"];
+                }
+                if (jsonObject.Keys.Contains("include_dlc"))
+                {
+                    includeDLC = jsonObject["include_dlc"];
+                }
+
+                if (jsonObject.Keys.Contains("include_campaign")) // Unsure, what exactly it does, since it does not prevent it from appearing in the campaing.
+                {
+                    includeCampaign = jsonObject["include_campaign"];
+                }
+
+
+                // Access Level and Aracade Calls
                 if (jsonObject.Keys.Contains("access_level"))
                 {
                     accessLevel = jsonObject["access_level"];
@@ -156,28 +178,33 @@ namespace NewSafetyHelp.src.JSONParsing
                     MelonLogger.Warning($"WARNING: No Arcade Calls given for file in {filePath}. Defaulting to empty values.");
                 }
 
-                // TODO Add logic to load the sprite.
+
+                // Image
                 if (jsonObject.Keys.Contains("monster_portrait_image_name"))
                 {
                     _monsterPortraitLocation = jsonObject["monster_portrait_image_name"];
 
-                    if (_monsterPortraitLocation == "")
+                    if (_monsterPortraitLocation == "" || _monsterPortraitLocation == null)
                     {
+                        _monsterPortrait = null;
                         MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
                     }
-
-                    _monsterPortrait = null;
+                    else
+                    {
+                        _monsterPortrait = ImageImport.LoadImage(filePath + "\\" + _monsterPortraitLocation);
+                    }
                 }
                 else
                 {
                     MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
                 }
 
+                // Audio Path (Later gets added with coroutine)
                 if (jsonObject.Keys.Contains("monster_audio_clip_name"))
                 {
                     _monsterAudioClipLocation = jsonObject["monster_audio_clip_name"];
 
-                    if (_monsterAudioClipLocation == "")
+                    if (_monsterAudioClipLocation == "" || _monsterAudioClipLocation == null)
                     {
                         MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
                     }
@@ -188,20 +215,52 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
             }
 
-            if (newID == -1) // No ID given, we default to a new one.
+            // Update ID if not given.
+            if (newID == -1) //
             {
-                MelonLogger.Msg($"Info: No Monster ID given for file in {filePath}. Defaulting to a valid ID. (This is not a problem, this is recommended.)");
-                newID = -1; //TODO Replace with a new valid ID.
+                MelonLogger.Msg($"Info: Defaulting to a new Monster ID for file in {filePath}. (This is not a problem, this is recommended.)");
+
+                // Get the max Monster ID.
+                int maxEntryIDMainCampaing = EntryManager.EntryManager.getlargerID(entryUnlockerInstance);
+                int maxEntryIDMainDLC = EntryManager.EntryManager.getlargerID(entryUnlockerInstance, 1);
+
+                if (onlyDLC) // Only DLC
+                {
+                    newID = maxEntryIDMainDLC;
+                }
+                else if (includeDLC) // Also allow in DLC (We pick the largest from both)
+                {
+                    newID = (maxEntryIDMainCampaing < maxEntryIDMainDLC) ? maxEntryIDMainDLC : maxEntryIDMainCampaing;
+                }
+                else // Only base game.
+                {
+                    newID = maxEntryIDMainCampaing;
+                }
             }
 
             // Create Monster and add him
-            // AudioClip is added later
+            // NOTE: AudioClip is added later, since we need to do load it seperately from the main thread.
             MonsterProfile _newMonster = EntryManager.EntryManager.CreateMonster(_monsterName: _monsterName, _monsterDescription: _monsterDescription, _monsterID: newID,
                 _arcadeCalls: _arcadeCalls.ToArray(), _monsterPortrait: _monsterPortrait, _monsterAudioClip: null,
                 _spiderPhobia: _spiderPhobia, _darknessPhobia: _darknessPhobia, _dogPhobia: _dogPhobia, _holesPhobia: _holesPhobia, _insectPhobia: _insectPhobia, _watchingPhobia: _watchingPhobia,
                 _tightSpacePhobia: _tightSpacePhobia);
 
-            EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
+
+            // Decide where to add the Entry to. (Main Game or DLC or even both)
+
+            if (onlyDLC) // Only DLC
+            {
+                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
+            }
+            else if (includeDLC) // Also allow in DLC
+            {
+                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
+                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
+            }
+            else // Only base game.
+            {
+                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
+            }
 
             // Add audio to it
             if (_monsterAudioClipLocation != null || _monsterAudioClipLocation != "")
@@ -224,8 +283,11 @@ namespace NewSafetyHelp.src.JSONParsing
                 );
             }
 
-
-            //__instance.allMainCampaignEntries.monsterProfiles.Append<MonsterProfile>(fakeMonster);
+            // If to include in the Main Campaign. I assume.
+            if (includeCampaign)
+            {
+                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles);
+            }
 
             // This also counts the same for christmas
             switch (accessLevel)

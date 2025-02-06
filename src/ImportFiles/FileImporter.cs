@@ -11,6 +11,7 @@ namespace NewSafetyHelp.src.ImportFiles
 
             if (!Directory.Exists(modFolder)) // Our cute folder.
             {
+                MelonLogger.Msg("INFO: No UserData Folder found, creating one.");
                 Directory.CreateDirectory(modFolder);
             }
 
