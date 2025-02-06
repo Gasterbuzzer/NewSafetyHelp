@@ -8,12 +8,16 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
-using static MelonLoader.MelonLogger;
 
 namespace NewSafetyHelp.src.JSONParsing
 {
     public static class ParseMonster
     {
+        /// <summary>
+        /// Function for adding a single entry.
+        /// </summary>
+        /// <param name="folderFilePath"> Path to the folder containing the entry. </param>
+        /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void LoadMonster(string folderFilePath, EntryUnlockController __instance)
         {
             string[] filesDataPath = Directory.GetFiles(folderFilePath);
@@ -33,6 +37,10 @@ namespace NewSafetyHelp.src.JSONParsing
             }
         }
 
+        /// <summary>
+        /// Goes through all directories in the mods userdata folder and tries adding for each of them the monster if it contains an entry to be added.
+        /// </summary>
+        /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void LoadAllMonsters(EntryUnlockController __instance)
         {
             string userDataPath = FileImporter.getUserDataFolderPath();
@@ -45,6 +53,13 @@ namespace NewSafetyHelp.src.JSONParsing
             }
         }
 
+        /// <summary>
+        /// Function for adding a single entry.
+        /// </summary>
+        /// <param name="jsonText"> JSON Data for reading. </param>
+        /// <param name="newID"> If we wish to provide the ID via parameter. </param>
+        /// <param name="filePath"> Folder path to the entries directory </param>
+        /// <param name="entryUnlockerInstance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void CreateMonsterFromJSON(Variant jsonText, int newID = -1, string filePath = "", EntryUnlockController entryUnlockerInstance = null)
         {
             // Values used for storing the information.
@@ -330,7 +345,12 @@ namespace NewSafetyHelp.src.JSONParsing
             }
         }
 
-        // Helper coroutine for getting an AudioClip
+        /// <summary>
+        /// Helper coroutine for updating the audio correctly for a monster clip.
+        /// </summary>
+        /// <param name="callback"> Callback function for returning values and doing stuff with it that require the coroutine to finish first. </param>
+        /// <param name="audioPath"> Path to the audio file. </param>
+        /// <param name="_audioType"> Audio type to parse. </param>
         public static IEnumerator UpdateAudioClip(System.Action<AudioClip> callback, string audioPath, AudioType _audioType = AudioType.WAV)
         {
             AudioClip monsterSoundClip = null;

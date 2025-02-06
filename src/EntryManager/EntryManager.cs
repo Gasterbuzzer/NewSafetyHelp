@@ -1,7 +1,6 @@
 ﻿using MelonLoader;
 using System;
 using UnityEngine;
-using static MelonLoader.MelonLogger;
 
 namespace NewSafetyHelp.src.EntryManager
 {

@@ -1,14 +1,7 @@
 ﻿using MelonLoader;
-using NewSafetyHelp.src.AudioHandler;
-using NewSafetyHelp.src.EntryManager;
-using NewSafetyHelp.src.ImportFiles;
 using NewSafetyHelp.src.JSONParsing;
 using System;
-using System.Collections;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using UnityEngine;
-using static MelonLoader.MelonLogger;
 
 namespace NewSafetyHelp
 {
@@ -20,14 +13,12 @@ namespace NewSafetyHelp
         }
     }
 
-    // TODO: Move Audio to its own function
-
     // Add new Entries.
     [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
     public static class MonsterEntries
     {
 
-        // Some variables needed for persistent calls.
+        // Check if we already added the creatures, if yes, we do not do it again.
         public static bool isInitialized = false;
 
         /// <summary>
