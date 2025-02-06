@@ -72,5 +72,63 @@ namespace NewSafetyHelp.src.AudioHandler
 
             return newRichAudioClip;
         }
+
+        public static AudioType GetAudioType(string fileName)
+        {
+            if (fileName.ToLower().EndsWith(".wav"))
+            {
+                return AudioType.WAV;
+            } 
+            else if (fileName.ToLower().EndsWith(".ogg") || fileName.ToLower().EndsWith(".oga") || fileName.ToLower().EndsWith(".flac") || fileName.ToLower().EndsWith(".opus"))
+            {
+                return AudioType.OGGVORBIS;
+            }
+            else if (fileName.ToLower().EndsWith(".acc") || fileName.ToLower().EndsWith(".aac") || fileName.ToLower().EndsWith(".m4a") || fileName.ToLower().EndsWith(".mp4"))
+            {
+                return AudioType.ACC;
+            }
+            else if (fileName.ToLower().EndsWith(".aiff") || fileName.ToLower().EndsWith(".aif") || fileName.ToLower().EndsWith(".aifc"))
+            {
+                return AudioType.AIFF;
+            }
+            else if (fileName.ToLower().EndsWith(".it"))
+            {
+                return AudioType.IT;
+            }
+            else if (fileName.ToLower().EndsWith(".mod"))
+            {
+                return AudioType.MOD;
+            }
+            else if (fileName.ToLower().EndsWith(".mp2") || fileName.ToLower().EndsWith(".mp3") || fileName.ToLower().EndsWith(".wma"))
+            {
+                return AudioType.MPEG;
+            }
+            else if (fileName.ToLower().EndsWith(".s3m"))
+            {
+                return AudioType.S3M;
+            }
+            else if (fileName.ToLower().EndsWith(".xm"))
+            {
+                return AudioType.XM;
+            }
+            else if (fileName.ToLower().EndsWith(".vag"))
+            {
+                return AudioType.VAG;
+            }
+            else if (fileName.ToLower().EndsWith(".alac"))
+            {
+                return AudioType.AUDIOQUEUE;
+            }
+            else if (fileName.ToLower().EndsWith(".xma"))
+            {
+                return AudioType.XMA;
+            }
+            else
+            {
+                // Unknown File type, we return with Unknown
+                MelonLogger.Error("ERROR/WARNING: Unknown audio file type, attempting to still parse it. Expect failure.");
+                return AudioType.UNKNOWN;
+            }
+        }
     }
 }

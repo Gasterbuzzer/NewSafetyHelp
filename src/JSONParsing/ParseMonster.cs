@@ -355,6 +355,9 @@ namespace NewSafetyHelp.src.JSONParsing
         {
             AudioClip monsterSoundClip = null;
 
+            // Attempt to get the type
+            _audioType = AudioImport.GetAudioType(audioPath);
+
             yield return MelonCoroutines.Start(
             AudioImport.LoadAudio
             (
