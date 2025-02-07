@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NewSafetyHelp.src.EntryManager
@@ -94,16 +95,57 @@ namespace NewSafetyHelp.src.EntryManager
         }
 
         /// <summary>
-        /// Replaces a single Monster Image with a given sprite.
+        /// Replaces a single Monster Image with a given sprite. (It is more for testing than rather actually changing something.
         /// </summary>
-        /// <param name="monsterProfile"> Reference of the monsterProfile to replace the Sprite with. </param>
-        public static void replaceMonsterImage(ref MonsterProfile[] monsterProfile, string monsterName, Sprite entryImage, int monsterID = -1)
+        /// <param name="monsterProfiles"> Reference of the monsterProfile to replace the Sprite with. </param>
+        /// <param name="monsterName"> Name of the entry to find. </param>
+        /// <param name="entryImage"> Sprite to insert into the entry. </param>
+        /// <param name="monsterID"> Alternative way of finding the entry. </param>
+        public static void replaceMonsterImage(ref MonsterProfile[] monsterProfiles, string monsterName, Sprite entryImage, int monsterID = -1)
         {
-            for (int i = 0; i < monsterProfile.Length; i++)
+            for (int i = 0; i < monsterProfiles.Length; i++)
             {
-                if (monsterProfile[i].monsterName == monsterName || (monsterProfile[i].monsterID == monsterID && monsterID >= 0))
+                if (monsterProfiles[i].monsterName == monsterName || (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
                 {
-                    monsterProfile[i].monsterPortrait = entryImage;
+                    monsterProfiles[i].monsterPortrait = entryImage;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds an Entry by name or ID and returns a reference to it. It returns the first find, to avoid any issues you can search via ID.
+        /// </summary>
+        /// <param name="monsterProfiles"> Reference of the monsterProfile to replace find the entry in. </param>
+        /// <param name="monsterName"> Name of the entry to find. </param>
+        /// <param name="monsterID"> Alternative way of finding the entry. </param>
+        public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles, string monsterName, int monsterID = -1)
+        {
+            for (int i = 0; i < monsterProfiles.Length; i++)
+            {
+                if (monsterProfiles[i].monsterName == monsterName || (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
+                {
+                    return monsterProfiles[i];
+                }
+            }
+
+            // Nothing found, so we return null. Please note, this is a copy.
+            return null;
+        }
+
+        /// <summary>
+        /// Finds the Entry and replaces it.
+        /// </summary>
+        /// <param name="monsterProfiles"> Reference of the monsterProfile to replace find the entry in. </param>
+        /// <param name="monsterName"> Name of the entry to find. </param>
+        /// <param name="replaceProfile"> Entry to replace the original with </param>
+        /// <param name="monsterID"> Alternative way of finding the entry. </param>
+        public static void ReplaceEntry(ref MonsterProfile[] monsterProfiles, string monsterName, MonsterProfile replaceProfile, int monsterID = -1)
+        {
+            for (int i = 0; i < monsterProfiles.Length; i++)
+            {
+                if (monsterProfiles[i].monsterName == monsterName || (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
+                {
+                    monsterProfiles[i] = replaceProfile;
                 }
             }
         }

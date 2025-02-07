@@ -64,6 +64,9 @@ namespace NewSafetyHelp.src.JSONParsing
         {
             // Values used for storing the information.
             int accessLevel = 0;
+            bool accessLevelAdded = false;
+
+            bool replaceEntry = false;
 
             bool onlyDLC = false;
             bool includeDLC = false;
@@ -82,12 +85,19 @@ namespace NewSafetyHelp.src.JSONParsing
 
             // Phobias
             bool _spiderPhobia = false;
+            bool _spiderPhobiaIncluded = false;
             bool _darknessPhobia = false;
+            bool _darknessPhobiaIncluded = false;
             bool _dogPhobia = false;
+            bool _dogPhobiaIncluded = false;
             bool _holesPhobia = false;
+            bool _holesPhobiaIncluded = false;
             bool _insectPhobia = false;
+            bool _insectPhobiaIncluded = false;
             bool _watchingPhobia = false;
+            bool _watchingPhobiaIncluded = false;
             bool _tightSpacePhobia = false;
+            bool _tightSpacePhobiaIncluded = false;
 
             // We extract the info and save it
             if (jsonText is ProxyObject jsonObject)
@@ -124,36 +134,43 @@ namespace NewSafetyHelp.src.JSONParsing
                 if (jsonObject.Keys.Contains("spider_phobia"))
                 {
                     _spiderPhobia = jsonObject["spider_phobia"];
+                    _spiderPhobiaIncluded = true;
                 }
 
                 if (jsonObject.Keys.Contains("darkness_phobia"))
                 {
                     _darknessPhobia = jsonObject["darkness_phobia"];
+                    _darknessPhobiaIncluded = true;
                 }
 
                 if (jsonObject.Keys.Contains("dog_phobia"))
                 {
                     _dogPhobia = jsonObject["dog_phobia"];
+                    _dogPhobiaIncluded = true;
                 }
 
                 if (jsonObject.Keys.Contains("holes_phobia"))
                 {
                     _holesPhobia = jsonObject["holes_phobia"];
+                    _holesPhobiaIncluded = true;
                 }
 
                 if (jsonObject.Keys.Contains("insect_phobia"))
                 {
                     _insectPhobia = jsonObject["insect_phobia"];
+                    _insectPhobiaIncluded = true;
                 }
 
                 if (jsonObject.Keys.Contains("watching_phobia"))
                 {
                     _watchingPhobia = jsonObject["watching_phobia"];
+                    _watchingPhobiaIncluded = true;
                 }
 
                 if (jsonObject.Keys.Contains("tight_space_phobia"))
                 {
                     _tightSpacePhobia = jsonObject["tight_space_phobia"];
+                    _tightSpacePhobiaIncluded = true;
                 }
 
 
@@ -177,6 +194,7 @@ namespace NewSafetyHelp.src.JSONParsing
                 if (jsonObject.Keys.Contains("access_level"))
                 {
                     accessLevel = jsonObject["access_level"];
+                    accessLevelAdded = true;
                 }
 
                 if (jsonObject.Keys.Contains("arcade_calls"))
@@ -228,10 +246,17 @@ namespace NewSafetyHelp.src.JSONParsing
                 {
                     MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
                 }
+
+
+                // Replace Entry rather than add it
+                if (jsonObject.Keys.Contains("replace_entry"))
+                {
+                    replaceEntry = jsonObject["replace_entry"];
+                }
             }
 
             // Update ID if not given.
-            if (newID == -1) //
+            if (newID == -1 && !replaceEntry) //
             {
                 MelonLogger.Msg($"Info: Defaulting to a new Monster ID for file in {filePath}.\n (This is not a problem, this is recommended.)");
 
@@ -253,96 +278,314 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
             }
 
-            // Create Monster and add him
-            // NOTE: AudioClip is added later, since we need to do load it seperately from the main thread.
-            MonsterProfile _newMonster = EntryManager.EntryManager.CreateMonster(_monsterName: _monsterName, _monsterDescription: _monsterDescription, _monsterID: newID,
-                _arcadeCalls: _arcadeCalls.ToArray(), _monsterPortrait: _monsterPortrait, _monsterAudioClip: null,
-                _spiderPhobia: _spiderPhobia, _darknessPhobia: _darknessPhobia, _dogPhobia: _dogPhobia, _holesPhobia: _holesPhobia, _insectPhobia: _insectPhobia, _watchingPhobia: _watchingPhobia,
-                _tightSpacePhobia: _tightSpacePhobia);
+            if (replaceEntry) // We replace an Entry
+            {
+
+                // Returns a copy of the foundMonster
+
+                MonsterProfile foundMonster = null;
+                MonsterProfile foundMonsterXMAS = null; // For replacing DLC version aswell
+
+                if (onlyDLC)
+                {
+                    foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allXmasEntries.monsterProfiles, _monsterName, newID);
+                }
+                else if (includeDLC)
+                {
+                    // Will search both and attempt to find the entry.
+                    foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
+                    foundMonsterXMAS = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allXmasEntries.monsterProfiles, _monsterName, newID); // New Monster to also replace
+                }
+                else
+                {
+                    foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
+                }
 
 
-            // Decide where to add the Entry to. (Main Game or DLC or even both)
+                if (foundMonster == null)
+                {
+                    return;
+                }
 
-            if (onlyDLC) // Only DLC
-            {
-                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
-            }
-            else if (includeDLC) // Also allow in DLC
-            {
-                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
-                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
-            }
-            else // Only base game.
-            {
-                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
-            }
-
-            // Add audio to it
-            if (_monsterAudioClipLocation != null || _monsterAudioClipLocation != "")
-            {
-                MelonCoroutines.Start(UpdateAudioClip
-                (
-                    (myReturnValue) =>
-                    {
-                        if (myReturnValue != null)
+                // We replace the audio if needed.
+                if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
+                {
+                    MelonCoroutines.Start(UpdateAudioClip
+                    (
+                        (myReturnValue) =>
                         {
-                            _newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                        }
-                        else
+                            if (myReturnValue != null)
+                            {
+                                foundMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                if (foundMonsterXMAS != null) foundMonsterXMAS.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                            }
+                            else
+                            {
+                                MelonLogger.Error($"ERROR: Failed to load audio clip {_monsterAudioClipLocation}.");
+                            }
+
+                        },
+                        filePath + "\\" + _monsterAudioClipLocation)
+                    );
+                }
+
+                // Portrait
+                if (!string.IsNullOrEmpty(_monsterPortraitLocation))
+                {
+                    foundMonster.monsterPortrait = _monsterPortrait;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.monsterPortrait = _monsterPortrait;
+                }
+
+                // Description
+                if (_monsterDescription != "NO_DESCRIPTION")
+                {
+                    foundMonster.monsterDescription = _monsterDescription;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.monsterDescription = _monsterDescription;
+                }
+
+                // Name (Only works if ID was provided)
+                if (_monsterName != "NO_NAME" && newID >= 0 && foundMonster != null && replaceEntry && _monsterName != foundMonster.monsterName)
+                {
+                    foundMonster.monsterName = _monsterName;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.monsterName = _monsterName;
+                    foundMonster.name = _monsterName;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.name = _monsterName;
+                }
+
+                // Arcade Calls
+                if (_arcadeCalls.Count > 0)
+                {
+                    foundMonster.arcadeCalls = _arcadeCalls.ToArray();
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.arcadeCalls = _arcadeCalls.ToArray();
+                }
+
+                // Phobias, they don't require to be warned, since they optional.
+
+                if (_spiderPhobiaIncluded)
+                {
+                    foundMonster.spider = _spiderPhobia;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.spider = _spiderPhobia;
+                }
+
+                if (_darknessPhobiaIncluded)
+                {
+                    foundMonster.dark = _darknessPhobia;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.dark = _darknessPhobia;
+                }
+
+                if (_dogPhobiaIncluded)
+                {
+                    foundMonster.dog = _dogPhobia;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.dog = _dogPhobia;
+                }
+
+                if (_holesPhobiaIncluded)
+                {
+                    foundMonster.holes = _holesPhobia;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.holes = _holesPhobia;
+                }
+
+                if (_insectPhobiaIncluded)
+                {
+                    foundMonster.insect = _insectPhobia;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.insect = _insectPhobia;
+                }
+
+                if (_watchingPhobiaIncluded)
+                {
+                    foundMonster.watching = _watchingPhobia;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.watching = _watchingPhobia;
+                }
+
+                if (_tightSpacePhobiaIncluded)
+                {
+                    foundMonster.tightSpace = _tightSpacePhobia;
+                    if (foundMonsterXMAS != null) foundMonsterXMAS.tightSpace = _tightSpacePhobia;
+                }
+
+                // Access level, since we do not wish to accidentally include them, we do not add them to default
+                // This also counts the same for christmas
+                switch (accessLevel)
+                {
+                    case 0: // First Level, is also default if not provided.
+                        if (accessLevelAdded)
                         {
-                            MelonLogger.Error($"ERROR: Failed to load audio clip {_monsterAudioClipLocation}.");
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
+
+                            if (foundMonsterXMAS != null)
+                            {
+                                EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
+                                EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
+                            }
+                        }
+                        break;
+
+                    case 1: // Second Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.secondTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasSecondTier.monsterProfiles);
+
+                        if (foundMonsterXMAS != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.secondTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.xmasSecondTier.monsterProfiles);
                         }
 
-                    },
-                    filePath + "\\" + _monsterAudioClipLocation)
-                );
-            }
+                        break;
 
-            // If to include in the Main Campaign. I assume.
-            if (includeCampaign)
+                    case 2: // Third Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.thirdTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasThirdTier.monsterProfiles);
+
+                        if (foundMonsterXMAS != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.thirdTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.xmasThirdTier.monsterProfiles);
+                        }
+
+                        break;
+
+                    case 3: // Fourth Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.fourthTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles);
+
+                        if (foundMonsterXMAS != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.fourthTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles);
+                        }
+
+                        break;
+
+                    case 4: // Fifth Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+
+                        if (foundMonsterXMAS != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+                        }
+
+                        break;
+
+                    case 5: // Sixth Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+
+                        if (foundMonsterXMAS != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonsterXMAS, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+                        }
+
+                        break;
+                }
+
+                // Now if we also use "includeCampaign" we need to replace it there aswell
+                if (includeCampaign)
+                {
+                    EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
+                }
+
+                // Replace the Entry
+                //EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, foundMonster);
+            }
+            else // We add it
             {
-                EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles);
+                // Create Monster and add him
+                // NOTE: AudioClip is added later, since we need to do load it seperately from the main thread.
+                MonsterProfile _newMonster = EntryManager.EntryManager.CreateMonster(_monsterName: _monsterName, _monsterDescription: _monsterDescription, _monsterID: newID,
+                    _arcadeCalls: _arcadeCalls.ToArray(), _monsterPortrait: _monsterPortrait, _monsterAudioClip: null,
+                    _spiderPhobia: _spiderPhobia, _darknessPhobia: _darknessPhobia, _dogPhobia: _dogPhobia, _holesPhobia: _holesPhobia, _insectPhobia: _insectPhobia, _watchingPhobia: _watchingPhobia,
+                    _tightSpacePhobia: _tightSpacePhobia);
+
+                // Decide where to add the Entry to. (Main Game or DLC or even both)
+
+                if (onlyDLC) // Only DLC
+                {
+                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
+                }
+                else if (includeDLC) // Also allow in DLC
+                {
+                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
+                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
+                }
+                else // Only base game.
+                {
+                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
+                }
+
+                // Add audio to it
+                if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
+                {
+                    MelonCoroutines.Start(UpdateAudioClip
+                    (
+                        (myReturnValue) =>
+                        {
+                            if (myReturnValue != null)
+                            {
+                                _newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                            }
+                            else
+                            {
+                                MelonLogger.Error($"ERROR: Failed to load audio clip {_monsterAudioClipLocation}.");
+                            }
+
+                        },
+                        filePath + "\\" + _monsterAudioClipLocation)
+                    );
+                }
+
+                // If to include in the Main Campaign. I assume.
+                if (includeCampaign)
+                {
+                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles);
+                }
+
+                // This also counts the same for christmas
+                switch (accessLevel)
+                {
+                    case 0: // First Level, is also default if not provided.
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
+                        break;
+
+                    case 1: // Second Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.secondTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasSecondTier.monsterProfiles);
+                        break;
+
+                    case 2: // Third Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.thirdTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasThirdTier.monsterProfiles);
+                        break;
+
+                    case 3: // Fourth Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.fourthTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles);
+                        break;
+
+                    case 4: // Fifth Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+                        break;
+
+                    case 5: // Sixth Level
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+                        break;
+
+                    default: // Incase we somehow have an unknown value, we also default to first level.
+                        MelonLogger.Warning("WARNING: Provided access level is unknown (0-5). Defaulting to 0th access level.");
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
+                        EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
+                        break;
+                }
+
             }
 
-            // This also counts the same for christmas
-            switch (accessLevel)
-            {
-                case 0: // First Level, is also default if not provided.
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
-                    break;
-
-                case 1: // Second Level
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.secondTierUnlocks.monsterProfiles);
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasSecondTier.monsterProfiles);
-                    break;
-
-                case 2: // Third Level
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.thirdTierUnlocks.monsterProfiles);
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasThirdTier.monsterProfiles);
-                    break;
-
-                case 3: // Fourth Level
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.fourthTierUnlocks.monsterProfiles);
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles);
-                    break;
-
-                case 4: // Fifth Level
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles);
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
-                    break;
-
-                case 5: // Sixth Level
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles);
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
-                    break;
-
-                default: // Incase we somehow have an unknown value, we also default to first level.
-                    MelonLogger.Warning("WARNING: Provided access level is unknown (0-5). Defaulting to 0th access level.");
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
-                    EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
-                    break;
-            }
+            // We added or replaced the entry, now we finish up.
 
             // Sort the Entries in alphabetical order
             EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allEntries.monsterProfiles);
