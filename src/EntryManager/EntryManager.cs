@@ -94,6 +94,21 @@ namespace NewSafetyHelp.src.EntryManager
         }
 
         /// <summary>
+        /// Replaces a single Monster Image with a given sprite.
+        /// </summary>
+        /// <param name="monsterProfile"> Reference of the monsterProfile to replace the Sprite with. </param>
+        public static void replaceMonsterImage(ref MonsterProfile[] monsterProfile, string monsterName, Sprite entryImage, int monsterID = -1)
+        {
+            for (int i = 0; i < monsterProfile.Length; i++)
+            {
+                if (monsterProfile[i].monsterName == monsterName || (monsterProfile[i].monsterID == monsterID && monsterID >= 0))
+                {
+                    monsterProfile[i].monsterPortrait = entryImage;
+                }
+            }
+        }
+
+        /// <summary>
         /// Returns a new ID that should be +1 from the largest.
         /// </summary>
         /// <param name="entryUnlocker"> Instance of the entryunlockercontroller </param>
@@ -111,8 +126,6 @@ namespace NewSafetyHelp.src.EntryManager
                 default: 
                     return entryUnlocker.allEntries.monsterProfiles.Length;
             }
-
-            
         }
 
         /// <summary>

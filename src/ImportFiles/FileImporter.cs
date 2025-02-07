@@ -6,7 +6,7 @@ namespace NewSafetyHelp.src.ImportFiles
     public static class FileImporter
     {
         /// <summary>
-        /// Returns the UserData Directory folder for the mod. (Example: ...\GameDirectory\UserData\NewSafetyHelp\
+        /// Returns the UserData Directory folder for the mod. (Example: ...\GameDirectory\UserData\NewSafetyHelp\)
         /// </summary>
         public static string getUserDataFolderPath()
         {
