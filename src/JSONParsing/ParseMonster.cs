@@ -487,9 +487,6 @@ namespace NewSafetyHelp.src.JSONParsing
                 {
                     EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
                 }
-
-                // Replace the Entry
-                //EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, foundMonster);
             }
             else // We add it
             {
