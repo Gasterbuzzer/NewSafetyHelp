@@ -261,8 +261,8 @@ namespace NewSafetyHelp.src.JSONParsing
                 MelonLogger.Msg($"Info: Defaulting to a new Monster ID for file in {filePath}.\n (This is not a problem, this is recommended.)");
 
                 // Get the max Monster ID.
-                int maxEntryIDMainCampaing = EntryManager.EntryManager.getlargerID(entryUnlockerInstance);
-                int maxEntryIDMainDLC = EntryManager.EntryManager.getlargerID(entryUnlockerInstance, 1);
+                int maxEntryIDMainCampaing = EntryManager.EntryManager.getNewEntryID(entryUnlockerInstance);
+                int maxEntryIDMainDLC = EntryManager.EntryManager.getNewEntryID(entryUnlockerInstance, 1);
 
                 if (onlyDLC) // Only DLC
                 {

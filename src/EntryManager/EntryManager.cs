@@ -155,7 +155,7 @@ namespace NewSafetyHelp.src.EntryManager
         /// </summary>
         /// <param name="entryUnlocker"> Instance of the entryunlockercontroller </param>
         /// <param name="type"> Type of entry type. (0 = monsterProfiles default, 1 = allXmasEntries DLC) </param>
-        public static int getlargerID(EntryUnlockController entryUnlocker, int type = 0)
+        public static int getNewEntryID(EntryUnlockController entryUnlocker, int type = 0)
         {
             switch (type)
             {
