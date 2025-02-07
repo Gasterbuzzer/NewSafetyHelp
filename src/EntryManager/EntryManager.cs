@@ -1,6 +1,6 @@
 ﻿using MelonLoader;
 using System;
-using System.Collections.Generic;
+using System.Runtime.Remoting.Lifetime;
 using UnityEngine;
 
 namespace NewSafetyHelp.src.EntryManager
@@ -124,11 +124,11 @@ namespace NewSafetyHelp.src.EntryManager
             {
                 if (monsterProfiles[i].monsterName == monsterName || (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
                 {
-                    return monsterProfiles[i];
+                    return monsterProfiles[i]; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
                 }
             }
 
-            // Nothing found, so we return null. Please note, this is a copy.
+            // Nothing found, so we return null. 
             return null;
         }
 
