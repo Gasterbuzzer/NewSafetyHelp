@@ -301,11 +301,12 @@ namespace NewSafetyHelp.src.JSONParsing
                     foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
                 }
 
-
                 if (foundMonster == null)
                 {
                     return;
                 }
+
+                MelonLogger.Msg($"INFO: Found {_monsterName} / {newID}. Now replacing the entry with given information.");
 
                 // We replace the audio if needed.
                 if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
