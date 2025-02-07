@@ -256,7 +256,7 @@ namespace NewSafetyHelp.src.JSONParsing
             }
 
             // Update ID if not given.
-            if (newID == -1 && !replaceEntry) //
+            if (newID == -1 && !replaceEntry)
             {
                 MelonLogger.Msg($"Info: Defaulting to a new Monster ID for file in {filePath}.\n (This is not a problem, this is recommended.)");
 
