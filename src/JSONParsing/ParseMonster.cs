@@ -320,8 +320,9 @@ namespace NewSafetyHelp.src.JSONParsing
                     foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
                 }
 
-                if ((foundMonster == null  && !onlyDLC && !includeDLC) || (foundMonsterXMAS == null && onlyDLC) || (foundMonster == null && foundMonsterXMAS == null))
+                if ((foundMonster == null  && !onlyDLC && !includeDLC) || (foundMonster == null && foundMonsterXMAS == null))
                 {
+                    MelonLogger.Msg($"DEBUG: Now returning with information: {foundMonster == null} and {foundMonsterXMAS == null}.");
                     return;
                 }
 
