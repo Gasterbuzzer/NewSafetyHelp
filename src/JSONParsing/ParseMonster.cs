@@ -301,7 +301,7 @@ namespace NewSafetyHelp.src.JSONParsing
                     foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
                 }
 
-                if (foundMonster == null)
+                if (foundMonster == null  && !onlyDLC && !includeDLC)
                 {
                     return;
                 }
@@ -317,7 +317,7 @@ namespace NewSafetyHelp.src.JSONParsing
                         {
                             if (myReturnValue != null)
                             {
-                                foundMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                if (foundMonster != null) foundMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 if (foundMonsterXMAS != null) foundMonsterXMAS.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
                             }
                             else
@@ -333,30 +333,30 @@ namespace NewSafetyHelp.src.JSONParsing
                 // Portrait
                 if (!string.IsNullOrEmpty(_monsterPortraitLocation))
                 {
-                    foundMonster.monsterPortrait = _monsterPortrait;
+                    if (foundMonster != null) foundMonster.monsterPortrait = _monsterPortrait;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.monsterPortrait = _monsterPortrait;
                 }
 
                 // Description
                 if (_monsterDescription != "NO_DESCRIPTION")
                 {
-                    foundMonster.monsterDescription = _monsterDescription;
+                    if (foundMonster != null) foundMonster.monsterDescription = _monsterDescription;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.monsterDescription = _monsterDescription;
                 }
 
                 // Name (Only works if ID was provided)
                 if (_monsterName != "NO_NAME" && newID >= 0 && foundMonster != null && replaceEntry && _monsterName != foundMonster.monsterName)
                 {
-                    foundMonster.monsterName = _monsterName;
+                    if (foundMonster != null) foundMonster.monsterName = _monsterName;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.monsterName = _monsterName;
-                    foundMonster.name = _monsterName;
+                    if (foundMonster != null) foundMonster.name = _monsterName;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.name = _monsterName;
                 }
 
                 // Arcade Calls
                 if (_arcadeCalls.Count > 0)
                 {
-                    foundMonster.arcadeCalls = _arcadeCalls.ToArray();
+                    if (foundMonster != null) foundMonster.arcadeCalls = _arcadeCalls.ToArray();
                     if (foundMonsterXMAS != null) foundMonsterXMAS.arcadeCalls = _arcadeCalls.ToArray();
                 }
 
@@ -364,43 +364,43 @@ namespace NewSafetyHelp.src.JSONParsing
 
                 if (_spiderPhobiaIncluded)
                 {
-                    foundMonster.spider = _spiderPhobia;
+                    if (foundMonster != null) foundMonster.spider = _spiderPhobia;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.spider = _spiderPhobia;
                 }
 
                 if (_darknessPhobiaIncluded)
                 {
-                    foundMonster.dark = _darknessPhobia;
+                    if (foundMonster != null) foundMonster.dark = _darknessPhobia;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.dark = _darknessPhobia;
                 }
 
                 if (_dogPhobiaIncluded)
                 {
-                    foundMonster.dog = _dogPhobia;
+                    if (foundMonster != null) foundMonster.dog = _dogPhobia;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.dog = _dogPhobia;
                 }
 
                 if (_holesPhobiaIncluded)
                 {
-                    foundMonster.holes = _holesPhobia;
+                    if (foundMonster != null) foundMonster.holes = _holesPhobia;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.holes = _holesPhobia;
                 }
 
                 if (_insectPhobiaIncluded)
                 {
-                    foundMonster.insect = _insectPhobia;
+                    if (foundMonster != null) foundMonster.insect = _insectPhobia;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.insect = _insectPhobia;
                 }
 
                 if (_watchingPhobiaIncluded)
                 {
-                    foundMonster.watching = _watchingPhobia;
+                    if (foundMonster != null) foundMonster.watching = _watchingPhobia;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.watching = _watchingPhobia;
                 }
 
                 if (_tightSpacePhobiaIncluded)
                 {
-                    foundMonster.tightSpace = _tightSpacePhobia;
+                    if (foundMonster != null) foundMonster.tightSpace = _tightSpacePhobia;
                     if (foundMonsterXMAS != null) foundMonsterXMAS.tightSpace = _tightSpacePhobia;
                 }
 
@@ -411,8 +411,12 @@ namespace NewSafetyHelp.src.JSONParsing
                     case 0: // First Level, is also default if not provided.
                         if (accessLevelAdded)
                         {
-                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
-                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
+
+                            if (foundMonster != null)
+                            {
+                                EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles);
+                                EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles);
+                            }
 
                             if (foundMonsterXMAS != null)
                             {
@@ -423,8 +427,12 @@ namespace NewSafetyHelp.src.JSONParsing
                         break;
 
                     case 1: // Second Level
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.secondTierUnlocks.monsterProfiles);
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasSecondTier.monsterProfiles);
+
+                        if (foundMonster != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.secondTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasSecondTier.monsterProfiles);
+                        }
 
                         if (foundMonsterXMAS != null)
                         {
@@ -435,8 +443,12 @@ namespace NewSafetyHelp.src.JSONParsing
                         break;
 
                     case 2: // Third Level
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.thirdTierUnlocks.monsterProfiles);
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasThirdTier.monsterProfiles);
+
+                        if (foundMonster != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.thirdTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasThirdTier.monsterProfiles);
+                        }
 
                         if (foundMonsterXMAS != null)
                         {
@@ -447,8 +459,12 @@ namespace NewSafetyHelp.src.JSONParsing
                         break;
 
                     case 3: // Fourth Level
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.fourthTierUnlocks.monsterProfiles);
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles);
+
+                        if (foundMonster != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.fourthTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles);
+                        }
 
                         if (foundMonsterXMAS != null)
                         {
@@ -459,8 +475,12 @@ namespace NewSafetyHelp.src.JSONParsing
                         break;
 
                     case 4: // Fifth Level
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles);
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+
+                        if (foundMonster != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+                        }
 
                         if (foundMonsterXMAS != null)
                         {
@@ -471,8 +491,12 @@ namespace NewSafetyHelp.src.JSONParsing
                         break;
 
                     case 5: // Sixth Level
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles);
-                        EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+
+                        if (foundMonster != null)
+                        {
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles);
+                            EntryManager.EntryManager.AddMonsterToTheProfile(ref foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles); // We keep it fourth level incase they also want christmas
+                        }
 
                         if (foundMonsterXMAS != null)
                         {
@@ -486,10 +510,11 @@ namespace NewSafetyHelp.src.JSONParsing
                 // Now if we also use "includeCampaign" we need to replace it there aswell
                 if (includeCampaign)
                 {
-                    EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
+                    if (foundMonster != null)  EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
+                    if (foundMonsterXMAS != null)  EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonsterXMAS);
                 }
             }
-            else // We add it
+            else // We add it instead of replacing the entry
             {
                 // Create Monster and add him
                 // NOTE: AudioClip is added later, since we need to do load it seperately from the main thread.
