@@ -301,7 +301,7 @@ namespace NewSafetyHelp.src.JSONParsing
                     foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
                 }
 
-                if (foundMonster == null  && !onlyDLC && !includeDLC)
+                if ((foundMonster == null  && !onlyDLC && !includeDLC) || (foundMonsterXMAS == null && onlyDLC) || (foundMonster == null && foundMonsterXMAS == null))
                 {
                     return;
                 }
