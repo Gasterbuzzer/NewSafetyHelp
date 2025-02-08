@@ -102,6 +102,13 @@ namespace NewSafetyHelp.src.JSONParsing
             // We extract the info and save it
             if (jsonText is ProxyObject jsonObject)
             {
+
+                // Replace Entry rather than add it, important for warnings.
+                if (jsonObject.Keys.Contains("replace_entry"))
+                {
+                    replaceEntry = jsonObject["replace_entry"];
+                }
+
                 // Monster Name
                 if (jsonObject.Keys.Contains("monster_name"))
                 {
@@ -109,7 +116,10 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
                 else
                 {
-                    MelonLogger.Warning($"WARNING: No Monster name given for file in {filePath}. Defaulting to NO_NAME.");
+                    if (!replaceEntry)
+                    {
+                        MelonLogger.Warning($"WARNING: No Monster name given for file in {filePath}. Defaulting to NO_NAME.");
+                    }
                 }
 
                 // Monster Description
@@ -119,7 +129,10 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
                 else
                 {
-                    MelonLogger.Warning($"WARNING: No Monster description given for file in {filePath}. Defaulting to NO_DESCRIPTION.");
+                    if (!replaceEntry)
+                    {
+                        MelonLogger.Warning($"WARNING: No Monster description given for file in {filePath}. Defaulting to NO_DESCRIPTION.");
+                    }
                 }
 
 
@@ -208,7 +221,10 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
                 else
                 {
-                    MelonLogger.Warning($"WARNING: No Arcade Calls given for file in {filePath}. Defaulting to empty values.");
+                    if (!replaceEntry)
+                    {
+                        MelonLogger.Warning($"WARNING: No Arcade Calls given for file in {filePath}. Defaulting to empty values.");
+                    }
                 }
 
 
@@ -220,7 +236,11 @@ namespace NewSafetyHelp.src.JSONParsing
                     if (_monsterPortraitLocation == "" || _monsterPortraitLocation == null)
                     {
                         _monsterPortrait = null;
-                        MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
+
+                        if (!replaceEntry)
+                        {
+                            MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
+                        }
                     }
                     else
                     {
@@ -229,7 +249,10 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
                 else
                 {
-                    MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
+                    if (!replaceEntry)
+                    {
+                        MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
+                    }
                 }
 
                 // Audio Path (Later gets added with coroutine)
@@ -237,21 +260,17 @@ namespace NewSafetyHelp.src.JSONParsing
                 {
                     _monsterAudioClipLocation = jsonObject["monster_audio_clip_name"];
 
-                    if (_monsterAudioClipLocation == "" || _monsterAudioClipLocation == null)
+                    if (_monsterAudioClipLocation == "" || _monsterAudioClipLocation == null && !replaceEntry)
                     {
                         MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
                     }
                 }
                 else
                 {
-                    MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
-                }
-
-
-                // Replace Entry rather than add it
-                if (jsonObject.Keys.Contains("replace_entry"))
-                {
-                    replaceEntry = jsonObject["replace_entry"];
+                    if (!replaceEntry)
+                    {
+                        MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
+                    }
                 }
             }
 
