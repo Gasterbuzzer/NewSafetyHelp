@@ -95,6 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
+    <Compile Include="src\CallerPatches\CallerPatches.cs" />
+    <Compile Include="src\EntryManager\EntryExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
     <Compile Include="src\EntryManager\ImageImport.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />

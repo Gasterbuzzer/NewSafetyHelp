@@ -13,6 +13,10 @@ namespace NewSafetyHelp.src.JSONParsing
 {
     public static class ParseMonster
     {
+        // "Global" Variables for handling caller audio. Gets stored as its ID and with its Name.
+        public static List<EntryExtraInfo> entriesExtraInfo = new List<EntryExtraInfo>();
+
+
         /// <summary>
         /// Function for adding a single entry.
         /// </summary>
@@ -82,6 +86,9 @@ namespace NewSafetyHelp.src.JSONParsing
             string _monsterPortraitLocation = "";
 
             string _monsterAudioClipLocation = "";
+
+            // Caller Audio
+            string _callerAudioClipLocation = "";
 
             // Phobias
             bool _spiderPhobia = false;
@@ -255,12 +262,12 @@ namespace NewSafetyHelp.src.JSONParsing
                     }
                 }
 
-                // Audio Path (Later gets added with coroutine)
+                // Monster Audio Path (Later gets added with coroutine)
                 if (jsonObject.Keys.Contains("monster_audio_clip_name"))
                 {
                     _monsterAudioClipLocation = jsonObject["monster_audio_clip_name"];
 
-                    if (_monsterAudioClipLocation == "" || _monsterAudioClipLocation == null && !replaceEntry)
+                    if ((_monsterAudioClipLocation == "" || _monsterAudioClipLocation == null) && !replaceEntry)
                     {
                         MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
                     }
@@ -270,6 +277,17 @@ namespace NewSafetyHelp.src.JSONParsing
                     if (!replaceEntry)
                     {
                         MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
+                    }
+                }
+
+                // Caller Audio Path (Later gets added with coroutine)
+                if (jsonObject.Keys.Contains("caller_audio_clip_name"))
+                {
+                    _callerAudioClipLocation = jsonObject["caller_audio_clip_name"];
+
+                    if ((_callerAudioClipLocation == "" || _callerAudioClipLocation == null) && !replaceEntry)
+                    {
+                        MelonLogger.Msg($"INFO: No caller audio given for file in {filePath}. No audio will be heard.");
                     }
                 }
             }

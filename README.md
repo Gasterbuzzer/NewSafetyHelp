@@ -1,22 +1,40 @@
-﻿# Jumpscare Free Irritated Mind
+﻿# New Safety Help
 
-A mod that removes all jump scares from the game.
-Some scenes scripted jump scares are skipped or just removed.
-This also works for the warehouse jump scares, which instead just lead to the game over screen.
-Note, none of the functionality has changed, so you can still earn achievements without any issues.
+A mod that allows adding/modifying Entity entries from the game Home Safety Hotline.
 
 # How to Install:
 1. Download MelonLoader (Automated Installer) from the official website: [MelonLoader Download](https://melonwiki.xyz/#/?id=requirements)
 
 2. Alternative Download Page: ﻿[MelonLoader Releases](https://github.com/LavaGang/MelonLoader/releases/)
 
-3. Run MelonLoader and select **Irritated Mind: Fear of Warehouse** as the game. You can choose any version, however note, that it is best to use the latest.
-Use the installer on **SH.exe** in your Superhot Directory 
+3. Run MelonLoader and select **Home Safety Hotline** as the game. You can choose any version, however note, that it is best to use the latest.
 
-4. Move **JumpscareFreeIrritatedMind.dll** (From ﻿[Releases](https://github.com/Gasterbuzzer/JumpscareFreeIrritatedMind/releases)) to the new **Mods** folder in your Games Directory. You can find your games Mod folder by pressing the folder icon MelonLoader.
+4. Move **NewSafetyHelp.dll** (From ﻿[Releases](https://github.com/Gasterbuzzer/NewSafetyHelp/releases)) to the new **Mods** folder in your Games Directory. You can find your games Mod folder by pressing the folder icon MelonLoader.
 (Alternatively: Right mouse click the game in Steam with → Manage → Browse Local Files)
 
 6. Start your game and enjoy.
+
+# Using the Mod
+See the Wiki here on GitHub [Link](https://github.com/404)
+
+List of JSON Keys (Not all values are needed, but you may wish to use some.):
+
+## Main Values
+ - "monster_name" ("TEST_NAME"): Name of the monster.
+ - "monster_description" ("DESCRIPTION"): Description of the monster, allows special formatting.
+ - "monster_portrait_image_name" ("image.png"): Name of the image inside the same folder.
+ - "monster_audio_clip_name" ("sound.wav"): Name of the sound file inside the same folder.
+ - "monster_id" (Optional) (INT): ID for the monster, best to leave it empty and let the mod handle it for you. Mostly usefull for replacing entries.
+
+## Phobias
+ - "spider_phobia" (Optional) (true, false): If to hide the image of the entry if spider phobia is enabled.
+ - "spider_phobia" (Optional) (true, false): If to hide the image of the entry if spider phobia is enabled.
+	- 
+	- 
+## Special Values
+ - "replace_entry" (true, false): Replace Entry instead of adding it.
+ - "access_level" (INT 0-5): Which access level is needed when playing the main campaign (0 => No permissions needed).
+ - "includeCampaign" (UNUSED): If to include it in the main campaign.
 
 # Building
 Project can be built with: .NET Standard 2.1

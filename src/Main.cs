@@ -2,6 +2,7 @@
 using NewSafetyHelp.src.JSONParsing;
 using System;
 using System.Reflection;
+using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp
 {
@@ -10,6 +11,11 @@ namespace NewSafetyHelp
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             LoggerInstance.Msg($"Scene {sceneName} with build index {buildIndex} has been loaded!");
+        }
+
+        public override void OnLateInitializeMelon()
+        {
+            SceneManager.LoadScene("MainMenuScene");
         }
     }
 
