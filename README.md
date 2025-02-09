@@ -46,9 +46,10 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
  - "includeCampaign" (UNUSED: true, false): If to include it in the main campaign.
 
 # Building
-Project can be built with: .NET Standard 2.1
+Project can be built with: .NET Framework 4.7.2
 
-Please note, a build script has been added to automatically move the built mod to the games directory, for this to work, you have to provide a txt file (Named "config.txt"). It should contain the full absolute path to the games mods folder.
+Please note, a build script has been added to automatically move the built mod to the games directory, for this to work, you have to provide a textfile named "config.txt" in the top most level. 
+It should contain the full absolute path to the games **Mods** folder.
 Other than that, enjoy.
 
 # MelonLoader Information
