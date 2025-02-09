@@ -24,7 +24,6 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
  - "monster_description" (Example: "DESCRIPTION"): Description of the monster, allows special formatting.
  - "monster_portrait_image_name" (Example: "image.png"): Name of the image inside the same folder.
  - "monster_audio_clip_name" (Example: "sound.wav"): Name of the sound file inside the same folder.
- - "arcade_calls" (List) (Example: ["Hello, I have this problem...", "Hi, I think I have this problem..."]): List of text that appear when called in Arcade (Training) Mode.
  - "monster_id" (Optional) (INT (Examples: 0-9999)): ID for the monster, best to leave it empty and let the mod handle it for you. Mostly usefull for replacing entries.
 
 ## Phobias
@@ -39,6 +38,10 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
 ## DLC: Seasonal Worker
  - "only_dlc" (Examples: true, false): If to only show in the DLC.
  - "include_dlc" (Examples: true, false): If to **also** include in the DLC.
+
+# Caller Values (Values of the caller for the Entry)
+ - "arcade_calls" (List) (Example: ["Hello, I have this problem...", "Hi, I think I have this problem..."]): List of text that appear when called in Arcade (Training) Mode.
+ - "caller_audio_clip_name" (Example: "sound.wav"): Audio played when called for this entity.
 
 ## Special Values
  - "replace_entry" (Examples: true, false): Replace Entry instead of adding it.
