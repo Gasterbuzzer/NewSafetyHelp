@@ -29,8 +29,7 @@ List of JSON Keys (Not all values are needed, but you may wish to use some.):
 ## Phobias
  - "spider_phobia" (Optional) (true, false): If to hide the image of the entry if spider phobia is enabled.
  - "spider_phobia" (Optional) (true, false): If to hide the image of the entry if spider phobia is enabled.
-	- 
-	- 
+
 ## Special Values
  - "replace_entry" (true, false): Replace Entry instead of adding it.
  - "access_level" (INT 0-5): Which access level is needed when playing the main campaign (0 => No permissions needed).
