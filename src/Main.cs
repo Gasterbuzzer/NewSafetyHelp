@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using NewSafetyHelp.src.DebugHelper;
 using NewSafetyHelp.src.JSONParsing;
 using System;
 using System.Reflection;
