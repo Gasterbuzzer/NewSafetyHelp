@@ -289,6 +289,35 @@ namespace NewSafetyHelp.src.JSONParsing
                     {
                         MelonLogger.Msg($"INFO: No caller audio given for file in {filePath}. No audio will be heard.");
                     }
+                    else if (!File.Exists(filePath + "\\" + _callerAudioClipLocation)) // Check if location is valid now, since we are storing it now.
+                    {
+                        MelonLogger.Error($"ERROR: Location {filePath} does not contain {_callerAudioClipLocation}. Unable to add audio.");
+                    }
+                    else // Valid location, so we load in the value.
+                    {
+                        MelonCoroutines.Start(UpdateAudioClip
+                        (
+                            (myReturnValue) =>
+                            {
+                                if (myReturnValue != null)
+                                {
+                                    // Add the value
+
+                                    EntryExtraInfo newExtra = new EntryExtraInfo(_monsterName, newID); // ID will not work if not provided, but this shouldn't be an issue.
+
+                                    newExtra.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+
+                                    entriesExtraInfo.Add(newExtra);
+                                }
+                                else
+                                {
+                                    MelonLogger.Error($"ERROR: Failed to load audio clip {_callerAudioClipLocation}.");
+                                }
+
+                            },
+                            filePath + "\\" + _callerAudioClipLocation)
+                        );
+                    }
                 }
             }
 
@@ -664,17 +693,20 @@ namespace NewSafetyHelp.src.JSONParsing
             AudioClip monsterSoundClip = null;
 
             // Attempt to get the type
-            _audioType = AudioImport.GetAudioType(audioPath);
+            if (_audioType != AudioType.UNKNOWN)
+            {
+                _audioType = AudioImport.GetAudioType(audioPath);
 
-            yield return MelonCoroutines.Start(
-            AudioImport.LoadAudio
-            (
-                (myReturnValue) =>
-                {
-                    monsterSoundClip = myReturnValue;
-                },
-                audioPath, _audioType)
-            );
+                yield return MelonCoroutines.Start(
+                AudioImport.LoadAudio
+                (
+                    (myReturnValue) =>
+                    {
+                        monsterSoundClip = myReturnValue;
+                    },
+                    audioPath, _audioType)
+                );
+            }
 
             callback(monsterSoundClip);
         }
