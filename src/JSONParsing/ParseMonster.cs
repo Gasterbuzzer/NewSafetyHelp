@@ -306,6 +306,7 @@ namespace NewSafetyHelp.src.JSONParsing
                                     EntryExtraInfo newExtra = new EntryExtraInfo(_monsterName, newID); // ID will not work if not provided, but this shouldn't be an issue.
 
                                     newExtra.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    newExtra.replace = replaceEntry;
 
                                     entriesExtraInfo.Add(newExtra);
                                 }

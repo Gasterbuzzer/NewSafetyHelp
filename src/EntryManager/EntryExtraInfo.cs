@@ -6,7 +6,8 @@
         public string Name { get; }
 
         // Extra Info
-        public RichAudioClip callerClip;
+        public RichAudioClip callerClip; // Caller Clip
+        public bool replace; // If to replace
 
         // Constructor
         public EntryExtraInfo(int _id) { ID = _id; Name = null; }

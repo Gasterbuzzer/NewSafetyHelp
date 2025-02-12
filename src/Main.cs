@@ -16,7 +16,8 @@ namespace NewSafetyHelp
 
         public override void OnLateInitializeMelon()
         {
-            SceneManager.LoadScene("MainMenuScene");
+            //SceneManager.LoadScene("MainMenuScene");
+            SceneManager.LoadScene("MainScene");
         }
     }
 
