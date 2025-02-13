@@ -106,6 +106,10 @@ namespace NewSafetyHelp.src.JSONParsing
             bool _tightSpacePhobia = false;
             bool _tightSpacePhobiaIncluded = false;
 
+            // Persistent information for caller.
+            EntryExtraInfo newExtra = null;
+
+
             // We extract the info and save it
             if (jsonText is ProxyObject jsonObject)
             {
@@ -280,6 +284,15 @@ namespace NewSafetyHelp.src.JSONParsing
                     }
                 }
 
+                if (includeCampaign)
+                {
+                    newExtra = new EntryExtraInfo(_monsterName, newID); // ID will not work if not provided, but this shouldn't be an issue.
+                    newExtra.replace = replaceEntry;
+                    newExtra.callTranscript = "TEST";
+                    newExtra.inCampaign = includeCampaign;
+                }
+
+
                 // Caller Audio Path (Later gets added with coroutine)
                 if (jsonObject.Keys.Contains("caller_audio_clip_name"))
                 {
@@ -301,14 +314,19 @@ namespace NewSafetyHelp.src.JSONParsing
                             {
                                 if (myReturnValue != null)
                                 {
-                                    // Add the value
+                                    // Add the audio
 
-                                    EntryExtraInfo newExtra = new EntryExtraInfo(_monsterName, newID); // ID will not work if not provided, but this shouldn't be an issue.
+                                    if (newExtra == null) // Incase we didn't create it
+                                    {
+                                        newExtra = new EntryExtraInfo(_monsterName, newID); // ID will not work if not provided, but this shouldn't be an issue.
+
+                                        // Add extra information used for distinguishing entries from campaign.
+                                        newExtra.replace = replaceEntry;
+                                        newExtra.callTranscript = "TEST";
+                                        newExtra.inCampaign = includeCampaign;
+                                    }
 
                                     newExtra.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    newExtra.replace = replaceEntry;
-
-                                    entriesExtraInfo.Add(newExtra);
                                 }
                                 else
                                 {
@@ -319,6 +337,12 @@ namespace NewSafetyHelp.src.JSONParsing
                             filePath + "\\" + _callerAudioClipLocation)
                         );
                     }
+                }
+
+                // Add the extra information entry.
+                if ((jsonObject.Keys.Contains("caller_audio_clip_name") || includeCampaign) && newExtra != null)
+                {
+                    entriesExtraInfo.Add(newExtra);
                 }
             }
 

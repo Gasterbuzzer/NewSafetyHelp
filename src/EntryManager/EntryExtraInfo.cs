@@ -6,8 +6,14 @@
         public string Name { get; }
 
         // Extra Info
-        public RichAudioClip callerClip; // Caller Clip
-        public bool replace; // If to replace
+        public RichAudioClip callerClip = null; // Caller Clip
+        public bool replace = false; // If to replace
+        public string callTranscript = "NO_TRANSCRIPT"; // Call Transcript
+        public bool inCampaign = false; // If to appear in the campaign
+
+        // Extra Extra
+        public bool alreadyCalledOnce = false;
+        public bool currentlySelected = false; // Used for finding currently selected, for replacing audio. Please know that the information is updated for the canvas before the audio is played.
 
         // Constructor
         public EntryExtraInfo(int _id) { ID = _id; Name = null; }
