@@ -123,7 +123,7 @@ namespace NewSafetyHelp.src.CallerPatches
                 }
 
                 // Replace information about the caller with a random entry with a 10% chance that wasn't called.
-                if (UnityEngine.Random.Range(0.0f, 1.0f) <= 1.1f) // Chance
+                if (UnityEngine.Random.Range(0.0f, 1.0f) <= 0.1f) // Chance
                 {
                     EntryExtraInfo selected = null;
 
