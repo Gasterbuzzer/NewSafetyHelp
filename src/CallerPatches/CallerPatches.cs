@@ -85,7 +85,9 @@ namespace NewSafetyHelp.src.CallerPatches
                     if (item.currentlySelected && !item.alreadyCalledOnce) // We found an entry to replace the audio for.
                     {
                             item.alreadyCalledOnce = true;
-                            item.currentlySelected = false;
+                                
+                            // We used say that the current selection gets removed however, since we need to check upon 
+                            //item.currentlySelected = false;
 
                             callerAudioSource.clip = item.callerClip.clip;
                             found = true;
@@ -120,9 +122,8 @@ namespace NewSafetyHelp.src.CallerPatches
                     profile = __instance.currentCustomCaller;
                 }
 
-                // Replace information about the caller with a random entry with a 20% chance that wasn't called.
-                float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (randomValue <= 0.2f) // Chance
+                // Replace information about the caller with a random entry with a 10% chance that wasn't called.
+                if (UnityEngine.Random.Range(0.0f, 1.0f) <= 0.1f) // Chance
                 {
                     EntryExtraInfo selected = null;
 
@@ -158,6 +159,88 @@ namespace NewSafetyHelp.src.CallerPatches
 
                 __instance.currentCallerProfile = profile;
                 GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
+
+                return false; // Skip the original function
+            }
+        }
+
+        // Patches the caller to replace it with another with random chance.
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", new Type[] { typeof(MonsterProfile) })]
+        public static class ReplaceAnswerWithReplacedAnswer
+        {
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref MonsterProfile monsterID)
+            {
+
+                // Get triggerGameOver
+                Type callerController = typeof(CallerController);
+                FieldInfo dynamicCaller = callerController.GetField("dynamicCaller", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (monsterID != null) // Monster Valid
+                {
+
+                    ++__instance.callersToday;
+
+                    // Get replaced monster if valid
+                    bool found = false;
+                    MonsterProfile monsterToCheck = null;
+                    foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                    {
+                        if (item.currentlySelected) // We found an entry to replace the audio for.
+                        {
+                            // Now we unselect the item for new calls to allow replacing.
+                            item.currentlySelected = false;
+
+                            monsterToCheck = item.referenceCopyEntry;
+
+                            found = true;
+                        }
+                    }
+                    
+                    if (!found) // We do not replace, so we default back to the current caller.
+                    {
+                        monsterToCheck = __instance.callers[__instance.currentCallerID].callerProfile.callerMonster;
+                        MelonLogger.Msg($"Info: Current entry was not replaced. The actual caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}");
+                    }
+
+
+                    if (monsterID == monsterToCheck) // If correct
+                    {
+                        __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                        ++__instance.correctCallsToday;
+
+                        // Debug Info incase the replacement worked.
+                        if (found)
+                        {
+                            MelonLogger.Msg("Info: Selected the correct replaced entry.");
+                        }
+                    }
+                    else // If wrong
+                    {
+                        __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
+                        if (GlobalVariables.isXmasDLC) // If wrong and DLC
+                        {
+                            // Get TriggerXMAS Lights
+                            MethodInfo triggerXmasLight = callerController.GetMethod("TriggerXmasLight", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                            triggerXmasLight.Invoke(__instance, new object[] { });
+
+                            GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
+                        }
+
+                        // Debug Info incase the replacement worked.
+                        if (found)
+                        {
+                            MelonLogger.Msg("Info: Selected the wrong replaced entry.");
+                        }
+                    }
+                }
+                else if (!(bool)dynamicCaller.GetValue(__instance)) // Monster not provided and a dynamic caller. So we set it to true.
+                {
+                    __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+
+                    MelonLogger.Msg("Info: Dynamic Caller. No replacement possible. Always correct.");
+                }
+
+                dynamicCaller.SetValue(__instance, false);
 
                 return false; // Skip the original function
             }

@@ -15,6 +15,9 @@
         public bool alreadyCalledOnce = false;
         public bool currentlySelected = false; // Used for finding currently selected, for replacing audio. Please know that the information is updated for the canvas before the audio is played.
 
+        // Copy of Monster Entry
+        public MonsterProfile referenceCopyEntry = null;
+
         // Constructor
         public EntryExtraInfo(int _id) { ID = _id; Name = null; }
         public EntryExtraInfo(string _name) { Name = _name; ID = null; }

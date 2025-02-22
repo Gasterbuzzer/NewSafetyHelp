@@ -602,8 +602,26 @@ namespace NewSafetyHelp.src.JSONParsing
                 // Now if we also use "includeCampaign" we need to replace it there aswell
                 if (includeCampaign)
                 {
-                    if (foundMonster != null)  EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
-                    if (foundMonsterXMAS != null)  EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonsterXMAS);
+                    if (foundMonster != null)
+                    {
+                        EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
+
+                        // Include a copy of the monster in the extrainfo
+                        entriesExtraInfo.Find(item => item.Name == foundMonster.monsterName || item.ID == foundMonster.monsterID).referenceCopyEntry = foundMonster;
+                    }
+                    
+                    if (foundMonsterXMAS != null)
+                    {
+                        EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonsterXMAS);
+
+                        if (foundMonster == null)
+                        {
+                            // Include a copy of the monster in the extrainfo
+                            entriesExtraInfo.Find(item => item.Name == foundMonster.monsterName || item.ID == foundMonster.monsterID).referenceCopyEntry = foundMonster;
+                        }
+                    }
+
+                    
                 }
             }
             else // We add it instead of replacing the entry
@@ -630,6 +648,9 @@ namespace NewSafetyHelp.src.JSONParsing
                 {
                     EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allEntries.monsterProfiles);
                 }
+
+                // Include a copy of the monster in the extrainfo
+                entriesExtraInfo.Find(item => item.Name == _newMonster.monsterName || item.ID == _newMonster.monsterID).referenceCopyEntry = _newMonster;
 
                 // Add audio to it
                 if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
