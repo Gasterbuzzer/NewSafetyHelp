@@ -123,7 +123,7 @@ namespace NewSafetyHelp.src.CallerPatches
                 }
 
                 // Replace information about the caller with a random entry with a 10% chance that wasn't called.
-                if (UnityEngine.Random.Range(0.0f, 1.0f) <= 0.1f) // Chance
+                if (UnityEngine.Random.Range(0.0f, 1.0f) <= 1.1f) // Chance
                 {
                     EntryExtraInfo selected = null;
 
@@ -148,9 +148,15 @@ namespace NewSafetyHelp.src.CallerPatches
 
                         // Get a "copy"
                         selected = entries[entrySelected];
-                         
+
                         // Replace caller with custom caller
-                        profile.callerName = selected.Name;
+                        profile.callerName = selected.callerName;
+
+                        if (selected.callerImage != null) // If Image provided
+                        {
+                            profile.callerPortrait = selected.callerImage;
+                        }
+
                         profile.callTranscription = selected.callTranscript;
 
                         MelonLogger.Msg($"Info: Replaced the current caller with a custom caller: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");

@@ -5,10 +5,14 @@
         public int? ID { get; }
         public string Name { get; }
 
-        // Extra Info
+        // Extra Info Caller
         public RichAudioClip callerClip = null; // Caller Clip
-        public bool replace = false; // If to replace
         public string callTranscript = "NO_TRANSCRIPT"; // Call Transcript
+        public string callerName = "NO_CALLER_NAME";
+        public UnityEngine.Sprite callerImage = null;
+
+        // Extra Info
+        public bool replace = false; // If to replace
         public bool inCampaign = false; // If to appear in the campaign
 
         // Extra Extra

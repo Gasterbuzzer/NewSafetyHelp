@@ -89,6 +89,10 @@ namespace NewSafetyHelp.src.JSONParsing
 
             // Caller Audio
             string _callerAudioClipLocation = "";
+            string _callerName = "NO_CALLER_NAME";
+            string _callerTranscript = "NO_TRANSCRIPT";
+            string _callerImageLocation = "";
+            Sprite _callerPortrait = null;
 
             // Phobias
             bool _spiderPhobia = false;
@@ -284,11 +288,50 @@ namespace NewSafetyHelp.src.JSONParsing
                     }
                 }
 
+                // Caller Information
+
+                // Caller Name
+                if (jsonObject.Keys.Contains("caller_name"))
+                {
+                    _callerName = jsonObject["caller_name"];
+                }
+
+                // Caller Transcript
+                if (jsonObject.Keys.Contains("caller_transcript"))
+                {
+                    _callerTranscript = jsonObject["caller_transcript"];
+                }
+
+                // Caller Image
+                if (jsonObject.Keys.Contains("caller_image_name"))
+                {
+                    _callerImageLocation = jsonObject["caller_image_name"];
+
+                    if (_callerImageLocation == "" || _callerImageLocation == null)
+                    {
+                        _callerPortrait = null;
+
+                        MelonLogger.Warning($"WARNING: Invalid Caller Portrait for {filePath}. No image will be shown.");
+                    }
+                    else
+                    {
+                        _callerPortrait = ImageImport.LoadImage(filePath + "\\" + _callerImageLocation);
+                    }
+                }
+
+                // If to include in the main campaing.
                 if (includeCampaign)
                 {
                     newExtra = new EntryExtraInfo(_monsterName, newID); // ID will not work if not provided, but this shouldn't be an issue.
                     newExtra.replace = replaceEntry;
-                    newExtra.callTranscript = "TEST";
+                    newExtra.callerName = _callerName;
+                    newExtra.callTranscript = _callerTranscript;
+
+                    if (_callerPortrait != null)
+                    {
+                        newExtra.callerImage = _callerPortrait;
+                    }
+                    
                     newExtra.inCampaign = includeCampaign;
                 }
 
@@ -322,7 +365,14 @@ namespace NewSafetyHelp.src.JSONParsing
 
                                         // Add extra information used for distinguishing entries from campaign.
                                         newExtra.replace = replaceEntry;
-                                        newExtra.callTranscript = "TEST";
+                                        newExtra.callerName = _callerName;
+                                        newExtra.callTranscript = _callerTranscript;
+
+                                        if (_callerPortrait != null)
+                                        {
+                                            newExtra.callerImage = _callerPortrait;
+                                        }
+
                                         newExtra.inCampaign = includeCampaign;
                                     }
 

@@ -39,9 +39,15 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
  - "only_dlc" (Examples: true, false): If to only show in the DLC.
  - "include_dlc" (Examples: true, false): If to **also** include in the DLC.
 
-# Caller Values (Values of the caller for the Entry)
+# Caller Arcade Mode Values (Values of the caller for the Entry)
  - "arcade_calls" (List) (Example: ["Hello, I have this problem...", "Hi, I think I have this problem..."]): List of text that appear when called in Arcade (Training) Mode.
- - "caller_audio_clip_name" (Example: "sound.wav"): Audio played when called for this entity.
+ - "caller_audio_clip_name" (Example: "sound.wav"): Audio played when called for this entry.
+
+# Caller Main Campaing Values (Values of the caller for the Entry)
+ - "caller_audio_clip_name" (Example: "sound.wav"): Audio played when called for this entry.
+ - "caller_name" (Example: "John Safety"): Name of the caller.
+ - "caller_transcript" (Example: "Hello, I need help."): Transcript of the caller in text form.
+ - "caller_image_name" (Example: "image.png"): Name of the image for the caller inside the same folder.
 
 ## Special Values
  - "replace_entry" (Examples: true, false): Replace Entry instead of adding it.
