@@ -135,6 +135,7 @@ namespace NewSafetyHelp.src.CallerPatches
                         if (UnityEngine.Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
                         {
                             entries.Add(item);
+                            replaceTrue = true;
                         }
                     }
                 }

@@ -43,7 +43,7 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
  - "arcade_calls" (List) (Example: ["Hello, I have this problem...", "Hi, I think I have this problem..."]): List of text that appear when called in Arcade (Training) Mode.
  - "caller_audio_clip_name" (Example: "sound.wav"): Audio played when called for this entry.
 
-# Caller Main Campaing Values (Values of the caller for the Entry)
+# Caller Main Campaing Values (Values of the caller for the Entry) (Requires include_campaign to be true)
  - "caller_audio_clip_name" (Example: "sound.wav"): Audio played when called for this entry.
  - "caller_name" (Example: "John Safety"): Name of the caller.
  - "caller_transcript" (Example: "Hello, I need help."): Transcript of the caller in text form.
