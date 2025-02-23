@@ -9,9 +9,21 @@ namespace NewSafetyHelp
 {
     public class NewSafetyHelpMainClass : MelonMod
     {
+
+        public static MelonPreferences_Category persistantEntrySave;
+
+        public override void OnInitializeMelon()
+        {
+            persistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
+
+            // Entries are created when neeeded.
+        }
+
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             LoggerInstance.Msg($"Scene {sceneName} with build index {buildIndex} has been loaded!");
+
+            MelonPreferences.Save(); // Save on scene change.
         }
 
         public override void OnLateInitializeMelon()

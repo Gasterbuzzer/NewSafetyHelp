@@ -93,6 +93,7 @@ namespace NewSafetyHelp.src.JSONParsing
             string _callerTranscript = "NO_TRANSCRIPT";
             string _callerImageLocation = "";
             float _callerReplaceChance = 0.1f;
+            bool _callerRestartCallAgain = false;
             Sprite _callerPortrait = null;
 
             // Phobias
@@ -326,6 +327,14 @@ namespace NewSafetyHelp.src.JSONParsing
                     _callerReplaceChance = jsonObject["caller_chance"];
                 }
 
+                
+                // If to store the information if it was already called once.
+                if (jsonObject.Keys.Contains("allow_calling_again_over_restarts"))
+                {
+                    _callerRestartCallAgain = jsonObject["allow_calling_again_over_restarts"];
+                }
+
+
                 // If to include in the main campaing.
                 if (includeCampaign)
                 {
@@ -340,6 +349,8 @@ namespace NewSafetyHelp.src.JSONParsing
                     }
 
                     newExtra.callerReplaceChance = _callerReplaceChance;
+
+                    newExtra.allowCallAgainOverRestart = _callerRestartCallAgain;
 
                     newExtra.inCampaign = includeCampaign;
                 }
@@ -383,6 +394,8 @@ namespace NewSafetyHelp.src.JSONParsing
                                         }
 
                                         newExtra.callerReplaceChance = _callerReplaceChance;
+
+                                        newExtra.allowCallAgainOverRestart = _callerRestartCallAgain;
 
                                         newExtra.inCampaign = includeCampaign;
                                     }

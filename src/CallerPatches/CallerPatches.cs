@@ -85,7 +85,31 @@ namespace NewSafetyHelp.src.CallerPatches
                     if (item.currentlySelected && !item.alreadyCalledOnce) // We found an entry to replace the audio for.
                     {
                             item.alreadyCalledOnce = true;
-                                
+
+                            // We now check if we are allowed to save if the entry can be saved as already called.
+                            if (!item.allowCallAgainOverRestart)
+                            {
+                                if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
+                                {
+                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, true);
+                                }
+                                else
+                                {
+                                    NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName).Value = true;
+                                }
+                            }
+                            else
+                            {
+                                if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
+                                {
+                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false); // Store it as false
+                                }
+                                else
+                                {
+                                    NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName).Value = false;
+                                }
+                            }
+
                             // We used say that the current selection gets removed however, since we need to check upon 
                             //item.currentlySelected = false;
 
@@ -132,10 +156,53 @@ namespace NewSafetyHelp.src.CallerPatches
                 {
                     if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
                     {
+
+                        // Create Entry if not existant and if allowed
+
+                        MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry = null;
+
+                        if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
+                        {
+                            entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false);
+                        }
+                        else
+                        {
+                            entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName);
+                        }
+
+                        if (item.allowCallAgainOverRestart)
+                        {
+
+                            MelonLogger.Msg($"Info: Entry {item.Name} is allowed to be called again even if called once in the past.");
+
+                            entryAlreadyCalledBeforeEntry.Value = false; // Reset the entry. If not allowed to store the value.
+                        }
+
+                        if (entryAlreadyCalledBeforeEntry.Value)
+                        {
+                            MelonLogger.Msg($"Info: Entry {item.Name} was already called once, so it will not be available for calling.");
+                        }
+
                         if (UnityEngine.Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
                         {
-                            entries.Add(item);
-                            replaceTrue = true;
+                            if (!item.allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
+                            {
+                                if (!entryAlreadyCalledBeforeEntry.Value) // We never called it.
+                                {
+                                    entries.Add(item);
+                                    replaceTrue = true;
+
+                                    MelonLogger.Msg($"Info: Saved Entry {item.Name} to not be called in the future.");
+
+                                    entryAlreadyCalledBeforeEntry.Value = true;
+                                }
+                                // Else we skip it.
+                            }
+                            else // We are allowed to ignore it.
+                            {
+                                entries.Add(item);
+                                replaceTrue = true;
+                            }
                         }
                     }
                 }
@@ -166,7 +233,7 @@ namespace NewSafetyHelp.src.CallerPatches
 
                         profile.callTranscription = selected.callTranscript;
 
-                        MelonLogger.Msg($"Info: Replaced the current caller with a custom caller: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
+                        MelonLogger.Msg($"Info: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
                     }
                 }
 

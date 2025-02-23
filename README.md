@@ -49,6 +49,7 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
  - "caller_transcript" (Example: "Hello, I need help."): Transcript of the caller in text form.
  - "caller_image_name" (Example: "image.png"): Name of the image for the caller inside the same folder.
  - "caller_chance" (Example: 0.3): Chance that this entry replaces the caller. Must be between 0.0 and 1.0. (Or equal) (Default 0.1)
+ - "allow_calling_again_over_restarts" (Example: true, false): If the call is allowed to happen again upon restarting the game. Default is false. Thus when restarting the game, you cannot be called again by that entry. (Setting this to true, will reset previous save for it)
 
 ## Special Values
  - "replace_entry" (Examples: true, false): Replace Entry instead of adding it.
