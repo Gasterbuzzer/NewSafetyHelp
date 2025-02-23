@@ -48,6 +48,7 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
  - "caller_name" (Example: "John Safety"): Name of the caller.
  - "caller_transcript" (Example: "Hello, I need help."): Transcript of the caller in text form.
  - "caller_image_name" (Example: "image.png"): Name of the image for the caller inside the same folder.
+ - "caller_chance" (Example: 0.3): Chance that this entry replaces the caller. Must be between 0.0 and 1.0. (Or equal) (Default 0.1)
 
 ## Special Values
  - "replace_entry" (Examples: true, false): Replace Entry instead of adding it.

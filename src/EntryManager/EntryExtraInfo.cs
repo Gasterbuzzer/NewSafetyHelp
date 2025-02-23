@@ -8,8 +8,9 @@
         // Extra Info Caller
         public RichAudioClip callerClip = null; // Caller Clip
         public string callTranscript = "NO_TRANSCRIPT"; // Call Transcript
-        public string callerName = "NO_CALLER_NAME";
-        public UnityEngine.Sprite callerImage = null;
+        public string callerName = "NO_CALLER_NAME"; // Caller Name
+        public UnityEngine.Sprite callerImage = null; // Caller Image
+        public float callerReplaceChance = 0.1f; // Chance that this entry replaces the normal caller.
 
         // Extra Info
         public bool replace = false; // If to replace

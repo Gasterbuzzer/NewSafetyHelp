@@ -122,21 +122,27 @@ namespace NewSafetyHelp.src.CallerPatches
                     profile = __instance.currentCustomCaller;
                 }
 
-                // Replace information about the caller with a random entry with a 10% chance that wasn't called.
-                if (UnityEngine.Random.Range(0.0f, 1.0f) <= 0.1f) // Chance
+                EntryExtraInfo selected = null;
+
+                List<EntryExtraInfo> entries = new List<EntryExtraInfo>();
+
+                bool replaceTrue = false;
+
+                foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
                 {
-                    EntryExtraInfo selected = null;
-
-                    List<EntryExtraInfo> entries = new List<EntryExtraInfo>();
-
-                    foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                    if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
                     {
-                        if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
+                        if (UnityEngine.Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
                         {
                             entries.Add(item);
                         }
                     }
+                }
 
+                // Replace information about the caller with a random entry with a 10% chance that wasn't called.
+
+                if (replaceTrue) // If any entry won the chance to replace this call, replace it.
+                {
                     if (entries.Count > 0) // We actually found atleast one.
                     {
 

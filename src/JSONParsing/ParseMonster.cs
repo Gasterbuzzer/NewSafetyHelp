@@ -92,6 +92,7 @@ namespace NewSafetyHelp.src.JSONParsing
             string _callerName = "NO_CALLER_NAME";
             string _callerTranscript = "NO_TRANSCRIPT";
             string _callerImageLocation = "";
+            float _callerReplaceChance = 0.1f;
             Sprite _callerPortrait = null;
 
             // Phobias
@@ -319,6 +320,12 @@ namespace NewSafetyHelp.src.JSONParsing
                     }
                 }
 
+                // Caller Replace Chance
+                if (jsonObject.Keys.Contains("caller_chance"))
+                {
+                    _callerReplaceChance = jsonObject["caller_chance"];
+                }
+
                 // If to include in the main campaing.
                 if (includeCampaign)
                 {
@@ -331,7 +338,9 @@ namespace NewSafetyHelp.src.JSONParsing
                     {
                         newExtra.callerImage = _callerPortrait;
                     }
-                    
+
+                    newExtra.callerReplaceChance = _callerReplaceChance;
+
                     newExtra.inCampaign = includeCampaign;
                 }
 
@@ -372,6 +381,8 @@ namespace NewSafetyHelp.src.JSONParsing
                                         {
                                             newExtra.callerImage = _callerPortrait;
                                         }
+
+                                        newExtra.callerReplaceChance = _callerReplaceChance;
 
                                         newExtra.inCampaign = includeCampaign;
                                     }
