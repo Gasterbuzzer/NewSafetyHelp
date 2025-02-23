@@ -53,7 +53,7 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
 ## Special Values
  - "replace_entry" (Examples: true, false): Replace Entry instead of adding it.
  - "access_level" (Examples (INT): 0-5): Which access level is needed when playing the main campaign (0 => No permissions needed).
- - "include_campaign" (Examples: true, false): If to include it in the main campaign, has a 20% to replace a call.
+ - "include_campaign" (Examples: true, false): If to include it in the main campaign. It replaces a random caller with a chance, if not provided it is 10%.
 
 # Building
 Project can be built with: .NET Framework 4.7.2
