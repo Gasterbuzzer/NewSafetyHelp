@@ -1,5 +1,11 @@
-﻿using MelonLoader;
+﻿using Harmony;
+using HarmonyLib;
+using MelonLoader;
+using NewSafetyHelp.src.JSONParsing;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Remoting.Lifetime;
 using UnityEngine;
 
@@ -14,7 +20,7 @@ namespace NewSafetyHelp.src.EntryManager
         /// <param name="newProfile"> The new monster to add. </param>
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         /// <param name="profileName"> Name of the profile to be added, used for debugging. </param>
-        public static void AddMonsterToTheProfile(ref MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles, string profileName)
+        public static void AddMonsterToTheProfile(MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles, string profileName)
         {
             if (monsterProfiles == null) // Empty MonsterProfile array, so we create a new one.
             {
@@ -31,7 +37,11 @@ namespace NewSafetyHelp.src.EntryManager
                 {
                     if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
                     {
-                        MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
+                        if (profileName != "NONE") // Not display it if we are just readding things that are more than welcome to replace entries.
+                        {
+                            MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
+                        }
+
                         monsterProfiles[i] = newProfile;
                         return; // Replaced the profile and we return.
                     }
@@ -51,6 +61,36 @@ namespace NewSafetyHelp.src.EntryManager
 
                 // Replace the old array
                 monsterProfiles = newArray;
+
+                // Add the new entry to the entry fixer
+                switch (profileName)
+                {
+                    case "firstTierUnlocks":
+                        FixPermissionOverride.entriesReaddTierOne.Add(newProfile);
+                        break;
+
+                    case "secondTierUnlocks":
+                        FixPermissionOverride.entriesReaddTierTwo.Add(newProfile);
+                        break;
+
+                    case "thirdTierUnlocks":
+                        FixPermissionOverride.entriesReaddTierThree.Add(newProfile);
+                        break;
+
+                    case "fourthTierUnlocks":
+                        FixPermissionOverride.entriesReaddTierFour.Add(newProfile);
+                        break;
+
+                    case "fifthTierUnlocks":
+                        FixPermissionOverride.entriesReaddTierFive.Add(newProfile);
+                        break;
+
+                    case "sixthTierUnlocks":
+                        FixPermissionOverride.entriesReaddTierSix.Add(newProfile);
+                        break;
+
+                }
+                
             }
         }
 
@@ -180,6 +220,75 @@ namespace NewSafetyHelp.src.EntryManager
         public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
         {
             Array.Sort(monsterProfiles, (x, y) => String.Compare(x.monsterName, y.monsterName));
+        }
+    }
+
+    // Patches the entry unlocker to readd the missing entries to the different permission tiers that get lost upon reloading the computer scene.
+    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
+    public static class FixPermissionOverride
+    {
+        // List of elements
+        public static List<MonsterProfile> entriesReaddTierOne = new List<MonsterProfile>();
+        public static List<MonsterProfile> entriesReaddTierTwo = new List<MonsterProfile>();
+        public static List<MonsterProfile> entriesReaddTierThree = new List<MonsterProfile>();
+        public static List<MonsterProfile> entriesReaddTierFour = new List<MonsterProfile>();
+        public static List<MonsterProfile> entriesReaddTierFive = new List<MonsterProfile>();
+        public static List<MonsterProfile> entriesReaddTierSix = new List<MonsterProfile>();
+
+        private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance)
+        {
+            // I am aware there are more beautifull ways of achieving this. However, I am going to do it like the game.
+
+
+            MelonLogger.Msg("INFO: Now readding permissions for entries again.");
+
+            for (int i = 0; i < entriesReaddTierOne.Count; i++)
+            {
+                if (!__instance.firstTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                {
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE");
+                }
+            }
+
+            for (int i = 0; i < entriesReaddTierTwo.Count; i++)
+            {
+                if (!__instance.secondTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                {
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE");
+                }
+            }
+
+            for (int i = 0; i < entriesReaddTierThree.Count; i++)
+            {
+                if (!__instance.thirdTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                {
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE");
+                }
+            }
+
+            for (int i = 0; i < entriesReaddTierFour.Count; i++)
+            {
+                if (!__instance.fourthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                {
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE");
+                }
+            }
+
+            for (int i = 0; i < entriesReaddTierFive.Count; i++)
+            {
+                if (!__instance.fifthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                {
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE");
+                }
+            }
+
+            for (int i = 0; i < entriesReaddTierSix.Count; i++)
+            {
+                if (!__instance.sixthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                {
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE");
+                }
+            }
         }
     }
 }
