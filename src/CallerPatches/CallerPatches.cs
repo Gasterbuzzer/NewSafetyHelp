@@ -80,7 +80,7 @@ namespace NewSafetyHelp.src.CallerPatches
 
                 // Clip replace
                 bool found = false;
-                if (profile != null && profile.callerMonster != null) // We only check if the caller has any entry to begin with.
+                if (profile != null && profile.callerMonster != null && !__instance.arcadeMode) // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
                 {
                     foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
                     {
