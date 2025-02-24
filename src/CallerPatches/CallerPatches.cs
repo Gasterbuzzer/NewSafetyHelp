@@ -84,7 +84,7 @@ namespace NewSafetyHelp.src.CallerPatches
                 {
                     foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
                     {
-                        if (item.currentlySelected && !item.alreadyCalledOnce) // We found an entry to replace the audio for.
+                        if (item.currentlySelected) // We found an entry to replace the audio for.
                         {
                             item.alreadyCalledOnce = true;
 
@@ -147,12 +147,13 @@ namespace NewSafetyHelp.src.CallerPatches
         {
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref CallerProfile profile)
             {
+
                 if (profile == null)
                 {
                     profile = __instance.callers[__instance.currentCallerID].callerProfile;
                 }
 
-                else if (__instance.arcadeMode)
+                if (__instance.arcadeMode)
                 {
                     profile = __instance.currentCustomCaller;
                 }
@@ -163,46 +164,63 @@ namespace NewSafetyHelp.src.CallerPatches
 
                 bool replaceTrue = false;
 
-                foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                if (!__instance.arcadeMode)
                 {
-                    if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
+                    foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
                     {
-
-                        // Create Entry if not existant and if allowed
-
-                        MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry = null;
-
-                        if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
-                        {
-                            entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false);
-                        }
-                        else
-                        {
-                            entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName);
-                        }
-
-                        if (item.allowCallAgainOverRestart)
+                        if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
                         {
 
-                            MelonLogger.Msg($"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
+                            // Create Entry if not existant and if allowed
 
-                            entryAlreadyCalledBeforeEntry.Value = false; // Reset the entry. If not allowed to store the value.
-                        }
+                            MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry = null;
 
-                        if (entryAlreadyCalledBeforeEntry.Value)
-                        {
-                            MelonLogger.Msg($"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
-                        }
-
-                        if (UnityEngine.Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
-                        {
-                            if (!item.allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
+                            if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
                             {
-                                if (!entryAlreadyCalledBeforeEntry.Value && item.permissionLevel <= GlobalVariables.currentDay) // We never called it. And make sure we can actually access the callers entry.
+                                entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false);
+                            }
+                            else
+                            {
+                                entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName);
+                            }
+
+                            if (item.allowCallAgainOverRestart)
+                            {
+
+                                MelonLogger.Msg($"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
+
+                                entryAlreadyCalledBeforeEntry.Value = false; // Reset the entry. If not allowed to store the value.
+                            }
+
+                            if (entryAlreadyCalledBeforeEntry.Value)
+                            {
+                                MelonLogger.Msg($"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
+                            }
+
+                            if (UnityEngine.Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
+                            {
+                                if (!item.allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
                                 {
-                                    if (GlobalVariables.isXmasDLC) // If DLC
+                                    if (!entryAlreadyCalledBeforeEntry.Value && item.permissionLevel <= GlobalVariables.currentDay) // We never called it. And make sure we can actually access the callers entry.
                                     {
-                                        if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+
+                                        if (GlobalVariables.isXmasDLC) // If DLC
+                                        {
+                                            if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+                                            {
+                                                entries.Add(item);
+                                                replaceTrue = true;
+
+                                                MelonLogger.Msg($"INFO: Saved Entry '{item.Name}' to not be called in the future.");
+
+                                                entryAlreadyCalledBeforeEntry.Value = true;
+                                            }
+                                            else
+                                            {
+                                                MelonLogger.Msg($"INFO: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
+                                            }
+                                        }
+                                        else // Main Game
                                         {
                                             entries.Add(item);
                                             replaceTrue = true;
@@ -211,39 +229,29 @@ namespace NewSafetyHelp.src.CallerPatches
 
                                             entryAlreadyCalledBeforeEntry.Value = true;
                                         }
-                                        else
-                                        {
-                                            MelonLogger.Msg($"INFO: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
-                                        }
                                     }
-                                    else // Main Game
-                                    {
-                                        entries.Add(item);
-                                        replaceTrue = true;
-
-                                        MelonLogger.Msg($"INFO: Saved Entry '{item.Name}' to not be called in the future.");
-
-                                        entryAlreadyCalledBeforeEntry.Value = true;
-                                    }
+                                    // Else we skip it.
                                 }
-                                // Else we skip it.
-                            }
-                            else // We are allowed to ignore it.
-                            {
-                                if (item.permissionLevel <= GlobalVariables.currentDay) // Make sure we can actually access the callers entry.
+                                else // We are allowed to ignore it.
                                 {
-                                    if (GlobalVariables.isXmasDLC) // If DLC
+
+
+                                    if (item.permissionLevel <= GlobalVariables.currentDay) // Make sure we can actually access the callers entry.
                                     {
-                                        if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+                                        if (GlobalVariables.isXmasDLC) // If DLC
+                                        {
+                                            if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+                                            {
+
+                                                entries.Add(item);
+                                                replaceTrue = true;
+                                            }
+                                        }
+                                        else // Main Game
                                         {
                                             entries.Add(item);
                                             replaceTrue = true;
                                         }
-                                    }
-                                    else // Main Game
-                                    {
-                                        entries.Add(item);
-                                        replaceTrue = true;
                                     }
                                 }
                             }
@@ -251,13 +259,11 @@ namespace NewSafetyHelp.src.CallerPatches
                     }
                 }
 
-                // Replace information about the caller with a random entry with a 10% chance that wasn't called.
-
-                if (replaceTrue) // If any entry won the chance to replace this call, replace it.
+                // Replace information about the caller with a random entry
+                if (replaceTrue && profile != null && profile.callerMonster != null && !__instance.arcadeMode) // If any entry won the chance to replace this call, replace it.
                 {
                     if (entries.Count > 0) // We actually found atleast one.
                     {
-
                         // Select one randomly.
                         int entrySelected = UnityEngine.Random.Range(0, entries.Count - 1);
 
@@ -277,10 +283,13 @@ namespace NewSafetyHelp.src.CallerPatches
 
                         profile.callTranscription = selected.callTranscript;
 
-                        MelonLogger.Msg($"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                        if (profile != null && profile.callerMonster != null && selected != null)
+                        {
+                            MelonLogger.Msg($"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                        }
                     }
                 }
-
+                
                 __instance.currentCallerProfile = profile;
                 GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
 
