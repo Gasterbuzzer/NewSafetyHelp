@@ -28,7 +28,7 @@ namespace NewSafetyHelp.src.EntryManager
                 {
                     if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
                     {
-                        MelonLogger.Warning($"Warning: An existing entry was overriden (Name: {newProfile.monsterName}, ID: {newProfile.monsterID}). If this was intentional, you can safely ignore it.");
+                        MelonLogger.Warning($"WARNING: An existing entry was overriden (Name: {newProfile.monsterName}, ID: {newProfile.monsterID}). If this was intentional, you can safely ignore it.");
                         monsterProfiles[i] = newProfile;
                         return; // Replaced the profile and we return.
                     }

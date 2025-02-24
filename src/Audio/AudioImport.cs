@@ -39,7 +39,7 @@ namespace NewSafetyHelp.src.AudioHandler
 
                 if (www.result == UnityWebRequest.Result.Success && operation.isDone) // Was able of getting the audio file.
                 {
-                    MelonLogger.Msg($"Info: {path} as {_audioType.ToString()} has been successfully loaded.");
+                    MelonLogger.Msg($"INFO: {path} as {_audioType.ToString()} has been successfully loaded.");
 
                     callback(DownloadHandlerAudioClip.GetContent(www)); // Get actual audio clip
                     yield break;
@@ -48,7 +48,7 @@ namespace NewSafetyHelp.src.AudioHandler
                 {
                     if (!operation.isDone)
                     {
-                        MelonLogger.Error("Not finished, please wait.");
+                        MelonLogger.Error("ERROR: Audio Loading was not finished. This an an unexpected error.");
                     }
 
                     MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. \n Results in the error: {www.error} and the response code is: {www.responseCode}. Was the proccess finished?: {www.isDone}");

@@ -21,7 +21,7 @@ namespace NewSafetyHelp
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            LoggerInstance.Msg($"Scene {sceneName} with build index {buildIndex} has been loaded!");
+            LoggerInstance.Msg($"DEBUG: Scene {sceneName} with build index {buildIndex} has been loaded!");
 
             MelonPreferences.Save(); // Save on scene change.
         }
@@ -62,11 +62,11 @@ namespace NewSafetyHelp
             if (isInitialized)
             {
                 // We already added them once, no need to add them again.
-                MelonLogger.Msg("Entries were already added. Skipping adding.");
+                MelonLogger.Msg("INFO: Entries were already added. Skipping adding.");
                 return;
             }
 
-            MelonLogger.Msg("Entries are now being added...");
+            MelonLogger.Msg("INFO: Entries are now being added...");
 
             // Add all monsters
             ParseMonster.LoadAllMonsters(__instance);
@@ -101,7 +101,7 @@ namespace NewSafetyHelp
                 }
                 else
                 {
-                    MelonLogger.Error("Failed to access the member 'Start' of EntryCanvasStandaloneBehavior.");
+                    MelonLogger.Error("ERROR: Failed to access the member 'Start' of EntryCanvasStandaloneBehavior.");
                 }
             }
         }

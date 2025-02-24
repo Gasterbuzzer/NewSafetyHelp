@@ -8,7 +8,6 @@ namespace NewSafetyHelp.src.DebugHelper
 {
     public static class Debug
     {
-
         public static void RemoveAllEntries(ref MonsterProfile[] monsterProfiles)
         {
             monsterProfiles = new MonsterProfile[monsterProfiles.Length];

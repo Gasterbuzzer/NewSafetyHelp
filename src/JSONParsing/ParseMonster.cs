@@ -30,7 +30,7 @@ namespace NewSafetyHelp.src.JSONParsing
             {
                 if (filesDataPath[i].ToLower().EndsWith(".json"))
                 {
-                    MelonLogger.Msg($"Found new Monster Entry at {filesDataPath[i]}, adding now.");
+                    MelonLogger.Msg($"INFO: Found new Monster Entry at {filesDataPath[i]}, adding now.");
 
                     string jsonString = File.ReadAllText(filesDataPath[i]);
 
@@ -435,7 +435,7 @@ namespace NewSafetyHelp.src.JSONParsing
             // Update ID if not given.
             if (newID == -1 && !replaceEntry)
             {
-                MelonLogger.Msg($"Info: Defaulting to a new Monster ID for file in {filePath}.\n (This is not a problem, this is recommended.)");
+                MelonLogger.Msg($"INFO: Defaulting to a new Monster ID for file in {filePath}.\n (This is not a problem, this is recommended.)");
 
                 // Get the max Monster ID.
                 int maxEntryIDMainCampaing = EntryManager.EntryManager.getNewEntryID(entryUnlockerInstance);

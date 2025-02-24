@@ -126,11 +126,11 @@ namespace NewSafetyHelp.src.CallerPatches
                 {
                     if (profile != null && profile.callerMonster != null)
                     {
-                        MelonLogger.Msg($"Debug: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
+                        MelonLogger.Msg($"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
                     }
                     else
                     {
-                        MelonLogger.Msg("Info: This caller does not have a monster entry. Thus not replaced.");
+                        MelonLogger.Msg("INFO: This caller does not have a monster entry. Thus not replaced.");
                     }
 
                     callerAudioSource.clip = profile.callerClip.clip;
@@ -184,14 +184,14 @@ namespace NewSafetyHelp.src.CallerPatches
                         if (item.allowCallAgainOverRestart)
                         {
 
-                            MelonLogger.Msg($"Info: Entry {item.Name} is allowed to be called again even if called once in the past.");
+                            MelonLogger.Msg($"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
 
                             entryAlreadyCalledBeforeEntry.Value = false; // Reset the entry. If not allowed to store the value.
                         }
 
                         if (entryAlreadyCalledBeforeEntry.Value)
                         {
-                            MelonLogger.Msg($"Info: Entry {item.Name} was already called once, so it will not be available for calling.");
+                            MelonLogger.Msg($"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
                         }
 
                         if (UnityEngine.Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
@@ -207,13 +207,13 @@ namespace NewSafetyHelp.src.CallerPatches
                                             entries.Add(item);
                                             replaceTrue = true;
 
-                                            MelonLogger.Msg($"Info: Saved Entry '{item.Name}' to not be called in the future.");
+                                            MelonLogger.Msg($"INFO: Saved Entry '{item.Name}' to not be called in the future.");
 
                                             entryAlreadyCalledBeforeEntry.Value = true;
                                         }
                                         else
                                         {
-                                            MelonLogger.Msg($"Info: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
+                                            MelonLogger.Msg($"INFO: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
                                         }
                                     }
                                     else // Main Game
@@ -221,7 +221,7 @@ namespace NewSafetyHelp.src.CallerPatches
                                         entries.Add(item);
                                         replaceTrue = true;
 
-                                        MelonLogger.Msg($"Info: Saved Entry '{item.Name}' to not be called in the future.");
+                                        MelonLogger.Msg($"INFO: Saved Entry '{item.Name}' to not be called in the future.");
 
                                         entryAlreadyCalledBeforeEntry.Value = true;
                                     }
@@ -277,7 +277,7 @@ namespace NewSafetyHelp.src.CallerPatches
 
                         profile.callTranscription = selected.callTranscript;
 
-                        MelonLogger.Msg($"Info: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                        MelonLogger.Msg($"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
                     }
                 }
 
@@ -323,7 +323,7 @@ namespace NewSafetyHelp.src.CallerPatches
                     if (!found) // We do not replace, so we default back to the current caller.
                     {
                         monsterToCheck = __instance.callers[__instance.currentCallerID].callerProfile.callerMonster;
-                        MelonLogger.Msg($"Info: Current entry was not replaced. The actual caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}");
+                        MelonLogger.Msg($"INFO: Current entry was not replaced. The actual caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}");
                     }
 
 
@@ -335,7 +335,7 @@ namespace NewSafetyHelp.src.CallerPatches
                         // Debug Info incase the replacement worked.
                         if (found)
                         {
-                            MelonLogger.Msg("Info: Selected the correct replaced entry.");
+                            MelonLogger.Msg("INFO: Selected the correct replaced entry.");
                         }
                     }
                     else // If wrong
@@ -353,7 +353,7 @@ namespace NewSafetyHelp.src.CallerPatches
                         // Debug Info incase the replacement worked.
                         if (found)
                         {
-                            MelonLogger.Msg("Info: Selected the wrong replaced entry.");
+                            MelonLogger.Msg("INFO: Selected the wrong replaced entry.");
                         }
                     }
                 }
@@ -361,7 +361,7 @@ namespace NewSafetyHelp.src.CallerPatches
                 {
                     __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
 
-                    MelonLogger.Msg("Info: Dynamic Caller. No replacement possible. Always correct.");
+                    MelonLogger.Msg("INFO: Dynamic Caller. No replacement possible. Always correct.");
                 }
 
                 dynamicCaller.SetValue(__instance, false);
