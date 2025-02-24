@@ -13,7 +13,8 @@ namespace NewSafetyHelp.src.EntryManager
         /// </summary>
         /// <param name="newProfile"> The new monster to add. </param>
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
-        public static void AddMonsterToTheProfile(ref MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles)
+        /// <param name="profileName"> Name of the profile to be added, used for debugging. </param>
+        public static void AddMonsterToTheProfile(ref MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles, string profileName)
         {
             if (monsterProfiles == null) // Empty MonsterProfile array, so we create a new one.
             {
@@ -21,6 +22,8 @@ namespace NewSafetyHelp.src.EntryManager
             }
             else
             {
+                MelonLogger.Msg($"DEBUG: Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
+
                 // Before adding we check if the ID already exists.
                 int idToCheck = newProfile.monsterID;
 
@@ -28,7 +31,7 @@ namespace NewSafetyHelp.src.EntryManager
                 {
                     if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
                     {
-                        MelonLogger.Warning($"WARNING: An existing entry was overriden (Name: {newProfile.monsterName}, ID: {newProfile.monsterID}). If this was intentional, you can safely ignore it.");
+                        MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
                         monsterProfiles[i] = newProfile;
                         return; // Replaced the profile and we return.
                     }
