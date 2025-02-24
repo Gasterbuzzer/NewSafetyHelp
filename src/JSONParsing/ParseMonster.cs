@@ -352,6 +352,12 @@ namespace NewSafetyHelp.src.JSONParsing
 
                     newExtra.allowCallAgainOverRestart = _callerRestartCallAgain;
 
+                    newExtra.permissionLevel = accessLevel; // Minimum Access level required for call
+
+                    // DLC Handling
+                    newExtra.onlyDLC = onlyDLC;
+                    newExtra.includeInDLC = includeDLC;
+
                     newExtra.inCampaign = includeCampaign;
                 }
 
@@ -396,6 +402,12 @@ namespace NewSafetyHelp.src.JSONParsing
                                         newExtra.callerReplaceChance = _callerReplaceChance;
 
                                         newExtra.allowCallAgainOverRestart = _callerRestartCallAgain;
+
+                                        newExtra.permissionLevel = accessLevel; // Minimum Access level required for call
+
+                                        // DLC Handling
+                                        newExtra.onlyDLC = onlyDLC;
+                                        newExtra.includeInDLC = includeDLC;
 
                                         newExtra.inCampaign = includeCampaign;
                                     }

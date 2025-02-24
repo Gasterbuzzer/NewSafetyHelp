@@ -29,7 +29,9 @@ namespace NewSafetyHelp
         public override void OnLateInitializeMelon()
         {
             //SceneManager.LoadScene("MainMenuScene");
-            SceneManager.LoadScene("MainScene");
+            //SceneManager.LoadScene("MainScene");
+            //SceneManager.LoadScene("MainMenuSceneXmas");
+            SceneManager.LoadScene("Computer3DSceneXmas");
         }
     }
 

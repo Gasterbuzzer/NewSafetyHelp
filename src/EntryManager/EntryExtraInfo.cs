@@ -17,6 +17,9 @@
         // Extra Info
         public bool replace = false; // If to replace
         public bool inCampaign = false; // If to appear in the campaign
+        public int permissionLevel = 0; // Required permission for a call to be replaced.
+        public bool onlyDLC = false; // If only in the DLC.
+        public bool includeInDLC = false; // If to also include in the DLC
 
         // Extra Extra
         public bool alreadyCalledOnce = false;

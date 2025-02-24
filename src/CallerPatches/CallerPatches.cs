@@ -80,10 +80,12 @@ namespace NewSafetyHelp.src.CallerPatches
 
                 // Clip replace
                 bool found = false;
-                foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                if (profile != null && profile.callerMonster != null) // We only check if the caller has any entry to begin with.
                 {
-                    if (item.currentlySelected && !item.alreadyCalledOnce) // We found an entry to replace the audio for.
+                    foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
                     {
+                        if (item.currentlySelected && !item.alreadyCalledOnce) // We found an entry to replace the audio for.
+                        {
                             item.alreadyCalledOnce = true;
 
                             // We now check if we are allowed to save if the entry can be saved as already called.
@@ -115,15 +117,24 @@ namespace NewSafetyHelp.src.CallerPatches
 
                             callerAudioSource.clip = item.callerClip.clip;
                             found = true;
+                        }
                     }
                 }
 
                 // Else
                 if (!found)
                 {
-                    MelonLogger.Msg($"Debug: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
+                    if (profile != null && profile.callerMonster != null)
+                    {
+                        MelonLogger.Msg($"Debug: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
+                    }
+                    else
+                    {
+                        MelonLogger.Msg("Info: This caller does not have a monster entry. Thus not replaced.");
+                    }
+
                     callerAudioSource.clip = profile.callerClip.clip;
-                } 
+                }
 
                 callerAudioSource.volume = profile.callerClip.volume;
                 callerAudioSource.Play();
@@ -187,21 +198,54 @@ namespace NewSafetyHelp.src.CallerPatches
                         {
                             if (!item.allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
                             {
-                                if (!entryAlreadyCalledBeforeEntry.Value) // We never called it.
+                                if (!entryAlreadyCalledBeforeEntry.Value && item.permissionLevel <= GlobalVariables.currentDay) // We never called it. And make sure we can actually access the callers entry.
                                 {
-                                    entries.Add(item);
-                                    replaceTrue = true;
+                                    if (GlobalVariables.isXmasDLC) // If DLC
+                                    {
+                                        if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+                                        {
+                                            entries.Add(item);
+                                            replaceTrue = true;
 
-                                    MelonLogger.Msg($"Info: Saved Entry {item.Name} to not be called in the future.");
+                                            MelonLogger.Msg($"Info: Saved Entry '{item.Name}' to not be called in the future.");
 
-                                    entryAlreadyCalledBeforeEntry.Value = true;
+                                            entryAlreadyCalledBeforeEntry.Value = true;
+                                        }
+                                        else
+                                        {
+                                            MelonLogger.Msg($"Info: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
+                                        }
+                                    }
+                                    else // Main Game
+                                    {
+                                        entries.Add(item);
+                                        replaceTrue = true;
+
+                                        MelonLogger.Msg($"Info: Saved Entry '{item.Name}' to not be called in the future.");
+
+                                        entryAlreadyCalledBeforeEntry.Value = true;
+                                    }
                                 }
                                 // Else we skip it.
                             }
                             else // We are allowed to ignore it.
                             {
-                                entries.Add(item);
-                                replaceTrue = true;
+                                if (item.permissionLevel <= GlobalVariables.currentDay) // Make sure we can actually access the callers entry.
+                                {
+                                    if (GlobalVariables.isXmasDLC) // If DLC
+                                    {
+                                        if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+                                        {
+                                            entries.Add(item);
+                                            replaceTrue = true;
+                                        }
+                                    }
+                                    else // Main Game
+                                    {
+                                        entries.Add(item);
+                                        replaceTrue = true;
+                                    }
+                                }
                             }
                         }
                     }
