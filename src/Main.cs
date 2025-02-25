@@ -53,17 +53,17 @@ namespace NewSafetyHelp
             if (isInitialized)
             {
                 // We already added them once, no need to add them again.
-                MelonLogger.Msg("INFO: Entries were already added. Skipping adding.");
+                MelonLogger.Msg("INFO: Custom Entries were already added. Skipping adding them again. (This happens on scene reload).");
                 return;
             }
 
-            MelonLogger.Msg("INFO: Entries are now being added...");
+            MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added...");
 
             // Add all monsters
             ParseMonster.LoadAllMonsters(__instance);
 
             isInitialized = true;
-            MelonLogger.Msg("INFO: Added all entries successfully!");
+            MelonLogger.Msg(ConsoleColor.Green, "INFO: Added/Modified all custom entries successfully!");
         }
     }
 

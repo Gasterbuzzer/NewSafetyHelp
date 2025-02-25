@@ -436,7 +436,8 @@ namespace NewSafetyHelp.src.JSONParsing
             // Update ID if not given.
             if (newID == -1 && !replaceEntry)
             {
-                MelonLogger.Msg($"INFO: Defaulting to a new Monster ID for file in {filePath}.\n (This intended and recommended.)");
+                MelonLogger.Msg($"INFO: Defaulting to a new Monster ID for file in {filePath}.");
+                MelonLogger.Msg($"(This intended and recommended).");
 
                 // Get the max Monster ID.
                 int maxEntryIDMainCampaing = EntryManager.EntryManager.getNewEntryID(entryUnlockerInstance);
