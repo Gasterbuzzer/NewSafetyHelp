@@ -1,12 +1,8 @@
-﻿using Harmony;
-using HarmonyLib;
-using MelonLoader;
-using NewSafetyHelp.src.JSONParsing;
+﻿using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Lifetime;
 using UnityEngine;
 
 namespace NewSafetyHelp.src.EntryManager
@@ -227,7 +223,7 @@ namespace NewSafetyHelp.src.EntryManager
     [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
     public static class FixPermissionOverride
     {
-        // List of elements
+        // List of entrie permissions
         public static List<MonsterProfile> entriesReaddTierOne = new List<MonsterProfile>();
         public static List<MonsterProfile> entriesReaddTierTwo = new List<MonsterProfile>();
         public static List<MonsterProfile> entriesReaddTierThree = new List<MonsterProfile>();
@@ -235,10 +231,14 @@ namespace NewSafetyHelp.src.EntryManager
         public static List<MonsterProfile> entriesReaddTierFive = new List<MonsterProfile>();
         public static List<MonsterProfile> entriesReaddTierSix = new List<MonsterProfile>();
 
+        /// <summary>
+        /// Re adds entries that were removed upon reload of the EntryUnlocker Object.
+        /// </summary>
+        /// <param name="__originalMethod"> Method Caller </param>
+        /// <param name="__instance"> Caller of function instance </param>
         private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance)
         {
             // I am aware there are more beautifull ways of achieving this. However, I am going to do it like the game.
-
 
             MelonLogger.Msg("INFO: Now readding permissions for entries again.");
 

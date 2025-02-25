@@ -1,17 +1,11 @@
 ﻿using MelonLoader;
-using NewSafetyHelp.src.AudioHandler;
 using NewSafetyHelp.src.EntryManager;
 using NewSafetyHelp.src.JSONParsing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace NewSafetyHelp.src.CallerPatches
 {
@@ -112,8 +106,7 @@ namespace NewSafetyHelp.src.CallerPatches
                                 }
                             }
 
-                            // We used say that the current selection gets removed however, since we need to check upon 
-                            //item.currentlySelected = false;
+                            // Current selection is set to false once the answer for the caller has been submitted.
 
                             callerAudioSource.clip = item.callerClip.clip;
                             found = true;
@@ -145,6 +138,12 @@ namespace NewSafetyHelp.src.CallerPatches
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", new Type[] { typeof(CallerProfile)})]
         public static class UpdateCampaignCallerRandom
         {
+            /// <summary>
+            /// Patch for the caller info to be updated to a custom entry.
+            /// </summary>
+            /// <param name="__originalMethod"> Original Method Caller </param>
+            /// <param name="__instance"> Function Caller Instance </param>
+            /// <param name="profile"> Caller Profile that called </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref CallerProfile profile)
             {
 
@@ -301,6 +300,12 @@ namespace NewSafetyHelp.src.CallerPatches
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", new Type[] { typeof(MonsterProfile) })]
         public static class ReplaceAnswerWithReplacedAnswer
         {
+            /// <summary>
+            /// Patch the caller answer check to be the custom caller/entry.
+            /// </summary>
+            /// <param name="__originalMethod"> Original Method Caller </param>
+            /// <param name="__instance"> Function Caller Instance </param>
+            /// <param name="monsterID"> Monster Profile that was selected </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref MonsterProfile monsterID)
             {
 

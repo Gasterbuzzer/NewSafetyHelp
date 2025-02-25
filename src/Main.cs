@@ -1,37 +1,24 @@
 ﻿using MelonLoader;
-using NewSafetyHelp.src.DebugHelper;
 using NewSafetyHelp.src.JSONParsing;
 using System;
 using System.Reflection;
-using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp
 {
     public class NewSafetyHelpMainClass : MelonMod
     {
-
+        // Category for Entries (So that they can be saved upon quitting the game)
         public static MelonPreferences_Category persistantEntrySave;
 
         public override void OnInitializeMelon()
         {
-            persistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
-
             // Entries are created when neeeded.
+            persistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            LoggerInstance.Msg($"DEBUG: Scene {sceneName} with build index {buildIndex} has been loaded!");
-
             MelonPreferences.Save(); // Save on scene change.
-        }
-
-        public override void OnLateInitializeMelon()
-        {
-            //SceneManager.LoadScene("MainMenuScene");
-            SceneManager.LoadScene("MainScene");
-            //SceneManager.LoadScene("MainMenuSceneXmas");
-            //SceneManager.LoadScene("Computer3DSceneXmas");
         }
     }
 
@@ -93,7 +80,7 @@ namespace NewSafetyHelp
                 // Get the start of the EntryBrowser
                 Type _optionsExecutable = typeof(EntryCanvasStandaloneBehavior);
 
-                var startMethod = _optionsExecutable.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public, null, new Type[] { }, null);
+                MethodInfo startMethod = _optionsExecutable.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public, null, new Type[] { }, null);
 
                 if (startMethod != null)
                 {

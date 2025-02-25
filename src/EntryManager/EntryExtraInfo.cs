@@ -33,6 +33,10 @@
         public EntryExtraInfo(string _name) { Name = _name; ID = null; }
         public EntryExtraInfo(string _name, int _id) { Name = _name; ID = _id; }
 
+        /// <summary>
+        /// Overloaded equals function for comparing this object to another.
+        /// </summary>
+        /// <param name="obj"> Object to compare to. </param>
         public override bool Equals(object obj)
         {
             if (obj is EntryExtraInfo other)
@@ -53,6 +57,9 @@
             return false;
         }
 
+        /// <summary>
+        /// Gets the hash for optimization.
+        /// </summary>
         public override int GetHashCode()
         {
             unchecked // Prevent overflow exceptions

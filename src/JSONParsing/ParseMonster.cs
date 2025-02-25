@@ -16,7 +16,6 @@ namespace NewSafetyHelp.src.JSONParsing
         // "Global" Variables for handling caller audio. Gets stored as its ID and with its Name.
         public static List<EntryExtraInfo> entriesExtraInfo = new List<EntryExtraInfo>();
 
-
         /// <summary>
         /// Function for adding a single entry.
         /// </summary>
@@ -290,7 +289,9 @@ namespace NewSafetyHelp.src.JSONParsing
                     }
                 }
 
-                // Caller Information
+                /* 
+                 * Caller Information
+                */
 
                 // Caller Name
                 if (jsonObject.Keys.Contains("caller_name"))
@@ -759,12 +760,9 @@ namespace NewSafetyHelp.src.JSONParsing
                     );
                 }
 
-                // If to include in the Main Campaign. I assume.
-                if (includeCampaign)
-                {
-                    // It seems to be a duplicate entry list of allEntries. As adding here results in fiding the same entry again.
-                    //EntryManager.EntryManager.AddMonsterToTheProfile(ref _newMonster, ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, "allMainCampaignEntries");
-                }
+                /*
+                 * Removed the section that adds the entry also to entryUnlockerInstance.allMainCampaignEntries . However, this added the entry twice for unknown reasons. So we do not do it.
+                 */
 
                 // This also counts the same for christmas
                 switch (accessLevel)

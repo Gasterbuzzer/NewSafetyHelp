@@ -52,7 +52,7 @@ namespace NewSafetyHelp.src.AudioHandler
                     }
 
                     MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. \n Results in the error: {www.error} and the response code is: {www.responseCode}. Was the proccess finished?: {www.isDone}");
-                    yield break; // Rip rip
+                    yield break; // We failed loading the audio. We give up.
                 }
             }
         }
