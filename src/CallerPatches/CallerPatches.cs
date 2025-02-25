@@ -119,7 +119,9 @@ namespace NewSafetyHelp.src.CallerPatches
                 {
                     if (profile != null && profile.callerMonster != null)
                     {
+                        #if DEBUG
                         MelonLogger.Msg($"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
+                        #endif
                     }
                     else
                     {

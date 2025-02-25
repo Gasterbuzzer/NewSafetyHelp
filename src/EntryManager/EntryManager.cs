@@ -24,7 +24,9 @@ namespace NewSafetyHelp.src.EntryManager
             }
             else
             {
+                #if DEBUG
                 MelonLogger.Msg($"DEBUG: Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
+                #endif
 
                 // Before adding we check if the ID already exists.
                 int idToCheck = newProfile.monsterID;
