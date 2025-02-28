@@ -66,7 +66,7 @@ namespace NewSafetyHelp.src.JSONParsing
         public static void CreateMonsterFromJSON(Variant jsonText, int newID = -1, string filePath = "", EntryUnlockController entryUnlockerInstance = null)
         {
             // Values used for storing the information.
-            int accessLevel = 0;
+            int accessLevel = -1;
             bool accessLevelAdded = false;
 
             bool replaceEntry = false;
@@ -585,20 +585,30 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
 
                 // Access level, since we do not wish to accidentally include them, we do not add them to default
+
+                // If no access level was provided, we default to 0.
+                if (accessLevel == -1)
+                {
+                    accessLevel = 0;
+                }
+
                 // This also counts the same for christmas
                 switch (accessLevel)
                 {
                     case 0: // First Level, is also default if not provided.
-                        if (foundMonster != null)
+                        if (accessLevelAdded)
                         {
-                            EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
-                            EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
-                        }
+                            if (foundMonster != null)
+                            {
+                                EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
+                                EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
+                            }
 
-                        if (foundMonsterXMAS != null)
-                        {
-                            EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
-                            EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
+                            if (foundMonsterXMAS != null)
+                            {
+                                EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
+                                EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
+                            }
                         }
                         break;
 
@@ -761,9 +771,16 @@ namespace NewSafetyHelp.src.JSONParsing
                  * Removed the section that adds the entry also to entryUnlockerInstance.allMainCampaignEntries . However, this added the entry twice for unknown reasons. So we do not do it.
                  */
 
+                // If no access level provided.
+                if (accessLevel == -1)
+                {
+                    accessLevel = 0;
+                }
+
                 // This also counts the same for christmas
                 switch (accessLevel)
                 {
+
                     case 0: // First Level, is also default if not provided.
                         EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
                         EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
