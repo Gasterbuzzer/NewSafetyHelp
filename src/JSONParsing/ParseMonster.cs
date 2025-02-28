@@ -8,6 +8,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace NewSafetyHelp.src.JSONParsing
 {
@@ -720,6 +721,7 @@ namespace NewSafetyHelp.src.JSONParsing
             }
             else // We add it instead of replacing the entry
             {
+
                 // Create Monster and add him
                 // NOTE: AudioClip is added later, since we need to do load it seperately from the main thread.
                 MonsterProfile _newMonster = EntryManager.EntryManager.CreateMonster(_monsterName: _monsterName, _monsterDescription: _monsterDescription, _monsterID: newID,
@@ -744,7 +746,10 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
 
                 // Include a copy of the monster in the extrainfo
-                entriesExtraInfo.Find(item => item.Name == _newMonster.monsterName || item.ID == _newMonster.monsterID).referenceCopyEntry = _newMonster;
+                if (entriesExtraInfo.Find(item => item.Name == _newMonster.monsterName || item.ID == _newMonster.monsterID) != null) // Only if it exists.
+                {
+                    entriesExtraInfo.Find(item => item.Name == _newMonster.monsterName || item.ID == _newMonster.monsterID).referenceCopyEntry = _newMonster;
+                }
 
                 // Add audio to it
                 if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
