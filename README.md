@@ -15,7 +15,7 @@ A mod that allows adding/modifying Entity entries from the game Home Safety Hotl
 6. Start your game and enjoy.
 
 # Using the Mod
-See the Wiki here on GitHub [Link](https://github.com/404)
+See the Wiki here on GitHub [Link](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
 
 List of JSON Keys (All values are optional. But if it has (Optional) it means most Entries do not need it or it is handled by the mod itself for you):
 
