@@ -25,6 +25,7 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
  - "monster_portrait_image_name" (Example: "image.png"): Name of the image inside the same folder.
  - "monster_audio_clip_name" (Example: "sound.wav"): Name of the sound file inside the same folder.
  - "monster_id" (Optional) (INT (Examples: 0-9999)): ID for the monster, best to leave it empty and let the mod handle it for you. Mostly usefull for replacing entries.
+ - "access_level" (Examples (INT): 0-5): Which access level is needed when playing the main campaign (0 => No permissions needed).
 
 ## Phobias
  - "spider_phobia" (Optional) (Examples: true, false): If to hide the image of the entry if spider phobia is enabled.
@@ -53,7 +54,6 @@ List of JSON Keys (All values are optional. But if it has (Optional) it means mo
 
 ## Special Values
  - "replace_entry" (Examples: true, false): Replace Entry instead of adding it.
- - "access_level" (Examples (INT): 0-5): Which access level is needed when playing the main campaign (0 => No permissions needed).
  - "include_campaign" (Examples: true, false): If to include it in the main campaign. It replaces a random caller with a chance, if not provided it is 10%.
 
 # Building
