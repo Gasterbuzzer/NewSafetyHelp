@@ -17,7 +17,7 @@ A mod that allows adding/modifying Entity entries from the game Home Safety Hotl
 # Using the Mod
 See the Wiki here on GitHub for Documentation and a small Tutorial [Link](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
 
-# Building
+# Building the project
 Project can be built with: .NET Framework 4.7.2
 
 The DEBUG flag is set for a few debug prints, for a release build however they will not be shown.
