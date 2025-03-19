@@ -27,4 +27,4 @@ It should contain the full absolute path to the games **Mods** folder.
 Other than that, enjoy.
 
 # MelonLoader Information
-Has been tested with version 0.5.7 and above. As of release, the newest version is 0.6.6. If any versions higher or lower do not work, do not be afraid to contact me.
+Has been tested with version 0.5.7 and above. As of release, the newest version is 0.7.0. If any versions higher or lower do not work, do not be afraid to contact me.
