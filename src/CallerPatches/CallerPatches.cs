@@ -149,6 +149,10 @@ namespace NewSafetyHelp.src.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref CallerProfile profile)
             {
 
+                #if DEBUG
+                MelonLogger.Msg($"New caller is calling.");
+                #endif
+
                 if (profile == null)
                 {
                     profile = __instance.callers[__instance.currentCallerID].callerProfile;

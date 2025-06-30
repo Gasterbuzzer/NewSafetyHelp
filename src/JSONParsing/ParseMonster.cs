@@ -93,7 +93,7 @@ namespace NewSafetyHelp.src.JSONParsing
             string _callerTranscript = "NO_TRANSCRIPT";
             string _callerImageLocation = "";
             float _callerReplaceChance = 0.1f;
-            bool _callerRestartCallAgain = false;
+            bool _callerRestartCallAgain = true;
             Sprite _callerPortrait = null;
 
             // Phobias

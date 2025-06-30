@@ -12,7 +12,7 @@
         public UnityEngine.Sprite callerImage = null; // Caller Image
         public float callerReplaceChance = 0.1f; // Chance that this entry replaces the normal caller.
 
-        public bool allowCallAgainOverRestart = false; // If allowed to ignore the saved value and to allow calling again.
+        public bool allowCallAgainOverRestart = true; // If allowed to ignore the saved value and to allow calling again.
 
         // Extra Info
         public bool replace = false; // If to replace
