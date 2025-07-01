@@ -5,6 +5,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace NewSafetyHelp.src.CallerPatches
@@ -131,6 +133,10 @@ namespace NewSafetyHelp.src.CallerPatches
                     callerAudioSource.clip = profile.callerClip.clip;
                 }
 
+                #if DEBUG
+                MelonLogger.Msg($"DEBUG: Caller Audio File Name: {callerAudioSource.name} with {callerAudioSource.clip.name} and {callerAudioSource.clip.length}.");
+                #endif
+
                 callerAudioSource.volume = profile.callerClip.volume;
                 callerAudioSource.Play();
             }
@@ -150,7 +156,7 @@ namespace NewSafetyHelp.src.CallerPatches
             {
 
                 #if DEBUG
-                MelonLogger.Msg($"New caller is calling.");
+                MelonLogger.Msg($"DEBUG: New caller is calling.");
                 #endif
 
                 if (profile == null)
@@ -239,8 +245,6 @@ namespace NewSafetyHelp.src.CallerPatches
                                 }
                                 else // We are allowed to ignore it.
                                 {
-
-
                                     if (item.permissionLevel <= GlobalVariables.currentDay) // Make sure we can actually access the callers entry.
                                     {
                                         if (GlobalVariables.isXmasDLC) // If DLC
@@ -264,39 +268,81 @@ namespace NewSafetyHelp.src.CallerPatches
                     }
                 }
 
-                // Replace information about the caller with a random entry
-                if (replaceTrue && profile != null && profile.callerMonster != null && !__instance.arcadeMode) // If any entry won the chance to replace this call, replace it.
+                if (profile != null && !__instance.arcadeMode && profile.consequenceCallerProfile != null) // We are a consequence caller. (Since we don't replace and we don't have a caller monster.
                 {
-                    if (entries.Count > 0) // We actually found atleast one.
+                    MelonLogger.Msg($"INFO: Current caller is Consequence Caller.");
+                    Caller callers = CallerPatches.GetConsequenceCaller(profile, ref __instance.callers);
+
+                    MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
+
+                    if (callers == null)
                     {
-                        // Select one randomly.
-                        int entrySelected = UnityEngine.Random.Range(0, entries.Count - 1);
-
-                        // Audio check
-                        ParseMonster.entriesExtraInfo.Find(item => item == entries[entrySelected]).currentlySelected = true;
-
-                        // Get a "copy"
-                        selected = entries[entrySelected];
-
-                        // Replace caller with custom caller
-                        profile.callerName = selected.callerName;
-
-                        if (selected.callerImage != null) // If Image provided
+                        MelonLogger.Error($"INFO: Did not find initial caller.");
+                    }
+                    else // Caller is valid.
+                    {
+                        if (ParseMonster.entriesExtraInfo.Exists(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name)) // IF the consequence caller has been replaced once.
                         {
-                            profile.callerPortrait = selected.callerImage;
-                        }
+                            MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
+                            EntryExtraInfo foundExtraInfo = ParseMonster.entriesExtraInfo.Find(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name);
 
-                        profile.callTranscription = selected.callTranscript;
+                            if (foundExtraInfo == null)
+                            {
+                                MelonLogger.Error($"INFO: Did not find replacement caller.");
+                            }
 
-                        if (profile != null && profile.callerMonster != null && selected != null)
-                        {
-                            MelonLogger.Msg($"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                            // It was replaced once, so we also change the consequencecaller info.
+                            profile.callTranscription = foundExtraInfo.consequenceTranscript;
+                            profile.callerName = foundExtraInfo.consequenceName;
+                            profile.callerPortrait = foundExtraInfo.consequenceCallerImage;
+                            profile.callerClip = foundExtraInfo.consequenceCallerClip;
+
+                            MelonLogger.Msg($"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
                         }
                     }
                 }
-                
+                // Replace information about the caller with a random entry
+                else if (replaceTrue && profile != null && profile.callerMonster != null && !__instance.arcadeMode && profile.consequenceCallerProfile == null) // If any entry won the chance to replace this call, replace it.
+                {
+                    if (entries.Count > 0) // We actually found atleast one.
+                    {
+                            // We are not a consequence caller.
+                            // Select one randomly.
+                            int entrySelected = UnityEngine.Random.Range(0, entries.Count - 1);
+
+                            // Audio check
+                            ParseMonster.entriesExtraInfo.Find(item => item == entries[entrySelected]).currentlySelected = true;
+
+                            // Get a "copy"
+                            selected = entries[entrySelected];
+
+                            // Replace caller with custom caller
+                            profile.callerName = selected.callerName;
+
+                            if (selected.callerImage != null) // If Image provided
+                            {
+                                profile.callerPortrait = selected.callerImage;
+                            }
+
+                            profile.callTranscription = selected.callTranscript;
+
+                            if (profile != null && profile.callerMonster != null && selected != null)
+                            {
+                                MelonLogger.Msg($"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                            }
+
+                            // We store a reference to the caller for finding later if the consequence caller calls.
+                            ParseMonster.entriesExtraInfo.Find(item => item == entries[entrySelected]).referenceProfileNameInternal = profile.name;
+                    }
+                }
+
+                #if DEBUG
+                MelonLogger.Msg($"DEBUG: Finished handling the caller replacement.");
+                #endif
+
                 __instance.currentCallerProfile = profile;
                 GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
+
 
                 return false; // Skip the original function
             }
@@ -387,6 +433,33 @@ namespace NewSafetyHelp.src.CallerPatches
                 dynamicCaller.SetValue(__instance, false);
 
                 return false; // Skip the original function
+            }
+        }
+
+        public static Caller GetConsequenceCaller(CallerProfile profileToCheck, ref Caller[] callers)
+        {
+            foreach (Caller caller in callers)
+            {
+                if (profileToCheck == caller.callerProfile)
+                    return caller; // Returns the caller
+            }
+            return null;
+        }
+
+        // Patches the dynamic caller for custom responses. Be it for consequence caller.
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "AnswerDynamicCall", new Type[] { typeof(CallerProfile) })]
+        public static class UpdateDynamicCaller
+        {
+            /// <summary>
+            /// Patch the dynamic caller to be updated.
+            /// </summary>
+            /// <param name="__originalMethod"> Original Method Caller </param>
+            /// <param name="__instance"> Function Caller Instance </param>
+            /// <param name="callerProfile"> Caller Profile triggering the dynamiccall. </param>
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref CallerProfile profile)
+            {
+                   
+                return true; // Skip the original function
             }
         }
     }

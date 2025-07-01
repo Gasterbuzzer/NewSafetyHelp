@@ -1,6 +1,28 @@
 @echo off
 setlocal
 
+set "PROC=Home Safety Hotline.exe"
+
+REM Check if the process is running
+tasklist /FI "IMAGENAME eq %PROC%" | find /I "%PROC%" >nul
+if errorlevel 1 (
+    echo %PROC% is not running.
+) else (
+    echo Killing %PROC%...
+    taskkill /F /IM "%PROC%" >nul
+
+    REM Wait loop: keep checking if the process still exists
+    :wait_loop
+    ping -n 2 127.0.0.1 >nul
+    tasklist /FI "IMAGENAME eq %PROC%" | find /I "%PROC%" >nul
+    if not errorlevel 1 (
+        echo Waiting for %PROC% to terminate...
+        goto wait_loop
+    )
+    echo %PROC% has been terminated.
+)
+
+
 REM Define source and destination paths
 set "source_file=%CD%\NewSafetyHelp.dll"
 echo Starting copying of mod dll to game folder.

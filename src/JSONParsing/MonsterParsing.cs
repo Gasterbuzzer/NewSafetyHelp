@@ -1,0 +1,194 @@
+﻿using MelonLoader;
+using MelonLoader.TinyJSON;
+using NewSafetyHelp.src.EntryManager;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace NewSafetyHelp.src.JSONParsing
+{
+    public class MonsterParsing
+    {
+        public static void parseEntry(ref ProxyObject jsonObject, ref string filePath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC, ref bool includeCampaign, ref string _monsterName,
+            ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait, ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation)
+        {
+            /* 
+             * Monster Information
+            */
+
+            // Replace Entry rather than add it, important for warnings.
+            if (jsonObject.Keys.Contains("replace_entry"))
+            {
+                replaceEntry = jsonObject["replace_entry"];
+            }
+
+            // Monster Name
+            if (jsonObject.Keys.Contains("monster_name"))
+            {
+                _monsterName = jsonObject["monster_name"];
+            }
+            else
+            {
+                if (!replaceEntry)
+                {
+                    MelonLogger.Warning($"WARNING: No Monster name given for file in {filePath}. Defaulting to NO_NAME.");
+                }
+            }
+
+            // Monster Description
+            if (jsonObject.Keys.Contains("monster_description"))
+            {
+                _monsterDescription = jsonObject["monster_description"];
+            }
+            else
+            {
+                if (!replaceEntry)
+                {
+                    MelonLogger.Warning($"WARNING: No Monster description given for file in {filePath}. Defaulting to NO_DESCRIPTION.");
+                }
+            }
+
+
+            // DLC xMas
+            if (jsonObject.Keys.Contains("only_dlc"))
+            {
+                onlyDLC = jsonObject["only_dlc"];
+            }
+            if (jsonObject.Keys.Contains("include_dlc"))
+            {
+                includeDLC = jsonObject["include_dlc"];
+            }
+
+            if (jsonObject.Keys.Contains("include_campaign")) // Unsure, what exactly it does, since it does not prevent it from appearing in the campaing.
+            {
+                includeCampaign = jsonObject["include_campaign"];
+            }
+
+
+            // Access Level and Aracade Calls
+            if (jsonObject.Keys.Contains("access_level"))
+            {
+                accessLevel = jsonObject["access_level"];
+                accessLevelAdded = true;
+            }
+
+            if (jsonObject.Keys.Contains("arcade_calls"))
+            {
+                var test = (ProxyArray)jsonObject["arcade_calls"];
+
+                for (int i = 0; i < test.Count; i++)
+                {
+                    _arcadeCalls.Add(test[i]);
+                }
+            }
+            else
+            {
+                if (!replaceEntry)
+                {
+                    MelonLogger.Warning($"WARNING: No Arcade Calls given for file in {filePath}. Defaulting to empty values.");
+                }
+            }
+
+
+            // Image
+            if (jsonObject.Keys.Contains("monster_portrait_image_name"))
+            {
+                _monsterPortraitLocation = jsonObject["monster_portrait_image_name"];
+
+                if (_monsterPortraitLocation == "" || _monsterPortraitLocation == null)
+                {
+                    _monsterPortrait = null;
+
+                    if (!replaceEntry)
+                    {
+                        MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
+                    }
+                }
+                else
+                {
+                    _monsterPortrait = ImageImport.LoadImage(filePath + "\\" + _monsterPortraitLocation);
+                }
+            }
+            else
+            {
+                if (!replaceEntry)
+                {
+                    MelonLogger.Warning($"WARNING: No monster portrait given for file in {filePath}. No image will be shown.");
+                }
+            }
+
+            // Monster Audio Path (Later gets added with coroutine)
+            if (jsonObject.Keys.Contains("monster_audio_clip_name"))
+            {
+                _monsterAudioClipLocation = jsonObject["monster_audio_clip_name"];
+
+                if ((_monsterAudioClipLocation == "" || _monsterAudioClipLocation == null) && !replaceEntry)
+                {
+                    MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
+                }
+            }
+            else
+            {
+                if (!replaceEntry)
+                {
+                    MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
+                }
+            }
+        }
+
+        public static void parsePhobias(ref ProxyObject jsonObject, ref string filePath, ref bool _spiderPhobia, ref bool _spiderPhobiaIncluded, ref bool _darknessPhobia, ref bool _darknessPhobiaIncluded, ref bool _dogPhobia, ref bool _dogPhobiaIncluded,
+            ref bool _holesPhobia, ref bool _holesPhobiaIncluded, ref bool _insectPhobia, ref bool _insectPhobiaIncluded, ref bool _watchingPhobia, ref bool _watchingPhobiaIncluded, ref bool _tightSpacePhobia, ref bool _tightSpacePhobiaIncluded)
+        {
+            /* 
+             * Monster Information
+            */
+
+            // Phobias, they don't require to be warned, since they optional.
+
+            if (jsonObject.Keys.Contains("spider_phobia"))
+            {
+                _spiderPhobia = jsonObject["spider_phobia"];
+                _spiderPhobiaIncluded = true;
+            }
+
+            if (jsonObject.Keys.Contains("darkness_phobia"))
+            {
+                _darknessPhobia = jsonObject["darkness_phobia"];
+                _darknessPhobiaIncluded = true;
+            }
+
+            if (jsonObject.Keys.Contains("dog_phobia"))
+            {
+                _dogPhobia = jsonObject["dog_phobia"];
+                _dogPhobiaIncluded = true;
+            }
+
+            if (jsonObject.Keys.Contains("holes_phobia"))
+            {
+                _holesPhobia = jsonObject["holes_phobia"];
+                _holesPhobiaIncluded = true;
+            }
+
+            if (jsonObject.Keys.Contains("insect_phobia"))
+            {
+                _insectPhobia = jsonObject["insect_phobia"];
+                _insectPhobiaIncluded = true;
+            }
+
+            if (jsonObject.Keys.Contains("watching_phobia"))
+            {
+                _watchingPhobia = jsonObject["watching_phobia"];
+                _watchingPhobiaIncluded = true;
+            }
+
+            if (jsonObject.Keys.Contains("tight_space_phobia"))
+            {
+                _tightSpacePhobia = jsonObject["tight_space_phobia"];
+                _tightSpacePhobiaIncluded = true;
+            }
+        }
+    }
+}

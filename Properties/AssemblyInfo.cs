@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "1.0.0", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
+[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "1.1.0", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
 [assembly: MelonAuthorColor(ConsoleColor.Magenta)]
 [assembly: MelonGame("Night Signal Entertainment", "Home Safety Hotline")]
 [assembly: MelonPriority(99)]

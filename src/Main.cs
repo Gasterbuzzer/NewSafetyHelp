@@ -2,6 +2,7 @@
 using NewSafetyHelp.src.JSONParsing;
 using System;
 using System.Reflection;
+using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp
 {
@@ -14,6 +15,19 @@ namespace NewSafetyHelp
         {
             // Entries are created when neeeded.
             persistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
+        }
+
+        public override void OnLateInitializeMelon()
+        {
+            #if DEBUG
+            //SceneManager.LoadScene("MainMenuScene");
+
+            SceneManager.LoadScene("MainScene");
+
+            //SceneManager.LoadScene("MainMenuSceneXmas");
+
+            //SceneManager.LoadScene("Computer3DSceneXmas");
+            #endif
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)

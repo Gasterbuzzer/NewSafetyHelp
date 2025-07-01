@@ -58,6 +58,17 @@ namespace NewSafetyHelp.src.AudioHandler
         }
 
         /// <summary>
+        /// Coroutine that gets an audio clip from a specified path, please note to also provide an audiotype, defaulted to MPEG.
+        /// </summary>
+        /// <param name="callback"> Callback function used for getting the AudioClip back. </param>
+        /// <param name="path"> Path to file. </param>
+        /// <param name="_audioType"> Unity AudioType </param>
+        public static void LoadAudioSync(System.Action<AudioClip> callback, string path, AudioType _audioType = AudioType.MPEG)
+        {
+            //
+        }
+
+        /// <summary>
         /// Creates a new rich audio clip from a provided audioclip. Used for creating a monster.
         /// </summary>
         /// <param name="_newAudioClip"> AudioClip to insert into the RichAudioClip. </param>

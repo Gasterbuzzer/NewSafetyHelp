@@ -1,4 +1,6 @@
-﻿namespace NewSafetyHelp.src.EntryManager
+﻿using System.Runtime.CompilerServices;
+
+namespace NewSafetyHelp.src.EntryManager
 {
     public class EntryExtraInfo
     {
@@ -27,6 +29,15 @@
 
         // Copy of Monster Entry
         public MonsterProfile referenceCopyEntry = null;
+
+        // Copy of Caller (if called)
+        public string referenceProfileNameInternal = null;
+
+        // Consequence Values
+        public string consequenceName = "NO_CONSEQUENCE_CALLER_NAME";
+        public string consequenceTranscript = "NO_CONSEQUENCE_TRANSCRIPT";
+        public RichAudioClip consequenceCallerClip = null; // Consequence Caller Clip
+        public UnityEngine.Sprite consequenceCallerImage = null; // Consequence Caller Image
 
         // Constructor
         public EntryExtraInfo(int _id) { ID = _id; Name = null; }
