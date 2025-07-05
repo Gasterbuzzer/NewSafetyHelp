@@ -1,14 +1,14 @@
-﻿using MelonLoader;
-using System.IO;
+﻿using System.IO;
+using MelonLoader;
 
-namespace NewSafetyHelp.src.ImportFiles
+namespace NewSafetyHelp.ImportFiles
 {
     public static class FileImporter
     {
         /// <summary>
         /// Returns the UserData Directory folder for the mod. (Example: ...\GameDirectory\UserData\NewSafetyHelp\)
         /// </summary>
-        public static string getUserDataFolderPath()
+        public static string GetUserDataFolderPath()
         {
             string modFolder = Path.Combine(MelonUtils.UserDataDirectory, "NewSafetyHelp");
 

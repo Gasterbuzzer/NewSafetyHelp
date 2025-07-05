@@ -1,17 +1,16 @@
-﻿using MelonLoader;
-using NewSafetyHelp.src.EntryManager;
-using NewSafetyHelp.src.JSONParsing;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using JetBrains.Annotations;
+using MelonLoader;
+using NewSafetyHelp.EntryManager;
+using NewSafetyHelp.JSONParsing;
 using UnityEngine;
 
-namespace NewSafetyHelp.src.CallerPatches
+namespace NewSafetyHelp.CallerPatches
 {
-    public class CallerPatches
+    public static class CallerPatches
     {
         // Patches the caller to have a custom caller clip in arcade mode.
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "CreateCustomCaller", new Type[] { })]
@@ -36,9 +35,9 @@ namespace NewSafetyHelp.src.CallerPatches
             }
         }
 
-        // Patches the caller to have a custom audio in campaing.
+        // Patches the caller to have a custom audio in campaign.
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine", new Type[] { typeof(CallerProfile) })]
-        public static class UpdateCampaingCallerAudio
+        public static class UpdateCampaignCallerAudio
         {
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, CallerProfile profile, ref IEnumerator __result)
             {
@@ -69,6 +68,12 @@ namespace NewSafetyHelp.src.CallerPatches
                 // Get callerAudioSource
                 Type callerController = typeof(CallerController);
                 var callerAudioSourceGetter = callerController.GetField("callerAudioSource", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (callerAudioSourceGetter == null)
+                {
+                    MelonLogger.Error($"CallerController: callerAudioSourceGetter is null");
+                    yield break;
+                }
 
                 AudioSource callerAudioSource = (AudioSource) callerAudioSourceGetter.GetValue(__instance);
 
@@ -169,8 +174,6 @@ namespace NewSafetyHelp.src.CallerPatches
                     profile = __instance.currentCustomCaller;
                 }
 
-                EntryExtraInfo selected = null;
-
                 List<EntryExtraInfo> entries = new List<EntryExtraInfo>();
 
                 bool replaceTrue = false;
@@ -182,7 +185,7 @@ namespace NewSafetyHelp.src.CallerPatches
                         if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
                         {
 
-                            // Create Entry if not existant and if allowed
+                            // Create Entry if not existent and if allowed
 
                             MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry = null;
 
@@ -212,7 +215,7 @@ namespace NewSafetyHelp.src.CallerPatches
                             {
                                 if (!item.allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
                                 {
-                                    if (!entryAlreadyCalledBeforeEntry.Value && item.permissionLevel <= GlobalVariables.currentDay) // We never called it. And make sure we can actually access the callers entry.
+                                    if (!entryAlreadyCalledBeforeEntry.Value && item.permissionLevel <= GlobalVariables.currentDay) // We never called it. And make sure we can actually access the callers' entry.
                                     {
 
                                         if (GlobalVariables.isXmasDLC) // If DLC
@@ -245,7 +248,7 @@ namespace NewSafetyHelp.src.CallerPatches
                                 }
                                 else // We are allowed to ignore it.
                                 {
-                                    if (item.permissionLevel <= GlobalVariables.currentDay) // Make sure we can actually access the callers entry.
+                                    if (item.permissionLevel <= GlobalVariables.currentDay) // Make sure we can actually access the callers' entry.
                                     {
                                         if (GlobalVariables.isXmasDLC) // If DLC
                                         {
@@ -268,19 +271,15 @@ namespace NewSafetyHelp.src.CallerPatches
                     }
                 }
 
-                if (profile != null && !__instance.arcadeMode && profile.consequenceCallerProfile != null) // We are a consequence caller. (Since we don't replace and we don't have a caller monster.
+                if (profile != null && !__instance.arcadeMode && profile.consequenceCallerProfile != null) // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
                 {
                     MelonLogger.Msg($"INFO: Current caller is Consequence Caller.");
                     Caller callers = CallerPatches.GetConsequenceCaller(profile, ref __instance.callers);
-
-                    MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
-
-                    if (callers == null)
+                    
+                    if (callers != null)// Caller is valid.
                     {
-                        MelonLogger.Error($"INFO: Did not find initial caller.");
-                    }
-                    else // Caller is valid.
-                    {
+                        MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
+                        
                         if (ParseMonster.entriesExtraInfo.Exists(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name)) // IF the consequence caller has been replaced once.
                         {
                             MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
@@ -289,9 +288,10 @@ namespace NewSafetyHelp.src.CallerPatches
                             if (foundExtraInfo == null)
                             {
                                 MelonLogger.Error($"INFO: Did not find replacement caller.");
+                                return true;
                             }
 
-                            // It was replaced once, so we also change the consequencecaller info.
+                            // It was replaced once, so we also change the consequence caller info.
                             profile.callTranscription = foundExtraInfo.consequenceTranscript;
                             profile.callerName = foundExtraInfo.consequenceName;
                             profile.callerPortrait = foundExtraInfo.consequenceCallerImage;
@@ -300,21 +300,25 @@ namespace NewSafetyHelp.src.CallerPatches
                             MelonLogger.Msg($"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
                         }
                     }
+                    else
+                    {
+                        MelonLogger.Error($"INFO: Did not find initial caller.");
+                    }
                 }
                 // Replace information about the caller with a random entry
                 else if (replaceTrue && profile != null && profile.callerMonster != null && !__instance.arcadeMode && profile.consequenceCallerProfile == null) // If any entry won the chance to replace this call, replace it.
                 {
-                    if (entries.Count > 0) // We actually found atleast one.
+                    if (entries.Count > 0) // We actually found at least one.
                     {
                             // We are not a consequence caller.
                             // Select one randomly.
                             int entrySelected = UnityEngine.Random.Range(0, entries.Count - 1);
 
                             // Audio check
-                            ParseMonster.entriesExtraInfo.Find(item => item == entries[entrySelected]).currentlySelected = true;
+                            ParseMonster.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected])).currentlySelected = true;
 
                             // Get a "copy"
-                            selected = entries[entrySelected];
+                            EntryExtraInfo selected = entries[entrySelected];
 
                             // Replace caller with custom caller
                             profile.callerName = selected.callerName;
@@ -326,7 +330,7 @@ namespace NewSafetyHelp.src.CallerPatches
 
                             profile.callTranscription = selected.callTranscript;
 
-                            if (profile != null && profile.callerMonster != null && selected != null)
+                            if (profile != null && profile.callerMonster != null)
                             {
                                 MelonLogger.Msg($"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
                             }
@@ -365,6 +369,12 @@ namespace NewSafetyHelp.src.CallerPatches
                 Type callerController = typeof(CallerController);
                 FieldInfo dynamicCaller = callerController.GetField("dynamicCaller", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
+                if (dynamicCaller == null)
+                {
+                    MelonLogger.Error("ERROR: CallerController.dynamicCaller is null!");
+                    return true;
+                }
+
                 if (monsterID != null) // Monster Valid
                 {
 
@@ -398,7 +408,7 @@ namespace NewSafetyHelp.src.CallerPatches
                         __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
                         ++__instance.correctCallsToday;
 
-                        // Debug Info incase the replacement worked.
+                        // Debug Info in case the replacement worked.
                         if (found)
                         {
                             MelonLogger.Msg("INFO: Selected the correct replaced entry.");
@@ -411,12 +421,19 @@ namespace NewSafetyHelp.src.CallerPatches
                         {
                             // Get TriggerXMAS Lights
                             MethodInfo triggerXmasLight = callerController.GetMethod("TriggerXmasLight", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                            
+                            if (triggerXmasLight == null)
+                            {
+                                MelonLogger.Error("ERROR: triggerXmasLight is null!");
+                                return true;
+                            }
+                            
                             triggerXmasLight.Invoke(__instance, new object[] { });
 
                             GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
                         }
 
-                        // Debug Info incase the replacement worked.
+                        // Debug Info in case the replacement worked.
                         if (found)
                         {
                             MelonLogger.Msg("INFO: Selected the wrong replaced entry.");
@@ -436,6 +453,7 @@ namespace NewSafetyHelp.src.CallerPatches
             }
         }
 
+        [CanBeNull]
         public static Caller GetConsequenceCaller(CallerProfile profileToCheck, ref Caller[] callers)
         {
             foreach (Caller caller in callers)
@@ -446,19 +464,21 @@ namespace NewSafetyHelp.src.CallerPatches
             return null;
         }
 
-        // Patches the dynamic caller for custom responses. Be it for consequence caller.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "AnswerDynamicCall", new Type[] { typeof(CallerProfile) })]
-        public static class UpdateDynamicCaller
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "Start", new Type[] {})]
+        public static class AddCustomCampaign
         {
             /// <summary>
-            /// Patch the dynamic caller to be updated.
+            /// Patch the start function to inject custom campaigns.
             /// </summary>
             /// <param name="__originalMethod"> Original Method Caller </param>
             /// <param name="__instance"> Function Caller Instance </param>
-            /// <param name="callerProfile"> Caller Profile triggering the dynamiccall. </param>
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref CallerProfile profile)
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
-                   
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Finished handling the caller replacement.");
+                #endif
+
+
                 return true; // Skip the original function
             }
         }

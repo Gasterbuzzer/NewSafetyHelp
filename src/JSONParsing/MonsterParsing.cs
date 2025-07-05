@@ -1,16 +1,13 @@
-﻿using MelonLoader;
-using MelonLoader.TinyJSON;
-using NewSafetyHelp.src.EntryManager;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MelonLoader;
+using MelonLoader.TinyJSON;
+using NewSafetyHelp.EntryManager;
 using UnityEngine;
 
-namespace NewSafetyHelp.src.JSONParsing
+namespace NewSafetyHelp.JSONParsing
 {
-    public class MonsterParsing
+    public static class MonsterParsing
     {
         public static void parseEntry(ref ProxyObject jsonObject, ref string filePath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC, ref bool includeCampaign, ref string _monsterName,
             ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait, ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation)
@@ -62,13 +59,13 @@ namespace NewSafetyHelp.src.JSONParsing
                 includeDLC = jsonObject["include_dlc"];
             }
 
-            if (jsonObject.Keys.Contains("include_campaign")) // Unsure, what exactly it does, since it does not prevent it from appearing in the campaing.
+            if (jsonObject.Keys.Contains("include_campaign")) // Unsure, what exactly it does, since it does not prevent it from appearing in the campaign.
             {
                 includeCampaign = jsonObject["include_campaign"];
             }
 
 
-            // Access Level and Aracade Calls
+            // Access Level and Arcade Calls
             if (jsonObject.Keys.Contains("access_level"))
             {
                 accessLevel = jsonObject["access_level"];
@@ -79,9 +76,9 @@ namespace NewSafetyHelp.src.JSONParsing
             {
                 var test = (ProxyArray)jsonObject["arcade_calls"];
 
-                for (int i = 0; i < test.Count; i++)
+                foreach (Variant arcadeCustomCall in test)
                 {
-                    _arcadeCalls.Add(test[i]);
+                    _arcadeCalls.Add(arcadeCustomCall);
                 }
             }
             else
@@ -98,7 +95,7 @@ namespace NewSafetyHelp.src.JSONParsing
             {
                 _monsterPortraitLocation = jsonObject["monster_portrait_image_name"];
 
-                if (_monsterPortraitLocation == "" || _monsterPortraitLocation == null)
+                if (string.IsNullOrEmpty(_monsterPortraitLocation))
                 {
                     _monsterPortrait = null;
 
@@ -125,7 +122,7 @@ namespace NewSafetyHelp.src.JSONParsing
             {
                 _monsterAudioClipLocation = jsonObject["monster_audio_clip_name"];
 
-                if ((_monsterAudioClipLocation == "" || _monsterAudioClipLocation == null) && !replaceEntry)
+                if (string.IsNullOrEmpty(_monsterAudioClipLocation) && !replaceEntry)
                 {
                     MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
                 }

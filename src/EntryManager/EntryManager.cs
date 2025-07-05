@@ -1,11 +1,11 @@
-﻿using MelonLoader;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MelonLoader;
 using UnityEngine;
 
-namespace NewSafetyHelp.src.EntryManager
+namespace NewSafetyHelp.EntryManager
 {
     public static class EntryManager
     {
@@ -129,26 +129,26 @@ namespace NewSafetyHelp.src.EntryManager
             newMonster.watching = _watchingPhobia;
             newMonster.tightSpace = _tightSpacePhobia;
 
-            // Arcade Calls (Which do not have a voice over)
+            // Arcade Calls (Which do not have a voice-over)
             newMonster.arcadeCalls = _arcadeCalls; // Must be done correctly or else it will fail.
 
             return newMonster;
         }
 
         /// <summary>
-        /// Replaces a single Monster Image with a given sprite. (It is more for testing than rather actually changing something.
+        /// Replaces a single Monster Image with a given sprite. (It is more for testing than rather actually changing something.)
         /// </summary>
         /// <param name="monsterProfiles"> Reference of the monsterProfile to replace the Sprite with. </param>
         /// <param name="monsterName"> Name of the entry to find. </param>
         /// <param name="entryImage"> Sprite to insert into the entry. </param>
         /// <param name="monsterID"> Alternative way of finding the entry. </param>
-        public static void replaceMonsterImage(ref MonsterProfile[] monsterProfiles, string monsterName, Sprite entryImage, int monsterID = -1)
+        public static void ReplaceMonsterImage(ref MonsterProfile[] monsterProfiles, string monsterName, Sprite entryImage, int monsterID = -1)
         {
-            for (int i = 0; i < monsterProfiles.Length; i++)
+            foreach (MonsterProfile entryProfile in monsterProfiles)
             {
-                if (monsterProfiles[i].monsterName == monsterName || (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
+                if (entryProfile.monsterName == monsterName || (entryProfile.monsterID == monsterID && monsterID >= 0))
                 {
-                    monsterProfiles[i].monsterPortrait = entryImage;
+                    entryProfile.monsterPortrait = entryImage;
                 }
             }
         }
@@ -161,11 +161,11 @@ namespace NewSafetyHelp.src.EntryManager
         /// <param name="monsterID"> Alternative way of finding the entry. </param>
         public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles, string monsterName, int monsterID = -1)
         {
-            for (int i = 0; i < monsterProfiles.Length; i++)
+            foreach (MonsterProfile entryProfile in monsterProfiles)
             {
-                if (monsterProfiles[i].monsterName == monsterName || (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
+                if (entryProfile.monsterName == monsterName || (entryProfile.monsterID == monsterID && monsterID >= 0))
                 {
-                    return monsterProfiles[i]; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
+                    return entryProfile; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
                 }
             }
 
@@ -194,9 +194,9 @@ namespace NewSafetyHelp.src.EntryManager
         /// <summary>
         /// Returns a new ID that should be +1 from the largest.
         /// </summary>
-        /// <param name="entryUnlocker"> Instance of the entryunlockercontroller </param>
+        /// <param name="entryUnlocker"> Instance of the EntryUnlockerController </param>
         /// <param name="type"> Type of entry type. (0 = monsterProfiles default, 1 = allXmasEntries DLC) </param>
-        public static int getNewEntryID(EntryUnlockController entryUnlocker, int type = 0)
+        public static int GetNewEntryID(EntryUnlockController entryUnlocker, int type = 0)
         {
             switch (type)
             {
@@ -212,7 +212,7 @@ namespace NewSafetyHelp.src.EntryManager
         }
 
         /// <summary>
-        /// Function sorting all of the monsterProfiles by alphabetical order.
+        /// Function sorting all the monsterProfiles by alphabetical order.
         /// </summary>
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
@@ -225,7 +225,7 @@ namespace NewSafetyHelp.src.EntryManager
     [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
     public static class FixPermissionOverride
     {
-        // List of entrie permissions
+        // List of entire permissions
         public static List<MonsterProfile> entriesReaddTierOne = new List<MonsterProfile>();
         public static List<MonsterProfile> entriesReaddTierTwo = new List<MonsterProfile>();
         public static List<MonsterProfile> entriesReaddTierThree = new List<MonsterProfile>();
@@ -240,7 +240,7 @@ namespace NewSafetyHelp.src.EntryManager
         /// <param name="__instance"> Caller of function instance </param>
         private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance)
         {
-            // I am aware there are more beautifull ways of achieving this. However, I am going to do it like the game.
+            // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
 
             MelonLogger.Msg("INFO: If tier/permission levels for extra entries were lost, they will now be readded.");
 

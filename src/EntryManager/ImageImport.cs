@@ -1,8 +1,8 @@
-﻿using MelonLoader;
-using System.IO;
+﻿using System.IO;
+using MelonLoader;
 using UnityEngine;
 
-namespace NewSafetyHelp.src.EntryManager
+namespace NewSafetyHelp.EntryManager
 {
     public static class ImageImport
     {

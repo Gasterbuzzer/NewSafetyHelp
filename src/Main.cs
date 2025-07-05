@@ -1,7 +1,7 @@
 ﻿using MelonLoader;
-using NewSafetyHelp.src.JSONParsing;
 using System;
 using System.Reflection;
+using NewSafetyHelp.JSONParsing;
 using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp
@@ -13,7 +13,7 @@ namespace NewSafetyHelp
 
         public override void OnInitializeMelon()
         {
-            // Entries are created when neeeded.
+            // Entries are created when needed.
             persistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
         }
 
@@ -81,7 +81,7 @@ namespace NewSafetyHelp
         }
     }
 
-    // Patches the class when it opens to also update the monster list, since due to our coroutines problem.
+    // Patches the class when it opens to also update the monster list, since due to our coroutine's problem.
     [HarmonyLib.HarmonyPatch(typeof(OptionsExecutable), "Open", new Type[] { })]
     public static class UpdateListDesktop
     {

@@ -1,16 +1,15 @@
-﻿using MelonLoader;
-using MelonLoader.TinyJSON;
-using NewSafetyHelp.src.ImportFiles;
-using NewSafetyHelp.src.EntryManager;
-using System.IO;
-using NewSafetyHelp.src.AudioHandler;
-using UnityEngine;
-using System.Collections;
-using System.Linq;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System;
+using System.IO;
+using System.Linq;
+using MelonLoader;
+using MelonLoader.TinyJSON;
+using NewSafetyHelp.Audio;
+using NewSafetyHelp.EntryManager;
+using NewSafetyHelp.ImportFiles;
+using UnityEngine;
 
-namespace NewSafetyHelp.src.JSONParsing
+namespace NewSafetyHelp.JSONParsing
 {
     public static class ParseMonster
     {
@@ -26,13 +25,13 @@ namespace NewSafetyHelp.src.JSONParsing
         {
             string[] filesDataPath = Directory.GetFiles(folderFilePath);
 
-            for (int i = 0; i < filesDataPath.Length; i++)
+            foreach (string entryPath in filesDataPath)
             {
-                if (filesDataPath[i].ToLower().EndsWith(".json"))
+                if (entryPath.ToLower().EndsWith(".json"))
                 {
-                    MelonLogger.Msg($"INFO: Found new Entry at '{filesDataPath[i]}', attempting to add it now.");
+                    MelonLogger.Msg($"INFO: Found new Entry at '{entryPath}', attempting to add it now.");
 
-                    string jsonString = File.ReadAllText(filesDataPath[i]);
+                    string jsonString = File.ReadAllText(entryPath);
 
                     Variant variant = JSON.Load(jsonString);
 
@@ -47,13 +46,13 @@ namespace NewSafetyHelp.src.JSONParsing
         /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void LoadAllMonsters(EntryUnlockController __instance)
         {
-            string userDataPath = FileImporter.getUserDataFolderPath();
+            string userDataPath = FileImporter.GetUserDataFolderPath();
 
             string[] foldersDataPath = Directory.GetDirectories(userDataPath);
 
-            for (int i = 0; i < foldersDataPath.Length; i++)
+            foreach (string foldersStringName in foldersDataPath)
             {
-                LoadMonster(foldersDataPath[i], __instance);
+                LoadMonster(foldersStringName, __instance);
             }
         }
 
@@ -150,7 +149,7 @@ namespace NewSafetyHelp.src.JSONParsing
                     _callerAudioClipLocation = jsonObject["caller_audio_clip_name"];
                     string callerAudioClipLocationLambdaCopy = _callerAudioClipLocation; // Create copy for lambda function.
 
-                    if ((_callerAudioClipLocation == "" || _callerAudioClipLocation == null) && !replaceEntry)
+                    if (string.IsNullOrEmpty(_callerAudioClipLocation) && !replaceEntry)
                     {
                         MelonLogger.Msg($"INFO: No caller audio given for file in {filePath}. No audio will be heard.");
                     }
@@ -188,7 +187,7 @@ namespace NewSafetyHelp.src.JSONParsing
                 {
                     _consequenceCallerAudioClipLocation = jsonObject["consequence_caller_audio_clip_name"];
 
-                    if ((_consequenceCallerAudioClipLocation == "" || _consequenceCallerAudioClipLocation == null) && !replaceEntry)
+                    if (string.IsNullOrEmpty(_consequenceCallerAudioClipLocation) && !replaceEntry)
                     {
                         MelonLogger.Msg($"INFO: No caller audio given for file in {filePath}. No audio will be heard.");
                     }
@@ -233,7 +232,7 @@ namespace NewSafetyHelp.src.JSONParsing
                 // Returns a copy of the foundMonster
 
                 MonsterProfile foundMonster = null;
-                MonsterProfile foundMonsterXMAS = null; // For replacing DLC version aswell
+                MonsterProfile foundMonsterXMAS = null; // For replacing DLC version as well
 
                 replaceEntryFunction(ref filePath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription, ref replaceEntry,
                     ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia, ref _holesPhobiaIncluded,
@@ -266,7 +265,7 @@ namespace NewSafetyHelp.src.JSONParsing
             {
                 MonsterProfile _newMonster = null;
 
-                createNewExtryFunction(ref filePath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription,
+                createNewEntryFunction(ref filePath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription,
                     ref replaceEntry, ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia,
                     ref _holesPhobiaIncluded, ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded, ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia,
                     ref _newMonster);
@@ -333,10 +332,12 @@ namespace NewSafetyHelp.src.JSONParsing
             ref bool _callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC, ref bool includeDLC, ref bool includeCampaign, ref string _consequenceCallerName, ref string _consequenceCallerTranscript, ref string _consequenceCallerImageLocation,
             ref Sprite _consequenceCallerPortrait)
         {
-            newExtra = new EntryExtraInfo(_monsterName, newID); // ID will not work if not provided, but this shouldn't be an issue.
-            newExtra.replace = replaceEntry;
-            newExtra.callerName = _callerName;
-            newExtra.callTranscript = _callerTranscript;
+            newExtra = new EntryExtraInfo(_monsterName, newID)
+            {
+                replace = replaceEntry,
+                callerName = _callerName,
+                callTranscript = _callerTranscript
+            }; // ID will not work if not provided, but this shouldn't be an issue.
 
             if (_callerPortrait != null)
             {
@@ -370,8 +371,8 @@ namespace NewSafetyHelp.src.JSONParsing
                 MelonLogger.Msg($"(This intended and recommended).");
 
                 // Get the max Monster ID.
-                int maxEntryIDMainCampaing = EntryManager.EntryManager.getNewEntryID(entryUnlockerInstance);
-                int maxEntryIDMainDLC = EntryManager.EntryManager.getNewEntryID(entryUnlockerInstance, 1);
+                int maxEntryIDMainCampaign = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance);
+                int maxEntryIDMainDLC = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance, 1);
 
                 if (onlyDLC) // Only DLC
                 {
@@ -379,11 +380,11 @@ namespace NewSafetyHelp.src.JSONParsing
                 }
                 else if (includeDLC) // Also allow in DLC (We pick the largest from both)
                 {
-                    newID = (maxEntryIDMainCampaing < maxEntryIDMainDLC) ? maxEntryIDMainDLC : maxEntryIDMainCampaing;
+                    newID = (maxEntryIDMainCampaign < maxEntryIDMainDLC) ? maxEntryIDMainDLC : maxEntryIDMainCampaign;
                 }
                 else // Only base game.
                 {
-                    newID = maxEntryIDMainCampaing;
+                    newID = maxEntryIDMainCampaign;
                 }
             }
         }
@@ -500,7 +501,7 @@ namespace NewSafetyHelp.src.JSONParsing
                 accessLevel = 0;
             }
 
-            // This also counts the same for christmas
+            // This also counts the same for Christmas
             switch (accessLevel)
             {
                 case 0: // First Level, is also default if not provided.
@@ -509,12 +510,14 @@ namespace NewSafetyHelp.src.JSONParsing
                         if (foundMonster != null)
                         {
                             EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
+                            // ReSharper disable once StringLiteralTypo
                             EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
                         }
 
                         if (foundMonsterXMAS != null)
                         {
                             EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
+                            // ReSharper disable once StringLiteralTypo
                             EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
                         }
                     }
@@ -573,13 +576,13 @@ namespace NewSafetyHelp.src.JSONParsing
                     if (foundMonster != null)
                     {
                         EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles, "fifthTierUnlocks");
-                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level incase they also want christmas
+                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level in case they also want Christmas
                     }
 
                     if (foundMonsterXMAS != null)
                     {
                         EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles, "fifthTierUnlocks");
-                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level incase they also want christmas
+                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level in case they also want Christmas
                     }
 
                     break;
@@ -589,19 +592,19 @@ namespace NewSafetyHelp.src.JSONParsing
                     if (foundMonster != null)
                     {
                         EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles, "sixthTierUnlocks");
-                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level incase they also want christmas
+                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level in case they also want Christmas
                     }
 
                     if (foundMonsterXMAS != null)
                     {
                         EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles, "sixthTierUnlocks");
-                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level incase they also want christmas
+                        EntryManager.EntryManager.AddMonsterToTheProfile(foundMonsterXMAS, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level in case they also want Christmas
                     }
 
                     break;
             }
 
-            // Now if we also use "includeCampaign" we need to replace it there aswell
+            // Now if we also use "includeCampaign" we need to replace it there as well
             if (includeCampaign)
             {
                 if (foundMonster != null)
@@ -610,7 +613,7 @@ namespace NewSafetyHelp.src.JSONParsing
 
                     EntryManager.EntryManager.ReplaceEntry(ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
 
-                    // Include a copy of the monster in the extrainfo
+                    // Include a copy of the monster in the extra info
                     entriesExtraInfo.Find(item => item.Name == foundMonsterCopy.monsterName || item.ID == foundMonsterCopy.monsterID).referenceCopyEntry = foundMonster;
                 }
 
@@ -623,7 +626,7 @@ namespace NewSafetyHelp.src.JSONParsing
 
                     if (foundMonster == null)
                     {
-                        // Include a copy of the monster in the extrainfo
+                        // Include a copy of the monster in the extra info
                         entriesExtraInfo.Find(item => item.Name == foundMonsterXMASCopy.monsterName || item.ID == foundMonsterXMASCopy.monsterID).referenceCopyEntry = foundMonster;
                     }
                 }
@@ -632,14 +635,14 @@ namespace NewSafetyHelp.src.JSONParsing
             }
         }
     
-        public static void createNewExtryFunction(ref string filePath, ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, ref string _monsterAudioClipLocation,
+        public static void createNewEntryFunction(ref string filePath, ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, ref string _monsterAudioClipLocation,
             ref string _monsterPortraitLocation, ref Sprite _monsterPortrait, ref string _monsterDescription, ref bool replaceEntry, ref List<string> _arcadeCalls, ref int accessLevel, ref bool accessLevelAdded, ref bool includeCampaign,
             ref bool _spiderPhobiaIncluded, ref bool _spiderPhobia, ref bool _darknessPhobiaIncluded, ref bool _darknessPhobia, ref bool _dogPhobiaIncluded, ref bool _dogPhobia, ref bool _holesPhobiaIncluded, ref bool _holesPhobia,
             ref bool _insectPhobiaIncluded, ref bool _insectPhobia, ref bool _watchingPhobiaIncluded, ref bool _watchingPhobia, ref bool _tightSpacePhobiaIncluded, ref bool _tightSpacePhobia,
             ref MonsterProfile _newMonster)
         {
             // Create Monster and add him
-            // NOTE: AudioClip is added later, since we need to do load it seperately from the main thread.
+            // NOTE: AudioClip is added later, since we need to do load it separately from the main thread.
             _newMonster = EntryManager.EntryManager.CreateMonster(_monsterName: _monsterName, _monsterDescription: _monsterDescription, _monsterID: newID,
                 _arcadeCalls: _arcadeCalls.ToArray(), _monsterPortrait: _monsterPortrait, _monsterAudioClip: null,
                 _spiderPhobia: _spiderPhobia, _darknessPhobia: _darknessPhobia, _dogPhobia: _dogPhobia, _holesPhobia: _holesPhobia, _insectPhobia: _insectPhobia, _watchingPhobia: _watchingPhobia,
@@ -662,7 +665,7 @@ namespace NewSafetyHelp.src.JSONParsing
             }
 
             MonsterProfile _newMonsterCopy = _newMonster;
-            // Include a copy of the monster in the extrainfo
+            // Include a copy of the monster in the extra info
             if (entriesExtraInfo.Find(item => item.Name == _newMonsterCopy.monsterName || item.ID == _newMonsterCopy.monsterID) != null) // Only if it exists.
             {
                 entriesExtraInfo.Find(item => item.Name == _newMonsterCopy.monsterName || item.ID == _newMonsterCopy.monsterID).referenceCopyEntry = _newMonster;
@@ -678,12 +681,13 @@ namespace NewSafetyHelp.src.JSONParsing
                 accessLevel = 0;
             }
 
-            // This also counts the same for christmas
+            // This also counts the same for Christmas
             switch (accessLevel)
             {
 
                 case 0: // First Level, is also default if not provided.
                     EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
+                    // ReSharper disable once StringLiteralTypo
                     EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
                     break;
 
@@ -704,17 +708,18 @@ namespace NewSafetyHelp.src.JSONParsing
 
                 case 4: // Fifth Level
                     EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.fifthTierUnlocks.monsterProfiles, "fifthTierUnlocks");
-                    EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level incase they also want christmas
+                    EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level in case they also want Christmas
                     break;
 
                 case 5: // Sixth Level
                     EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.sixthTierUnlocks.monsterProfiles, "sixthTierUnlocks");
-                    EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level incase they also want christmas
+                    EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.xmasFourthTier.monsterProfiles, "xmasFourthTier"); // We keep it fourth level in case they also want Christmas
                     break;
 
-                default: // Incase we somehow have an unknown value, we also default to first level.
+                default: // In case we somehow have an unknown value, we also default to first level.
                     MelonLogger.Warning("WARNING: Provided access level is invalid (0-5). Defaulting to 0th access level.");
                     EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
+                    // ReSharper disable once StringLiteralTypo
                     EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster, ref entryUnlockerInstance.xmastFirstTier.monsterProfiles, "xmastFirstTier");
                     break;
             }

@@ -1,18 +1,12 @@
-﻿using MelonLoader;
+﻿using System.Linq;
+using MelonLoader;
 using MelonLoader.TinyJSON;
-using NewSafetyHelp.src.ImportFiles;
-using NewSafetyHelp.src.EntryManager;
-using System.IO;
-using NewSafetyHelp.src.AudioHandler;
+using NewSafetyHelp.EntryManager;
 using UnityEngine;
-using System.Collections;
-using System.Linq;
-using System.Collections.Generic;
-using System;
 
-namespace NewSafetyHelp.src.JSONParsing
+namespace NewSafetyHelp.JSONParsing
 {
-    public class CallerParsing
+    public static class CallerParsing
     {
         public static void parseCaller(ref ProxyObject jsonObject, ref string filePath, ref string _callerAudioClipLocation, ref string _callerName, ref string _callerTranscript, ref string _callerImageLocation,  ref float _callerReplaceChance, ref bool _callerRestartCallAgain,
             ref Sprite _callerPortrait, ref bool replaceEntry, ref EntryExtraInfo newExtra)
@@ -38,7 +32,7 @@ namespace NewSafetyHelp.src.JSONParsing
             {
                 _callerImageLocation = jsonObject["caller_image_name"];
 
-                if (_callerImageLocation == "" || _callerImageLocation == null)
+                if (string.IsNullOrEmpty(_callerImageLocation))
                 {
                     _callerPortrait = null;
 
@@ -88,7 +82,7 @@ namespace NewSafetyHelp.src.JSONParsing
             {
                 _consequenceCallerImageLocation = jsonObject["consequence_caller_image_name"];
 
-                if (_consequenceCallerImageLocation == "" || _consequenceCallerImageLocation == null)
+                if (string.IsNullOrEmpty(_consequenceCallerImageLocation))
                 {
                     _consequenceCallerPortrait = null;
 

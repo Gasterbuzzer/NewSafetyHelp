@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace NewSafetyHelp.src.EntryManager
+﻿namespace NewSafetyHelp.EntryManager
 {
     public class EntryExtraInfo
     {
