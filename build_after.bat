@@ -3,6 +3,8 @@ setlocal
 
 set "PROC=Home Safety Hotline.exe"
 
+set "run_game=false"
+
 REM Check if the process is running
 tasklist /FI "IMAGENAME eq %PROC%" | find /I "%PROC%" >nul
 if errorlevel 1 (
@@ -29,7 +31,7 @@ echo Starting copying of mod dll to game folder.
 echo Current directory is: %CD%
 
 REM Read the destination folder from the config file
-set /p destination_folder=<..\..\config.txt
+set /p root_destination_folder=<..\..\config.txt
 
 REM Check if the source file exists
 if not exist "%source_file%" (
@@ -38,8 +40,19 @@ if not exist "%source_file%" (
 )
 
 REM Check if the destination folder exists
+if not exist "%root_destination_folder%" (
+    echo Destination folder "%root_destination_folder%" not found.
+    pause
+    exit /b 1
+)
+
+REM Create Mods Folder
+set "mod_folder=\Mods\"
+set "destination_folder=%root_destination_folder%%mod_folder%"
+
+REM Check if the mods folder exists
 if not exist "%destination_folder%" (
-    echo Destination folder "%destination_folder%" not found.
+    echo Mods folder "%destination_folder%" not found.
     pause
     exit /b 1
 )
@@ -52,7 +65,17 @@ if errorlevel 1 (
     echo An error occurred during the file copy operation.
 ) else (
     echo File copied successfully.
+     
+     REM Run the game if set to true.
+     if "%run_game%" == "true" (
+         REM --- Starting Game ---
+         start "" "%root_destination_folder%\Home Safety Hotline.exe"
+     ) else (
+        echo Not starting game.
+     )
 )
+
+echo Finished building.
 
 endlocal
 pause
