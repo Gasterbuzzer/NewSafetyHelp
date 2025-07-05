@@ -453,6 +453,12 @@ namespace NewSafetyHelp.CallerPatches
             }
         }
 
+        /// <summary>
+        /// Gets the consequence caller based on a provided profile from a caller list.
+        /// </summary>
+        /// <param name="profileToCheck"></param>
+        /// <param name="callers"></param>
+        /// <returns></returns>
         [CanBeNull]
         public static Caller GetConsequenceCaller(CallerProfile profileToCheck, ref Caller[] callers)
         {
