@@ -11,8 +11,16 @@ using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing
 {
-    public static class ParseMonster
+    public static class ParseJSONFiles
     {
+        public enum JSONParseTypes
+        {
+            Campaign,
+            Call,
+            Entry,
+            Invalid
+        }
+        
         // "Global" Variables for handling caller audio. Gets stored as its ID and with its Name.
         public static List<EntryExtraInfo> entriesExtraInfo = new List<EntryExtraInfo>();
 
@@ -21,7 +29,7 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="folderFilePath"> Path to the folder containing the entry. </param>
         /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
-        public static void LoadMonster(string folderFilePath, EntryUnlockController __instance)
+        public static void LoadJsonFilesFromFolder(string folderFilePath, EntryUnlockController __instance)
         {
             string[] filesDataPath = Directory.GetFiles(folderFilePath);
 
@@ -29,22 +37,44 @@ namespace NewSafetyHelp.JSONParsing
             {
                 if (entryPath.ToLower().EndsWith(".json"))
                 {
-                    MelonLogger.Msg($"INFO: Found new Entry at '{entryPath}', attempting to add it now.");
+                    MelonLogger.Msg($"INFO: Found new JSON file at '{entryPath}', attempting to parse it now.");
 
                     string jsonString = File.ReadAllText(entryPath);
 
                     Variant variant = JSON.Load(jsonString);
 
-                    CreateMonsterFromJSON(variant, filePath: folderFilePath, entryUnlockerInstance: __instance);
+                    JSONParseTypes jsonType = GetJSONParsingType(variant, folderFilePath);
+
+                    switch (jsonType)
+                    {
+                        case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
+                            break;
+                        
+                        case JSONParseTypes.Call: // The provided JSON is a standalone call.
+                            break;
+                        
+                        case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
+                            MelonLogger.Msg($"INFO: Provided JSON file at '{entryPath}' has been interpreted as a monster entry.");
+                            CreateMonsterFromJSON(variant, filePath: folderFilePath, entryUnlockerInstance: __instance);
+                            break;
+                        
+                        case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
+                            MelonLogger.Error("ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
+                            break;
+                        
+                        default: // Unknown Error
+                            MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
+                            break;
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Goes through all directories in the mods userdata folder and tries adding for each of them the monster if it contains an entry to be added.
+        /// Goes through all directories in the mods userdata folder and tries adding parsing it, if it contains an entry or something to be added.
         /// </summary>
         /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
-        public static void LoadAllMonsters(EntryUnlockController __instance)
+        public static void LoadAllJSON(EntryUnlockController __instance)
         {
             string userDataPath = FileImporter.GetUserDataFolderPath();
 
@@ -52,7 +82,41 @@ namespace NewSafetyHelp.JSONParsing
 
             foreach (string foldersStringName in foldersDataPath)
             {
-                LoadMonster(foldersStringName, __instance);
+                LoadJsonFilesFromFolder(foldersStringName, __instance);
+            }
+        }
+        
+        /// <summary>
+        /// Checks what type of JSON file it is and returns the type back. Used for checking what to do with the file.
+        /// </summary>
+        /// <param name="jsonText"></param>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static JSONParseTypes GetJSONParsingType(Variant jsonText, string filePath = "")
+        {
+            if (jsonText is ProxyObject jsonObject)
+            {
+                if (jsonObject.Keys.Contains("custom_campaign")) // Added Campaign Settings
+                {
+                    return JSONParseTypes.Campaign;
+                }
+                else if (jsonObject.Keys.Contains("caller_audio_clip_name")) // Custom Call added either to main campaign or custom campaign.
+                {
+                    return JSONParseTypes.Call;
+                }
+                else if (jsonObject.Keys.Contains("_monsterName") || jsonObject.Keys.Contains("replaceEntry") ||
+                         jsonObject.Keys.Contains("_callerName")) // Entry was provided.
+                {
+                    return JSONParseTypes.Entry;
+                }
+                else // Unknown json type.
+                {
+                    return JSONParseTypes.Invalid;
+                }
+            }
+            else // We failed parsing the json.
+            {
+                return JSONParseTypes.Invalid;
             }
         }
 
@@ -97,7 +161,7 @@ namespace NewSafetyHelp.JSONParsing
             Sprite _callerPortrait = null;
 
             // Consequence Caller Audio
-            string _consequenceCallerAudioClipLocation = "";
+            string _consequenceCallerAudioClipLocation;
             string _consequenceCallerName = "NO_CALLER_NAME";
             string _consequenceCallerTranscript = "NO_TRANSCRIPT";
             string _consequenceCallerImageLocation = "";
@@ -140,7 +204,7 @@ namespace NewSafetyHelp.JSONParsing
                 CallerParsing.parseConsequenceCaller(ref jsonObject, ref filePath, ref _consequenceCallerName, ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait);
 
                 // Create new extra info.
-                ParseMonster.createNewExtra(ref newExtra, ref _monsterName, ref newID, ref replaceEntry, ref _callerName, ref _callerTranscript, ref _callerPortrait, ref _callerReplaceChance, ref _callerRestartCallAgain, ref accessLevel, ref onlyDLC,
+                createNewExtra(ref newExtra, ref _monsterName, ref newID, ref replaceEntry, ref _callerName, ref _callerTranscript, ref _callerPortrait, ref _callerReplaceChance, ref _callerRestartCallAgain, ref accessLevel, ref onlyDLC,
                     ref includeDLC, ref includeCampaign, ref _consequenceCallerName, ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait);
 
                 // Caller Audio Path (Later gets added with coroutine)
@@ -160,7 +224,7 @@ namespace NewSafetyHelp.JSONParsing
                     else // Valid location, so we load in the value.
                     {
 
-                        MelonCoroutines.Start(ParseMonster.UpdateAudioClip
+                        MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
@@ -225,7 +289,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Generate new ID if not provided.
-            ParseMonster.generateNewID(ref newID, ref replaceEntry, ref filePath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance);
+            ParseJSONFiles.generateNewID(ref newID, ref replaceEntry, ref filePath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance);
 
             if (replaceEntry) // We replace an Entry
             {

@@ -106,7 +106,7 @@
     <Compile Include="src\ImportFiles\FileImporter.cs" />
     <Compile Include="src\JSONParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\MonsterParsing.cs" />
-    <Compile Include="src\JSONParsing\ParseMonster.cs" />
+    <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

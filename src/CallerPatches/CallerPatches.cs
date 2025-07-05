@@ -25,7 +25,7 @@ namespace NewSafetyHelp.CallerPatches
             private static void Postfix(MethodBase __originalMethod, CallerController __instance)
             {
 
-                foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                 {
                     if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name || __instance.currentCustomCaller.callerMonster.monsterID == item.ID) // We found an entry to replace the audio for.
                     {
@@ -83,7 +83,7 @@ namespace NewSafetyHelp.CallerPatches
                 bool found = false;
                 if (profile != null && profile.callerMonster != null && !__instance.arcadeMode) // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
                 {
-                    foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                     {
                         if (item.currentlySelected) // We found an entry to replace the audio for.
                         {
@@ -180,7 +180,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (!__instance.arcadeMode)
                 {
-                    foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                     {
                         if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
                         {
@@ -280,10 +280,10 @@ namespace NewSafetyHelp.CallerPatches
                     {
                         MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
                         
-                        if (ParseMonster.entriesExtraInfo.Exists(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name)) // IF the consequence caller has been replaced once.
+                        if (ParseJSONFiles.entriesExtraInfo.Exists(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name)) // IF the consequence caller has been replaced once.
                         {
                             MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
-                            EntryExtraInfo foundExtraInfo = ParseMonster.entriesExtraInfo.Find(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name);
+                            EntryExtraInfo foundExtraInfo = ParseJSONFiles.entriesExtraInfo.Find(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name);
 
                             if (foundExtraInfo == null)
                             {
@@ -315,7 +315,7 @@ namespace NewSafetyHelp.CallerPatches
                             int entrySelected = UnityEngine.Random.Range(0, entries.Count - 1);
 
                             // Audio check
-                            ParseMonster.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected])).currentlySelected = true;
+                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected])).currentlySelected = true;
 
                             // Get a "copy"
                             EntryExtraInfo selected = entries[entrySelected];
@@ -336,7 +336,7 @@ namespace NewSafetyHelp.CallerPatches
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
-                            ParseMonster.entriesExtraInfo.Find(item => item == entries[entrySelected]).referenceProfileNameInternal = profile.name;
+                            ParseJSONFiles.entriesExtraInfo.Find(item => item == entries[entrySelected]).referenceProfileNameInternal = profile.name;
                     }
                 }
 
@@ -383,7 +383,7 @@ namespace NewSafetyHelp.CallerPatches
                     // Get replaced monster if valid
                     bool found = false;
                     MonsterProfile monsterToCheck = null;
-                    foreach (EntryExtraInfo item in ParseMonster.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                     {
                         if (item.currentlySelected) // We found an entry to replace the audio for.
                         {
@@ -558,6 +558,12 @@ namespace NewSafetyHelp.CallerPatches
                 {
                     callerProfile = newProfile
                 };
+
+                // Sanity check to prevent the callers from freezing up.
+                if (__instance.callers.Length < 2)
+                {
+                    MelonLogger.Error("ERROR: Amount of callers is less than 2. It must at least contain 2! Expect failure.");
+                }
 
                 return false; // Skip the original function
             }

@@ -73,8 +73,8 @@ namespace NewSafetyHelp
 
             MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added...");
 
-            // Add all monsters
-            ParseMonster.LoadAllMonsters(__instance);
+            // Read all json and add all monsters and campaigns (/Calls)
+            ParseJSONFiles.LoadAllJSON(__instance);
 
             isInitialized = true;
             MelonLogger.Msg(ConsoleColor.Green, "INFO: Added/Modified all custom entries successfully!");
