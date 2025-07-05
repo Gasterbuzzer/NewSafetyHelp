@@ -481,11 +481,85 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Finished handling the caller replacement.");
+                    MelonLogger.Msg($"DEBUG: Called Start from CallerController.");
                 #endif
 
+                Type callerController = typeof(CallerController);
+                
+                // Original Code
+                GlobalVariables.callerControllerScript = __instance;
+                
+                __instance.arcadeMode = GlobalVariables.arcadeMode;
+                
+                FieldInfo _lastDayNum = callerController.GetField("lastDayNum", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                return true; // Skip the original function
+                if (_lastDayNum == null)
+                {
+                    MelonLogger.Error("ERROR: CallerController.lastDayNum is null!");
+                    return true;
+                }
+                
+                _lastDayNum.SetValue(__instance, __instance.mainGameLastDay);
+                
+                FieldInfo _callerAudioSource = callerController.GetField("callerAudioSource", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (_callerAudioSource == null)
+                {
+                    MelonLogger.Error("ERROR: CallerAudioSource is null!");
+                    return true;
+                }
+                
+                _callerAudioSource.SetValue(__instance, __instance.GetComponent<AudioSource>());
+                
+                if (__instance.arcadeMode)
+                {
+                    __instance.CreateCustomCaller();
+                }
+                
+                if (GlobalVariables.isXmasDLC)
+                {
+                    __instance.callers = (Caller[]) null;
+                    __instance.callers = __instance.xmasCallers;
+                    __instance.warningCall = __instance.xmasWarningCall;
+                    __instance.gameOverCall = __instance.xmasGameOverCall;
+                    _lastDayNum.SetValue(__instance, __instance.xmasLastDay);
+                    __instance.downedNetworkCalls = __instance.xmasDownedNetworkCalls;
+                }
+                
+                // Attempt to hijack caller list.
+                
+                CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
+
+                newProfile.callerName = "Jeff";
+                newProfile.callTranscription = "We live jeff";
+                
+                MethodInfo getRandomPicMethod = callerController.GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                
+                MethodInfo getRandomClip = callerController.GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (getRandomPicMethod == null || getRandomClip == null)
+                {
+                    MelonLogger.Error("ERROR: getRandomPicMethod or getRandomClip is null!");
+                    return true;
+                }
+                
+                newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, new object[] { });
+                
+                newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
+                
+
+                __instance.callers = new Caller[2];
+                __instance.callers[0] = new Caller
+                {
+                    callerProfile = newProfile
+                };
+
+                __instance.callers[1] = new Caller
+                {
+                    callerProfile = newProfile
+                };
+
+                return false; // Skip the original function
             }
         }
     }
