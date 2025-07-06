@@ -5,6 +5,7 @@ using System.Linq;
 using MelonLoader;
 using MelonLoader.TinyJSON;
 using NewSafetyHelp.Audio;
+using NewSafetyHelp.CallerPatches;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.ImportFiles;
 using UnityEngine;
@@ -23,7 +24,14 @@ namespace NewSafetyHelp.JSONParsing
         
         // "Global" Variables for handling caller audio. Gets stored as its ID and with its Name.
         public static List<EntryExtraInfo> entriesExtraInfo = new List<EntryExtraInfo>();
-
+        
+        // Map for custom callers to replaced in the main game. (ID of the call to replace, Caller for that ID)
+        public static Dictionary<int, CustomCallerExtraInfo> customCallerMainGame = new Dictionary<int, CustomCallerExtraInfo>();
+        
+        // Map for custom callers in different campaigns. (CustomCampaignName, Caller for that Campaign)
+        public static Dictionary<string, CustomCallerExtraInfo> customCallerCampaign = new Dictionary<string, CustomCallerExtraInfo>();
+        
+        
         /// <summary>
         /// Function for adding a single entry.
         /// </summary>
@@ -33,13 +41,13 @@ namespace NewSafetyHelp.JSONParsing
         {
             string[] filesDataPath = Directory.GetFiles(folderFilePath);
 
-            foreach (string entryPath in filesDataPath)
+            foreach (string jsonPathFile in filesDataPath)
             {
-                if (entryPath.ToLower().EndsWith(".json"))
+                if (jsonPathFile.ToLower().EndsWith(".json"))
                 {
-                    MelonLogger.Msg($"INFO: Found new JSON file at '{entryPath}', attempting to parse it now.");
+                    MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
 
-                    string jsonString = File.ReadAllText(entryPath);
+                    string jsonString = File.ReadAllText(jsonPathFile);
 
                     Variant variant = JSON.Load(jsonString);
 
@@ -51,10 +59,12 @@ namespace NewSafetyHelp.JSONParsing
                             break;
                         
                         case JSONParseTypes.Call: // The provided JSON is a standalone call.
+                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
+                            CreateCustomCaller(variant, folderFilePath);
                             break;
                         
                         case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{entryPath}' has been interpreted as a monster entry.");
+                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
                             CreateMonsterFromJSON(variant, filePath: folderFilePath, entryUnlockerInstance: __instance);
                             break;
                         
@@ -100,12 +110,13 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     return JSONParseTypes.Campaign;
                 }
-                else if (jsonObject.Keys.Contains("caller_audio_clip_name")) // Custom Call added either to main campaign or custom campaign.
+                else if (jsonObject.Keys.Contains("custom_caller") || jsonObject.Keys.Contains("custom_caller_name")
+                         || jsonObject.Keys.Contains("order_in_campaign")) // Custom Call added either to main campaign or custom campaign.
                 {
                     return JSONParseTypes.Call;
                 }
-                else if (jsonObject.Keys.Contains("_monsterName") || jsonObject.Keys.Contains("replaceEntry") ||
-                         jsonObject.Keys.Contains("_callerName")) // Entry was provided.
+                else if (jsonObject.Keys.Contains("monster_name") || jsonObject.Keys.Contains("replace_entry") ||
+                         jsonObject.Keys.Contains("caller_name")) // Entry was provided.
                 {
                     return JSONParseTypes.Entry;
                 }
@@ -117,6 +128,177 @@ namespace NewSafetyHelp.JSONParsing
             else // We failed parsing the json.
             {
                 return JSONParseTypes.Invalid;
+            }
+        }
+
+        public static void CreateCustomCaller(Variant jsonText, string filePath = "")
+        {
+            if (jsonText is ProxyObject jsonObject)
+            {
+                if (jsonObject.Keys.Contains("custom_caller") && jsonObject["custom_caller"]) // Sanity Check
+                {
+                    // Actual logic
+                    const int mainCampaignCallAmount = 81;
+
+                    bool inMainCampaign = false;
+                    string customCallerName = "NO_CUSTOM_CALLER_NAME";
+                    string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
+                    int orderInCampaign = -1;
+
+                    bool increasesTier = false;
+                    
+                    string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
+
+                    string customCallerAudioPath = "";
+                    
+                    int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
+                    
+                    Sprite customCallerImage = null;
+                    
+                    if (jsonObject.Keys.Contains("include_campaign"))
+                    {
+                        inMainCampaign = jsonObject["custom_caller"];
+                    }
+
+                    if (jsonObject.Keys.Contains("custom_caller_name"))
+                    {
+                        customCallerName = jsonObject["custom_caller_name"];
+                    }
+
+                    if (jsonObject.Keys.Contains("custom_caller_transcript"))
+                    {
+                        customCallerTranscript = jsonObject["custom_caller_transcript"];
+                    }
+
+                    if (jsonObject.Keys.Contains("custom_caller_image_name"))
+                    {
+                        string customCallerImageLocation = jsonObject["custom_caller_image_name"];
+                        
+                        if (string.IsNullOrEmpty(customCallerImageLocation))
+                        {
+                            MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. No image will be shown.");
+                        }
+                        else
+                        {
+                            customCallerImage = ImageImport.LoadImage(filePath + "\\" + customCallerImageLocation);
+                        }
+                    }
+                    else
+                    {
+                        MelonLogger.Warning($"WARNING: No custom caller portrait given for file in {filePath}. No image will be shown.");
+                    }
+
+                    if (jsonObject.Keys.Contains("order_in_campaign"))
+                    {
+                        orderInCampaign =  jsonObject["order_in_campaign"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_caller_monster_name"))
+                    {
+                        customCallerMonsterName =  jsonObject["custom_caller_monster_name"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_caller_monster_id"))
+                    {
+                        customCallerMonsterID =  jsonObject["custom_caller_monster_id"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_caller_increases_tier"))
+                    {
+                        increasesTier =  (bool) jsonObject["custom_caller_increases_tier"];
+                    }
+
+                    if (jsonObject.Keys.Contains("custom_caller_audio_clip_name"))
+                    {
+                        customCallerAudioPath = filePath + "\\" +  jsonObject["custom_caller_audio_clip_name"];
+                    }
+
+                    // Check if order is valid and if not, we warn the user.
+                    if (orderInCampaign < 0)
+                    {
+                        MelonLogger.Warning($"WARNING: No order was provided for custom caller at '{filePath}'. This will accidentally replace the first caller (Index = 0)!");
+                        orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
+                    }
+                    
+                    // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
+                    CustomCallerExtraInfo _customCaller = new CustomCallerExtraInfo(customCallerName, orderInCampaign)
+                        {
+                            callerName = customCallerName,
+                            callerImage = customCallerImage,
+                            callTranscript = customCallerTranscript,
+                            monsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
+                            inCustomCampaign = !inMainCampaign,
+                            callerIncreasesTier = increasesTier,
+                            callerClipPath = customCallerAudioPath
+                        };
+
+                    if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
+                    {
+                        _customCaller.monsterNameAttached = customCallerMonsterName;
+                    }
+
+                    // Custom Caller Audio Path (Later gets added with coroutine)
+                    if (jsonObject.Keys.Contains("custom_caller_audio_clip_name"))
+                    {
+                        if (string.IsNullOrEmpty(customCallerAudioPath))
+                        {
+                            MelonLogger.Warning($"WARNING: No caller audio given for file in {filePath}. No audio will be heard.");
+                        }
+                        else if (!File.Exists(customCallerAudioPath)) // Check if location is valid now, since we are storing it now.
+                        {
+                            MelonLogger.Error($"ERROR: Location {filePath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
+                        }
+                        else // Valid location, so we load in the value.
+                        {
+                            MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
+                                (
+                                    (myReturnValue) =>
+                                    {
+                                        if (myReturnValue != null)
+                                        {
+                                            // Add the audio
+                                            _customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                            _customCaller.isCallerClipLoaded = true;
+                                            
+                                            if (AudioImport.currentLoadingAudios.Count <= 0)
+                                            {
+                                                // We finished loading all audios. We call the start function again.
+                                                AudioImport.reCallCallerListStart();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            MelonLogger.Error($"ERROR: Failed to load audio clip {customCallerAudioPath} for custom caller.");
+                                        }
+
+                                    },
+                                    customCallerAudioPath)
+                            );
+                            
+                            
+                        }
+                    }
+                    
+                    // Now after parsing all values, we add the custom caller to our map
+
+                    if (inMainCampaign)
+                    {
+                        customCallerMainGame.Add(orderInCampaign, _customCaller);
+                    }
+                    else
+                    {
+                        customCallerCampaign.Add("FakeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", _customCaller);
+                    }
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Finished adding this custom caller.");
+                    #endif
+                    
+                }
+                else
+                {
+                    MelonLogger.Error($"ERROR: Provided custom caller '{filePath}' does not have the flag 'custom_caller = true', thus it got skipped.");
+                }
             }
         }
 
@@ -223,7 +405,6 @@ namespace NewSafetyHelp.JSONParsing
                     }
                     else // Valid location, so we load in the value.
                     {
-
                         MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
                         (
                             (myReturnValue) =>
@@ -241,7 +422,6 @@ namespace NewSafetyHelp.JSONParsing
                             },
                             filePath + "\\" + _callerAudioClipLocation)
                         );
-
                     }
                 }
 

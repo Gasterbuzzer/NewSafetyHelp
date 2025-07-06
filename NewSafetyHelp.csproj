@@ -100,6 +100,8 @@
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
+    <Compile Include="src\CallerPatches\CustomCallerExtraInfo.cs" />
+    <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
     <Compile Include="src\EntryManager\EntryExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
     <Compile Include="src\EntryManager\ImageImport.cs" />
@@ -118,7 +120,6 @@
     <None Include="build_after.bat" />
     <None Include="README.md" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)\build_after.bat</PostBuildEvent>

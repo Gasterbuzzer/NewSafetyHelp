@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -8,6 +11,10 @@ namespace NewSafetyHelp.Audio
 {
     public static class AudioImport
     {
+        
+        // List containing all audios currently loading.
+        public static List<string> currentLoadingAudios = new List<string>();
+        
 
         // ReSharper disable once CommentTypo
         /// <summary>
@@ -19,6 +26,10 @@ namespace NewSafetyHelp.Audio
         public static IEnumerator LoadAudio(System.Action<AudioClip> callback, string path, AudioType _audioType = AudioType.MPEG)
         {
             MelonLogger.Msg($"INFO: Attempting to add {path} as audio type {_audioType.ToString()}.");
+            
+            Time.timeScale = 0;
+            
+            currentLoadingAudios.Add($"{path}{_audioType.ToString()}");
 
             // First we check if the file exists
             if (!File.Exists(path))
@@ -43,7 +54,6 @@ namespace NewSafetyHelp.Audio
                     MelonLogger.Msg($"INFO: {path} as {_audioType.ToString()} has been successfully loaded.");
 
                     callback(DownloadHandlerAudioClip.GetContent(www)); // Get actual audio clip
-                    yield break;
                 }
                 else // Failed loading the audio file.
                 {
@@ -53,9 +63,32 @@ namespace NewSafetyHelp.Audio
                     }
 
                     MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. \n Results in the error: {www.error} and the response code is: {www.responseCode}. Was the process finished?: {www.isDone}");
-                    yield break; // We failed loading the audio. We give up.
                 }
+                
+                Time.timeScale = 1.0f;
+                currentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
             }
+        }
+
+
+        /// <summary>
+        /// Calls the CallerController Start to reload audio / imports again.
+        /// </summary>
+        public static void reCallCallerListStart()
+        {
+            Type callerController = typeof(CallerController);
+            
+            MethodInfo startCallerController = callerController.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+            if (startCallerController == null)
+            {
+                MelonLogger.Error("ERROR: Start of CallerController was not found!");
+                return;
+            }
+
+            CallerController ccInstance = GameObject.Find("CallerController").GetComponent<CallerController>();
+            
+            startCallerController.Invoke(ccInstance, null); // Call again.
         }
 
         /// <summary>

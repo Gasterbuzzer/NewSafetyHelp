@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
+using NewSafetyHelp.Audio;
+using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
@@ -481,7 +483,7 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Called Start from CallerController.");
+                    MelonLogger.Msg(ConsoleColor.Magenta, $"DEBUG: Called Start from CallerController.");
                 #endif
 
                 Type callerController = typeof(CallerController);
@@ -525,39 +527,90 @@ namespace NewSafetyHelp.CallerPatches
                     _lastDayNum.SetValue(__instance, __instance.xmasLastDay);
                     __instance.downedNetworkCalls = __instance.xmasDownedNetworkCalls;
                 }
-                
-                // Attempt to hijack caller list.
-                
-                CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
-                newProfile.callerName = "Jeff";
-                newProfile.callTranscription = "We live jeff";
-                
-                MethodInfo getRandomPicMethod = callerController.GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                
-                MethodInfo getRandomClip = callerController.GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                if (getRandomPicMethod == null || getRandomClip == null)
+                if (!CustomCampaignGlobal.inCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
-                    MelonLogger.Error("ERROR: getRandomPicMethod or getRandomClip is null!");
-                    return true;
+                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in ParseJSONFiles.customCallerMainGame)
+                    {
+                        if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
+                        {
+                            MelonLogger.Error("ERROR: Custom caller is invalid!");
+                            return true;
+                        }
+
+                        if (customCaller.Value.inCustomCampaign)
+                        {
+                            MelonLogger.Warning("WARNING: Custom Caller is marked as custom campaign but is also main campaign! Skipping.");
+                            continue;
+                        }
+                        
+                        // Is Valid
+                        
+                        CallerProfile callerProfile = ScriptableObject.CreateInstance<CallerProfile>();
+
+                        if (!customCaller.Value.isCallerClipLoaded)
+                        {
+                            MelonLogger.Msg("INFO: Audio is still loading for this custom caller. It will be updated once the audio has been updated.");
+                        }
+                        
+                        callerProfile.callerName = customCaller.Value.callerName;
+                        callerProfile.callTranscription = customCaller.Value.callTranscript;
+                        callerProfile.callerPortrait = customCaller.Value.callerImage;
+                        callerProfile.callerClip = customCaller.Value.callerClip;
+                        callerProfile.increaseTier = customCaller.Value.callerIncreasesTier;
+
+                        if (customCaller.Value.monsterNameAttached != "NO_MONSTER_NAME")
+                        {
+                            callerProfile.callerMonster = null; // WIP: Get Monster Name for reference here.
+                        }
+
+                        callerProfile.consequenceCallerProfile = null; // WIP: Add ID to get consequence caller.
+                        
+                        Caller newCustomCaller = new Caller
+                        {
+                            answeredCorrectly = false,
+                            callerProfile = callerProfile
+                        };
+                        
+                        // Insert our custom caller.
+                        __instance.callers[customCaller.Key] = newCustomCaller;
+                        
+                    }
                 }
-                
-                newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, new object[] { });
-                
-                newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
-                
-
-                __instance.callers = new Caller[2];
-                __instance.callers[0] = new Caller
+                else
                 {
-                    callerProfile = newProfile
-                };
+                    // Attempt to hijack caller list.
+                
+                    CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
-                __instance.callers[1] = new Caller
-                {
-                    callerProfile = newProfile
-                };
+                    newProfile.callerName = "Jeff";
+                    newProfile.callTranscription = "We live jeff";
+                
+                    MethodInfo getRandomPicMethod = callerController.GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                
+                    MethodInfo getRandomClip = callerController.GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    if (getRandomPicMethod == null || getRandomClip == null)
+                    {
+                        MelonLogger.Error("ERROR: getRandomPicMethod or getRandomClip is null!");
+                        return true;
+                    }
+                
+                    newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, new object[] { });
+                
+                    newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
+                    
+                    __instance.callers = new Caller[2];
+                    __instance.callers[0] = new Caller
+                    {
+                        callerProfile = newProfile
+                    };
+
+                    __instance.callers[1] = new Caller
+                    {
+                        callerProfile = newProfile
+                    };
+                }
 
                 // Sanity check to prevent the callers from freezing up.
                 if (__instance.callers.Length < 2)
