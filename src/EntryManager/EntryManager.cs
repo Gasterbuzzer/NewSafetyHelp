@@ -159,11 +159,11 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterProfiles"> Reference of the monsterProfile to replace find the entry in. </param>
         /// <param name="monsterName"> Name of the entry to find. </param>
         /// <param name="monsterID"> Alternative way of finding the entry. </param>
-        public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles, string monsterName, int monsterID = -1)
+        public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles, string monsterName = "SKIP_MONSTER_NAME_TO_SEARCH", int monsterID = -1)
         {
             foreach (MonsterProfile entryProfile in monsterProfiles)
             {
-                if (entryProfile.monsterName == monsterName || (entryProfile.monsterID == monsterID && monsterID >= 0))
+                if ((entryProfile.monsterName == monsterName && monsterName != "SKIP_MONSTER_NAME_TO_SEARCH") || (entryProfile.monsterID == monsterID && monsterID >= 0))
                 {
                     return entryProfile; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
                 }

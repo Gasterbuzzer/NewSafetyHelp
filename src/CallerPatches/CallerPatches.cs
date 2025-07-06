@@ -539,8 +539,8 @@ namespace NewSafetyHelp.CallerPatches
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {
-                            MelonLogger.Error("ERROR: Custom caller is invalid!");
-                            return true;
+                            MelonLogger.Error($"ERROR: Custom caller {customCaller.Key} is invalid!");
+                            continue;
                         }
 
                         if (customCaller.Value.inCustomCampaign)
@@ -566,8 +566,37 @@ namespace NewSafetyHelp.CallerPatches
 
                         if (customCaller.Value.monsterNameAttached != "NO_MONSTER_NAME")
                         {
-                            callerProfile.callerMonster = null; // WIP: Get Monster Name for reference here.
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, customCaller.Value.monsterNameAttached);
+
+                            if (foundMonster == null)
+                            {
+                                MelonLogger.Warning($"WARNING: Provided Monster Name for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
+                                callerProfile.callerMonster = null; 
+                            }
+                            else
+                            {
+                                callerProfile.callerMonster = foundMonster;
+                            }
                         }
+                        else if(customCaller.Value.monsterIDAttached >= 0) // Check for ID monster.
+                        {
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, monsterID: customCaller.Value.monsterIDAttached);
+
+                            if (foundMonster == null)
+                            {
+                                MelonLogger.Warning($"WARNING: Provided monster ID for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
+                                callerProfile.callerMonster = null; 
+                            }
+                            else
+                            {
+                                callerProfile.callerMonster = foundMonster;
+                            }
+                        }
+                        else // No caller monster.
+                        {
+                            callerProfile.callerMonster = null; 
+                        }
+                        
 
                         if (customCaller.Value.consequenceCallerID >= 0)
                         {
