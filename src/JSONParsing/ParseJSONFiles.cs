@@ -111,7 +111,7 @@ namespace NewSafetyHelp.JSONParsing
                     return JSONParseTypes.Campaign;
                 }
                 else if (jsonObject.Keys.Contains("custom_caller") || jsonObject.Keys.Contains("custom_caller_name")
-                         || jsonObject.Keys.Contains("order_in_campaign")) // Custom Call added either to main campaign or custom campaign.
+                         || jsonObject.Keys.Contains("order_in_campaign") || jsonObject.Keys.Contains("custom_caller_audio_clip_name")) // Custom Call added either to main campaign or custom campaign.
                 {
                     return JSONParseTypes.Call;
                 }
@@ -138,7 +138,7 @@ namespace NewSafetyHelp.JSONParsing
                 if (jsonObject.Keys.Contains("custom_caller") && jsonObject["custom_caller"]) // Sanity Check
                 {
                     // Actual logic
-                    const int mainCampaignCallAmount = 81;
+                    const int mainCampaignCallAmount = 116;
 
                     bool inMainCampaign = false;
                     string customCallerName = "NO_CUSTOM_CALLER_NAME";
@@ -223,7 +223,7 @@ namespace NewSafetyHelp.JSONParsing
                     // Check if order is valid and if not, we warn the user.
                     if (orderInCampaign < 0)
                     {
-                        MelonLogger.Warning($"WARNING: No order was provided for custom caller at '{filePath}'. This will accidentally replace the first caller (Index = 0)!");
+                        MelonLogger.Warning($"WARNING: No order was provided for custom caller at '{filePath}'. This could accidentally replace a caller! Set to replace last caller!");
                         orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
                     }
                     

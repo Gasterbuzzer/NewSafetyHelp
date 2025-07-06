@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
-using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.JSONParsing;
@@ -618,9 +617,29 @@ namespace NewSafetyHelp.CallerPatches
                         
                     }
                 }
-                else
+                else // We are in a custom campaign.
                 {
                     // Attempt to hijack caller list.
+                    
+                    // Clear callers array with amount of campaign callers.
+                    __instance.callers = new Caller[ParseJSONFiles.customCallerCampaign.Count];
+
+                    if (string.IsNullOrEmpty(CustomCampaignGlobal.currentCustomCampaign)) // Invalid Custom Campaign
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign is set to be true but no custom campaign is active!");
+                        return true;
+                    }
+                    else if (!CustomCampaignGlobal.customCampaignsAvailable.Contains(CustomCampaignGlobal .currentCustomCampaign)) // Custom Campaign is not registered.
+                    {
+                        MelonLogger.Error("ERROR: Current Custom Campaign has not been properly setup! Stopping loading.");
+                        return true;
+                    }
+                    
+                    // Add all customCallers in Callers list.
+                    foreach (KeyValuePair<string, CustomCallerExtraInfo> customCaller in ParseJSONFiles.customCallerCampaign)
+                    {
+                        
+                    }
                 
                     CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
@@ -641,7 +660,7 @@ namespace NewSafetyHelp.CallerPatches
                 
                     newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
                     
-                    __instance.callers = new Caller[2];
+                    
                     __instance.callers[0] = new Caller
                     {
                         callerProfile = newProfile
