@@ -56,6 +56,8 @@ namespace NewSafetyHelp.JSONParsing
                     switch (jsonType)
                     {
                         case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
+                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
+                            CreateCustomCampaign(variant, folderFilePath);
                             break;
                         
                         case JSONParseTypes.Call: // The provided JSON is a standalone call.
@@ -106,7 +108,8 @@ namespace NewSafetyHelp.JSONParsing
         {
             if (jsonText is ProxyObject jsonObject)
             {
-                if (jsonObject.Keys.Contains("custom_campaign")) // Added Campaign Settings
+                if (jsonObject.Keys.Contains("custom_campaign_name") || jsonObject.Keys.Contains("custom_campaign_days")
+                    || jsonObject.Keys.Contains("custom_campaign_icon_image_name")) // Added Campaign Settings
                 {
                     return JSONParseTypes.Campaign;
                 }
@@ -131,6 +134,21 @@ namespace NewSafetyHelp.JSONParsing
             }
         }
 
+        /// <summary>
+        /// Creates a custom campaign from a provided json file.
+        /// </summary>
+        /// <param name="jsonText"></param>
+        /// <param name="filePath"></param>
+        public static void CreateCustomCampaign(Variant jsonText, string filePath = "")
+        {
+            
+        }
+
+        /// <summary>
+        /// Creates a custom caller from a provided json file.
+        /// </summary>
+        /// <param name="jsonText"></param>
+        /// <param name="filePath"></param>
         public static void CreateCustomCaller(Variant jsonText, string filePath = "")
         {
             if (jsonText is ProxyObject jsonObject)
