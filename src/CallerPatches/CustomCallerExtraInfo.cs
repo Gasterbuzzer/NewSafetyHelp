@@ -12,6 +12,8 @@
         public string callTranscript = "NO_TRANSCRIPT"; // Call Transcript
         public string callerName = "NO_CALLER_NAME"; // Caller Name
         public UnityEngine.Sprite callerImage = null; // Caller Image
+        
+        public int consequenceCallerID = -1; // If this caller is a consequence caller, here would be the ID of that original caller.
 
         public bool callerIncreasesTier = false;
         

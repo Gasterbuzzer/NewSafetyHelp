@@ -527,7 +527,12 @@ namespace NewSafetyHelp.CallerPatches
                     _lastDayNum.SetValue(__instance, __instance.xmasLastDay);
                     __instance.downedNetworkCalls = __instance.xmasDownedNetworkCalls;
                 }
-
+                
+                
+                /*
+                 * Add Custom Callers / Campaign Callers.
+                 */
+                
                 if (!CustomCampaignGlobal.inCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
                     foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in ParseJSONFiles.customCallerMainGame)
@@ -564,7 +569,14 @@ namespace NewSafetyHelp.CallerPatches
                             callerProfile.callerMonster = null; // WIP: Get Monster Name for reference here.
                         }
 
-                        callerProfile.consequenceCallerProfile = null; // WIP: Add ID to get consequence caller.
+                        if (customCaller.Value.consequenceCallerID >= 0)
+                        {
+                            callerProfile.consequenceCallerProfile = __instance.callers[customCaller.Value.consequenceCallerID].callerProfile;
+                        }
+                        else
+                        {
+                            callerProfile.consequenceCallerProfile = null;
+                        }
                         
                         Caller newCustomCaller = new Caller
                         {

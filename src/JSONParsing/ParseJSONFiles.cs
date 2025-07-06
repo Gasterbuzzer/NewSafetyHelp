@@ -153,6 +153,8 @@ namespace NewSafetyHelp.JSONParsing
                     
                     int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
                     
+                    int customCallerConsequenceCallerID = -1; // If this call is due to a consequence caller. You can provide it here.
+                    
                     Sprite customCallerImage = null;
                     
                     if (jsonObject.Keys.Contains("include_campaign"))
@@ -213,6 +215,11 @@ namespace NewSafetyHelp.JSONParsing
                         customCallerAudioPath = filePath + "\\" +  jsonObject["custom_caller_audio_clip_name"];
                     }
 
+                    if (jsonObject.Keys.Contains("custom_caller_consequence_caller_id"))
+                    {
+                        customCallerConsequenceCallerID = jsonObject["custom_caller_consequence_caller_id"];
+                    }
+
                     // Check if order is valid and if not, we warn the user.
                     if (orderInCampaign < 0)
                     {
@@ -229,7 +236,8 @@ namespace NewSafetyHelp.JSONParsing
                             monsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
                             inCustomCampaign = !inMainCampaign,
                             callerIncreasesTier = increasesTier,
-                            callerClipPath = customCallerAudioPath
+                            callerClipPath = customCallerAudioPath,
+                            consequenceCallerID = customCallerConsequenceCallerID
                         };
 
                     if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
