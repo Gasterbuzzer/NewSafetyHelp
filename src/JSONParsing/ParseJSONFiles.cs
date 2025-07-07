@@ -151,7 +151,7 @@ namespace NewSafetyHelp.JSONParsing
 
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
-                        customCampaignName = jsonObject["custom_caller"];
+                        customCampaignName = jsonObject["custom_campaign_name"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_days"))
