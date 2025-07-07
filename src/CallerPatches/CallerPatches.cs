@@ -482,7 +482,7 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
                 #if DEBUG
-                    MelonLogger.Msg(ConsoleColor.Magenta, $"DEBUG: Called Start from CallerController.");
+                    MelonLogger.Msg(ConsoleColor.Magenta, $"DEBUG: Called Start from the class CallerController.");
                 #endif
 
                 Type callerController = typeof(CallerController);
@@ -595,7 +595,6 @@ namespace NewSafetyHelp.CallerPatches
                         {
                             callerProfile.callerMonster = null; 
                         }
-                        
 
                         if (customCaller.Value.consequenceCallerID >= 0)
                         {
@@ -621,31 +620,7 @@ namespace NewSafetyHelp.CallerPatches
                 {
                     // Attempt to hijack caller list.
                     
-                    // Clear callers array with amount of campaign callers.
-                    __instance.callers = new Caller[ParseJSONFiles.customCallerCampaign.Count];
-
-                    if (string.IsNullOrEmpty(CustomCampaignGlobal.currentCustomCampaign)) // Invalid Custom Campaign
-                    {
-                        MelonLogger.Error("ERROR: Custom Campaign is set to be true but no custom campaign is active!");
-                        return true;
-                    }
-                    else if (!CustomCampaignGlobal.customCampaignsAvailable.Contains(CustomCampaignGlobal .currentCustomCampaign)) // Custom Campaign is not registered.
-                    {
-                        MelonLogger.Error("ERROR: Current Custom Campaign has not been properly setup! Stopping loading.");
-                        return true;
-                    }
-                    
-                    // Add all customCallers in Callers list.
-                    foreach (KeyValuePair<string, CustomCallerExtraInfo> customCaller in ParseJSONFiles.customCallerCampaign)
-                    {
-                        
-                    }
-                
-                    CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
-
-                    newProfile.callerName = "Jeff";
-                    newProfile.callTranscription = "We live jeff";
-                
+                    // Fallback for missing picture or audio.
                     MethodInfo getRandomPicMethod = callerController.GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
                 
                     MethodInfo getRandomClip = callerController.GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -655,27 +630,70 @@ namespace NewSafetyHelp.CallerPatches
                         MelonLogger.Error("ERROR: getRandomPicMethod or getRandomClip is null!");
                         return true;
                     }
-                
-                    newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, new object[] { });
-                
-                    newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
-                    
-                    
-                    __instance.callers[0] = new Caller
-                    {
-                        callerProfile = newProfile
-                    };
 
-                    __instance.callers[1] = new Caller
+                    if (string.IsNullOrEmpty(CustomCampaignGlobal.currentCustomCampaignName)) // Invalid Custom Campaign
                     {
-                        callerProfile = newProfile
-                    };
+                        MelonLogger.Error("ERROR: Custom Campaign is set to be true but no custom campaign is active!");
+                        return true;
+                    }
+                    else if (!CustomCampaignGlobal.customCampaignsAvailable.Exists(scannedCampaign => scannedCampaign.campaignName == CustomCampaignGlobal.currentCustomCampaignName)) // Custom Campaign is not registered.
+                    {
+                        MelonLogger.Error("ERROR: Current Custom Campaign has not been properly setup! Stopping loading.");
+                        return true;
+                    }
+
+                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(scannedCampaign => scannedCampaign.campaignName == CustomCampaignGlobal.currentCustomCampaignName);
+                    
+                    // Clear callers array with amount of campaign callers.
+                    __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
+
+                    int customCallerIndex = 0;
+                    
+                    // Add all customCallers in Callers list.
+                    foreach (CustomCallerExtraInfo customCallerCC in currentCustomCampaign.customCallersInCampaign)
+                    {
+                        CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
+                        
+                        newProfile.callerName = customCallerCC.callerName;
+                        newProfile.callTranscription = customCallerCC.callTranscript;
+
+                        // Clip
+                        if (customCallerCC.callerClip == null)
+                        {
+                            MelonLogger.Warning("WARNING: Custom Caller does not have any valid audio clip. Using fallback for now. If the audio is still loading, ignore this.");
+                            
+                            newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
+                        }
+                        else
+                        {
+                            newProfile.callerClip = customCallerCC.callerClip;
+                        }
+                        
+                        // Sprite
+                        if (customCallerCC.callerImage == null)
+                        {
+                            MelonLogger.Warning("WARNING: Custom Caller does not have any valid image / sprite. Using fallback for now.");
+                            
+                            newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, new object[] { });
+                        }
+                        else
+                        {
+                            newProfile.callerPortrait = customCallerCC.callerImage;
+                        }
+                        
+                        __instance.callers[customCallerIndex] = new Caller
+                        {
+                            callerProfile = newProfile
+                        };
+
+                        customCallerIndex++;
+                    }
                 }
 
                 // Sanity check to prevent the callers from freezing up.
                 if (__instance.callers.Length < 2)
                 {
-                    MelonLogger.Error("ERROR: Amount of callers is less than 2. It must at least contain 2! Expect failure.");
+                    MelonLogger.Error("ERROR: Amount of callers is less than 2. It is highly recommended to have at least 2 to avoid any soft locks by the game.");
                 }
 
                 return false; // Skip the original function

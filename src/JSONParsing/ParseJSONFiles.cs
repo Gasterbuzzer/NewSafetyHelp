@@ -6,6 +6,7 @@ using MelonLoader;
 using MelonLoader.TinyJSON;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.ImportFiles;
 using UnityEngine;
@@ -28,9 +29,8 @@ namespace NewSafetyHelp.JSONParsing
         // Map for custom callers to replaced in the main game. (ID of the call to replace, Caller for that ID)
         public static Dictionary<int, CustomCallerExtraInfo> customCallerMainGame = new Dictionary<int, CustomCallerExtraInfo>();
         
-        // Map for custom callers in different campaigns. (CustomCampaignName, Caller for that Campaign)
-        public static Dictionary<string, CustomCallerExtraInfo> customCallerCampaign = new Dictionary<string, CustomCallerExtraInfo>();
-        
+        // Campaign Information
+        const int mainCampaignCallAmount = 116;
         
         /// <summary>
         /// Function for adding a single entry.
@@ -141,7 +141,54 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="filePath"></param>
         public static void CreateCustomCampaign(Variant jsonText, string filePath = "")
         {
-            
+            if (jsonText is ProxyObject jsonObject)
+            {
+                    string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
+                    
+                    int customCampaignDays = 5;
+                    
+                    Sprite customCampaignSprite = null;
+
+                    if (jsonObject.Keys.Contains("custom_campaign_name"))
+                    {
+                        customCampaignName = jsonObject["custom_caller"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_days"))
+                    {
+                        customCampaignDays = jsonObject["custom_campaign_days"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_icon_image_name"))
+                    {
+                        string customCampaignImagePath = jsonObject["custom_campaign_icon_image_name"];
+                        
+                        if (string.IsNullOrEmpty(customCampaignImagePath))
+                        {
+                            MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. Default icon will be shown.");
+                        }
+                        else
+                        {
+                            customCampaignSprite = ImageImport.LoadImage(filePath + "\\" + customCampaignImagePath);
+                        }
+                    }
+                    else
+                    {
+                        MelonLogger.Warning($"WARNING: No custom campaign icon given for file in {filePath}. Default icon will be shown.");
+                    }
+                    
+                    // Create
+                    CustomCampaignExtraInfo _customCampaign = new CustomCampaignExtraInfo
+                    {
+                        campaignName = customCampaignName,
+                        campaignDays = customCampaignDays,
+                        campaignIcon = customCampaignSprite
+                        
+                    };
+
+                    // Add to list
+                    CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
+            }
         }
 
         /// <summary>
@@ -156,28 +203,35 @@ namespace NewSafetyHelp.JSONParsing
                 if (jsonObject.Keys.Contains("custom_caller") && jsonObject["custom_caller"]) // Sanity Check
                 {
                     // Actual logic
-                    const int mainCampaignCallAmount = 116;
 
                     bool inMainCampaign = false;
+
+                    string customCampaign = "NO_CUSTOM_CAMPAIGN";
+                    
+                    // Caller Information
                     string customCallerName = "NO_CUSTOM_CALLER_NAME";
                     string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
                     int orderInCampaign = -1;
 
                     bool increasesTier = false;
-                    
-                    string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
 
                     string customCallerAudioPath = "";
-                    
-                    int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
                     
                     int customCallerConsequenceCallerID = -1; // If this call is due to a consequence caller. You can provide it here.
                     
                     Sprite customCallerImage = null;
                     
+                    string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
+                    int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
+                    
+                    
                     if (jsonObject.Keys.Contains("include_campaign"))
                     {
                         inMainCampaign = jsonObject["custom_caller"];
+                    }
+                    else if (jsonObject.Keys.Contains("custom_campaign_attached"))
+                    {
+                        customCampaign = jsonObject["custom_campaign_attached"];
                     }
 
                     if (jsonObject.Keys.Contains("custom_caller_name"))
@@ -313,7 +367,8 @@ namespace NewSafetyHelp.JSONParsing
                     }
                     else
                     {
-                        customCallerCampaign.Add("FakeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", _customCaller);
+                        // Add to correct campaign.
+                        CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaign).customCallersInCampaign.Add(_customCaller);
                     }
                     
                     #if DEBUG

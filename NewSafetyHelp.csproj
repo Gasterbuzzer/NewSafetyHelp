@@ -101,6 +101,7 @@
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
     <Compile Include="src\CallerPatches\CustomCallerExtraInfo.cs" />
+    <Compile Include="src\CustomCampaign\CustomCampaignExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
     <Compile Include="src\EntryManager\EntryExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />

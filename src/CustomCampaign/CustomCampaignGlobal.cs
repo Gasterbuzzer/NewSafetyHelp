@@ -4,10 +4,10 @@ namespace NewSafetyHelp.CustomCampaign
 {
     public static class CustomCampaignGlobal
     {
-        public static List<string> customCampaignsAvailable = new List<string>();
+        public static List<CustomCampaignExtraInfo> customCampaignsAvailable = new List<CustomCampaignExtraInfo>();
         
         public static bool inCustomCampaign = false;
 
-        public static string currentCustomCampaign = "";
+        public static string currentCustomCampaignName = "";
     }
 }
