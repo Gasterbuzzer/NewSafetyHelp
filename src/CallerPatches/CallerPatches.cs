@@ -337,7 +337,7 @@ namespace NewSafetyHelp.CallerPatches
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
-                            ParseJSONFiles.entriesExtraInfo.Find(item => item == entries[entrySelected]).referenceProfileNameInternal = profile.name;
+                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected])).referenceProfileNameInternal = profile.name;
                     }
                 }
 
@@ -499,8 +499,17 @@ namespace NewSafetyHelp.CallerPatches
                     MelonLogger.Error("ERROR: CallerController.lastDayNum is null!");
                     return true;
                 }
+
+                if (!CustomCampaignGlobal.inCustomCampaign)
+                {
+                    _lastDayNum.SetValue(__instance, __instance.mainGameLastDay);
+                }
+                else
+                {
+                    
+                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.getCustomCampaignExtraInfo().campaignDays);
+                }
                 
-                _lastDayNum.SetValue(__instance, __instance.mainGameLastDay);
                 
                 FieldInfo _callerAudioSource = callerController.GetField("callerAudioSource", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
@@ -642,7 +651,7 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(scannedCampaign => scannedCampaign.campaignName == CustomCampaignGlobal.currentCustomCampaignName);
+                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
                     
                     // Clear callers array with amount of campaign callers.
                     __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
@@ -753,10 +762,6 @@ namespace NewSafetyHelp.CallerPatches
                     return true;
                 }
                 
-                CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(scannedCampaign => scannedCampaign.campaignName == CustomCampaignGlobal.currentCustomCampaignName);
-
-                CustomCallerExtraInfo customCallerFound = currentCustomCampaign.customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == __instance.currentCallerID);
-                
                 if (!CustomCampaignGlobal.inCustomCampaign) // In main Campaign.
                 {
                     bool mainCampaignResult = false;
@@ -774,13 +779,15 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
+                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCampaignCustomCallerByOrderID(__instance.currentCallerID);
+                    
                     // If the last caller of the day, this will result in true.
                     __result = customCallerFound.lastDayCaller;
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Last caller of day: {__result} for caller {customCallerFound.callerName}.");
+                    #endif
                 }
-                
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Last caller of day: {__result} for caller {customCallerFound.callerName}.");
-                #endif
                 
                 return false; // Skip the original function
             }

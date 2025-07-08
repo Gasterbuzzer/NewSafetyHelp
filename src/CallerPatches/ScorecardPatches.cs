@@ -37,10 +37,6 @@ namespace NewSafetyHelp.CallerPatches
                 
                 UnityEngine.Object.Instantiate<GameObject>(__instance.dayListing, __instance.contentHolder);
                 
-                CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(scannedCampaign => scannedCampaign.campaignName == CustomCampaignGlobal.currentCustomCampaignName);
-
-                
-                
                 int dayAmount = 1;
                 
                 if (!CustomCampaignGlobal.inCustomCampaign)
@@ -60,13 +56,13 @@ namespace NewSafetyHelp.CallerPatches
                         }
                     }
                 }
-                else
+                else // Custom Campaign
                 {
                     int currentCallerIndex = 0;
                     
                     foreach (Caller caller in GlobalVariables.callerControllerScript.callers)
                     {
-                        CustomCallerExtraInfo customCallerFound = currentCustomCampaign.customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == currentCallerIndex);
+                        CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCampaignCustomCallerByOrderID(currentCallerIndex);
                         
                         #if DEBUG
                             MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}.");

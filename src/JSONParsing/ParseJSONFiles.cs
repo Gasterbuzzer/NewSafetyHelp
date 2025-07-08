@@ -148,9 +148,11 @@ namespace NewSafetyHelp.JSONParsing
             {
                     string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
                     
-                    int customCampaignDays = 5;
+                    int customCampaignDays = 7;
                     
                     Sprite customCampaignSprite = null;
+
+                    List<string> customCampaignDaysNames = new List<string>();
 
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
@@ -160,6 +162,16 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("custom_campaign_days"))
                     {
                         customCampaignDays = jsonObject["custom_campaign_days"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_days_names"))
+                    {
+                        ProxyArray _customCampaignDays = (ProxyArray) jsonObject["custom_campaign_days_names"];
+
+                        foreach (Variant arcadeCustomCall in _customCampaignDays)
+                        {
+                            customCampaignDaysNames.Add(arcadeCustomCall);
+                        }
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_icon_image_name"))
@@ -185,8 +197,8 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         campaignName = customCampaignName,
                         campaignDays = customCampaignDays,
-                        campaignIcon = customCampaignSprite
-                        
+                        campaignIcon = customCampaignSprite,
+                        campaignDayStrings = customCampaignDaysNames
                     };
                     
                     // Check if any callers have to be added to me.
@@ -214,9 +226,10 @@ namespace NewSafetyHelp.JSONParsing
                     // Add to list
                     CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
                     
+                    
+                    // WIP: Will later be fdo
                     #if DEBUG
-                        CustomCampaignGlobal.currentCustomCampaignName = customCampaignName;
-                        CustomCampaignGlobal.inCustomCampaign = true;
+                        CustomCampaignGlobal.activateCustomCampaign(customCampaignName);
                     #endif
             }
         }

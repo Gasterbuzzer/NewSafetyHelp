@@ -106,7 +106,9 @@
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
+    <Compile Include="src\CallerPatches\CloseButtonPatches.cs" />
     <Compile Include="src\CallerPatches\CustomCallerExtraInfo.cs" />
+    <Compile Include="src\CallerPatches\MainCanvasPatches.cs" />
     <Compile Include="src\CallerPatches\ScorecardPatches.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
