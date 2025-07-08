@@ -16,6 +16,8 @@
         public int consequenceCallerID = -1; // If this caller is a consequence caller, here would be the ID of that original caller.
 
         public bool callerIncreasesTier = false;
+
+        public bool lastDayCaller = false; // If this caller will end the day.
         
         // Monster Profile
         public string monsterNameAttached = "NO_MONSTER_NAME"; // Monster / Entry name to be attached for. (Used when the caller asks for help and to check if that name is valid).

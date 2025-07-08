@@ -29,6 +29,9 @@ namespace NewSafetyHelp.JSONParsing
         // Map for custom callers to replaced in the main game. (ID of the call to replace, Caller for that ID)
         public static Dictionary<int, CustomCallerExtraInfo> customCallerMainGame = new Dictionary<int, CustomCallerExtraInfo>();
         
+        // List of custom caller yet to be added to custom campaign. Happens when the custom caller file was found before.
+        public static List<CustomCallerExtraInfo> missingCustomCallerCallersCustomCampaign = new List<CustomCallerExtraInfo>();
+        
         // Campaign Information
         const int mainCampaignCallAmount = 116;
         
@@ -185,9 +188,36 @@ namespace NewSafetyHelp.JSONParsing
                         campaignIcon = customCampaignSprite
                         
                     };
+                    
+                    // Check if any callers have to be added to me.
+                    if (missingCustomCallerCallersCustomCampaign.Count > 0)
+                    {
+                        
+                        // Create a copy of the list to iterate over
+                        List<CustomCallerExtraInfo> tempList = new List<CustomCallerExtraInfo>(missingCustomCallerCallersCustomCampaign);
+                        
+                        foreach (CustomCallerExtraInfo customCallerCC in tempList)
+                        {
+                            if (customCallerCC.belongsToCustomCampaign == customCampaignName)
+                            {
+                                
+                                #if DEBUG
+                                MelonLogger.Msg($"DEBUG: Adding missing custom caller to custom campaign {customCampaignName}.");
+                                #endif
+                                
+                                _customCampaign.customCallersInCampaign.Add(customCallerCC);
+                                missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
+                            }
+                        }
+                    }
 
                     // Add to list
                     CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
+                    
+                    #if DEBUG
+                        CustomCampaignGlobal.currentCustomCampaignName = customCampaignName;
+                        CustomCampaignGlobal.inCustomCampaign = true;
+                    #endif
             }
         }
 
@@ -225,9 +255,9 @@ namespace NewSafetyHelp.JSONParsing
                     int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
                     
                     
-                    if (jsonObject.Keys.Contains("include_campaign"))
+                    if (jsonObject.Keys.Contains("include_in_main_campaign"))
                     {
-                        inMainCampaign = jsonObject["custom_caller"];
+                        inMainCampaign = jsonObject["include_in_main_campaign"];
                     }
                     else if (jsonObject.Keys.Contains("custom_campaign_attached"))
                     {
@@ -309,7 +339,8 @@ namespace NewSafetyHelp.JSONParsing
                             inCustomCampaign = !inMainCampaign,
                             callerIncreasesTier = increasesTier,
                             callerClipPath = customCallerAudioPath,
-                            consequenceCallerID = customCallerConsequenceCallerID
+                            consequenceCallerID = customCallerConsequenceCallerID,
+                            belongsToCustomCampaign = customCampaign
                         };
 
                     if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
@@ -368,7 +399,20 @@ namespace NewSafetyHelp.JSONParsing
                     else
                     {
                         // Add to correct campaign.
-                        CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaign).customCallersInCampaign.Add(_customCaller);
+                        CustomCampaignExtraInfo foundCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaign);
+
+                        if (foundCustomCampaign != null)
+                        {
+                            foundCustomCampaign.customCallersInCampaign.Add(_customCaller);
+                        }
+                        else
+                        {
+                            #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
+                            #endif
+                            
+                            missingCustomCallerCallersCustomCampaign.Add(_customCaller);
+                        }
                     }
                     
                     #if DEBUG

@@ -647,7 +647,10 @@ namespace NewSafetyHelp.CallerPatches
                     // Clear callers array with amount of campaign callers.
                     __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
 
-                    int customCallerIndex = 0;
+                    if (currentCustomCampaign.customCallersInCampaign.Count <= 0)
+                    {
+                        MelonLogger.Warning("WARNING: Custom Campaign has no custom caller assigned! Unexpected behavior will occur when in campaign.");
+                    }
                     
                     // Add all customCallers in Callers list.
                     foreach (CustomCallerExtraInfo customCallerCC in currentCustomCampaign.customCallersInCampaign)
@@ -660,7 +663,7 @@ namespace NewSafetyHelp.CallerPatches
                         // Clip
                         if (customCallerCC.callerClip == null)
                         {
-                            MelonLogger.Warning("WARNING: Custom Caller does not have any valid audio clip. Using fallback for now. If the audio is still loading, ignore this.");
+                            MelonLogger.Msg($"INFO \\ WARNING: Custom Caller '{customCallerCC.callerName}' does not have any valid audio clip. Using fallback for now. Note: If the audio is still loading, ignore this.");
                             
                             newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
                         }
@@ -681,12 +684,40 @@ namespace NewSafetyHelp.CallerPatches
                             newProfile.callerPortrait = customCallerCC.callerImage;
                         }
                         
-                        __instance.callers[customCallerIndex] = new Caller
+                        // Adding Entry to Caller if valid.
+                        if (customCallerCC.monsterNameAttached != "NO_MONSTER_NAME")
+                        {
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, customCallerCC.monsterNameAttached);
+
+                            if (foundMonster == null)
+                            {
+                                MelonLogger.Warning($"WARNING: Provided Monster Name for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
+                                newProfile.callerMonster = null; 
+                            }
+                            else
+                            {
+                                newProfile.callerMonster = foundMonster;
+                            }
+                        }
+                        else if(customCallerCC.monsterIDAttached >= 0) // Check for ID monster.
+                        {
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, monsterID: customCallerCC.monsterIDAttached);
+
+                            if (foundMonster == null)
+                            {
+                                MelonLogger.Warning($"WARNING: Provided monster ID for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
+                                newProfile.callerMonster = null; 
+                            }
+                            else
+                            {
+                                newProfile.callerMonster = foundMonster;
+                            }
+                        }
+                        
+                        __instance.callers[customCallerCC.orderInCampaign] = new Caller
                         {
                             callerProfile = newProfile
                         };
-
-                        customCallerIndex++;
                     }
                 }
 
