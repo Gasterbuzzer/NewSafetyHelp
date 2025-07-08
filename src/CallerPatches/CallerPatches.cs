@@ -366,7 +366,7 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref MonsterProfile monsterID)
             {
 
-                // Get triggerGameOver
+                // Get DynamicCaller
                 Type callerController = typeof(CallerController);
                 FieldInfo dynamicCaller = callerController.GetField("dynamicCaller", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 

@@ -214,7 +214,7 @@ namespace NewSafetyHelp.JSONParsing
                             {
                                 
                                 #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Adding missing custom caller to custom campaign {customCampaignName}.");
+                                    MelonLogger.Msg($"DEBUG: Adding missing custom caller to custom campaign {customCampaignName}.");
                                 #endif
                                 
                                 _customCampaign.customCallersInCampaign.Add(customCallerCC);
