@@ -244,7 +244,8 @@ namespace NewSafetyHelp.JSONParsing
                     int orderInCampaign = -1;
 
                     bool increasesTier = false;
-
+                    bool isLastCallerOfDay = false;
+                    
                     string customCallerAudioPath = "";
                     
                     int customCallerConsequenceCallerID = -1; // If this call is due to a consequence caller. You can provide it here.
@@ -311,6 +312,11 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         increasesTier =  (bool) jsonObject["custom_caller_increases_tier"];
                     }
+                    
+                    if (jsonObject.Keys.Contains("custom_caller_last_caller_day"))
+                    {
+                        isLastCallerOfDay =  (bool) jsonObject["custom_caller_last_caller_day"];
+                    }
 
                     if (jsonObject.Keys.Contains("custom_caller_audio_clip_name"))
                     {
@@ -340,7 +346,8 @@ namespace NewSafetyHelp.JSONParsing
                             callerIncreasesTier = increasesTier,
                             callerClipPath = customCallerAudioPath,
                             consequenceCallerID = customCallerConsequenceCallerID,
-                            belongsToCustomCampaign = customCampaign
+                            belongsToCustomCampaign = customCampaign,
+                            lastDayCaller = isLastCallerOfDay
                         };
 
                     if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")

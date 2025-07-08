@@ -730,5 +730,60 @@ namespace NewSafetyHelp.CallerPatches
                 return false; // Skip the original function
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "IsLastCallOfDay", new Type[] { })]
+        public static class LastCallOfDayPatch
+        {
+
+            /// <summary>
+            /// Changes the function to also return if the last caller of the day to check for custom callers.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Result of original function. </param>
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref bool __result)
+            {
+
+                Type callerController = typeof(CallerController);
+                FieldInfo lastDayNumField = callerController.GetField("lastDayNum", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (lastDayNumField == null)
+                {
+                    MelonLogger.Error($"CallerController: lastDayNumField is null! Unable of checking if caller is last day.");
+                    return true;
+                }
+                
+                CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(scannedCampaign => scannedCampaign.campaignName == CustomCampaignGlobal.currentCustomCampaignName);
+
+                CustomCallerExtraInfo customCallerFound = currentCustomCampaign.customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == __instance.currentCallerID);
+                
+                if (!CustomCampaignGlobal.inCustomCampaign) // In main Campaign.
+                {
+                    bool mainCampaignResult = false;
+
+                    if (GlobalVariables.currentDay < (int) lastDayNumField.GetValue(__instance))
+                    {
+                        mainCampaignResult = __instance.callers[__instance.currentCallerID + 1].callerProfile.increaseTier;
+                    }
+                    else
+                    {
+                        mainCampaignResult = __instance.callers[__instance.currentCallerID + 1] == __instance.callers[__instance.callers.Length - 1];
+                    }
+                    
+                    __result = mainCampaignResult;
+                }
+                else // Custom Campaign
+                {
+                    // If the last caller of the day, this will result in true.
+                    __result = customCallerFound.lastDayCaller;
+                }
+                
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Last caller of day: {__result} for caller {customCallerFound.callerName}.");
+                #endif
+                
+                return false; // Skip the original function
+            }
+        }
     }
 }
