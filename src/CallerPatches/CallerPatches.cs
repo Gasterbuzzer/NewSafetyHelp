@@ -792,5 +792,45 @@ namespace NewSafetyHelp.CallerPatches
                 return false; // Skip the original function
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "IncreaseTier", new Type[] { })]
+        public static class IncreaseTierPatch
+        {
+
+            /// <summary>
+            /// Changes the function increase tier patch to work with better with custom campaigns.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
+            /// <param name="__instance"> Caller of function. </param>
+            private static bool Prefix(MethodBase __originalMethod, EntryUnlockController __instance)
+            {
+                
+                ++__instance.currentTier;
+                
+                // Get Private Methods (Original: this.OnIncreasedTierEvent(); )
+                Type entryUnlockControllerType = typeof(EntryUnlockController);
+                
+                FieldInfo onIncreasedTierEvent = entryUnlockControllerType.GetField("OnIncreasedTierEvent", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (onIncreasedTierEvent != null)
+                {
+                    Action eventDelegate = (Action) onIncreasedTierEvent.GetValue(__instance);
+                    eventDelegate?.Invoke();
+                }
+                else
+                {
+                    MelonLogger.Error("ERROR: Unable of calling 'OnIncreasedTierEvent' was null.");
+                }
+
+                if (GlobalVariables.currentDay >= 7 && !CustomCampaignGlobal.inCustomCampaign) // Patched to work better with custom campaigns.
+                {
+                    return false;
+                }
+                   
+                GlobalVariables.mainCanvasScript.CreateError("PERMISSIONS HAVE BEEN UPDATED. NEW ENTRIES NOW AVAILABLE.");
+                
+                return false; // Skip the original function
+            }
+        }
     }
 }
