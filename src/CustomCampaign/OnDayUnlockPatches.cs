@@ -57,15 +57,15 @@ namespace NewSafetyHelp.CustomCampaign
                                 return true;
                             }
                             
+                            #if DEBUG
+                                MelonLogger.Msg($"DEBUG: Saved day score of day {__instance.unlockDay}. The threshold is: {__instance.scoreThresholdToUnlock}.");
+                            #endif
+                            
                             if (currentCampaign.savedDayScores[__instance.unlockDay] > 0.0f) // Has a set value other than the default.
                             {
                                 if (currentCampaign.savedDayScores[__instance.unlockDay] < (double) __instance.scoreThresholdToUnlock)
                                 {
                                     __instance.gameObject.SetActive(false);
-                                    
-                                    #if DEBUG
-                                        MelonLogger.Msg($"DEBUG: Saved day score {__instance.unlockDay} was not enough for threshold: {__instance.scoreThresholdToUnlock}.");
-                                    #endif
                                 }
                                 else
                                 {
