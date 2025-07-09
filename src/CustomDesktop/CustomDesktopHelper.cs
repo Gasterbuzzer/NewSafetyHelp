@@ -204,6 +204,9 @@ namespace NewSafetyHelp.CustomDesktop
             // Activate the Custom Campaign
             CustomCampaignGlobal.activateCustomCampaign(customCampaignName);
             
+            // Load Custom Campaign values
+            CustomCampaignGlobal.loadFromFileCustomCampaignInfo();
+            
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
             SceneManager.LoadScene("MainMenuScene");
         }
@@ -211,6 +214,9 @@ namespace NewSafetyHelp.CustomDesktop
         public static void backToMainGame()
         {
             MelonLogger.Msg(ConsoleColor.Green, $"INFO: Going back to the main game.");
+            
+            // Save values
+            CustomCampaignGlobal.saveCustomCampaignInfo();
             
             // Reset back.
             CustomCampaignGlobal.deactivateCustomCampaign();

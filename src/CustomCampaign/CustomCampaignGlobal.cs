@@ -78,38 +78,84 @@ namespace NewSafetyHelp.CustomCampaign
             }
             
             // Create Campaign Days Save Value
-            MelonPreferences_Entry<int> currentSavedDays = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedDays", 1);
-            currentSavedDays.Value = currentCampaign.currentDay;
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
+            {
+                MelonPreferences_Entry<int> currentSavedDays = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedDays", 1);
+                currentSavedDays.Value = currentCampaign.currentDay;
+            }
+            else
+            {
+                currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value = currentCampaign.currentDay;
+            }
+            
             
             // Current Caller Index
-            MelonPreferences_Entry<int> savedCurrentCaller = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCurrentCaller", 0);
-            savedCurrentCaller.Value = currentCampaign.savedCurrentCaller;
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
+            {
+                MelonPreferences_Entry<int> savedCurrentCaller = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCurrentCaller", 0);
+                savedCurrentCaller.Value = currentCampaign.savedCurrentCaller;
+            }
+            else
+            {
+                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value = currentCampaign.savedCurrentCaller;
+            }
             
             // Current permission tier
-            MelonPreferences_Entry<int> currentSavedTier = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedEntryTier", 1);
-            currentSavedTier.Value = currentCampaign.currentPermissionTier;
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
+            {
+                MelonPreferences_Entry<int> currentSavedTier = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedEntryTier", 1);
+                currentSavedTier.Value = currentCampaign.currentPermissionTier;
+            }
+            else
+            {
+                currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value = currentCampaign.currentPermissionTier;
+            }
             
             // Correct answers.
-            MelonPreferences_Entry<int> savedCallerArrayLength = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCallerArrayLength", 0);
-            savedCallerArrayLength.Value = currentCampaign.savedCallerArrayLength;
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
+            {
+                MelonPreferences_Entry<int> savedCallerArrayLength = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCallerArrayLength", 0);
+                savedCallerArrayLength.Value = currentCampaign.savedCallerArrayLength;
+            }
+            else
+            {
+                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value = currentCampaign.savedCallerArrayLength;
+            }
             
             // For each correct answer create the correct entry.
             for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
             {
-                MelonPreferences_Entry<bool> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry<bool>($"savedCallerCorrectAnswer{i}", false);
-
-                if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be but who knows.
+                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
                 {
-                    savedCallerCorrectAnswers.Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value where have at that index.
+                    MelonPreferences_Entry<bool> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry<bool>($"savedCallerCorrectAnswer{i}", false);
+
+                    if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be but who knows.
+                    {
+                        savedCallerCorrectAnswers.Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value where have at that index.
+                    }
+                    else
+                    {
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                    }
                 }
                 else
                 {
-                    MelonLogger.Warning("WARNING: Provided index is not available.");
+                    if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be but who knows.
+                    {
+                        currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value where have at that index.
+                    }
+                    else
+                    {
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                    }
                 }
+                
             }
             
             // We finished storing all important values. Now we save.
             MelonPreferences.Save();
+            
+            MelonLogger.Msg($"INFO: Finished saving custom campaign {currentCampaign.campaignName}.");
         }
         
         /// <summary>
@@ -251,6 +297,7 @@ namespace NewSafetyHelp.CustomCampaign
             currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value = 0;
             currentCampaign.savedCallerArrayLength = 0;
             
+            MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.campaignName}.");
         }
     }
 }
