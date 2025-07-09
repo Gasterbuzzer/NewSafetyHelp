@@ -25,7 +25,7 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Msg("Failed to find MainMenuCanvas. Possibly called outside of MainMenuCanvas?");
+                MelonLogger.Error("ERROR: Failed to find MainMenuCanvas. Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -44,7 +44,7 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Msg("Failed to find Desktop from Main Menu. Possibly called outside of MainMenuCanvas?");
+                MelonLogger.Error("ERROR: Failed to find Desktop from Main Menu. Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -63,7 +63,26 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Msg("Failed to find left sided Programs from Desktop. Possibly called outside of MainMenuCanvas?");
+                MelonLogger.Error("ERROR: Failed to find left sided Programs from Desktop. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the GameObject for the Program icons on the right side on the Desktop.
+        /// </summary>
+        /// <returns> GameObject for the programs on the right. </returns>
+        public static GameObject getRightPrograms()
+        {
+            GameObject foundRightSidePrograms = getDesktop().transform.Find("RightHandPrograms").gameObject;
+
+            if (foundRightSidePrograms != null)
+            {
+                return foundRightSidePrograms;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find right sided Programs from Desktop. Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -71,7 +90,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <summary>
         /// Gets the GameObject for the Winter DLC program. Used for creating copies to modify.
         /// </summary>
-        /// <returns> GameObject for the programs on the left. </returns>
+        /// <returns> GameObject for the winter dlc program on the left. </returns>
         public static GameObject getWinterDLCProgram()
         {
             GameObject winterDLCProgram = getLeftPrograms().transform.Find("DLC-Executable").gameObject;
@@ -82,7 +101,45 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Msg("Failed to find the winter DLC program. Possibly called outside of MainMenuCanvas?");
+                MelonLogger.Error("ERROR: Failed to find the winter DLC program. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the GameObject for the main game program. Used for creating copies to modify.
+        /// </summary>
+        /// <returns> GameObject for the main game program on the left. </returns>
+        public static GameObject getMainGameProgram()
+        {
+            GameObject mainGameProgram = getLeftPrograms().transform.Find("HSH-Executable").gameObject;
+
+            if (mainGameProgram != null)
+            {
+                return mainGameProgram;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find the main game program. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the GameObject for the NSE Discord program. Used for creating copies to modify.
+        /// </summary>
+        /// <returns> GameObject for the NSE Discord program on the right. </returns>
+        public static GameObject getNSEDiscordProgram()
+        {
+            GameObject discordProgram = getRightPrograms().transform.Find("Discord-Executable").gameObject;
+
+            if (discordProgram != null)
+            {
+                return discordProgram;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find the discord program. Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -116,6 +173,28 @@ namespace NewSafetyHelp.CustomDesktop
             customProgramButton.onClick.AddListener(() => changeToCustomCampaignSettings(customCampaignName));
 
         }
+        
+        public static void createBackToMainGameButton()
+        {
+            GameObject backToMainMenuGameButton = (GameObject) Object.Instantiate(getNSEDiscordProgram(), getRightPrograms().transform);
+
+            Object.Destroy(backToMainMenuGameButton.GetComponent<LinkExecutable>()); // Remove old executable Behavior.
+
+            // Change Program Name
+            backToMainMenuGameButton.transform.Find("TextBackground").Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = "Back to Main Game.";
+            
+            // Change Program Icon 
+            backToMainMenuGameButton.GetComponent<Image>().sprite = getMainGameProgram().GetComponent<Image>().sprite;
+            // Reset Color
+            backToMainMenuGameButton.GetComponent<Image>().color = Color.white;
+            
+            // Button Changes.
+            Button customProgramButton = backToMainMenuGameButton.GetComponent<Button>();
+            
+            customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
+            
+            customProgramButton.onClick.AddListener(backToMainGame);
+        }
 
 
         public static void changeToCustomCampaignSettings(string customCampaignName)
@@ -124,6 +203,17 @@ namespace NewSafetyHelp.CustomDesktop
             
             // Activate the Custom Campaign
             CustomCampaignGlobal.activateCustomCampaign(customCampaignName);
+            
+            // Reload Scene (Mainly to hide the fact that it is actually seamless.)
+            SceneManager.LoadScene("MainMenuScene");
+        }
+
+        public static void backToMainGame()
+        {
+            MelonLogger.Msg(ConsoleColor.Green, $"INFO: Going back to the main game.");
+            
+            // Reset back.
+            CustomCampaignGlobal.deactivateCustomCampaign();
             
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
             SceneManager.LoadScene("MainMenuScene");

@@ -24,9 +24,16 @@ namespace NewSafetyHelp.CustomDesktop
                     MelonLogger.Msg($"DEBUG: Start of Main Menu Canvas Behavior.");
                 #endif
 
-                foreach (CustomCampaignExtraInfo customCampaign in CustomCampaignGlobal.customCampaignsAvailable)
+                if (!CustomCampaignGlobal.inCustomCampaign)
                 {
-                    CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
+                    foreach (CustomCampaignExtraInfo customCampaign in CustomCampaignGlobal.customCampaignsAvailable)
+                    {
+                        CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
+                    }
+                }
+                else
+                {
+                    CustomDesktopHelper.createBackToMainGameButton();
                 }
             }
         }
