@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
 using UnityEngine;
@@ -49,6 +50,73 @@ namespace NewSafetyHelp.CustomCampaign
         public static CustomCallerExtraInfo getCustomCampaignCustomCallerByOrderID(int orderID)
         {
             return getCustomCampaignExtraInfo().customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == orderID);
+        }
+
+        /// <summary>
+        /// Calls this if your values aren't loaded in yet.
+        /// </summary>
+        public static void initializeCustomCampaignOnce()
+        {
+            CustomCampaignExtraInfo currentCampaign = getCustomCampaignExtraInfo();
+
+            if (currentCampaign == null)
+            {
+                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of saving.");
+                return;
+            }
+            
+            if (currentCampaign.campaignSaveCategory == null)
+            {
+                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName + currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+            }
+
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
+            {
+                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedDays", 1);
+            }
+
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
+            {
+                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCurrentCaller", 0);
+            }
+
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
+            {
+                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedEntryTier", 1);
+            }
+            
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
+            {
+                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCallerArrayLength", 0);
+            }
+
+            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
+            {
+                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
+                {
+                    currentCampaign.campaignSaveCategory.CreateEntry<bool>($"savedCallerCorrectAnswer{i}", false);
+                }
+            }
+
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
+            {
+                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinished", 0);
+            }
+
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
+            {
+                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinishedDisplay", 0);
+            }
+
+            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            {
+                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
+                {
+                    currentCampaign.campaignSaveCategory.CreateEntry<float>($"SavedDayScore{i}", 0.0f);
+                }
+            }
+            
+            MelonPreferences.Save();
         }
 
         /// <summary>
@@ -136,7 +204,7 @@ namespace NewSafetyHelp.CustomCampaign
                     }
                     else
                     {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (savedCallerCorrectAnswer doesn't exist)");
                     }
                 }
                 else
@@ -147,7 +215,7 @@ namespace NewSafetyHelp.CustomCampaign
                     }
                     else
                     {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (savedCallerCorrectAnswer exists)");
                     }
                 }
                 
@@ -187,7 +255,7 @@ namespace NewSafetyHelp.CustomCampaign
                     }
                     else
                     {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (SavedDayScore doesn't exist)");
                     }
                 }
                 else
@@ -198,7 +266,7 @@ namespace NewSafetyHelp.CustomCampaign
                     }
                     else
                     {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (SavedDayScore exists)");
                     }
                 }
                 
@@ -240,7 +308,7 @@ namespace NewSafetyHelp.CustomCampaign
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
             {
-                saveCustomCampaignInfo();
+                initializeCustomCampaignOnce();
             }
             
             // Load all values first into the currentCampaign Object.

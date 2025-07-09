@@ -57,16 +57,20 @@ namespace NewSafetyHelp.CustomCampaign
                                 return true;
                             }
                             
-                            if (currentCampaign.savedDayScores[(__instance.unlockDay)] > 0.0f) // Has a set value other than the default.
+                            if (currentCampaign.savedDayScores[__instance.unlockDay] > 0.0f) // Has a set value other than the default.
                             {
-                                if (currentCampaign.savedDayScores[(__instance.unlockDay)] < (double) __instance.scoreThresholdToUnlock)
+                                if (currentCampaign.savedDayScores[__instance.unlockDay] < (double) __instance.scoreThresholdToUnlock)
                                 {
                                     __instance.gameObject.SetActive(false);
+                                    
+                                    #if DEBUG
+                                        MelonLogger.Msg($"DEBUG: Saved day score {__instance.unlockDay} was not enough for threshold: {__instance.scoreThresholdToUnlock}.");
+                                    #endif
                                 }
                                 else
                                 {
                                     MelonLogger.Msg($"UNITY LOG: Email unlocked: {__instance.gameObject.name}| Day Checked: {(__instance.unlockDay).ToString()}| Day Score: " +
-                                                    $"{currentCampaign.savedDayScores[(__instance.unlockDay)]}.");
+                                                    $"{currentCampaign.savedDayScores[__instance.unlockDay]}.");
                                 }
                             }
                         }
