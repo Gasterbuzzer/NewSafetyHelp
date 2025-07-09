@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MelonLoader;
 using NewSafetyHelp.CallerPatches;
 using UnityEngine;
 
@@ -18,5 +19,18 @@ namespace NewSafetyHelp.CustomCampaign
         public List<CustomCallerExtraInfo> customCallersInCampaign = new List<CustomCallerExtraInfo>();
         
         public List<string> campaignDayStrings = new List<string>();
+        
+        // Saving
+        public MelonPreferences_Category campaignSaveCategory = null;
+
+        public int currentDay = 1;
+
+        public int savedCurrentCaller = 0;
+
+        public int currentPermissionTier = 1;
+
+        public int savedCallerArrayLength = 0;
+
+        public List<bool> savedCallersCorrectAnswer = new List<bool>();
     }
 }
