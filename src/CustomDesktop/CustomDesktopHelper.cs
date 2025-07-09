@@ -221,6 +221,9 @@ namespace NewSafetyHelp.CustomDesktop
             // Reset back.
             CustomCampaignGlobal.deactivateCustomCampaign();
             
+            // Load old values.
+            GlobalVariables.saveManagerScript.Load();
+            
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
             SceneManager.LoadScene("MainMenuScene");
         }

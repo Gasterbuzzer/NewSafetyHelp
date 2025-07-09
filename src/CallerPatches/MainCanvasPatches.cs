@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using Steamworks;
 using UnityEngine;
 
 namespace NewSafetyHelp.CallerPatches
@@ -254,6 +255,246 @@ namespace NewSafetyHelp.CallerPatches
                 
                 GlobalVariables.callerControllerScript.StartCallRoutine();
                 GlobalVariables.introIsPlaying = false;
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndDayRoutine", new Type[] { })]
+        public static class EndDayRoutinePatch
+        {
+
+            /// <summary>
+            /// Patches the EndDayRoutine coroutine to work better with custom campaigns.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, IEnumerator __result)
+            {
+
+                __result = endDayRoutineChanged(__instance);
+                
+                return false; // Skip function with false.
+            }
+            
+            public static IEnumerator endDayRoutineChanged(MainCanvasBehavior __instance)
+            {
+                MainCanvasBehavior mainCanvasBehavior = __instance;
+                mainCanvasBehavior.clockedOut = false;
+                
+                yield return new WaitForSeconds(5f);
+                
+                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
+                GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
+                mainCanvasBehavior.softwareStartupPanel.SetActive(true);
+                mainCanvasBehavior.clockInPanel.SetActive(true);
+                mainCanvasBehavior.logoPanel.SetActive(false);
+                mainCanvasBehavior.clockOutElements.SetActive(true);
+                mainCanvasBehavior.clockOutButton.SetActive(true);
+                mainCanvasBehavior.clockInElements.SetActive(false);
+
+                while (!mainCanvasBehavior.clockedOut)
+                {
+                    yield return null;
+                }
+                    
+                yield return new WaitForSeconds(6f);
+
+                if (!GlobalVariables.isXmasDLC)
+                {
+                    
+                    MethodInfo _unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod("UnlockDailySteamAchievement", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    if (_unlockDailySteamAchievement == null)
+                    {
+                        MelonLogger.Error("ERROR: Method 'UnlockDailySteamAchievement' was null. Catastrophic failure!");
+                        yield break;
+                    }
+
+                    _unlockDailySteamAchievement.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.UnlockDailySteamAchievement();;
+                }
+                    
+                GlobalVariables.fade.FadeIn(2f);
+                mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource));
+                
+                yield return new WaitForSeconds(2f);
+                
+                PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(), GlobalVariables.callerControllerScript.GetScore());
+                
+                FieldInfo _progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (_progressDay == null)
+                {
+                    MelonLogger.Error("ERROR: Field 'progressDay' was null. Catastrophic failure!");
+                    yield break;
+                }
+                
+                if (!(bool) _progressDay.GetValue(mainCanvasBehavior)) // !mainCanvasBehavior.progressDay
+                {
+                    ++GlobalVariables.currentDay;
+                    _progressDay.SetValue(mainCanvasBehavior, true); // mainCanvasBehavior.progressDay = true;
+                }
+
+                if (!CustomCampaignGlobal.inCustomCampaign)
+                {
+                    GlobalVariables.saveManagerScript.savedDay = GlobalVariables.currentDay;
+                    GlobalVariables.saveManagerScript.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
+                    GlobalVariables.saveManagerScript.savedEntryTier = GlobalVariables.entryUnlockScript.currentTier;
+                    
+                    MethodInfo _saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    if (_saveCallerAnswers == null)
+                    {
+                        MelonLogger.Error("ERROR: Method 'SaveCallerAnswers' was null. Catastrophic failure!");
+                        yield break;
+                    }
+                    
+                    _saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
+                }
+                else // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    
+                    customCampaign.currentDay = GlobalVariables.currentDay;
+                    customCampaign.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
+                    customCampaign.currentPermissionTier  = GlobalVariables.entryUnlockScript.currentTier;
+                    
+                    List<bool> flagArray = new List<bool>();
+
+                    for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
+                    {
+                        flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
+                    }
+                    
+                    customCampaign.savedCallersCorrectAnswer = flagArray;
+                    customCampaign.savedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
+                }
+                
+                GlobalVariables.saveManagerScript.SaveGameProgress();
+                
+                yield return null;
+                
+                mainCanvasBehavior.ExitToMenu();
+                mainCanvasBehavior.StartCoroutine(mainCanvasBehavior.StartSoftwareRoutine());
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine", new Type[] { })]
+        public static class EndingCutsceneRoutinePatch
+        {
+
+            /// <summary>
+            /// Patches the EndingCutsceneRoutine coroutine to work better with custom campaigns.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, IEnumerator __result)
+            {
+
+                __result = endingCutsceneRoutineChanged(__instance);
+                
+                return false; // Skip function with false.
+            }
+            
+            public static IEnumerator endingCutsceneRoutineChanged(MainCanvasBehavior __instance)
+            {
+                MainCanvasBehavior mainCanvasBehavior = __instance;
+                
+                if (!GlobalVariables.isXmasDLC)
+                {
+
+                    if (Camera.main == null)
+                    {
+                        MelonLogger.Error("ERROR: Camera was null. Catastrophic failure!");
+                        yield break;
+                    }
+                    
+                    Camera.main.gameObject.GetComponent<Animator>().SetBool("shake", true);
+                    mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.screenShakeLoop, GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
+                    
+                    yield return new WaitForSeconds(6f);
+                    
+                    mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+                    GlobalVariables.musicControllerScript.StopTrialMusic();
+                }
+
+                if (!CustomCampaignGlobal.inCustomCampaign)
+                {
+                    GlobalVariables.saveManagerScript.savedGameFinished = 1;
+                    GlobalVariables.saveManagerScript.savedGameFinishedDisplay = 1;
+                
+                    MethodInfo _saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    if (_saveCallerAnswers == null)
+                    {
+                        MelonLogger.Error("ERROR: Method 'SaveCallerAnswers' was null. Catastrophic failure!");
+                        yield break;
+                    }
+                    
+                    _saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
+                }
+                else // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    
+                    customCampaign.savedGameFinished = 1;
+                    customCampaign.savedGameFinishedDisplay = 1;
+                    
+                    List<bool> flagArray = new List<bool>();
+
+                    for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
+                    {
+                        flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
+                    }
+                    
+                    customCampaign.savedCallersCorrectAnswer = flagArray;
+                    customCampaign.savedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
+                }
+                
+                // Works for both custom campaigns and main campaign.
+                GlobalVariables.saveManagerScript.SaveGameProgress();
+                GlobalVariables.saveManagerScript.SaveGameFinished();
+                
+                GlobalVariables.fade.FadeIn(3f);
+                
+                yield return new WaitForSeconds(4f);
+                
+                GlobalVariables.fade.FadeOut();
+                mainCanvasBehavior.cutsceneCanvas.SetActive(true);
+                
+                yield return new WaitForSeconds(0.5f);
+                
+                // Inject custom end clip here.
+                mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
+                if (GlobalVariables.isXmasDLC)
+                {
+                    mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.xmasEndClip;
+                }
+                mainCanvasBehavior.videoPlayer.Play();
+                
+                yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC)
+                {
+                    SteamUserStats.SetAchievement("GameFinished");
+                    
+                    MethodInfo _achievedHundredPercentAccuracyRating = typeof(MainCanvasBehavior).GetMethod("AchievedHundredPercentAccuracyRating", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    if (_achievedHundredPercentAccuracyRating == null)
+                    {
+                        MelonLogger.Error("ERROR: Method 'AchievedHundredPercentAccuracyRating' was null. Catastrophic failure!");
+                        yield break;
+                    }
+                    
+                    if ((bool) _achievedHundredPercentAccuracyRating.Invoke(mainCanvasBehavior, null)) // mainCanvasBehavior.AchievedHundredPercentAccuracyRating()
+                    {
+                        SteamUserStats.SetAchievement("PerfectGame");
+                        Debug.Log((object) "PerfectGame Achievement Unlocked.");
+                    }
+                    SteamUserStats.StoreStats();
+                }
+                
+                yield return new WaitForSeconds(2f);
+                
+                mainCanvasBehavior.ExitToStartMenu();
             }
         }
     }

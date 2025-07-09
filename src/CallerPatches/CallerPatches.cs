@@ -360,7 +360,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Patch the caller answer check to be the custom caller/entry.
             /// </summary>
-            /// <param name="__originalMethod"> Original Method Caller </param>
+            /// <param name="__originalMethod"> Original Method Caller. </param>
             /// <param name="__instance"> Function Caller Instance </param>
             /// <param name="monsterID"> Monster Profile that was selected </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref MonsterProfile monsterID)
@@ -477,7 +477,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Patch the start function to inject custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Original Method Caller </param>
+            /// <param name="__originalMethod"> Original Method Caller. </param>
             /// <param name="__instance"> Function Caller Instance </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
@@ -747,7 +747,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Changes the function to also return if the last caller of the day to check for custom callers.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
+            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of original function. </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref bool __result)
@@ -800,7 +800,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Changes the function increase tier patch to work with better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called </param>
+            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, EntryUnlockController __instance)
             {

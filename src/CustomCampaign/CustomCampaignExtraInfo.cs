@@ -32,5 +32,10 @@ namespace NewSafetyHelp.CustomCampaign
         public int savedCallerArrayLength = 0;
 
         public List<bool> savedCallersCorrectAnswer = new List<bool>();
+        
+        
+        // Special Saves
+        public int savedGameFinished = 0;
+        public int savedGameFinishedDisplay = 0;
     }
 }

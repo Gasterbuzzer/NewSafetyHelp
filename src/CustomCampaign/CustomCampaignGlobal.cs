@@ -152,6 +152,27 @@ namespace NewSafetyHelp.CustomCampaign
                 
             }
             
+            // Special Values
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
+            {
+                MelonPreferences_Entry<int> savedGameFinished = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinished", 0);
+                savedGameFinished.Value = currentCampaign.savedGameFinished;
+            }
+            else
+            {
+                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value = currentCampaign.savedGameFinished;
+            }
+            
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
+            {
+                MelonPreferences_Entry<int> savedGameFinishedDisplay = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinishedDisplay", 0);
+                savedGameFinishedDisplay.Value = currentCampaign.savedGameFinishedDisplay;
+            }
+            else
+            {
+                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = currentCampaign.savedGameFinishedDisplay;
+            }
+            
             // We finished storing all important values. Now we save.
             MelonPreferences.Save();
             
@@ -197,6 +218,10 @@ namespace NewSafetyHelp.CustomCampaign
             currentCampaign.savedCallerArrayLength = currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value;
             currentCampaign.savedCurrentCaller = currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value;
             
+            // Special Values
+            currentCampaign.savedGameFinished = currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value;
+            currentCampaign.savedGameFinishedDisplay = currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value;
+            
             // Add all correct answers.
             for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
             {
@@ -234,6 +259,9 @@ namespace NewSafetyHelp.CustomCampaign
 
             GlobalVariables.saveManagerScript.savedCallerCorrectAnswers = flagArray;
             
+            // Special Values
+            GlobalVariables.saveManagerScript.savedGameFinished = currentCampaign.savedGameFinished;
+            GlobalVariables.saveManagerScript.savedGameFinishedDisplay = currentCampaign.savedGameFinishedDisplay;
             
             // Finished loading.
             MelonLogger.Msg("INFO: Finished loading in custom campaign values.");
@@ -296,6 +324,13 @@ namespace NewSafetyHelp.CustomCampaign
             // We reset our caller array length
             currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value = 0;
             currentCampaign.savedCallerArrayLength = 0;
+            
+            // Special Values
+            currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
+            currentCampaign.savedGameFinished = 0;
+            
+            currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
+            currentCampaign.savedGameFinishedDisplay = 0;
             
             MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.campaignName}.");
         }
