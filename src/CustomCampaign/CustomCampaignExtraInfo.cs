@@ -10,8 +10,11 @@ namespace NewSafetyHelp.CustomCampaign
 
         public int campaignDays = 7;
         
+        // Desktop
         public Sprite campaignIcon = null;
+        public string campaignDesktopName = "NO_CAMPAIGN_DESKTOP_NAME";
         
+        // In Game
         public List<CustomCallerExtraInfo> customCallersInCampaign = new List<CustomCallerExtraInfo>();
         
         public List<string> campaignDayStrings = new List<string>();

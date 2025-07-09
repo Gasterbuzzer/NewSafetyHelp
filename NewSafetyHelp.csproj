@@ -116,6 +116,8 @@
     <Compile Include="src\CallerPatches\ScorecardPatches.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
+    <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
+    <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
     <Compile Include="src\EntryManager\EntryExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
     <Compile Include="src\EntryManager\ImageImport.cs" />

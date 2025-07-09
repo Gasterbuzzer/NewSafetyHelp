@@ -147,6 +147,7 @@ namespace NewSafetyHelp.JSONParsing
             if (jsonText is ProxyObject jsonObject)
             {
                     string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
+                    string customCampaignDesktopName = "NO_NAME\nPROVIDED";
                     
                     int customCampaignDays = 7;
                     
@@ -157,6 +158,11 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
                         customCampaignName = jsonObject["custom_campaign_name"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_desktop_name"))
+                    {
+                        customCampaignDesktopName = jsonObject["custom_campaign_desktop_name"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_days"))
@@ -198,7 +204,8 @@ namespace NewSafetyHelp.JSONParsing
                         campaignName = customCampaignName,
                         campaignDays = customCampaignDays,
                         campaignIcon = customCampaignSprite,
-                        campaignDayStrings = customCampaignDaysNames
+                        campaignDayStrings = customCampaignDaysNames,
+                        campaignDesktopName = customCampaignDesktopName
                     };
                     
                     // Check if any callers have to be added to me.
@@ -225,12 +232,6 @@ namespace NewSafetyHelp.JSONParsing
 
                     // Add to list
                     CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
-                    
-                    
-                    // WIP: Will later be fdo
-                    #if DEBUG
-                        CustomCampaignGlobal.activateCustomCampaign(customCampaignName);
-                    #endif
             }
         }
 
