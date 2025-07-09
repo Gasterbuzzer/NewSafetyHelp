@@ -32,23 +32,53 @@ namespace NewSafetyHelp.CustomCampaign
                     }
                     else
                     {
-                        if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1).ToString()))
+                        if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
                         {
-                            if (PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()) < (double) __instance.scoreThresholdToUnlock)
+                            if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1).ToString()))
                             {
-                                __instance.gameObject.SetActive(false);
-                            }
-                            else
-                            {
-                                MelonLogger.Msg($"UNITY LOG: Email unlocked: {__instance.gameObject.name}| Day Checked: {(__instance.unlockDay - 1).ToString()}| Day Score: " +
-                                                $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()).ToString()}");
+                                if (PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()) < (double) __instance.scoreThresholdToUnlock)
+                                {
+                                    __instance.gameObject.SetActive(false);
+                                }
+                                else
+                                {
+                                    MelonLogger.Msg($"UNITY LOG: Email unlocked: {__instance.gameObject.name}| Day Checked: {(__instance.unlockDay - 1).ToString()}| Day Score: " +
+                                                    $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()).ToString()}");
+                                }
                             }
                         }
+                        else // Custom Campaign
+                        {
+                            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                            if (currentCampaign == null)
+                            {
+                                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                                return true;
+                            }
+                            
+                            if (currentCampaign.savedDayScores[(__instance.unlockDay)] > 0.0f) // Has a set value other than the default.
+                            {
+                                if (currentCampaign.savedDayScores[(__instance.unlockDay)] < (double) __instance.scoreThresholdToUnlock)
+                                {
+                                    __instance.gameObject.SetActive(false);
+                                }
+                                else
+                                {
+                                    MelonLogger.Msg($"UNITY LOG: Email unlocked: {__instance.gameObject.name}| Day Checked: {(__instance.unlockDay).ToString()}| Day Score: " +
+                                                    $"{currentCampaign.savedDayScores[(__instance.unlockDay)]}.");
+                                }
+                            }
+                        }
+                        
                         if (!__instance.beatGameUnlock || !(bool) GlobalVariables.saveManagerScript || GlobalVariables.saveManagerScript.savedGameFinished >= 1 || __instance.xmasUnlock && GlobalVariables.isXmasDLC)
                         {
                             return false;
                         }
-                        __instance.gameObject.SetActive(false);
+                        else
+                        {
+                            __instance.gameObject.SetActive(false);
+                        }
                     }
                 }
                 else

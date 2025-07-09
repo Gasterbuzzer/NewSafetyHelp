@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
+using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -173,6 +174,36 @@ namespace NewSafetyHelp.CustomCampaign
                 currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = currentCampaign.savedGameFinishedDisplay;
             }
             
+            // Day score
+            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            {
+                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
+                {
+                    MelonPreferences_Entry<float> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry<float>($"SavedDayScore{i}", 0.0f);
+
+                    if (currentCampaign.savedDayScores.Count > i) // If we have enough values for "i". It should be but who knows.
+                    {
+                        savedCallerCorrectAnswers.Value = currentCampaign.savedDayScores[i]; // What ever value where have at that index.
+                    }
+                    else
+                    {
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                    }
+                }
+                else
+                {
+                    if (currentCampaign.savedDayScores.Count > i) // If we have enough values for "i". It should be but who knows.
+                    {
+                        currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value = currentCampaign.savedDayScores[i]; // What ever value where have at that index.
+                    }
+                    else
+                    {
+                        MelonLogger.Warning($"WARNING: Provided index {i} is not available.");
+                    }
+                }
+                
+            }
+            
             // We finished storing all important values. Now we save.
             MelonPreferences.Save();
             
@@ -231,8 +262,22 @@ namespace NewSafetyHelp.CustomCampaign
                 }
                 else
                 {
-                    MelonLogger.Warning($"WARNING: While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist! Setting to false for {i}.");
+                    MelonLogger.Warning($"WARNING: While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist! Setting to 0.0 for {i}.");
                     currentCampaign.savedCallersCorrectAnswer.Add(false);
+                }
+            }
+            
+            // Saved Day Scores
+            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            {
+                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") != null)
+                {
+                    currentCampaign.savedDayScores.Add(currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value);
+                }
+                else
+                {
+                    MelonLogger.Warning($"WARNING: While loading all saved caller answers, 'SavedDayScore{i}' does not exist! Setting to false for {i}.");
+                    currentCampaign.savedDayScores.Add(0.0f);
                 }
             }
             
@@ -262,6 +307,44 @@ namespace NewSafetyHelp.CustomCampaign
             // Special Values
             GlobalVariables.saveManagerScript.savedGameFinished = currentCampaign.savedGameFinished;
             GlobalVariables.saveManagerScript.savedGameFinishedDisplay = currentCampaign.savedGameFinishedDisplay;
+            
+            for (int i = 0; i < Mathf.Min(7, currentCampaign.campaignDays); ++i)
+            {
+                switch (i)
+                {
+                    case 0:
+                        GlobalVariables.saveManagerScript.savedDayScore1 = currentCampaign.savedDayScores[i];
+                        break;
+                    
+                    case 1:
+                        GlobalVariables.saveManagerScript.savedDayScore2 = currentCampaign.savedDayScores[i];
+                        break;
+                    
+                    case 2:
+                        GlobalVariables.saveManagerScript.savedDayScore3 = currentCampaign.savedDayScores[i];
+                        break;
+                    
+                    case 3:
+                        GlobalVariables.saveManagerScript.savedDayScore4 = currentCampaign.savedDayScores[i];
+                        break;
+                    
+                    case 4:
+                        GlobalVariables.saveManagerScript.savedDayScore5 = currentCampaign.savedDayScores[i];
+                        break;
+                    
+                    case 5:
+                        GlobalVariables.saveManagerScript.savedDayScore6 = currentCampaign.savedDayScores[i];
+                        break;
+                    
+                    case 6:
+                        GlobalVariables.saveManagerScript.savedDayScore7 = currentCampaign.savedDayScores[i];
+                        break;
+                    
+                    default:
+                        // No saved day available in the campaign save manager. Thus, we just ignore it.
+                        continue;
+                }
+            }
             
             // Finished loading.
             MelonLogger.Msg("INFO: Finished loading in custom campaign values.");
@@ -319,6 +402,13 @@ namespace NewSafetyHelp.CustomCampaign
             for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
             {
                 currentCampaign.campaignSaveCategory.DeleteEntry($"savedCallerCorrectAnswer{i}");
+            }
+            
+            // Reset daily score
+            currentCampaign.savedDayScores = new List<float>();
+            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            {
+                currentCampaign.campaignSaveCategory.DeleteEntry($"SavedDayScore{i}");
             }
             
             // We reset our caller array length
