@@ -127,6 +127,7 @@
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />

@@ -91,6 +91,8 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void LoadAllJSON(EntryUnlockController __instance)
         {
+            Time.timeScale = 0.0f;
+            
             string userDataPath = FileImporter.GetUserDataFolderPath();
 
             string[] foldersDataPath = Directory.GetDirectories(userDataPath);
@@ -99,6 +101,8 @@ namespace NewSafetyHelp.JSONParsing
             {
                 LoadJsonFilesFromFolder(foldersStringName, __instance);
             }
+            
+            Time.timeScale = 1.0f;
         }
         
         /// <summary>

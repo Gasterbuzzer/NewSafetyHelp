@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MelonLoader;
 using NewSafetyHelp.CallerPatches;
 
 namespace NewSafetyHelp.CustomCampaign
@@ -31,6 +32,12 @@ namespace NewSafetyHelp.CustomCampaign
         public static CustomCallerExtraInfo getCustomCampaignCustomCallerByOrderID(int orderID)
         {
             return getCustomCampaignExtraInfo().customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == orderID);
+        }
+
+        public static void saveCustomCampaignInfo()
+        {
+            // Custom Campaigns
+            //persistantEntrySave = MelonPreferences.CreateCategory("CustomCampaigns");
         }
     }
 }

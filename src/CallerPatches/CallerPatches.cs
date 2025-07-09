@@ -800,7 +800,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Changes the function increase tier patch to work with better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
+            /// <param name="__originalMethod"> Method which was called </param>
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, EntryUnlockController __instance)
             {
