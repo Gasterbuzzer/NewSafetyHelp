@@ -5,6 +5,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.Audio
 {
@@ -96,6 +97,89 @@ namespace NewSafetyHelp.Audio
                 }
                     
                 uiSoundController.StartCoroutine(uiSoundController.FadeOutLoopingSound(uiSoundController.myGlitchLoopingSource, 5f));
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartRandomMusic", new Type[] { })]
+        public static class StartRandomMusicPatch
+        {
+
+            /// <summary>
+            /// Patches the play random music to not play day 7 music in custom campaigns.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            private static bool Prefix(MethodBase __originalMethod, MusicController __instance)
+            {
+
+                if (!CustomCampaignGlobal.inCustomCampaign)
+                {
+                    if (GlobalVariables.currentDay == 7 && !GlobalVariables.arcadeMode)
+                    {
+                        return false;
+                    }
+                }
+                
+                // Custom Campaign ignores the above line.
+                
+                int index1 = 0;
+                
+                FieldInfo _previousHoldMusicIndex = typeof(MusicController).GetField("previousHoldMusicIndex", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (_previousHoldMusicIndex == null)
+                {
+                    MelonLogger.Error("ERROR: PreviousHoldMusicIndex is null. Unable of replacing MusicController StartNewRandomMusic. Calling original function.");
+                    return true;
+                }
+
+                if (!CustomCampaignGlobal.inCustomCampaign)
+                {
+                    if (GlobalVariables.currentDay > 4)
+                    {
+                        for (int index2 = 0; index1 == (int) _previousHoldMusicIndex.GetValue(__instance) && index2 < 3; ++index2) // __instance.previousHoldMusicIndex
+                        {
+                            index1 = Random.Range(0, __instance.onHoldMusicClips.Length);
+                        }
+                        
+                        _previousHoldMusicIndex.SetValue(__instance, index1); // __instance.previousHoldMusicIndex = index1;
+                        
+                    }
+                    else
+                    {
+                        for (int index3 = 0; index1 == (int) _previousHoldMusicIndex.GetValue(__instance) && index3 < 3; ++index3) // __instance.previousHoldMusicIndex
+                        {
+                            index1 = Random.Range(0, GlobalVariables.currentDay);
+                        }
+                    
+                        _previousHoldMusicIndex.SetValue(__instance, index1); // __instance.previousHoldMusicIndex = index1;
+                    }
+                }
+                else // Custom Campaign Music. Ignores the day
+                {
+                    if (GlobalVariables.currentDay > 4)
+                    {
+                        for (int index2 = 0; index1 == (int) _previousHoldMusicIndex.GetValue(__instance) && index2 < 3; ++index2) // __instance.previousHoldMusicIndex
+                        {
+                            index1 = Random.Range(0, __instance.onHoldMusicClips.Length);
+                        }
+                        
+                        _previousHoldMusicIndex.SetValue(__instance, index1); // __instance.previousHoldMusicIndex = index1;
+                        
+                    }
+                    else
+                    {
+                        for (int index3 = 0; index1 == (int) _previousHoldMusicIndex.GetValue(__instance) && index3 < 3; ++index3) // __instance.previousHoldMusicIndex
+                        {
+                            index1 = Random.Range(0, Mathf.Min(GlobalVariables.currentDay, 7));
+                        }
+                    
+                        _previousHoldMusicIndex.SetValue(__instance, index1); // __instance.previousHoldMusicIndex = index1;
+                    }
+                }
+                
+                __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[index1]);
+                
+                return false; // Skip function with false.
             }
         }
     }

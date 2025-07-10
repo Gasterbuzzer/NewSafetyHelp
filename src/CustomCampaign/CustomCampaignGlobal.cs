@@ -91,7 +91,10 @@ namespace NewSafetyHelp.CustomCampaign
                 currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCallerArrayLength", 0);
             }
 
-            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
+            #if DEBUG
+            MelonLogger.Msg($"DEBUG: Amount of saved caller array length: { currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value}");
+            #endif
+            for (int i = 0; i < currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value; i++)
             {
                 if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
                 {
@@ -109,6 +112,10 @@ namespace NewSafetyHelp.CustomCampaign
                 currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinishedDisplay", 0);
             }
 
+            
+            #if DEBUG
+                MelonLogger.Msg($"DEBUG: Amount of campaign days: {currentCampaign.campaignDays}");
+            #endif
             for (int i = 0; i < currentCampaign.campaignDays; i++)
             {
                 if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
@@ -307,10 +314,7 @@ namespace NewSafetyHelp.CustomCampaign
             }
             
             // Check if it was ever saved before. If yes, load and if not then we call save once.
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
-            {
-                initializeCustomCampaignOnce();
-            }
+            initializeCustomCampaignOnce();
             
             // Load all values first into the currentCampaign Object.
             currentCampaign.currentDay = currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value;
@@ -368,7 +372,15 @@ namespace NewSafetyHelp.CustomCampaign
 
             for (int index = 0; index < currentCampaign.savedCallerArrayLength; ++index)
             {
-                flagArray[index] = currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{index}").Value;
+                MelonPreferences_Entry<bool> entry = currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{index}");
+
+                if (entry == null)
+                {
+                    // If entry does not exist, create it with default value false.
+                    entry = currentCampaign.campaignSaveCategory.CreateEntry<bool>($"savedCallerCorrectAnswer{index}", false);
+                }
+
+                flagArray[index] = entry.Value;
             }
 
             GlobalVariables.saveManagerScript.savedCallerCorrectAnswers = flagArray;

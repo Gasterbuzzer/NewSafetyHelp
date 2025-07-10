@@ -267,9 +267,12 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, IEnumerator __result)
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-
+                #if DEBUG
+                MelonLogger.Msg($"DEBUG: Calling EndDayRoutine.");
+                #endif
+                
                 __result = endDayRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
@@ -374,6 +377,12 @@ namespace NewSafetyHelp.CallerPatches
                     customCampaign.currentPermissionTier  = GlobalVariables.entryUnlockScript.currentTier;
                     
                     List<bool> flagArray = new List<bool>();
+                    
+                    // Create missing values.
+                    for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
+                    {
+                        flagArray.Add(false);
+                    }
 
                     for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
                     {
@@ -402,7 +411,7 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, IEnumerator __result)
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
 
                 __result = endingCutsceneRoutineChanged(__instance);
@@ -455,6 +464,12 @@ namespace NewSafetyHelp.CallerPatches
                     customCampaign.savedGameFinishedDisplay = 1;
                     
                     List<bool> flagArray = new List<bool>();
+                    
+                    // Create missing values.
+                    for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
+                    {
+                        flagArray.Add(false);
+                    }
 
                     for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
                     {
