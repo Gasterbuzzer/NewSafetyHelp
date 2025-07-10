@@ -780,6 +780,18 @@ namespace NewSafetyHelp.CallerPatches
                 else // Custom Campaign
                 {
                     CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCampaignCustomCallerByOrderID(__instance.currentCallerID);
+
+                    if (customCallerFound == null)
+                    {
+                        MelonLogger.Error($"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
+
+                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.getCustomCampaignExtraInfo().customCallersInCampaign)
+                        {
+                            MelonLogger.Error($"{customCallerE.callerName} : {customCallerE.orderInCampaign}");
+                        }
+                        
+                        return true;
+                    }
                     
                     // If the last caller of the day, this will result in true.
                     __result = customCallerFound.lastDayCaller;
