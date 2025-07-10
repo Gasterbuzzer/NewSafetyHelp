@@ -61,7 +61,11 @@ namespace NewSafetyHelp.CustomCampaign
                                 MelonLogger.Msg($"DEBUG: Saved day score of day {__instance.unlockDay}. The threshold is: {__instance.scoreThresholdToUnlock}.");
                             #endif
                             
-                            if (currentCampaign.savedDayScores[__instance.unlockDay] > 0.0f) // Has a set value other than the default.
+                            #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Custom Campaign the current saved day score is: {currentCampaign.savedDayScores[__instance.unlockDay]}");
+                            #endif
+                            
+                            if (__instance.scoreThresholdToUnlock > 0.0f) // Has a set value other than the default.
                             {
                                 if (currentCampaign.savedDayScores[__instance.unlockDay] < (double) __instance.scoreThresholdToUnlock)
                                 {
