@@ -26,11 +26,14 @@ namespace NewSafetyHelp.CallerPatches
                     if (CustomCampaignGlobal.inCustomCampaign) // If we are not in the main campaign.
                     {
                         
-                        MelonLogger.Msg("INFO: Playing custom ending cutscene.");
+                        MelonLogger.Msg(ConsoleColor.Green, "INFO: Playing custom ending cutscene.");
                         
                         // Play Ending Cutscene.
                         // WIP.
                         // But for now:
+                        
+                        GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
+                        
                         GlobalVariables.callerControllerScript.SubmitAnswer();
                         GlobalVariables.UISoundControllerScript.StopUISoundLooping();
                         __instance.CloseButton(false, false);
