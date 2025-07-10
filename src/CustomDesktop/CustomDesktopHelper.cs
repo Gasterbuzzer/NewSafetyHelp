@@ -1,6 +1,7 @@
 ﻿using System;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using Steamworks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -103,6 +104,30 @@ namespace NewSafetyHelp.CustomDesktop
             {
                 MelonLogger.Error("ERROR: Failed to find the winter DLC program. Possibly called outside of MainMenuCanvas?");
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Disables the Winter DLC Program to avoid switching to DLC while custom campaign is active.
+        /// </summary>
+        public static void disableWinterDLCProgram()
+        {
+            getWinterDLCProgram().SetActive(false);
+        }
+        
+        /// <summary>
+        /// Reenable the Winter DLC Program to avoid switching to DLC while custom campaign is active.
+        /// </summary>
+        public static void enableWinterDLCProgram()
+        {
+            
+            if (!SteamManager.Initialized || SteamApps.BIsDlcInstalled(new AppId_t(2914730U))) // No DLC, we don't activate.
+            {
+                return;
+            }
+            else
+            {
+                getWinterDLCProgram().SetActive(true);
             }
         }
         

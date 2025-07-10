@@ -10,7 +10,7 @@ namespace NewSafetyHelp.CustomDesktop
     {
         
         [HarmonyLib.HarmonyPatch(typeof(MainMenuCanvasBehavior), "Start", new Type[] { })]
-        public static class IncreaseTierPatch
+        public static class StartPatch
         {
 
             /// <summary>
@@ -30,10 +30,17 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
                     }
+                    
+                    // Enable DLC Button if DLC is installed.
+                    // Hide DLC Button
+                    CustomDesktopHelper.enableWinterDLCProgram();
                 }
                 else
                 {
                     CustomDesktopHelper.createBackToMainGameButton();
+                    
+                    // Hide DLC Button
+                    CustomDesktopHelper.disableWinterDLCProgram();
                 }
             }
         }
