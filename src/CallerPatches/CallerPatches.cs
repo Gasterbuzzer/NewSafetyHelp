@@ -723,6 +723,9 @@ namespace NewSafetyHelp.CallerPatches
                             }
                         }
                         
+                        // Increase Tier
+                        newProfile.increaseTier = customCallerCC.callerIncreasesTier;
+                        
                         __instance.callers[customCallerCC.orderInCampaign] = new Caller
                         {
                             callerProfile = newProfile
@@ -817,6 +820,10 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, EntryUnlockController __instance)
             {
                 
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Running increase tier!");
+                #endif
+                
                 ++__instance.currentTier;
                 
                 // Get Private Methods (Original: this.OnIncreasedTierEvent(); )
@@ -826,13 +833,24 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (onIncreasedTierEvent != null)
                 {
-                    Action eventDelegate = (Action) onIncreasedTierEvent.GetValue(__instance);
-                    eventDelegate?.Invoke();
+                    Delegate del = (Delegate) onIncreasedTierEvent.GetValue(__instance);
+                    
+                    if (del != null)
+                    {
+                        del.DynamicInvoke(); // call with parameters if required by TierUpdate signature
+                    }
+                    else
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg("No subscribers for OnIncreasedTierEvent.");
+                        #endif
+                    }
                 }
                 else
                 {
-                    MelonLogger.Error("ERROR: Unable of calling 'OnIncreasedTierEvent' was null.");
+                    MelonLogger.Error("ERROR: Could not find backing field for OnIncreasedTierEvent.");
                 }
+
 
                 if (GlobalVariables.currentDay >= 7 && !CustomCampaignGlobal.inCustomCampaign) // Patched to work better with custom campaigns.
                 {
@@ -875,7 +893,7 @@ namespace NewSafetyHelp.CallerPatches
                     else
                     {
                         #if DEBUG
-                            MelonLogger.Msg("DEBUG WARNING: OnCallConcluded has no subscribers unable of executing. Calling original function.");
+                            MelonLogger.Msg("DEBUG WARNING: OnCallConcluded has no subscribers unable of executing. Ignoring.");
                         #endif
                     }
                 }
@@ -999,7 +1017,12 @@ namespace NewSafetyHelp.CallerPatches
                     
                     _checkCallerAnswer.Invoke(__instance, new object[] {monsterID}); // __instance.CheckCallerAnswer(monsterID);
                     
-                    // Before checking it is the last call of the day, we check if we can increase the tier.
+                    // Before checking, it is the last call of the day, we check if we can increase the tier.
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Increase tier? (For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) {__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
+                    #endif
+                    
                     if (__instance.callers[__instance.currentCallerID].callerProfile.increaseTier)
                     {
                         __instance.IncreaseTier();
