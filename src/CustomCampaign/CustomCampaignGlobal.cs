@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -420,6 +421,9 @@ namespace NewSafetyHelp.CustomCampaign
 
         public static void resetCustomCampaignFile()
         {
+
+            MelonLogger.Msg("INFO: Resetting custom campaign file.");
+            
             if (!inCustomCampaign)
             {
                 MelonLogger.Warning("WARNING: Called reset custom campaign but there is no campaign active.");
@@ -440,23 +444,23 @@ namespace NewSafetyHelp.CustomCampaign
             {
                 loadFromFileCustomCampaignInfo();
             }
-
-            if (currentCampaign.campaignSaveCategory != null && currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
-            {
-                // If null, we cancel our operation since there is no save.
-                MelonLogger.Error("ERROR: Tried resetting when no save is available!");
-                return;
-            }
-
+            
             if (currentCampaign.campaignSaveCategory == null)
             {
                 MelonLogger.Error("ERROR: Tried resetting but save is still null!");
                 return;
             }
+
+            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
+            {
+                // If null, we cancel our operation since there is no save.
+                MelonLogger.Error("ERROR: Tried resetting when no save is available!");
+                return;
+            }
             
             // We have a save file, so we reset the values.
             currentCampaign.currentDay = 1;
-            currentCampaign.campaignSaveCategory.GetEntry<int>("currentDay").Value = 1;
+            currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value = 1;
             
             currentCampaign.currentPermissionTier = 1;
             currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value = 1;

@@ -316,8 +316,24 @@ namespace NewSafetyHelp.CallerPatches
                 mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource));
                 
                 yield return new WaitForSeconds(2f);
-                
-                PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(), GlobalVariables.callerControllerScript.GetScore());
+
+                if (!CustomCampaignGlobal.inCustomCampaign)
+                {
+                    PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(), GlobalVariables.callerControllerScript.GetScore());
+                }
+                else // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: customCampaign was null. Catastrophic failure!");
+                        yield break;
+                    }
+
+                    customCampaign.savedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
+                }
+               
                 
                 FieldInfo _progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 

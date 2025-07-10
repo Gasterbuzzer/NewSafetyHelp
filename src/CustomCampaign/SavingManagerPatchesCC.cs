@@ -2,6 +2,7 @@
 using System.Reflection;
 using MelonLoader;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -51,7 +52,6 @@ namespace NewSafetyHelp.CustomCampaign
         [HarmonyLib.HarmonyPatch(typeof(SaveManagerBehavior), "SaveGameFinished", new Type[] { })]
         public static class SaveGameFinishedPatch
         {
-
             /// <summary>
             /// Changes the save function to respect custom campaigns.
             /// </summary>
@@ -252,41 +252,40 @@ namespace NewSafetyHelp.CustomCampaign
                         {
                           __instance.savedGameFinishedDisplay = PlayerPrefs.GetInt("SavedGameFinishedDisplay");
                         }
-                      }
+                        
+                        if (PlayerPrefs.HasKey("SavedDayScore1"))
+                        {
+                          __instance.savedDayScore1 = PlayerPrefs.GetFloat("SavedDayScore1");
+                        }
                       
+                        if (PlayerPrefs.HasKey("SavedDayScore2"))
+                        {
+                          __instance.savedDayScore2 = PlayerPrefs.GetFloat("SavedDayScore2");
+                        }
+                        if (PlayerPrefs.HasKey("SavedDayScore3"))
+                        {
+                          __instance.savedDayScore3 = PlayerPrefs.GetFloat("SavedDayScore3");
+                        }
                       
-                      if (PlayerPrefs.HasKey("SavedDayScore1"))
-                      {
-                        __instance.savedDayScore1 = PlayerPrefs.GetFloat("SavedDayScore1");
-                      }
+                        if (PlayerPrefs.HasKey("SavedDayScore4"))
+                        {
+                          __instance.savedDayScore4 = PlayerPrefs.GetFloat("SavedDayScore4");
+                        }
                       
-                      if (PlayerPrefs.HasKey("SavedDayScore2"))
-                      {
-                        __instance.savedDayScore2 = PlayerPrefs.GetFloat("SavedDayScore2");
-                      }
-                      if (PlayerPrefs.HasKey("SavedDayScore3"))
-                      {
-                        __instance.savedDayScore3 = PlayerPrefs.GetFloat("SavedDayScore3");
-                      }
+                        if (PlayerPrefs.HasKey("SavedDayScore5"))
+                        {
+                          __instance.savedDayScore5 = PlayerPrefs.GetFloat("SavedDayScore5");
+                        }
                       
-                      if (PlayerPrefs.HasKey("SavedDayScore4"))
-                      {
-                        __instance.savedDayScore4 = PlayerPrefs.GetFloat("SavedDayScore4");
-                      }
+                        if (PlayerPrefs.HasKey("SavedDayScore6"))
+                        {
+                          __instance.savedDayScore6 = PlayerPrefs.GetFloat("SavedDayScore6");
+                        }
                       
-                      if (PlayerPrefs.HasKey("SavedDayScore5"))
-                      {
-                        __instance.savedDayScore5 = PlayerPrefs.GetFloat("SavedDayScore5");
-                      }
-                      
-                      if (PlayerPrefs.HasKey("SavedDayScore6"))
-                      {
-                        __instance.savedDayScore6 = PlayerPrefs.GetFloat("SavedDayScore6");
-                      }
-                      
-                      if (PlayerPrefs.HasKey("SavedDayScore7"))
-                      {
-                        __instance.savedDayScore7 = PlayerPrefs.GetFloat("SavedDayScore7");
+                        if (PlayerPrefs.HasKey("SavedDayScore7"))
+                        {
+                          __instance.savedDayScore7 = PlayerPrefs.GetFloat("SavedDayScore7");
+                        }
                       }
                       
                       if (PlayerPrefs.HasKey("SavedColorTheme"))
@@ -317,5 +316,73 @@ namespace NewSafetyHelp.CustomCampaign
                   return false; // Skip the original function
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(SaveManagerBehavior), "DeleteGameProgress", new Type[] { })]
+        public static class DeleteGameProgressPatch
+        {
+
+            /// <summary>
+            /// Changes the delete save function to delete the custom campaign if called in a custom campaign.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
+            {
+                if (CustomCampaignGlobal.inCustomCampaign) // Use Custom Campaign saving.
+                {
+                    CustomCampaignGlobal.resetCustomCampaignFile();   
+                    SceneManager.LoadScene("MainMenuScene"); // Reload Scene
+                }
+                else if (GlobalVariables.isXmasDLC)
+                {
+                  
+                  MethodInfo _deleteXmasGameProgress = typeof(SaveManagerBehavior).GetMethod("DeleteXmasGameProgress", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+
+                  if (_deleteXmasGameProgress == null)
+                  {
+                    MelonLogger.Error("ERROR: DeleteXmasGameProgress method was not found. Calling default function.");
+                    return true;
+                  }
+                  
+                  _deleteXmasGameProgress.Invoke(__instance, null); // __instance.DeleteXmasGameProgress();
+                  
+                }
+                else
+                {
+                  PlayerPrefs.DeleteKey("SavedDay");
+                  __instance.savedDay = 1;
+                  
+                  PlayerPrefs.DeleteKey("SavedCurrentCaller");
+                  __instance.savedCurrentCaller = 0;
+                  
+                  PlayerPrefs.DeleteKey("SavedEntryTier");
+                  __instance.savedEntryTier = 1;
+                  
+                  PlayerPrefs.DeleteKey("SavedDayScore1");
+                  PlayerPrefs.DeleteKey("SavedDayScore2");
+                  PlayerPrefs.DeleteKey("SavedDayScore3");
+                  PlayerPrefs.DeleteKey("SavedDayScore4");
+                  PlayerPrefs.DeleteKey("SavedDayScore5");
+                  PlayerPrefs.DeleteKey("SavedDayScore6");
+                  PlayerPrefs.DeleteKey("SavedDayScore7");
+                  
+                  __instance.DeleteBoolArray("SavedCallerCorrectAnswer", __instance.savedCallerArrayLength);
+                  __instance.savedCallerCorrectAnswers = (bool[]) null;
+                  
+                  PlayerPrefs.DeleteKey("SavedCallerArrayLength");
+                  __instance.savedCallerArrayLength = 0;
+                  
+                  PlayerPrefs.DeleteKey("SavedGameFinishedDisplay");
+                  __instance.savedGameFinishedDisplay = 0;
+                  
+                  MelonLogger.Msg($"UNITY: Game Progress Save Data Deleted.");
+                  
+                  SceneManager.LoadScene("MainMenuScene");
+                }
+                
+                return false; // Skip the original function
+            }
+        }
+        
     }
 }
