@@ -84,6 +84,9 @@ namespace NewSafetyHelp.CustomCampaign
                 EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry, ref _monsterProfileList.monsterProfiles, "allEntries");
             }
             
+            // Sort afterward
+            EntryManager.EntryManager.SortMonsterProfiles(ref _monsterProfileList.monsterProfiles);
+            
         }
 
         /// <summary>

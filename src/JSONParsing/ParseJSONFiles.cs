@@ -247,12 +247,12 @@ namespace NewSafetyHelp.JSONParsing
                     // Check if any entries have to be added to this campaign.
                     if (missingEntriesCustomCampaign.Count > 0)
                     {
-                        
                         // Create a copy of the list to iterate over
                         List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(missingEntriesCustomCampaign);
                         
                         foreach (EntryExtraInfo missingEntry in tempList)
                         {
+                            
                             if (missingEntry.customCampaignName == customCampaignName)
                             {
                                 
@@ -648,7 +648,7 @@ namespace NewSafetyHelp.JSONParsing
                 }
 
                 // Add the extra information entry.
-                if ((jsonObject.Keys.Contains("caller_audio_clip_name") || includeMainCampaign) && newExtra != null)
+                if ((jsonObject.Keys.Contains("caller_audio_clip_name") || includeMainCampaign || _inCustomCampaign) && newExtra != null)
                 {
                     entriesExtraInfo.Add(newExtra);
                 }
@@ -1122,8 +1122,16 @@ namespace NewSafetyHelp.JSONParsing
                     #if DEBUG
                         MelonLogger.Msg($"DEBUG: Adding found custom campaign entry to the custom campaign.");
                     #endif
+
+                    if (extraEntryInfo != null)
+                    {
+                        foundCustomCampaign.entriesOnlyInCampaign.Add(extraEntryInfo);
+                    }
+                    else
+                    {
+                        MelonLogger.Warning("WARNING: Entry that was suppose to be added in custom campaign does not exist as extra info. (Error Type: 1) ");
+                    }
                     
-                    foundCustomCampaign.entriesOnlyInCampaign.Add(extraEntryInfo);
                 }
                 else
                 {
@@ -1131,7 +1139,14 @@ namespace NewSafetyHelp.JSONParsing
                         MelonLogger.Msg($"DEBUG: Found monster entry before the custom campaign was found / does not exist.");
                     #endif
                             
-                    missingEntriesCustomCampaign.Add(extraEntryInfo);
+                    if (extraEntryInfo != null)
+                    {
+                        missingEntriesCustomCampaign.Add(extraEntryInfo);
+                    }
+                    else
+                    {
+                        MelonLogger.Warning("WARNING: Entry that was suppose to be added in custom campaign does not exist as extra info. (Error Type: 2) ");
+                    }
                 }
             }
 
