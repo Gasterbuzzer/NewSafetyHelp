@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.EntryManager;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign
@@ -16,9 +17,13 @@ namespace NewSafetyHelp.CustomCampaign
         public string campaignDesktopName = "NO_CAMPAIGN_DESKTOP_NAME";
         
         // In Game
-        public List<CustomCallerExtraInfo> customCallersInCampaign = new List<CustomCallerExtraInfo>();
+        public List<CustomCallerExtraInfo> customCallersInCampaign = new List<CustomCallerExtraInfo>(); // Caller in the campaign
+        
+        public List<EntryExtraInfo> entriesOnlyInCampaign = new List<EntryExtraInfo>(); // Entries that exist only in this campaign.  
         
         public List<string> campaignDayStrings = new List<string>();
+        
+        public bool removeExistingEntries = false; // Removes all existing entries and only shows custom entries.
         
         // Saving
         public MelonPreferences_Category campaignSaveCategory = null;

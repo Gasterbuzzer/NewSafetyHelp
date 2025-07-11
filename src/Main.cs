@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using System;
 using System.Reflection;
+using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine.SceneManagement;
 
@@ -46,7 +47,15 @@ namespace NewSafetyHelp
     {
 
         // Check if we already added the creatures, if yes, we do not do it again.
-        public static bool isInitialized = false;
+        public static bool isInitializedMainOnce = false;
+
+        public static bool addedEntriesToCustomCampaign = false;
+
+        public static MonsterProfile[] copyMonsterProfiles;
+        public static int monsterProfileSize = 0;
+        
+        public static MonsterProfile[] copyMonsterProfilesAfterAdding;
+        public static int monsterProfileSizeAfterAdding = 0;
 
         /// <summary>
         /// Adds extra Monsters to the list.
@@ -56,28 +65,75 @@ namespace NewSafetyHelp
         /// <param name="__instance"> Caller of function. </param>
         private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance)
         {
-
-            if (__instance == null)
+            if (!CustomCampaignGlobal.inCustomCampaign)
             {
-                MelonLogger.Error("ERROR: EntryUnlocker is equal to null!");
-                return;
-            }
+                
+                // We left the custom campaign. We reset the custom campaign values / entries.
+                if (addedEntriesToCustomCampaign)
+                {
+                    addedEntriesToCustomCampaign = false;
+                    __instance.allEntries.monsterProfiles = copyMonsterProfilesAfterAdding;
+                }
+                
+                // Check if already added monsters at any point.
+                if (isInitializedMainOnce)
+                {
+                    // We already added them once, no need to add them again.
+                    MelonLogger.Msg("INFO: Custom Entries were already added. Skipping adding them again. (This happens on scene reload).");
+                    return;
+                }
+            
+                // We create copy of the monster profiles. (Before adding all entries)
+                copyMonsterProfiles = __instance.allEntries.monsterProfiles;
+                monsterProfileSize = copyMonsterProfiles.Length;
 
-            // Check if already added monsters at any point.
-            if (isInitialized)
+                MelonLogger.Msg(ConsoleColor.Green, "INFO: Now parsing all '.json' files...");
+
+                // Read all json and add all monsters and campaigns (/Calls)
+                ParseJSONFiles.LoadAllJSON(__instance);
+                
+                // Create copy after adding all custom entries that belong to the main campaign.
+                copyMonsterProfilesAfterAdding = __instance.allEntries.monsterProfiles;
+                monsterProfileSizeAfterAdding = copyMonsterProfilesAfterAdding.Length;
+
+                isInitializedMainOnce = true;
+                MelonLogger.Msg(ConsoleColor.Green, "INFO: Loaded all '.json' files successfully!");
+            }
+            else if (!addedEntriesToCustomCampaign) // Custom Campaign
             {
-                // We already added them once, no need to add them again.
-                MelonLogger.Msg("INFO: Custom Entries were already added. Skipping adding them again. (This happens on scene reload).");
-                return;
+                if (copyMonsterProfiles.Length <= 0 || monsterProfileSize <= 0) // Invalid loading.
+                {
+                    MelonLogger.Error("CRITICAL ERROR: Loading of old values to add the entries to failed! (Count == 0)");
+                    return;
+                }
+
+                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                if (customCampaign == null)
+                {
+                    MelonLogger.Error("CRITICAL ERROR: Trying to add to empty custom campaign! Custom campaign is enabled but custom campaign was not found?");
+                    return;
+                }
+
+                if (customCampaign.removeExistingEntries)
+                {
+                    __instance.allEntries.monsterProfiles = new MonsterProfile[monsterProfileSize]; // Remove all entries.
+                }
+                else // Else we replace our current entries with the original copy and add the entries to that.
+                {
+                    __instance.allEntries.monsterProfiles = copyMonsterProfiles;
+                }
+                
+                // Now we add the new entries.
+                
+                MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added... (Custom Campaign)");
+
+                // Read all json and add all monsters and campaigns (/Calls)
+                CustomCampaignGlobal.addAllCustomCampaignEntriesToArray(ref __instance.allEntries);
+
+                addedEntriesToCustomCampaign = true;
+                MelonLogger.Msg(ConsoleColor.Green, "INFO: Added/Modified all custom entries successfully! (Custom Campaign)");
             }
-
-            MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added...");
-
-            // Read all json and add all monsters and campaigns (/Calls)
-            ParseJSONFiles.LoadAllJSON(__instance);
-
-            isInitialized = true;
-            MelonLogger.Msg(ConsoleColor.Green, "INFO: Added/Modified all custom entries successfully!");
         }
     }
 

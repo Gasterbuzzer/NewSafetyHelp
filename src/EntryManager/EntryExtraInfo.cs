@@ -16,7 +16,7 @@
 
         // Extra Info
         public bool replace = false; // If to replace
-        public bool inCampaign = false; // If to appear in the campaign
+        public bool inMainCampaign = false; // If to appear in the campaign
         public int permissionLevel = 0; // Required permission for a call to be replaced.
         public bool onlyDLC = false; // If only in the DLC.
         public bool includeInDLC = false; // If to also include in the DLC
@@ -36,6 +36,10 @@
         public string consequenceTranscript = "NO_CONSEQUENCE_TRANSCRIPT";
         public RichAudioClip consequenceCallerClip = null; // Consequence Caller Clip
         public UnityEngine.Sprite consequenceCallerImage = null; // Consequence Caller Image
+        
+        // Custom Campaign
+        public bool onlyCustomCampaign = false;
+        public string customCampaignName = "NO_CUSTOM_CAMPAIGN_NAME";
 
         // Constructor
         public EntryExtraInfo(int _id) { ID = _id; Name = null; }

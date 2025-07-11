@@ -162,7 +162,7 @@ namespace NewSafetyHelp.CallerPatches
             {
 
                 #if DEBUG
-                MelonLogger.Msg($"DEBUG: New caller is calling.");
+                    MelonLogger.Msg($"DEBUG: New caller is calling.");
                 #endif
 
                 if (profile == null)
@@ -183,7 +183,7 @@ namespace NewSafetyHelp.CallerPatches
                 {
                     foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                     {
-                        if (item.inCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
+                        if (item.inMainCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
                         {
 
                             // Create Entry if not existent and if allowed

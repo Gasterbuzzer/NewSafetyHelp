@@ -9,8 +9,8 @@ namespace NewSafetyHelp.JSONParsing
 {
     public static class MonsterParsing
     {
-        public static void parseEntry(ref ProxyObject jsonObject, ref string filePath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC, ref bool includeCampaign, ref string _monsterName,
-            ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait, ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation)
+        public static void parseEntry(ref ProxyObject jsonObject, ref string filePath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _monsterName,
+            ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait, ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation, ref bool _inCustomCampaign,  ref string _customCampaignName)
         {
             /* 
              * Monster Information
@@ -59,9 +59,10 @@ namespace NewSafetyHelp.JSONParsing
                 includeDLC = jsonObject["include_dlc"];
             }
 
-            if (jsonObject.Keys.Contains("include_campaign")) // Unsure, what exactly it does, since it does not prevent it from appearing in the campaign.
+            if (jsonObject.Keys.Contains("include_campaign")) // Currently is used to distinguish if a caller should appear in the main campaign and if in custom campaign.
             {
-                includeCampaign = jsonObject["include_campaign"];
+                // OLD COMMENT, kind of incorrect but useful to know what I thought: (Unsure, what exactly it does, since it does not prevent it from appearing in the campaign.)
+                includeMainCampaign = jsonObject["include_campaign"];
             }
 
 
@@ -133,6 +134,19 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     MelonLogger.Msg($"INFO: No monster audio given for file in {filePath}. No audio will be shown.");
                 }
+            }
+            
+            // Custom Campaign
+
+            if (jsonObject.Keys.Contains("attached_custom_campaign_name"))
+            {
+                
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Found an entry that is custom campaign only.");
+                #endif
+                
+                _customCampaignName = jsonObject["attached_custom_campaign_name"];
+                _inCustomCampaign = true;
             }
         }
 

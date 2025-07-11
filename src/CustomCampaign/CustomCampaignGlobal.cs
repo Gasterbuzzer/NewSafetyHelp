@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.EntryManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -51,6 +52,38 @@ namespace NewSafetyHelp.CustomCampaign
         public static CustomCallerExtraInfo getCustomCampaignCustomCallerByOrderID(int orderID)
         {
             return getCustomCampaignExtraInfo().customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == orderID);
+        }
+
+        /// <summary>
+        /// Adds all entries of a custom campaign to the array of entries.
+        /// </summary>
+        /// <param name="_monsterProfileList">MonsterProfileList to add the entries to.</param>
+        public static void addAllCustomCampaignEntriesToArray(ref MonsterProfileList _monsterProfileList)
+        {
+            
+            CustomCampaignExtraInfo customCampaignExtraInfo = getCustomCampaignExtraInfo();
+
+            if (customCampaignExtraInfo == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                return;
+            }
+            
+            #if DEBUG
+                MelonLogger.Msg($"DEBUG: Now adding all {customCampaignExtraInfo.entriesOnlyInCampaign.Count} entries to the custom campaign.");
+            #endif
+            
+            // Add all entries.
+            foreach (EntryExtraInfo entryInCustomCampaign in customCampaignExtraInfo.entriesOnlyInCampaign)
+            {
+                
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
+                #endif
+                
+                EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry, ref _monsterProfileList.monsterProfiles, "allEntries");
+            }
+            
         }
 
         /// <summary>
