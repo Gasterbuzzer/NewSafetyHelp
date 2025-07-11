@@ -35,6 +35,9 @@ namespace NewSafetyHelp.JSONParsing
         // List of entries yet to be added to custom campaign. Happens when the entries file was found before.
         public static List<EntryExtraInfo> missingEntriesCustomCampaign = new List<EntryExtraInfo>();
         
+        // List of entries that replace yet to be added to custom campaign. Happens when the replacement entries file was found before.
+        public static List<EntryExtraInfo> missingReplaceEntriesCustomCampaign = new List<EntryExtraInfo>();
+        
         // Campaign Information
         const int mainCampaignCallAmount = 116;
         
@@ -262,6 +265,27 @@ namespace NewSafetyHelp.JSONParsing
                                 
                                 _customCampaign.entriesOnlyInCampaign.Add(missingEntry);
                                 missingEntriesCustomCampaign.Remove(missingEntry);
+                            }
+                        }
+                    }
+                    
+                    // Check if any entries have to be added to this campaign.
+                    if (missingReplaceEntriesCustomCampaign.Count > 0)
+                    {
+                        // Create a copy of the list to iterate over
+                        List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(missingReplaceEntriesCustomCampaign);
+                        
+                        foreach (EntryExtraInfo missingEntry in tempList)
+                        {
+                            if (missingEntry.customCampaignName == customCampaignName)
+                            {
+                                
+                                #if DEBUG
+                                    MelonLogger.Msg($"DEBUG: Adding 'replace' missing entry to the custom campaign: {customCampaignName}.");
+                                #endif
+                                
+                                _customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
+                                missingReplaceEntriesCustomCampaign.Remove(missingEntry);
                             }
                         }
                     }
@@ -648,7 +672,7 @@ namespace NewSafetyHelp.JSONParsing
                 }
 
                 // Add the extra information entry.
-                if ((jsonObject.Keys.Contains("caller_audio_clip_name") || includeMainCampaign || _inCustomCampaign) && newExtra != null)
+                if ((jsonObject.Keys.Contains("caller_audio_clip_name") || includeMainCampaign || _inCustomCampaign || replaceEntry) && newExtra != null)
                 {
                     entriesExtraInfo.Add(newExtra);
                 }
@@ -665,8 +689,9 @@ namespace NewSafetyHelp.JSONParsing
                 MonsterProfile foundMonsterXMAS = null; // For replacing DLC version as well
 
                 replaceEntryFunction(ref filePath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription, ref replaceEntry,
-                    ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia, ref _holesPhobiaIncluded,
-                    ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded, ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia, ref foundMonster, ref foundMonsterXMAS);
+                    ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia, 
+                    ref _holesPhobiaIncluded, ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded, ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia, ref foundMonster, ref foundMonsterXMAS,
+                    ref _inCustomCampaign, ref _customCampaignName);
 
                 // We replace the audio if needed.
                 if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
@@ -824,10 +849,10 @@ namespace NewSafetyHelp.JSONParsing
         }
 
         public static void replaceEntryFunction(ref string filePath, ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, ref string _monsterAudioClipLocation,
-            ref string _monsterPortraitLocation, ref Sprite _monsterPortrait, ref string _monsterDescription, ref bool replaceEntry, ref List<string> _arcadeCalls, ref int accessLevel, ref bool accessLevelAdded, ref bool includeCampaign,
+            ref string _monsterPortraitLocation, ref Sprite _monsterPortrait, ref string _monsterDescription, ref bool replaceEntry, ref List<string> _arcadeCalls, ref int accessLevel, ref bool accessLevelAdded, ref bool includeMainCampaign,
             ref bool _spiderPhobiaIncluded, ref bool _spiderPhobia, ref bool _darknessPhobiaIncluded, ref bool _darknessPhobia, ref bool _dogPhobiaIncluded, ref bool _dogPhobia, ref bool _holesPhobiaIncluded, ref bool _holesPhobia,
             ref bool _insectPhobiaIncluded, ref bool _insectPhobia, ref bool _watchingPhobiaIncluded, ref bool _watchingPhobia, ref bool _tightSpacePhobiaIncluded, ref bool _tightSpacePhobia,
-            ref MonsterProfile foundMonster, ref MonsterProfile foundMonsterXMAS)
+            ref MonsterProfile foundMonster, ref MonsterProfile foundMonsterXMAS, ref bool inCustomCampaign, ref string customCampaignName)
         {
 
             if (onlyDLC)
@@ -840,9 +865,15 @@ namespace NewSafetyHelp.JSONParsing
                 foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
                 foundMonsterXMAS = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allXmasEntries.monsterProfiles, _monsterName, newID); // New Monster to also replace
             }
-            else
+            else if (includeMainCampaign) // Main Campaign
             {
                 foundMonster = EntryManager.EntryManager.FindEntry(ref entryUnlockerInstance.allEntries.monsterProfiles, _monsterName, newID);
+            }
+            else if (inCustomCampaign) // In custom campaign.
+            {
+                foundMonster = ScriptableObject.CreateInstance<MonsterProfile>(); // Create empty foundMonster to avoid replacing actual values.
+                foundMonster.monsterID = -1;
+                foundMonster.monsterName = _monsterName;
             }
 
             if ((foundMonster == null && !onlyDLC && !includeDLC) || (foundMonster == null && foundMonsterXMAS == null))
@@ -1039,7 +1070,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Now if we also use "includeCampaign" we need to replace it there as well
-            if (includeCampaign)
+            if (includeMainCampaign)
             {
                 if (foundMonster != null)
                 {
@@ -1064,8 +1095,39 @@ namespace NewSafetyHelp.JSONParsing
                         entriesExtraInfo.Find(item => item.Name == foundMonsterXMASCopy.monsterName || item.ID == foundMonsterXMASCopy.monsterID).referenceCopyEntry = foundMonster;
                     }
                 }
+            }
+            else if (inCustomCampaign) // Add entry to replace in custom campaign.
+            {
+                // Include a copy of the monster in the extra info
+                if (foundMonster != null)
+                {
 
+                    string monsterNameCopy = foundMonster.monsterName;
+                    int monsterIDCopy = foundMonster.monsterID;
+                
+                    EntryExtraInfo extraEntryInfo = entriesExtraInfo.Find(item => item.Name == monsterNameCopy);
+                    if (extraEntryInfo != null) // Only if it exists.
+                    {
+                        extraEntryInfo.referenceCopyEntry = foundMonster;
+                        
+                        // Add the extraEntryInfo in custom campaign things.
 
+                        CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                        
+                        if (currentCustomCampaign == null)
+                        {
+                            #if DEBUG
+                                MelonLogger.Msg($"DEBUG: Custom Campaign replace entry found before custom campaign has been parsed. Adding to late add.");
+                            #endif
+                            
+                            missingReplaceEntriesCustomCampaign.Add(extraEntryInfo);
+                            
+                            return;
+                        }
+                        
+                        currentCustomCampaign.entryReplaceOnlyInCampaign.Add(extraEntryInfo);
+                    }
+                }
             }
         }
     

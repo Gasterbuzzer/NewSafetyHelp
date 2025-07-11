@@ -4,7 +4,11 @@
     {
         public int? ID { get; }
         public string Name { get; }
-
+        
+        // Since it's useful to store values outside
+        // Entry Values
+        public string entryDescription;
+        
         // Extra Info Caller
         public RichAudioClip callerClip = null; // Caller Clip
         public string callTranscript = "NO_TRANSCRIPT"; // Call Transcript

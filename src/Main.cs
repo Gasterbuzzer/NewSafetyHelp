@@ -128,6 +128,9 @@ namespace NewSafetyHelp
                 
                 MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added... (Custom Campaign)");
 
+                // Replace all entries that need replacement.
+                CustomCampaignGlobal.replaceAllProvidedCampaignEntries(ref __instance.allEntries);
+                
                 // Read all json and add all monsters and campaigns (/Calls)
                 CustomCampaignGlobal.addAllCustomCampaignEntriesToArray(ref __instance.allEntries);
 

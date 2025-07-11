@@ -468,6 +468,7 @@ namespace NewSafetyHelp.CallerPatches
                 if (profileToCheck == caller.callerProfile)
                     return caller; // Returns the caller
             }
+            
             return null;
         }
 

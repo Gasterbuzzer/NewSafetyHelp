@@ -76,7 +76,6 @@ namespace NewSafetyHelp.CustomCampaign
             // Add all entries.
             foreach (EntryExtraInfo entryInCustomCampaign in customCampaignExtraInfo.entriesOnlyInCampaign)
             {
-                
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
                 #endif
@@ -86,6 +85,63 @@ namespace NewSafetyHelp.CustomCampaign
             
             // Sort afterward
             EntryManager.EntryManager.SortMonsterProfiles(ref _monsterProfileList.monsterProfiles);
+            
+        }
+
+        public static void replaceAllProvidedCampaignEntries(ref MonsterProfileList _monsterProfileList)
+        {
+            CustomCampaignExtraInfo customCampaignExtraInfo = getCustomCampaignExtraInfo();
+
+            if (customCampaignExtraInfo == null || !inCustomCampaign)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                return;
+            }
+
+            #if DEBUG
+                MelonLogger.Msg($"DEBUG: Now replacing all {customCampaignExtraInfo.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
+            #endif
+            
+            for (int i = 0; i < _monsterProfileList.monsterProfiles.Length; i++)
+            {
+                MonsterProfile realEntry = _monsterProfileList.monsterProfiles[i];
+
+                // Find matching entry to replace
+                EntryExtraInfo entryFound = customCampaignExtraInfo.entryReplaceOnlyInCampaign.Find(
+                    replaceEntry => replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
+                );
+                
+                // MelonLogger.Msg($"DEBUG: Comparing Names: '{realEntry.monsterName}' with {customCampaignExtraInfo.entryReplaceOnlyInCampaign[0].Name}");
+
+
+                if (entryFound != null) // It exists, so replace it.
+                {
+                    if (entryFound.referenceCopyEntry == null)
+                    {
+                        int IDCopy = -1;
+                        
+                        if (entryFound.ID != null)
+                        {
+                            IDCopy = (int) entryFound.ID;
+                        }
+                        
+                        /*entryFound.referenceCopyEntry = EntryManager.EntryManager.CreateMonster(_monsterName: entryFound.Name, _monsterDescription: entryFound., _monsterID: IDCopy,
+                            _arcadeCalls: entryFound.arcade.ToArray(), _monsterPortrait: entryFound.image, _monsterAudioClip: null,
+                            _spiderPhobia: _spiderPhobia, _darknessPhobia: _darknessPhobia, _dogPhobia: _dogPhobia, _holesPhobia: _holesPhobia, _insectPhobia: _insectPhobia, _watchingPhobia: _watchingPhobia,
+                            _tightSpacePhobia: _tightSpacePhobia);*/ 
+                        
+                        // I am too lazy to implement this. But if ever returns errors or problems, I will implement it this way.
+                        MelonLogger.Warning("WARNING: referenceCopyEntry of EntryFound is null. Was the entry initialized?");
+                        continue;
+                    }
+                    
+                    _monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Replacing entry {entryFound.Name} with custom entry in custom campaign.");
+                    #endif
+                }
+            }
             
         }
 
