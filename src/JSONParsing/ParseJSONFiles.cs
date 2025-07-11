@@ -679,7 +679,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Generate new ID if not provided.
-            generateNewID(ref newID, ref replaceEntry, ref filePath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance);
+            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref filePath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance);
 
             if (replaceEntry) // We replace an Entry
             {
@@ -821,7 +821,7 @@ namespace NewSafetyHelp.JSONParsing
             newExtra.customCampaignName = _customCampaignName;
         }
 
-        public static void generateNewID(ref int newID, ref bool replaceEntry, ref string filePath, ref bool onlyDLC, ref bool includeDLC, ref EntryUnlockController entryUnlockerInstance)
+        public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry, ref string filePath, ref bool onlyDLC, ref bool includeDLC, ref EntryUnlockController entryUnlockerInstance)
         {
             // Update ID if not given.
             if (newID == -1 && !replaceEntry)
@@ -846,6 +846,8 @@ namespace NewSafetyHelp.JSONParsing
                     newID = maxEntryIDMainCampaign;
                 }
             }
+            
+            newExtra.ID = newID;
         }
 
         public static void replaceEntryFunction(ref string filePath, ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, ref string _monsterAudioClipLocation,

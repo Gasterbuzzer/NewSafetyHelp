@@ -2,7 +2,7 @@
 {
     public class EntryExtraInfo
     {
-        public int? ID { get; }
+        public int? ID;
         public string Name { get; }
         
         // Since it's useful to store values outside
@@ -82,7 +82,7 @@
             unchecked // Prevent overflow exceptions
             {
                 int hash = 79; // Start with a prime number
-                hash = (hash * 31 + ID.GetHashCode() * 31) + (Name?.GetHashCode() * 31 ?? 0);
+                hash = (Name?.GetHashCode() * 31 ?? 0);
                 return hash;
             }
         }
