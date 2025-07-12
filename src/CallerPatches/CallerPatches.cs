@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
+using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.JSONParsing;
@@ -680,7 +681,15 @@ namespace NewSafetyHelp.CallerPatches
                         // Clip
                         if (customCallerCC.callerClip == null)
                         {
-                            MelonLogger.Msg($"INFO \\ WARNING: Custom Caller '{customCallerCC.callerName}' does not have any valid audio clip. Using fallback for now. Note: If the audio is still loading, ignore this.");
+
+                            if (AudioImport.currentLoadingAudios.Count > 0)
+                            {
+                                MelonLogger.Msg($"INFO : Custom Caller '{customCallerCC.callerName}' is still loading its audio. Using fallback for now.");
+                            }
+                            else // No Loading Audio
+                            {
+                                MelonLogger.Warning($"WARNING: Custom Caller '{customCallerCC.callerName}' does not have any valid audio clip! Using fallback instead of real audio. ");
+                            }
                             
                             newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
                         }
