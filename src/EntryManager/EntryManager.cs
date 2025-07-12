@@ -31,20 +31,27 @@ namespace NewSafetyHelp.EntryManager
                 // Before adding we check if the ID already exists. And if yes, we replace it.
                 int idToCheck = newProfile.monsterID;
 
-                for (int i = 0; i < monsterProfiles.Length; i++)
-                {
-                    if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
-                    {
-                        if (profileName != "NONE") // Not display it if we are just readding things that are more than welcome to replace entries.
-                        {
-                            MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
-                        }
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Checking IDS with monster profile array of size {monsterProfiles.Length}.");
+                #endif
 
-                        monsterProfiles[i] = newProfile;
-                        return; // Replaced the profile and we return.
+                if (monsterProfiles.Length > 0)
+                {
+                    for (int i = 0; i < monsterProfiles.Length; i++)
+                    {
+                        if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
+                        {
+                            if (profileName != "NONE") // Not display it if we are just readding things that are more than welcome to replace entries.
+                            {
+                                MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
+                            }
+
+                            monsterProfiles[i] = newProfile;
+                            return; // Replaced the profile and we return.
+                        }
                     }
                 }
-
+                
                 // Create a new array with an extra slot
                 MonsterProfile[] newArray = new MonsterProfile[monsterProfiles.Length + 1];
 

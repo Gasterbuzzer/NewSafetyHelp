@@ -874,7 +874,7 @@ namespace NewSafetyHelp.JSONParsing
             else if (inCustomCampaign) // In custom campaign.
             {
                 foundMonster = ScriptableObject.CreateInstance<MonsterProfile>(); // Create empty foundMonster to avoid replacing actual values.
-                foundMonster.monsterID = -1;
+                foundMonster.monsterID = newID;
                 foundMonster.monsterName = _monsterName;
             }
 

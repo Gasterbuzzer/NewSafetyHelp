@@ -117,7 +117,7 @@ namespace NewSafetyHelp
 
                 if (customCampaign.removeExistingEntries)
                 {
-                    __instance.allEntries.monsterProfiles = new MonsterProfile[monsterProfileSize]; // Remove all entries.
+                    __instance.allEntries.monsterProfiles = Array.Empty<MonsterProfile>(); // Remove all entries.
                 }
                 else // Else we replace our current entries with the original copy and add the entries to that.
                 {

@@ -101,10 +101,24 @@ namespace NewSafetyHelp.CustomCampaign
             #if DEBUG
                 MelonLogger.Msg($"DEBUG: Now replacing all {customCampaignExtraInfo.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
+
+            if (_monsterProfileList.monsterProfiles.Length <= 0)
+            {
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Monster Profile ");
+                #endif
+                return;
+            }
             
             for (int i = 0; i < _monsterProfileList.monsterProfiles.Length; i++)
             {
                 MonsterProfile realEntry = _monsterProfileList.monsterProfiles[i];
+
+                if (realEntry == null)
+                {
+                    MelonLogger.Warning("WARNING: realEntry is null! Unable of replacing entry for this entry!");
+                    return;
+                }
 
                 // Find matching entry to replace
                 EntryExtraInfo entryFound = customCampaignExtraInfo.entryReplaceOnlyInCampaign.Find(
