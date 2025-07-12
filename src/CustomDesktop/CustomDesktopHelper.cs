@@ -125,10 +125,8 @@ namespace NewSafetyHelp.CustomDesktop
             {
                 return;
             }
-            else
-            {
-                getWinterDLCProgram().SetActive(true);
-            }
+            
+            getWinterDLCProgram().SetActive(true);
         }
         
         /// <summary>
@@ -172,7 +170,7 @@ namespace NewSafetyHelp.CustomDesktop
 
         public static void createCustomProgramIcon(string customProgramName, string customCampaignName, Sprite customIcon = null)
         {
-            GameObject customProgramIcon = (GameObject) Object.Instantiate(getWinterDLCProgram(), getLeftPrograms().transform);
+            GameObject customProgramIcon = Object.Instantiate(getWinterDLCProgram(), getLeftPrograms().transform);
 
             Object.Destroy(customProgramIcon.GetComponent<HSHExecutableBehavior>()); // Remove old Executable Behavior.
 
@@ -203,7 +201,7 @@ namespace NewSafetyHelp.CustomDesktop
         
         public static void createBackToMainGameButton()
         {
-            GameObject backToMainMenuGameButton = (GameObject) Object.Instantiate(getNSEDiscordProgram(), getRightPrograms().transform);
+            GameObject backToMainMenuGameButton = Object.Instantiate(getNSEDiscordProgram(), getRightPrograms().transform);
 
             Object.Destroy(backToMainMenuGameButton.GetComponent<LinkExecutable>()); // Remove old executable Behavior.
 

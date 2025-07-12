@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 using MelonLoader;
 using UnityEngine;
-using Object = System.Object;
+// ReSharper disable UnusedMember.Local
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -17,6 +18,7 @@ namespace NewSafetyHelp.CustomCampaign
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, OnDayUnlock __instance)
             {
                 if (GlobalVariables.arcadeMode)
@@ -47,7 +49,7 @@ namespace NewSafetyHelp.CustomCampaign
                                 else
                                 {
                                     MelonLogger.Msg($"UNITY LOG: Email unlocked: {__instance.gameObject.name}| Day Checked: {(__instance.unlockDay - 1).ToString()}| Day Score: " +
-                                                    $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()).ToString()}");
+                                                    $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()).ToString(CultureInfo.InvariantCulture)}");
                                 }
                             }
                         }

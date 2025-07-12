@@ -410,7 +410,7 @@ namespace NewSafetyHelp.JSONParsing
                     }
                     
                     // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-                    CustomCallerExtraInfo _customCaller = new CustomCallerExtraInfo(customCallerName, orderInCampaign)
+                    CustomCallerExtraInfo _customCaller = new CustomCallerExtraInfo(orderInCampaign)
                         {
                             callerName = customCallerName,
                             callerImage = customCallerImage,
@@ -1103,9 +1103,7 @@ namespace NewSafetyHelp.JSONParsing
                 // Include a copy of the monster in the extra info
                 if (foundMonster != null)
                 {
-
                     string monsterNameCopy = foundMonster.monsterName;
-                    int monsterIDCopy = foundMonster.monsterID;
                 
                     EntryExtraInfo extraEntryInfo = entriesExtraInfo.Find(item => item.Name == monsterNameCopy);
                     if (extraEntryInfo != null) // Only if it exists.

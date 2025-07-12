@@ -82,7 +82,7 @@
             unchecked // Prevent overflow exceptions
             {
                 int hash = 79; // Start with a prime number
-                hash = (Name?.GetHashCode() * 31 ?? 0);
+                hash += (Name?.GetHashCode() * 31 ?? 0);
                 return hash;
             }
         }

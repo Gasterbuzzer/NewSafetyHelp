@@ -6,6 +6,8 @@ using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using Steamworks;
 using UnityEngine;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.CallerPatches
 {
@@ -20,7 +22,9 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, string __result)
+            /// <param name="__result"> Result of the function. </param> 
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref string __result)
             {
                 
                 List<string> defaultDayNames = new List<string>() {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
@@ -109,6 +113,8 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Coroutine of function to be called after wards </param>
+            // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 __result = StartSoftwareRoutine(__instance);
@@ -267,6 +273,8 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Coroutine to be called after wards. </param>
+            // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 #if DEBUG
@@ -411,6 +419,8 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Coroutine to be called after wards. </param>
+            // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
 
@@ -518,7 +528,7 @@ namespace NewSafetyHelp.CallerPatches
                     if ((bool) _achievedHundredPercentAccuracyRating.Invoke(mainCanvasBehavior, null)) // mainCanvasBehavior.AchievedHundredPercentAccuracyRating()
                     {
                         SteamUserStats.SetAchievement("PerfectGame");
-                        Debug.Log((object) "PerfectGame Achievement Unlocked.");
+                        MelonLogger.Msg("UNITY LOG: PerfectGame Achievement Unlocked.");
                     }
                     SteamUserStats.StoreStats();
                 }

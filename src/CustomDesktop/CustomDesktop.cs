@@ -2,7 +2,8 @@
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using UnityEngine;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.CustomDesktop
 {

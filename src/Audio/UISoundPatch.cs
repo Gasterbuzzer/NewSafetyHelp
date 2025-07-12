@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
@@ -20,6 +19,8 @@ namespace NewSafetyHelp.Audio
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, UISoundController __instance)
             {
                 if (__instance.myGlitchLoopingSource.isPlaying)
@@ -52,6 +53,10 @@ namespace NewSafetyHelp.Audio
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Result of the function. </param>
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
+            // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, UISoundController __instance, ref IEnumerator __result)
             {
                 
@@ -109,6 +114,8 @@ namespace NewSafetyHelp.Audio
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedParameter.Local
+            // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MethodBase __originalMethod, MusicController __instance)
             {
 

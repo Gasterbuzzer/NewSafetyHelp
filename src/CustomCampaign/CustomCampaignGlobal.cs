@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
 using NewSafetyHelp.EntryManager;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -12,6 +10,7 @@ namespace NewSafetyHelp.CustomCampaign
     {
         public static List<CustomCampaignExtraInfo> customCampaignsAvailable = new List<CustomCampaignExtraInfo>();
         
+        // ReSharper disable once RedundantDefaultMemberInitializer
         public static bool inCustomCampaign = false;
 
         public static string currentCustomCampaignName = "";
@@ -132,18 +131,6 @@ namespace NewSafetyHelp.CustomCampaign
                 {
                     if (entryFound.referenceCopyEntry == null)
                     {
-                        int IDCopy = -1;
-                        
-                        if (entryFound.ID != null)
-                        {
-                            IDCopy = (int) entryFound.ID;
-                        }
-                        
-                        /*entryFound.referenceCopyEntry = EntryManager.EntryManager.CreateMonster(_monsterName: entryFound.Name, _monsterDescription: entryFound., _monsterID: IDCopy,
-                            _arcadeCalls: entryFound.arcade.ToArray(), _monsterPortrait: entryFound.image, _monsterAudioClip: null,
-                            _spiderPhobia: _spiderPhobia, _darknessPhobia: _darknessPhobia, _dogPhobia: _dogPhobia, _holesPhobia: _holesPhobia, _insectPhobia: _insectPhobia, _watchingPhobia: _watchingPhobia,
-                            _tightSpacePhobia: _tightSpacePhobia);*/ 
-                        
                         // I am too lazy to implement this. But if ever returns errors or problems, I will implement it this way.
                         MelonLogger.Warning("WARNING: referenceCopyEntry of EntryFound is null. Was the entry initialized?");
                         continue;

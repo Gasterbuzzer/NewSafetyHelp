@@ -3,6 +3,8 @@ using System.Reflection;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -367,7 +369,7 @@ namespace NewSafetyHelp.CustomCampaign
                   PlayerPrefs.DeleteKey("SavedDayScore7");
                   
                   __instance.DeleteBoolArray("SavedCallerCorrectAnswer", __instance.savedCallerArrayLength);
-                  __instance.savedCallerCorrectAnswers = (bool[]) null;
+                  __instance.savedCallerCorrectAnswers = null;
                   
                   PlayerPrefs.DeleteKey("SavedCallerArrayLength");
                   __instance.savedCallerArrayLength = 0;

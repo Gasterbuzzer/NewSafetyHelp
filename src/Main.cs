@@ -4,6 +4,9 @@ using System.Reflection;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine.SceneManagement;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
+// ReSharper disable RedundantDefaultMemberInitializer
 
 namespace NewSafetyHelp
 {

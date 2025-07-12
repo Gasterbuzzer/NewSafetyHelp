@@ -5,6 +5,7 @@ using NewSafetyHelp.CustomCampaign;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+// ReSharper disable UnusedMember.Local
 
 namespace NewSafetyHelp.CallerPatches
 {
@@ -19,6 +20,7 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
             /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, ScorecardBehavior __instance)
             {
         

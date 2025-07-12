@@ -2,8 +2,6 @@
 {
     public class CustomCallerExtraInfo
     {
-        public string Name { get; }
-        
         // Base Values
         public RichAudioClip callerClip = null; // Caller Clip
         public string callerClipPath = ""; // Caller Clip Path
@@ -32,8 +30,6 @@
         public string belongsToCustomCampaign = "NO_CUSTOM_CAMPAIGN";
         
         // Constructor
-        public CustomCallerExtraInfo(int _orderInCampaign) { orderInCampaign = _orderInCampaign; Name = null; }
-
-        public CustomCallerExtraInfo(string _name, int _orderInCampaign) { Name = _name; orderInCampaign = _orderInCampaign; }
+        public CustomCallerExtraInfo(int _orderInCampaign) { orderInCampaign = _orderInCampaign;}
     }
 }

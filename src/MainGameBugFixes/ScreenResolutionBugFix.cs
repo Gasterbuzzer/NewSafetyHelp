@@ -1,13 +1,14 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using MelonLoader;
 using UnityEngine;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.MainGameBugFixes
 {
     public static class ScreenResolutionBugFix
     {
-        [HarmonyLib.HarmonyPatch(typeof(ScreenResolutions), "SetMenuValue", new Type[] { typeof(int), typeof(int), typeof(int) })]
+        [HarmonyLib.HarmonyPatch(typeof(ScreenResolutions), "SetMenuValue", new [] { typeof(int), typeof(int), typeof(int) })]
         public static class FixScreenResolutionOptions
         {
 
@@ -16,6 +17,9 @@ namespace NewSafetyHelp.MainGameBugFixes
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name="width"> Width of screen. </param>
+            /// <param name="height"> Height of screen. </param>
+            /// <param name="refresh"> Refresh rate of screen. </param>
             private static bool Prefix(MethodBase __originalMethod, ScreenResolutions __instance, ref int width, ref int height, ref int refresh)
             {
 

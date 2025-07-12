@@ -8,6 +8,8 @@ using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.CallerPatches
 {
@@ -37,9 +39,10 @@ namespace NewSafetyHelp.CallerPatches
         }
 
         // Patches the caller to have a custom audio in campaign.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine", new Type[] { typeof(CallerProfile) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine", new[] { typeof(CallerProfile) })]
         public static class UpdateCampaignCallerAudio
         {
+            // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, CallerProfile profile, ref IEnumerator __result)
             {
                 __result = originalCaller(__originalMethod, __instance, profile);
@@ -51,6 +54,7 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name= "profile"> Profile Parameter. </param>
             private static IEnumerator originalCaller(MethodBase __originalMethod, CallerController __instance, CallerProfile profile)
             {
   
@@ -95,6 +99,7 @@ namespace NewSafetyHelp.CallerPatches
                             {
                                 if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
                                 {
+                                    // ReSharper disable once RedundantTypeArgumentsOfMethod
                                     NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, true);
                                 }
                                 else
@@ -106,6 +111,7 @@ namespace NewSafetyHelp.CallerPatches
                             {
                                 if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
                                 {
+                                    // ReSharper disable once RedundantTypeArgumentsOfMethod
                                     NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false); // Store it as false
                                 }
                                 else
@@ -149,7 +155,7 @@ namespace NewSafetyHelp.CallerPatches
         }
 
         // Patches the caller to replace it with another with random chance.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", new Type[] { typeof(CallerProfile)})]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", new [] { typeof(CallerProfile)})]
         public static class UpdateCampaignCallerRandom
         {
             /// <summary>
@@ -188,10 +194,11 @@ namespace NewSafetyHelp.CallerPatches
 
                             // Create Entry if not existent and if allowed
 
-                            MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry = null;
+                            MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry;
 
                             if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
                             {
+                                // ReSharper disable once RedundantTypeArgumentsOfMethod
                                 entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false);
                             }
                             else
@@ -354,7 +361,7 @@ namespace NewSafetyHelp.CallerPatches
         }
 
         // Patches the caller to replace it with another with random chance.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", new Type[] { typeof(MonsterProfile) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", new [] { typeof(MonsterProfile) })]
         public static class ReplaceAnswerWithReplacedAnswer
         {
             /// <summary>
@@ -529,7 +536,7 @@ namespace NewSafetyHelp.CallerPatches
                 
                 if (GlobalVariables.isXmasDLC)
                 {
-                    __instance.callers = (Caller[]) null;
+                    __instance.callers = null;
                     __instance.callers = __instance.xmasCallers;
                     __instance.warningCall = __instance.xmasWarningCall;
                     __instance.gameOverCall = __instance.xmasGameOverCall;
@@ -768,7 +775,7 @@ namespace NewSafetyHelp.CallerPatches
                 
                 if (!CustomCampaignGlobal.inCustomCampaign) // In main Campaign.
                 {
-                    bool mainCampaignResult = false;
+                    bool mainCampaignResult; // False
 
                     if (GlobalVariables.currentDay < (int) lastDayNumField.GetValue(__instance))
                     {
@@ -864,7 +871,7 @@ namespace NewSafetyHelp.CallerPatches
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", new Type[] { typeof(MonsterProfile)})]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", new [] { typeof(MonsterProfile)})]
         public static class SubmitAnswerPatch
         {
 
@@ -873,6 +880,7 @@ namespace NewSafetyHelp.CallerPatches
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name="monsterID"> Reference to parameter having the monster ID. </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref MonsterProfile monsterID)
             {
                 

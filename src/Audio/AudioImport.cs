@@ -23,7 +23,7 @@ namespace NewSafetyHelp.Audio
         /// <param name="callback"> Callback function used for getting the AudioClip back. </param>
         /// <param name="path"> Path to file. </param>
         /// <param name="_audioType"> Unity AudioType </param>
-        public static IEnumerator LoadAudio(System.Action<AudioClip> callback, string path, AudioType _audioType = AudioType.MPEG)
+        public static IEnumerator LoadAudio(Action<AudioClip> callback, string path, AudioType _audioType = AudioType.MPEG)
         {
             MelonLogger.Msg($"INFO: Attempting to add {path} as audio type {_audioType.ToString()}.");
             

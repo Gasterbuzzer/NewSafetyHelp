@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using UnityEngine;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.EntryManager
 {
@@ -224,7 +226,7 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
         {
-            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.monsterName, y.monsterName));
+            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.monsterName, y.monsterName, StringComparison.InvariantCulture));
         }
     }
 
