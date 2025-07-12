@@ -249,7 +249,9 @@ namespace NewSafetyHelp.EntryManager
         {
             // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
 
-            MelonLogger.Msg("INFO: If tier/permission levels for extra entries were lost, they will now be readded.");
+            #if DEBUG
+                MelonLogger.Msg("DEBUG: If tier/permission levels for extra entries were lost, they will now be readded.");
+            #endif
 
             for (int i = 0; i < entriesReaddTierOne.Count; i++)
             {

@@ -826,9 +826,6 @@ namespace NewSafetyHelp.JSONParsing
             // Update ID if not given.
             if (newID == -1 && !replaceEntry)
             {
-                MelonLogger.Msg($"INFO: Defaulting to a new Monster ID for file in {filePath}.");
-                MelonLogger.Msg($"(This intended and recommended).");
-
                 // Get the max Monster ID.
                 int maxEntryIDMainCampaign = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance);
                 int maxEntryIDMainDLC = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance, 1);
@@ -848,6 +845,9 @@ namespace NewSafetyHelp.JSONParsing
             }
             
             newExtra.ID = newID;
+            
+            MelonLogger.Msg($"INFO: Defaulting to a new Monster ID {newExtra.ID} for file in {filePath}.");
+            MelonLogger.Msg($"(This intended and recommended way of providing the ID.)");
         }
 
         public static void replaceEntryFunction(ref string filePath, ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, ref string _monsterAudioClipLocation,

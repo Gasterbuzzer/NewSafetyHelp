@@ -196,7 +196,9 @@ namespace NewSafetyHelp.CustomDesktop
             customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
             
             customProgramButton.onClick.AddListener(() => changeToCustomCampaignSettings(customCampaignName));
-
+            
+            // Rename CustomProgramIcon
+            customProgramIcon.name = customProgramName;
         }
         
         public static void createBackToMainGameButton()
@@ -219,6 +221,10 @@ namespace NewSafetyHelp.CustomDesktop
             customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
             
             customProgramButton.onClick.AddListener(backToMainGame);
+            
+            
+            // Rename Program Object Name
+            backToMainMenuGameButton.name = "BackToMainGameButton";
         }
 
 

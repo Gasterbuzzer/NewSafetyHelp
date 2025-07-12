@@ -534,7 +534,7 @@ namespace NewSafetyHelp.CustomCampaign
             }
             
             // Finished loading.
-            MelonLogger.Msg("INFO: Finished loading in custom campaign values.");
+            MelonLogger.Msg("INFO: Finished loading all custom campaign values.");
         }
 
         public static void resetCustomCampaignFile()

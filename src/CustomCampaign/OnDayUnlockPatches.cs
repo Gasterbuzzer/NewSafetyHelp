@@ -31,7 +31,7 @@ namespace NewSafetyHelp.CustomCampaign
                         __instance.gameObject.SetActive(false);
                         
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Day to unlock has not been reached.. Disabling.\n");
+                            MelonLogger.Msg($"DEBUG: Day to unlock ({__instance.unlockDay}) has not been reached. Disabling this GameObject ('{__instance.gameObject.name}'). (Main and Custom Campaign). Current day: {GlobalVariables.currentDay}.\n");
                         #endif
                     }
                     else
@@ -69,14 +69,8 @@ namespace NewSafetyHelp.CustomCampaign
                             }
                             
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Saved day score of day {unlockDay}. The threshold is: {__instance.scoreThresholdToUnlock}.");
+                                MelonLogger.Msg($"DEBUG: This object unlock in day: {unlockDay} (Current Day is {GlobalVariables.currentDay}). The threshold is: {__instance.scoreThresholdToUnlock}. The current score for that day is {currentCampaign.savedDayScores[unlockDay]}. (For GameObject: '{__instance.gameObject.name}')");
                             #endif
-                            
-                            #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Custom Campaign the current saved day score is: {currentCampaign.savedDayScores[unlockDay]}");
-                            #endif
-
-
                             
                             if (__instance.scoreThresholdToUnlock > 0.0f) // Has a set value other than the default.
                             {
@@ -84,7 +78,7 @@ namespace NewSafetyHelp.CustomCampaign
                                 {
 
                                     #if DEBUG
-                                        MelonLogger.Msg($"DEBUG: This score is not enough. Disabling.\n");
+                                        MelonLogger.Msg($"DEBUG: The score {currentCampaign.savedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject. Disabling this GameObject '{__instance.gameObject.name}'.\n");
                                     #endif
                                     
                                     __instance.gameObject.SetActive(false);
@@ -100,7 +94,7 @@ namespace NewSafetyHelp.CustomCampaign
                         if (!__instance.beatGameUnlock || !(bool) GlobalVariables.saveManagerScript || GlobalVariables.saveManagerScript.savedGameFinished >= 1 || __instance.xmasUnlock && GlobalVariables.isXmasDLC)
                         {
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Is unlocked due to beating the game or being in winter DLC.\n");
+                                MelonLogger.Msg($"DEBUG: GameObject '{__instance.gameObject.name}' is unlocked due to beating the game or being in winter DLC. BeatGameUnlock: '{__instance.beatGameUnlock}'. SaveManagerScript: '{(bool) GlobalVariables.saveManagerScript}'. SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
                             #endif
                             
                             return false;
@@ -109,7 +103,7 @@ namespace NewSafetyHelp.CustomCampaign
                         {
                             
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Didn't beat the game to unlock this or not in winter DLC. Disabling.\n");
+                                MelonLogger.Msg($"DEBUG: Didn't beat the game to unlock this or not in winter DLC. Disabling the GameObject '{__instance.gameObject.name}'. BeatGameUnlock: '{__instance.beatGameUnlock}'. SaveManagerScript: '{(bool) GlobalVariables.saveManagerScript}'. SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
                             #endif
                             
                             __instance.gameObject.SetActive(false);
@@ -120,7 +114,7 @@ namespace NewSafetyHelp.CustomCampaign
                 {
                     
                     #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Disabling. Made for Arcade.\n");
+                        MelonLogger.Msg($"DEBUG: Disabling. GameObject made for Arcade.\n");
                     #endif
                     
                     __instance.gameObject.SetActive(false);
