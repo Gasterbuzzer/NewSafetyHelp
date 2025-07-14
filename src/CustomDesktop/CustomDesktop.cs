@@ -41,14 +41,34 @@ namespace NewSafetyHelp.CustomDesktop
                         return true;
                     }
 
-                    if (!string.IsNullOrEmpty(customCampaign.loadingTexts[0]))
+                    if (customCampaign.loadingTexts[0].Count > 0 && !string.IsNullOrEmpty(customCampaign.loadingTexts[0][0]))
                     {
-                        __instance.loginText.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[0];
+                        __instance.loginText.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[0][0];
+
+                        // Set animated texts to provided texts. (Even if just 1)
+                        AnimatedText loginText01 = __instance.loginText.GetComponent<AnimatedText>();
+                            
+                        loginText01.textFrames = new string[customCampaign.loadingTexts[0].Count];
+
+                        for (int i = 0; i < customCampaign.loadingTexts[0].Count; i++)
+                        {
+                            loginText01.textFrames[i] = customCampaign.loadingTexts[0][i];
+                        }
                     }
                     
-                    if (!string.IsNullOrEmpty(customCampaign.loadingTexts[1]))
+                    if (customCampaign.loadingTexts[1].Count > 0 && !string.IsNullOrEmpty(customCampaign.loadingTexts[1][0]))
                     {
-                        __instance.loginText2.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[1];
+                        __instance.loginText2.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[1][0];
+                        
+                        // Set animated texts to provided texts. (Even if just 1)
+                        AnimatedText loginText02 = __instance.loginText2.GetComponent<AnimatedText>();
+                        
+                        loginText02.textFrames = new string[customCampaign.loadingTexts[1].Count];
+
+                        for (int i = 0; i < customCampaign.loadingTexts[1].Count; i++)
+                        {
+                            loginText02.textFrames[i] = customCampaign.loadingTexts[1][i];
+                        }
                     }
                 }
 

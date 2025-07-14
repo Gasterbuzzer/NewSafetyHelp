@@ -16,7 +16,7 @@ namespace NewSafetyHelp.CustomCampaign
         public Sprite campaignIcon = null;
         public string campaignDesktopName = "NO_CAMPAIGN_DESKTOP_NAME";
 
-        public List<string> loadingTexts = new List<string>();
+        public List<List<string>> loadingTexts = new List<List<string>>();
         
         // In Game
         public List<CustomCallerExtraInfo> customCallersInCampaign = new List<CustomCallerExtraInfo>(); // Caller in the campaign

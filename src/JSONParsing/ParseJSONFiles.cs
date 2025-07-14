@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -166,7 +167,11 @@ namespace NewSafetyHelp.JSONParsing
                     Sprite customCampaignSprite = null;
                     
                     // Initialize the strings empty.
-                    List<string> loadingTexts = new List<string>() {"", ""};
+                    List<List<string>> loadingTexts = new List<List<string>>()
+                    {
+                        new List<string>() {""}, // First inner list with one empty string
+                        new List<string>() {""}  // Second inner list with one empty string
+                    };
                     
                     // Campaign Settings
                     int customCampaignDays = 7;
@@ -227,12 +232,22 @@ namespace NewSafetyHelp.JSONParsing
                     
                     if (jsonObject.Keys.Contains("custom_campaign_loading_desktop_text1"))
                     {
-                        loadingTexts[0] = jsonObject["custom_campaign_loading_desktop_text1"];
+                        ProxyArray _loadingText = (ProxyArray) jsonObject["custom_campaign_loading_desktop_text1"];
+                        
+                        for (int i = 0; i < _loadingText.Count; i++)
+                        {
+                            loadingTexts[0][i] = _loadingText[i];
+                        }
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_loading_desktop_text2"))
                     {
-                        loadingTexts[1] = jsonObject["custom_campaign_loading_desktop_text2"];
+                        ProxyArray _loadingText = (ProxyArray) jsonObject["custom_campaign_loading_desktop_text2"];
+                        
+                        for (int i = 0; i < _loadingText.Count; i++)
+                        {
+                            loadingTexts[1][i] = _loadingText[i];
+                        }
                     }
                     
                     // Create
