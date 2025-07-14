@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
@@ -93,6 +94,23 @@ namespace NewSafetyHelp.CustomDesktop
                     // Hide DLC Button
                     CustomDesktopHelper.disableWinterDLCProgram();
                 }
+                
+                // Change username text if available
+                if (CustomCampaignGlobal.inCustomCampaign)
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign is null! Unable of replacing username. Calling original function.");
+                        return true;
+                    }
+
+                    if (!string.IsNullOrEmpty(customCampaign.desktopUsernameText))
+                    {
+                        CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = customCampaign.desktopUsernameText;
+                    }
+                }
 
                 return false; // Skip original function.
             }
@@ -128,6 +146,146 @@ namespace NewSafetyHelp.CustomDesktop
                 
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.connectionSuccess);
             }
+        }
+        
+        
+        [HarmonyLib.HarmonyPatch(typeof(DateTextController), "Start", new Type[] { })]
+        public static class StartDateTextPatch
+        {
+
+            /// <summary>
+            /// Hooks into the Start function of the date function to allow for more robust days in custom campaigns.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            private static bool Prefix(MethodBase __originalMethod, DateTextController __instance)
+            {
+                
+                FieldInfo _myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+
+                if (_myText == null)
+                {
+                    MelonLogger.Error("ERROR: MyText Field of DateTextController is null! Calling original.");
+                    return true;
+                }
+                
+                _myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
+                
+                if (!GlobalVariables.isXmasDLC) // Main Campaign
+                {
+                    TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
+                    
+                    string[] strArray = new string[5];
+                    
+                    int num = 4;                            // Month
+                    
+                    strArray[0] = num.ToString();
+                    strArray[1] = "/";
+                    
+                    
+                    num = 23 + GlobalVariables.currentDay;  // Day
+                    
+                    
+                    strArray[2] = num.ToString();
+                    strArray[3] = "/";
+                    
+                    
+                    num = 1996;                             // Year
+                    
+                    
+                    strArray[4] = num.ToString();
+                    
+                    string str = string.Concat(strArray);
+                    
+                    text.text = str;
+                }
+                else if (!CustomCampaignGlobal.inCustomCampaign) // XMAS DLC
+                {
+                    TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
+                    
+                    string[] strArray = new string[5];
+                    
+                    int num = 12;                           // Month
+                    
+                    strArray[0] = num.ToString();
+                    strArray[1] = "/";
+                    
+                    
+                    num = 21 + GlobalVariables.currentDay;  // Day
+                    
+                    
+                    strArray[2] = num.ToString();
+                    strArray[3] = "/";
+                    
+                    
+                    num = 1996;                             // Year
+                    
+                    
+                    strArray[4] = num.ToString();
+                    
+                    string str = string.Concat(strArray);
+                    
+                    text.text = str;
+                }
+                else // Custom Campaign
+                {
+                    TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
+                    
+                    // Get our stored values
+
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign is null! Calling original function.");
+                        return false;
+                    }
+                    
+                    // Handle the dates
+                    List<int> dateList = new List<int>() {4, 23, 1996};
+
+                    if (customCampaign.desktopDateStartDay != -1)
+                    {
+                        dateList[0] = customCampaign.desktopDateStartDay;
+                    }
+
+                    if (customCampaign.desktopDateStartMonth != -1)
+                    {
+                        dateList[1] = customCampaign.desktopDateStartMonth;
+                    }
+
+                    if (customCampaign.desktopDateStartYear != -1)
+                    {
+                        dateList[2] = customCampaign.desktopDateStartYear;
+                    }
+                    
+                    dateList = DateUtil.fixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
+                    
+                    string[] strArray = new string[5];
+
+                    int monthIndex = customCampaign.useEuropeDateFormat ? 2 : 0;
+                    int dayIndex = customCampaign.useEuropeDateFormat ? 0 : 2;
+                    
+                    // Month
+                    strArray[monthIndex] = dateList[1].ToString();
+                    strArray[1] = "/";
+                    
+                    // Day
+                    strArray[dayIndex] = dateList[0].ToString();
+                    strArray[3] = "/";
+                    
+                    // Year
+                    strArray[4] = dateList[2].ToString();
+                    
+                    string str = string.Concat(strArray);
+                    
+                    text.text = str;
+                }
+                
+                
+                return false; // Skip original function.
+            }
+            
         }
     }
 }

@@ -51,6 +51,51 @@ namespace NewSafetyHelp.CustomDesktop
         }
         
         /// <summary>
+        /// Gets the windows bar GameObject from the desktop.
+        /// </summary>
+        /// <returns>Window Bar GameObject</returns>
+        public static GameObject getWindowsBar()
+        {
+            GameObject foundWindowBar = getDesktop().transform.Find("WindowsBar (1)").gameObject;
+
+            if (foundWindowBar != null)
+            {
+                return foundWindowBar;
+            }
+            else // Try again with a different name.
+            {
+                foundWindowBar = getDesktop().transform.Find("WindowsBar").gameObject;
+
+                if (foundWindowBar != null)
+                {
+                    MelonLogger.Error("ERROR: Failed to find windows bar from Main Menu. Possibly called outside of MainMenuCanvas?");
+                    return null;
+                }
+
+                return foundWindowBar;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the username GameObject from the windows bar.
+        /// </summary>
+        /// <returns>Username GameObject</returns>
+        public static GameObject getUsernameObject()
+        {
+            GameObject foundUsername = getWindowsBar().transform.Find("Username").gameObject;
+
+            if (foundUsername != null)
+            {
+                return foundUsername;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find username from window bar. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
         /// Gets the GameObject for the Program icons on the left side on the Desktop.
         /// </summary>
         /// <returns> GameObject for the programs on the left. </returns>

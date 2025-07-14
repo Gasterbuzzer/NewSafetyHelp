@@ -28,6 +28,13 @@ namespace NewSafetyHelp.CustomCampaign
         
         public bool removeExistingEntries = false; // Removes all existing entries and only shows custom entries.
         
+        // Date and Username
+        public string desktopUsernameText = "";
+        public int desktopDateStartYear = -1;
+        public int desktopDateStartMonth = -1;
+        public int desktopDateStartDay = -1;
+        public bool useEuropeDateFormat = false;
+        
         // Saving
         public MelonPreferences_Category campaignSaveCategory = null;
 

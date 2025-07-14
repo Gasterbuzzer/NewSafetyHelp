@@ -172,6 +172,13 @@ namespace NewSafetyHelp.JSONParsing
                         new List<string>() {""}, // First inner list with one empty string
                         new List<string>() {""}  // Second inner list with one empty string
                     };
+
+                    // Date and Username
+                    string desktopUsernameText = "";
+                    int desktopDateStartYear = -1;
+                    int desktopDateStartMonth = -1;
+                    int desktopDateStartDay = -1;
+                    bool useEuropeDateFormat = false;
                     
                     // Campaign Settings
                     int customCampaignDays = 7;
@@ -195,6 +202,31 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("custom_campaign_days"))
                     {
                         customCampaignDays = jsonObject["custom_campaign_days"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("desktop_username_text"))
+                    {
+                        desktopUsernameText = jsonObject["desktop_username_text"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("start_year"))
+                    {
+                        desktopDateStartYear = jsonObject["start_year"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("start_month"))
+                    {
+                        desktopDateStartMonth = jsonObject["start_month"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("start_day"))
+                    {
+                        desktopDateStartDay = jsonObject["start_day"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("use_europe_date_format"))
+                    {
+                        useEuropeDateFormat = jsonObject["use_europe_date_format"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_days_names"))
@@ -262,14 +294,21 @@ namespace NewSafetyHelp.JSONParsing
                         campaignIcon = customCampaignSprite,
                         campaignDayStrings = customCampaignDaysNames,
                         campaignDesktopName = customCampaignDesktopName,
+                        
                         removeExistingEntries = removeAllExistingEntries,
-                        loadingTexts = loadingTexts
+                        
+                        loadingTexts = loadingTexts,
+                        
+                        desktopUsernameText = desktopUsernameText,
+                        desktopDateStartYear = desktopDateStartYear,
+                        desktopDateStartMonth = desktopDateStartMonth,
+                        desktopDateStartDay = desktopDateStartDay,
+                        useEuropeDateFormat = useEuropeDateFormat
                     };
                     
                     // Check if any callers have to be added to this campaign.
                     if (missingCustomCallerCallersCustomCampaign.Count > 0)
                     {
-                        
                         // Create a copy of the list to iterate over
                         List<CustomCallerExtraInfo> tempList = new List<CustomCallerExtraInfo>(missingCustomCallerCallersCustomCampaign);
                         
