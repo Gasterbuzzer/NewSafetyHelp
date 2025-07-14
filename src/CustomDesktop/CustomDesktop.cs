@@ -161,7 +161,11 @@ namespace NewSafetyHelp.CustomDesktop
             private static bool Prefix(MethodBase __originalMethod, DateTextController __instance)
             {
                 
-                FieldInfo _myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+                #if DEBUG
+                    MelonLogger.Msg("DEBUG: Handling day format.");
+                #endif
+                
+                FieldInfo _myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
                 if (_myText == null)
                 {
@@ -171,7 +175,7 @@ namespace NewSafetyHelp.CustomDesktop
                 
                 _myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
                 
-                if (!GlobalVariables.isXmasDLC) // Main Campaign
+                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign) // Main Campaign
                 {
                     TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
                     
@@ -229,6 +233,10 @@ namespace NewSafetyHelp.CustomDesktop
                 }
                 else // Custom Campaign
                 {
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Handling custom day format..");
+                    #endif
+                    
                     TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
                     
                     // Get our stored values
@@ -259,7 +267,15 @@ namespace NewSafetyHelp.CustomDesktop
                         dateList[2] = customCampaign.desktopDateStartYear;
                     }
                     
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Current day format: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
+                    #endif
+                    
                     dateList = DateUtil.fixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Day format after fix: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
+                    #endif
                     
                     string[] strArray = new string[5];
 
