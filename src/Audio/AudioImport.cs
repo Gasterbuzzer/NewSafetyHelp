@@ -65,8 +65,13 @@ namespace NewSafetyHelp.Audio
                     MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. \n Results in the error: {www.error} and the response code is: {www.responseCode}. Was the process finished?: {www.isDone}");
                 }
                 
-                Time.timeScale = 1.0f;
                 currentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
+
+                // If all audios finished loading we continue letting the game run.
+                if (currentLoadingAudios.Count <= 0)
+                {
+                    Time.timeScale = 1.0f;
+                }
             }
         }
 

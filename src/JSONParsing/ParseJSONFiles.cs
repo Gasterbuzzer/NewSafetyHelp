@@ -107,6 +107,12 @@ namespace NewSafetyHelp.JSONParsing
             {
                 LoadJsonFilesFromFolder(foldersStringName, __instance);
             }
+
+            // If no audio is loading, we can reset the game back. If not, we let the audios do so.
+            if (AudioImport.currentLoadingAudios.Count <= 0)
+            {
+                Time.timeScale = 1.0f;
+            }
         }
         
         /// <summary>
@@ -154,16 +160,22 @@ namespace NewSafetyHelp.JSONParsing
         {
             if (jsonText is ProxyObject jsonObject)
             {
+                    // Desktop
                     string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
                     string customCampaignDesktopName = "NO_NAME\nPROVIDED";
+                    Sprite customCampaignSprite = null;
                     
+                    // Initialize the strings empty.
+                    List<string> loadingTexts = new List<string>() {"", ""};
+                    
+                    // Campaign Settings
                     int customCampaignDays = 7;
                     
-                    Sprite customCampaignSprite = null;
-
                     List<string> customCampaignDaysNames = new List<string>();
                     
                     bool removeAllExistingEntries = false;
+                    
+                    
 
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
@@ -212,7 +224,16 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         removeAllExistingEntries = jsonObject["custom_campaign_remove_main_entries"];
                     }
-
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_loading_desktop_text1"))
+                    {
+                        loadingTexts[0] = jsonObject["custom_campaign_loading_desktop_text1"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_loading_desktop_text2"))
+                    {
+                        loadingTexts[1] = jsonObject["custom_campaign_loading_desktop_text2"];
+                    }
                     
                     // Create
                     CustomCampaignExtraInfo _customCampaign = new CustomCampaignExtraInfo
@@ -222,7 +243,8 @@ namespace NewSafetyHelp.JSONParsing
                         campaignIcon = customCampaignSprite,
                         campaignDayStrings = customCampaignDaysNames,
                         campaignDesktopName = customCampaignDesktopName,
-                        removeExistingEntries = removeAllExistingEntries
+                        removeExistingEntries = removeAllExistingEntries,
+                        loadingTexts = loadingTexts
                     };
                     
                     // Check if any callers have to be added to this campaign.

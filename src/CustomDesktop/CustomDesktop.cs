@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using TMPro;
+using UnityEngine;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
@@ -19,11 +23,37 @@ namespace NewSafetyHelp.CustomDesktop
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static void Postfix(MethodBase __originalMethod, MainMenuCanvasBehavior __instance)
+            private static bool Prefix(MethodBase __originalMethod, MainMenuCanvasBehavior __instance)
             {
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Start of Main Menu Canvas Behavior.");
                 #endif
+
+                // If in custom campaign, we replace it with custom text.
+                if (CustomCampaignGlobal.inCustomCampaign)
+                {
+
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign is null! Unable of replacing loading screen texts. Calling original function.");
+                        return true;
+                    }
+
+                    if (!string.IsNullOrEmpty(customCampaign.loadingTexts[0]))
+                    {
+                        __instance.loginText.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[0];
+                    }
+                    
+                    if (!string.IsNullOrEmpty(customCampaign.loadingTexts[1]))
+                    {
+                        __instance.loginText2.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[1];
+                    }
+                }
+
+                // Plays beginning segment to desktop.
+                MelonCoroutines.Start(StartupRoutine(__instance));
 
                 if (!CustomCampaignGlobal.inCustomCampaign)
                 {
@@ -43,6 +73,40 @@ namespace NewSafetyHelp.CustomDesktop
                     // Hide DLC Button
                     CustomDesktopHelper.disableWinterDLCProgram();
                 }
+
+                return false; // Skip original function.
+            }
+
+
+            public static IEnumerator StartupRoutine(MainMenuCanvasBehavior __instance)
+            {
+                while (GlobalVariables.UISoundControllerScript ==null)
+                {
+                    yield return null;
+                }
+                
+                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.computerStartup);
+                
+                yield return new WaitForSeconds(1.3f);
+                
+                __instance.loginText.SetActive(true);
+                
+                yield return new WaitForSeconds(2f);
+                
+                GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.computerFanSpin, GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource);
+                
+                __instance.loginText2.SetActive(true);
+                
+                yield return new WaitForSeconds(3f);
+                
+                __instance.loginText.SetActive(false);
+                __instance.loginText2.SetActive(false);
+                
+                GlobalVariables.fade.FadeOut(0.0001f);
+                
+                yield return new WaitForSeconds(0.1f);
+                
+                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.connectionSuccess);
             }
         }
     }
