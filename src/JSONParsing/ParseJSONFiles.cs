@@ -233,10 +233,12 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("custom_campaign_loading_desktop_text1"))
                     {
                         ProxyArray _loadingText = (ProxyArray) jsonObject["custom_campaign_loading_desktop_text1"];
+
+                        loadingTexts[0] = new List<string>();
                         
                         for (int i = 0; i < _loadingText.Count; i++)
                         {
-                            loadingTexts[0][i] = _loadingText[i];
+                            loadingTexts[0].Add(_loadingText[i]);
                         }
                     }
                     
@@ -244,9 +246,11 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         ProxyArray _loadingText = (ProxyArray) jsonObject["custom_campaign_loading_desktop_text2"];
                         
+                        loadingTexts[1] = new List<string>();
+                        
                         for (int i = 0; i < _loadingText.Count; i++)
                         {
-                            loadingTexts[1][i] = _loadingText[i];
+                            loadingTexts[1].Add(_loadingText[i]);
                         }
                     }
                     
