@@ -538,5 +538,62 @@ namespace NewSafetyHelp.CallerPatches
                 mainCanvasBehavior.ExitToStartMenu();
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "IsNetworkDown", new Type[] { })]
+        public static class IsNetworkDownPatch
+        {
+            /// <summary>
+            /// Patches the network down patch to also check for custom callers.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> If to down the network. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref bool __result)
+            {
+
+                if (GlobalVariables.arcadeMode)
+                {
+                    if (GlobalVariables.callerControllerScript.downedNetworkCall)
+                    {
+                        __result = true;
+                        return false;  // Skip function with false.
+                    }
+                }
+                else
+                {
+                    if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign, could be main or DLC.
+                    {
+                        foreach (int downedNetworkCall in GlobalVariables.callerControllerScript.downedNetworkCalls)
+                        {
+                            if (downedNetworkCall == GlobalVariables.callerControllerScript.currentCallerID)
+                            {
+                                __result = true;
+                                return false;  // Skip function with false.
+                            }
+                        }
+                    }
+                    else // Custom Campaign
+                    {
+                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCampaignCustomCallerByOrderID(GlobalVariables.callerControllerScript.currentCallerID);
+                        
+                        if (customCaller == null)
+                        {
+                            MelonLogger.Error("ERROR: Custom campaign was null. Unable of checking for downed network parameter. Calling original function.");
+                            return true;
+                        }
+
+                        if (customCaller.downedNetworkCaller) // This is set to true if the caller is allowed to down the network.
+                        {
+                            __result = true;
+                            return false;
+                        }
+                    }
+                }
+                
+                __result = false;
+                return false; // Skip function with false.
+            }
+        }
     }
 }

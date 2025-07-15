@@ -16,6 +16,8 @@
         public bool callerIncreasesTier = false;
 
         public bool lastDayCaller = false; // If this caller will end the day.
+
+        public bool downedNetworkCaller = false; // If the caller will down the network (Meaning entry information cannot be accessed)
         
         // Monster Profile
         public string monsterNameAttached = "NO_MONSTER_NAME"; // Monster / Entry name to be attached for. (Used when the caller asks for help and to check if that name is valid).

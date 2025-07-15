@@ -399,6 +399,8 @@ namespace NewSafetyHelp.JSONParsing
 
                     bool increasesTier = false;
                     bool isLastCallerOfDay = false;
+
+                    bool downedCall = false; // If the entries cannot be accessed while the caller is calling.
                     
                     string customCallerAudioPath = "";
                     
@@ -481,6 +483,11 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         customCallerConsequenceCallerID = jsonObject["custom_caller_consequence_caller_id"];
                     }
+                    
+                    if (jsonObject.Keys.Contains("custom_caller_downed_network"))
+                    {
+                        downedCall = jsonObject["custom_caller_downed_network"];
+                    }
 
                     // Check if order is valid and if not, we warn the user.
                     if (orderInCampaign < 0)
@@ -501,7 +508,8 @@ namespace NewSafetyHelp.JSONParsing
                             callerClipPath = customCallerAudioPath,
                             consequenceCallerID = customCallerConsequenceCallerID,
                             belongsToCustomCampaign = customCampaign,
-                            lastDayCaller = isLastCallerOfDay
+                            lastDayCaller = isLastCallerOfDay,
+                            downedNetworkCaller = downedCall
                         };
 
                     if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
@@ -840,7 +848,7 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="callback"> Callback function for returning values and doing stuff with it that require the coroutine to finish first. </param>
         /// <param name="audioPath"> Path to the audio file. </param>
         /// <param name="_audioType"> Audio type to parse. </param>
-        public static IEnumerator UpdateAudioClip(System.Action<AudioClip> callback, string audioPath, AudioType _audioType = AudioType.WAV)
+        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath, AudioType _audioType = AudioType.WAV)
         {
             AudioClip monsterSoundClip = null;
 
