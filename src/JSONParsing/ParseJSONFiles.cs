@@ -411,6 +411,10 @@ namespace NewSafetyHelp.JSONParsing
                     string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
                     int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
                     
+                    // Warning Call
+
+                    bool isWarningCaller = false;
+                    int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
                     
                     if (jsonObject.Keys.Contains("include_in_main_campaign"))
                     {
@@ -488,6 +492,18 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         downedCall = jsonObject["custom_caller_downed_network"];
                     }
+                    
+                    // Warning Caller
+                    
+                    if (jsonObject.Keys.Contains("is_warning_caller"))
+                    {
+                        isWarningCaller = jsonObject["is_warning_caller"];
+                    }
+                    
+                    if (isWarningCaller && jsonObject.Keys.Contains("warning_caller_day"))
+                    {
+                        warningCallDay = jsonObject["warning_caller_day"];
+                    }
 
                     // Check if order is valid and if not, we warn the user.
                     if (orderInCampaign < 0)
@@ -509,7 +525,10 @@ namespace NewSafetyHelp.JSONParsing
                             consequenceCallerID = customCallerConsequenceCallerID,
                             belongsToCustomCampaign = customCampaign,
                             lastDayCaller = isLastCallerOfDay,
-                            downedNetworkCaller = downedCall
+                            downedNetworkCaller = downedCall,
+                            
+                            isWarningCaller = isWarningCaller,
+                            warningCallDay = warningCallDay
                         };
 
                     if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
