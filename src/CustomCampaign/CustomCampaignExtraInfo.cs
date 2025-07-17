@@ -28,6 +28,10 @@ namespace NewSafetyHelp.CustomCampaign
         
         public bool removeExistingEntries = false; // Removes all existing entries and only shows custom entries.
         
+        public int gameOverThreshold = 60;  // Game Over Threshold
+        public int warningThreshold = 60;  // Warning Threshold
+        public List<int> warningCallThresholdCallerAmounts  = new List<int>(); // Amount of calls per day until the warning is allowed to appear.
+        
         // Date and Username
         public string desktopUsernameText = "";
         public int desktopDateStartYear = -1;

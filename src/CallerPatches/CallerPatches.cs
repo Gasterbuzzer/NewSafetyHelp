@@ -1128,84 +1128,160 @@ namespace NewSafetyHelp.CallerPatches
                     MelonLogger.Error("ERROR: givenWarning or AnswerDynamicCall or firstCaller is null. Calling original function.");
                     return true;
                 }
-                
-                if (GlobalVariables.isXmasDLC && GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
-                {
-                    __instance.TriggerGameOver();
-                }
-                else if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) && GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
-                {
-                    __instance.TriggerGameOver();
-                }
-                else if (GlobalVariables.currentDay == 1 && __instance.callersToday == 3 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
-                {
-                    _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                    _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
-                }
-                else if (GlobalVariables.currentDay == 2 && __instance.callersToday == 2 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
-                {
-                    _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                    _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
-                }
-                else if (GlobalVariables.currentDay == 3 && __instance.callersToday == 3 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
-                {
-                    _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                    _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
-                }
-                else if (GlobalVariables.currentDay == 4 && __instance.callersToday == 4 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
-                {
-                    _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                    _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
-                }
-                else if (GlobalVariables.currentDay == 5 && __instance.callersToday == 5 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
-                {
-                    _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                    _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
-                }
-                else if (GlobalVariables.currentDay == 6 && __instance.callersToday == 7 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
-                {
-                    _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                    _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
-                }
-                else
-                {
-                  if (!(bool) _firstCaller.GetValue(__instance) && !__instance.arcadeMode) // !__instance.firstCaller
-                  {
-                      ++__instance.currentCallerID;
-                  }
-                  if ((bool) _firstCaller.GetValue(__instance)) // __instance.firstCaller
-                  {
-                      _firstCaller.SetValue(__instance, false); // __instance.firstCaller = false;
-                  }
-                  __instance.UpdateCallerInfo();
-                  if (!GlobalVariables.arcadeMode && __instance.callers[__instance.currentCallerID].callerProfile.consequenceCallerProfile != null && !__instance.CanReceiveConsequenceCall(__instance.callers[__instance.currentCallerID].callerProfile.consequenceCallerProfile))
-                  {
-                      __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
-                      __instance.AnswerCaller();
-                  }
-                  else
-                  {
-                    if (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)
-                    {
-                        GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
-                    }
-                    __instance.PlayCallAudio();
-                    
-                    FieldInfo _delayedLargeWindowDisplayRoutine = typeof(CallerController).GetField("delayedLargeWindowDisplayRoutine", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                    MethodInfo _waitTillCallEndRoutine = typeof(CallerController).GetMethod("WaitTillCallEndRoutine", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                    if (_delayedLargeWindowDisplayRoutine == null || _waitTillCallEndRoutine == null)
+                bool normalCallerAfterCheck = false;
+
+                if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign.
+                {
+                    if (GlobalVariables.isXmasDLC && GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                     {
-                        MelonLogger.Error("ERROR: delayedLargeWindowDisplayRoutine or WaitTillCallEndRoutine is null. Calling original function.");
+                        __instance.TriggerGameOver();
+                    }
+                    else if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) && GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                    {
+                        __instance.TriggerGameOver();
+                    }
+                    else if (GlobalVariables.currentDay == 1 && __instance.callersToday == 3 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    {
+                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                    }
+                    else if (GlobalVariables.currentDay == 2 && __instance.callersToday == 2 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    {
+                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                    }
+                    else if (GlobalVariables.currentDay == 3 && __instance.callersToday == 3 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    {
+                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                    }
+                    else if (GlobalVariables.currentDay == 4 && __instance.callersToday == 4 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    {
+                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                    }
+                    else if (GlobalVariables.currentDay == 5 && __instance.callersToday == 5 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    {
+                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                    }
+                    else if (GlobalVariables.currentDay == 6 && __instance.callersToday == 7 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    {
+                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                    }
+                    else
+                    {
+                        normalCallerAfterCheck = true;
+                    }
+                }
+                else if (CustomCampaignGlobal.inCustomCampaign)
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: customCampaign is null. Calling original function.");
                         return true;
                     }
+
+                    int[] callersTodayMainCampaign = new int[] {3, 2, 3, 4, 5, 7};
+
+                    // Not Arcade Mode, is last call of day?, not DLC, threshold correct, current day is after day 1 and no save immunity.
+                    if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(customCampaign.gameOverThreshold) && GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                    {
+                        __instance.TriggerGameOver();
+                    }
+                    else if (!__instance.ScoreIsPassing(customCampaign.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    {
+
+                        int currentDayUntilWarning = -1;
                         
-                    _delayedLargeWindowDisplayRoutine.SetValue(__instance, __instance.StartCoroutine((IEnumerator) _waitTillCallEndRoutine.Invoke(__instance, new object[]{__instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length}))); // __instance.delayedLargeWindowDisplayRoutine = __instance.StartCoroutine(__instance.WaitTillCallEndRoutine(__instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length));
-                  }
+                        if (GlobalVariables.currentDay <= customCampaign.warningCallThresholdCallerAmounts.Count) // We have enough information per day until the warning call appears.
+                        {
+                            currentDayUntilWarning = customCampaign.warningCallThresholdCallerAmounts[GlobalVariables.currentDay - 1];
+                        }
+                        else
+                        {
+                            currentDayUntilWarning = callersTodayMainCampaign[GlobalVariables.currentDay - 1];
+                        }
+
+                        if (__instance.callersToday == currentDayUntilWarning) // Now the warning call should appear.
+                        {
+                            // Insert warning caller.
+                            _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                            _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);   
+                        }
+                        else
+                        {
+                            normalCallerAfterCheck = true;
+                        }
+                    }
+                    else
+                    {
+                        normalCallerAfterCheck = true;
+                    }
+                }
+
+                if (normalCallerAfterCheck) // Since we have duplicated copies of this, we just have a flag called if that section is called.
+                {
+                    if (!(bool)_firstCaller.GetValue(__instance) && !__instance.arcadeMode) // !__instance.firstCaller
+                    {
+                        ++__instance.currentCallerID;
+                    }
+
+                    if ((bool)_firstCaller.GetValue(__instance)) // __instance.firstCaller
+                    {
+                        _firstCaller.SetValue(__instance, false); // __instance.firstCaller = false;
+                    }
+
+                    __instance.UpdateCallerInfo();
+
+                    if (!GlobalVariables.arcadeMode &&
+                        __instance.callers[__instance.currentCallerID].callerProfile.consequenceCallerProfile != null &&
+                        !__instance.CanReceiveConsequenceCall(__instance.callers[__instance.currentCallerID]
+                            .callerProfile.consequenceCallerProfile))
+                    {
+                        __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                        __instance.AnswerCaller();
+                    }
+                    else
+                    {
+                        if (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)
+                        {
+                            GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
+                        }
+
+                        __instance.PlayCallAudio();
+
+                        FieldInfo _delayedLargeWindowDisplayRoutine =
+                            typeof(CallerController).GetField("delayedLargeWindowDisplayRoutine",
+                                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance |
+                                BindingFlags.Public);
+                        MethodInfo _waitTillCallEndRoutine = typeof(CallerController).GetMethod(
+                            "WaitTillCallEndRoutine",
+                            BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                        if (_delayedLargeWindowDisplayRoutine == null || _waitTillCallEndRoutine == null)
+                        {
+                            MelonLogger.Error(
+                                "ERROR: delayedLargeWindowDisplayRoutine or WaitTillCallEndRoutine is null. Calling original function.");
+                            return true;
+                        }
+
+                        _delayedLargeWindowDisplayRoutine.SetValue(__instance,
+                            __instance.StartCoroutine((IEnumerator)_waitTillCallEndRoutine.Invoke(__instance,
+                                new object[]
+                                {
+                                    __instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length
+                                }))); // __instance.delayedLargeWindowDisplayRoutine = __instance.StartCoroutine(__instance.WaitTillCallEndRoutine(__instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length));
+                    }
+
                 }
 
                 return false; // Skip function with false.
-            }
+                }
         }
     }
 }

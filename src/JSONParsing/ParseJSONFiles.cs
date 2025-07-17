@@ -187,6 +187,11 @@ namespace NewSafetyHelp.JSONParsing
                     
                     bool removeAllExistingEntries = false;
                     
+                    // Thresholds
+                    int gameOverThreshold = 60; // Threshold when to trigger game over.
+                    int warningThreshold = 60; // Threshold when to trigger a warning call.
+
+                    List<int> warningCallThresholdCallerAmounts = new List<int>();
                     
 
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
@@ -227,6 +232,16 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("use_europe_date_format"))
                     {
                         useEuropeDateFormat = jsonObject["use_europe_date_format"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_gameover_threshold"))
+                    {
+                        gameOverThreshold = jsonObject["custom_campaign_gameover_threshold"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_warning_threshold"))
+                    {
+                        warningThreshold = jsonObject["custom_campaign_warning_threshold"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_days_names"))
@@ -286,6 +301,16 @@ namespace NewSafetyHelp.JSONParsing
                         }
                     }
                     
+                    if (jsonObject.Keys.Contains("custom_campaign_threshold_amount"))
+                    {
+                        ProxyArray thresholdAmount = (ProxyArray) jsonObject["custom_campaign_threshold_amount"];
+                        
+                        for (int i = 0; i < thresholdAmount.Count; i++)
+                        {
+                            warningCallThresholdCallerAmounts.Add(thresholdAmount[i]);
+                        }
+                    }
+                    
                     // Create
                     CustomCampaignExtraInfo _customCampaign = new CustomCampaignExtraInfo
                     {
@@ -303,7 +328,11 @@ namespace NewSafetyHelp.JSONParsing
                         desktopDateStartYear = desktopDateStartYear,
                         desktopDateStartMonth = desktopDateStartMonth,
                         desktopDateStartDay = desktopDateStartDay,
-                        useEuropeDateFormat = useEuropeDateFormat
+                        useEuropeDateFormat = useEuropeDateFormat,
+                        
+                        gameOverThreshold = gameOverThreshold,
+                        warningThreshold = warningThreshold,
+                        warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts
                     };
                     
                     // Check if any callers have to be added to this campaign.

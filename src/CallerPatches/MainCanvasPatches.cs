@@ -29,7 +29,7 @@ namespace NewSafetyHelp.CallerPatches
                 
                 List<string> defaultDayNames = new List<string>() {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
                 
-                if (!GlobalVariables.isXmasDLC)
+                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign)
                 {
                     if (GlobalVariables.arcadeMode)
                     {
@@ -39,7 +39,7 @@ namespace NewSafetyHelp.CallerPatches
                     __result = defaultDayNames[GlobalVariables.currentDay];
 
                 }
-                else if (GlobalVariables.isXmasDLC)
+                else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign)
                 {
                     switch (GlobalVariables.currentDay)
                     {
@@ -62,7 +62,6 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign Values
                 {
-
                     CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
 
                     if (currentCustomCampaign != null)
