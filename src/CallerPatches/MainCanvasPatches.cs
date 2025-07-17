@@ -36,7 +36,7 @@ namespace NewSafetyHelp.CallerPatches
                         __result = "Arcade Mode";
                     }
 
-                    __result = defaultDayNames[GlobalVariables.currentDay];
+                    __result = defaultDayNames[GlobalVariables.currentDay - 1];
 
                 }
                 else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign)
@@ -73,23 +73,23 @@ namespace NewSafetyHelp.CallerPatches
                             if (GlobalVariables.currentDay > currentCustomCampaign.campaignDayStrings.Count || currentCustomCampaign.campaignDays > currentCustomCampaign.campaignDayStrings.Count)
                             {
                                 MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
-                                __result = defaultDayNames[GlobalVariables.currentDay];
+                                __result = defaultDayNames[GlobalVariables.currentDay - 1];
                             }
                             else
                             {
-                                __result = currentCustomCampaign.campaignDayStrings[GlobalVariables.currentDay];
+                                __result = currentCustomCampaign.campaignDayStrings[GlobalVariables.currentDay - 1];
                             }
                         }
                         else
                         {
-                            __result = defaultDayNames[GlobalVariables.currentDay];
+                            __result = defaultDayNames[GlobalVariables.currentDay - 1];
                         }
                     }
                     else
                     {
                         MelonLogger.Warning("WARNING: Was unable of finding the current campaign. Defaulting to default values.");
                         
-                        __result = defaultDayNames[GlobalVariables.currentDay];
+                        __result = defaultDayNames[GlobalVariables.currentDay - 1];
                     }
                     
                 }

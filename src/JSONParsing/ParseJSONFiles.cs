@@ -349,8 +349,16 @@ namespace NewSafetyHelp.JSONParsing
                                 #if DEBUG
                                     MelonLogger.Msg($"DEBUG: Adding missing custom caller to the custom campaign: {customCampaignName}.");
                                 #endif
+
+                                if (!customCallerCC.isWarningCaller)
+                                {
+                                    _customCampaign.customCallersInCampaign.Add(customCallerCC);
+                                }
+                                else
+                                {
+                                    _customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
+                                }
                                 
-                                _customCampaign.customCallersInCampaign.Add(customCallerCC);
                                 missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
                             }
                         }
@@ -373,6 +381,7 @@ namespace NewSafetyHelp.JSONParsing
                                 #endif
                                 
                                 _customCampaign.entriesOnlyInCampaign.Add(missingEntry);
+                                
                                 missingEntriesCustomCampaign.Remove(missingEntry);
                             }
                         }
@@ -535,7 +544,7 @@ namespace NewSafetyHelp.JSONParsing
                     }
 
                     // Check if order is valid and if not, we warn the user.
-                    if (orderInCampaign < 0)
+                    if (orderInCampaign < 0 && !isWarningCaller)
                     {
                         MelonLogger.Warning($"WARNING: No order was provided for custom caller at '{filePath}'. This could accidentally replace a caller! Set to replace last caller!");
                         orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
@@ -620,12 +629,20 @@ namespace NewSafetyHelp.JSONParsing
 
                         if (foundCustomCampaign != null)
                         {
-                            foundCustomCampaign.customCallersInCampaign.Add(_customCaller);
+                            if (!_customCaller.isWarningCaller)
+                            {
+                                foundCustomCampaign.customCallersInCampaign.Add(_customCaller);  
+                            }
+                            else
+                            {
+                                foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);  
+                            }
+                            
                         }
                         else
                         {
                             #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
+                                MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
                             #endif
                             
                             missingCustomCallerCallersCustomCampaign.Add(_customCaller);

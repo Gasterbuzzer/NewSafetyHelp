@@ -1178,6 +1178,11 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else if (CustomCampaignGlobal.inCustomCampaign)
                 {
+                    
+                    #if DEBUG
+                         MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
+                    #endif
+                    
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
 
                     if (customCampaign == null)
@@ -1196,19 +1201,138 @@ namespace NewSafetyHelp.CallerPatches
                     else if (!__instance.ScoreIsPassing(customCampaign.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
 
-                        int currentDayUntilWarning = -1;
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Warning caller checks started.");
+                        #endif
+                        
+                        int callersTodayRequiredWarning = -1;
                         
                         if (GlobalVariables.currentDay <= customCampaign.warningCallThresholdCallerAmounts.Count) // We have enough information per day until the warning call appears.
                         {
-                            currentDayUntilWarning = customCampaign.warningCallThresholdCallerAmounts[GlobalVariables.currentDay - 1];
+                            callersTodayRequiredWarning = customCampaign.warningCallThresholdCallerAmounts[GlobalVariables.currentDay - 1];
                         }
                         else
                         {
-                            currentDayUntilWarning = callersTodayMainCampaign[GlobalVariables.currentDay - 1];
+                            if (GlobalVariables.currentDay <= callersTodayMainCampaign.Length)
+                            {
+                                callersTodayRequiredWarning = callersTodayMainCampaign[GlobalVariables.currentDay - 1];
+                            }
+                            else
+                            {
+                                callersTodayRequiredWarning = 7; // If we go past the 6 calls. We default to 7.
+                            }
                         }
 
-                        if (__instance.callersToday == currentDayUntilWarning) // Now the warning call should appear.
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Warning caller check for callers today required: {callersTodayRequiredWarning}. Current amount of callers: {__instance.callersToday}.");
+                        #endif
+                        
+                        if (__instance.callersToday == callersTodayRequiredWarning) // Now the warning call should appear.
                         {
+                            
+                            CustomCallerExtraInfo warningCallerToday = null;
+                            
+                            // Try finding a warning caller.
+                            if (customCampaign.customWarningCallersInCampaign.Count > 0) // We actually have any warning call to insert here.
+                            {
+                                
+                                if (customCampaign.customWarningCallersInCampaign.Exists(warningCaller => warningCaller.warningCallDay <= -1)) // If we have warning caller without a day attached we use this one before trying to find a more fitting one.
+                                {
+
+                                    List<CustomCallerExtraInfo> allWarningCallsWithoutDay = customCampaign.customWarningCallersInCampaign.FindAll(warningCaller => warningCaller.warningCallDay <= -1);
+
+                                    if (allWarningCallsWithoutDay.Count > 0)
+                                    {
+                                        warningCallerToday = allWarningCallsWithoutDay[UnityEngine.Random.Range(0, allWarningCallsWithoutDay.Count)]; // Choose a random one from the available list.
+                                    }
+                                }
+                                
+                                // Try finding a warning call that is set for the current day.
+                                List<CustomCallerExtraInfo> allWarningCallsForToday = customCampaign.customWarningCallersInCampaign.FindAll(warningCaller => warningCaller.warningCallDay == GlobalVariables.currentDay);
+                                if (allWarningCallsForToday.Count > 0)
+                                {
+                                    warningCallerToday = allWarningCallsForToday[UnityEngine.Random.Range(0, allWarningCallsForToday.Count)]; // Choose a random one from the available list.
+                                }
+                            }
+
+                            // If we found a warning call to replace it, we insert it here.
+                            if (warningCallerToday != null)
+                            {
+                                
+                                #if DEBUG
+                                    MelonLogger.Msg($"DEBUG: Warning caller found to replace! {warningCallerToday.callerName}.");
+                                #endif
+                                
+                                CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
+                                
+                                newProfile.callerName = warningCallerToday.callerName;
+                                newProfile.callTranscription = warningCallerToday.callTranscript;
+
+                                // Fallback for missing picture or audio.
+                                MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                
+                                MethodInfo getRandomClip = typeof(CallerController).GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                                if (getRandomPicMethod == null || getRandomClip == null)
+                                {
+                                    MelonLogger.Error("ERROR: getRandomPicMethod or getRandomClip is null! Calling original function.");
+                                    return true;
+                                }
+                                
+                                if (warningCallerToday.callerImage != null)
+                                {
+                                    newProfile.callerPortrait = warningCallerToday.callerImage;
+                                }
+                                else
+                                {
+                                    MelonLogger.Warning("WARNING: Warning-Caller has no caller image, using random image.");
+                                    
+                                    newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, null);
+                                }
+                                
+                                if (warningCallerToday.callerClip != null)
+                                {
+                                    newProfile.callerClip = warningCallerToday.callerClip;
+                                }
+                                else
+                                {
+                                    if (AudioImport.currentLoadingAudios.Count > 0)
+                                    {
+                                        MelonLogger.Warning("WARNING: Warning-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");
+                                    }
+                                    else
+                                    {
+                                        MelonLogger.Warning("WARNING: Warning-Caller has no audio! Using audio fallback. If you provided an audio but this error shows up, check for any errors before!");
+                                    }
+                                    
+                                    newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, null);
+                                }
+
+                                if (!string.IsNullOrEmpty(warningCallerToday.monsterNameAttached) || warningCallerToday.monsterIDAttached != -1)
+                                {
+                                    MelonLogger.Warning("WARNING: A monster was provided for the warning caller, but warning callers do not use any entries! Will default to none.");
+                                }
+                                
+                                newProfile.callerMonster = null;
+
+                                
+                                if (warningCallerToday.callerIncreasesTier)
+                                {
+                                    MelonLogger.Warning("WARNING: Increase tier was provided for a warning caller! It will be set to false!");
+                                }
+                                
+                                newProfile.increaseTier = false;
+
+                                
+                                if (warningCallerToday.consequenceCallerID != -1)
+                                {
+                                    MelonLogger.Warning("WARNING: Warning callers cannot be consequence caller, ignoring option.");
+                                }
+                                newProfile.consequenceCallerProfile = null;
+                                
+                                __instance.warningCall = newProfile;
+                            }
+                            
                             // Insert warning caller.
                             _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
                             _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);   
