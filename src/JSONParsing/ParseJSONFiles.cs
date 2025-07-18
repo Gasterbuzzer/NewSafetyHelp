@@ -1004,26 +1004,10 @@ namespace NewSafetyHelp.JSONParsing
             if (newID == -1 && !replaceEntry && inCustomCampaign)
             {
                 int tempID = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance);
-
-                string customCampaignNameCopy = customCampaignName;
                         
-                CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaignNameCopy);
-                        
-                if (currentCustomCampaign == null)
-                {
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Custom Campaign ID cannot be created right now. We set it to a high value.");
-                    #endif
-    
-                    // We add our amountExtra and increment it for the next extra.
-                    tempID += amountExtra;
-                    amountExtra++;
-                }
-                else
-                {
-                    // We found the custom campaign. We add the size to the ID.
-                    tempID += currentCustomCampaign.entriesOnlyInCampaign.Count;
-                }
+                // We add our amountExtra and increment it for the next extra.
+                tempID += amountExtra;
+                amountExtra++;
                 
                 newID = tempID;
             }
