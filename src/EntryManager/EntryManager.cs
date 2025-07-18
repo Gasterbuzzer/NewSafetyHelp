@@ -37,7 +37,7 @@ namespace NewSafetyHelp.EntryManager
                     MelonLogger.Msg($"DEBUG: Checking IDS with monster profile array of size {monsterProfiles.Length}.");
                 #endif
 
-                if (monsterProfiles.Length > 0)
+                if (monsterProfiles.Length > 0 && idToCheck != -1)
                 {
                     for (int i = 0; i < monsterProfiles.Length; i++)
                     {

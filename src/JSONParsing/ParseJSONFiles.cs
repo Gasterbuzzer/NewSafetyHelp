@@ -38,6 +38,8 @@ namespace NewSafetyHelp.JSONParsing
         
         // List of entries that replace yet to be added to custom campaign. Happens when the replacement entries file was found before.
         public static List<EntryExtraInfo> missingReplaceEntriesCustomCampaign = new List<EntryExtraInfo>();
+
+        public static int amountExtra = 10000;
         
         // Campaign Information
         const int mainCampaignCallAmount = 116;
@@ -832,7 +834,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Generate new ID if not provided.
-            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref filePath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance);
+            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref filePath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref _inCustomCampaign, ref _customCampaignName);
 
             if (replaceEntry) // We replace an Entry
             {
@@ -974,10 +976,11 @@ namespace NewSafetyHelp.JSONParsing
             newExtra.customCampaignName = _customCampaignName;
         }
 
-        public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry, ref string filePath, ref bool onlyDLC, ref bool includeDLC, ref EntryUnlockController entryUnlockerInstance)
+        public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry, ref string filePath, ref bool onlyDLC, ref bool includeDLC, ref EntryUnlockController entryUnlockerInstance, ref bool inCustomCampaign,
+            ref string customCampaignName)
         {
             // Update ID if not given.
-            if (newID == -1 && !replaceEntry)
+            if (newID == -1 && !replaceEntry && !inCustomCampaign) 
             {
                 // Get the max Monster ID.
                 int maxEntryIDMainCampaign = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance);
@@ -995,6 +998,34 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     newID = maxEntryIDMainCampaign;
                 }
+            }
+
+            // In custom campaign we first get our main game IDs and then add the offset by the size of the custom campaign sizes.
+            if (newID == -1 && !replaceEntry && inCustomCampaign)
+            {
+                int tempID = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance);
+
+                string customCampaignNameCopy = customCampaignName;
+                        
+                CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaignNameCopy);
+                        
+                if (currentCustomCampaign == null)
+                {
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Custom Campaign ID cannot be created right now. We set it to a high value.");
+                    #endif
+    
+                    // We add our amountExtra and increment it for the next extra.
+                    tempID += amountExtra;
+                    amountExtra++;
+                }
+                else
+                {
+                    // We found the custom campaign. We add the size to the ID.
+                    tempID += currentCustomCampaign.entriesOnlyInCampaign.Count;
+                }
+                
+                newID = tempID;
             }
             
             newExtra.ID = newID;
@@ -1265,7 +1296,9 @@ namespace NewSafetyHelp.JSONParsing
                         
                         // Add the extraEntryInfo in custom campaign things.
 
-                        CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                        string customCampaignNameCopy = customCampaignName;
+                        
+                        CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaignNameCopy);
                         
                         if (currentCustomCampaign == null)
                         {
