@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.ImportFiles;
 using Steamworks;
 using UnityEngine;
@@ -561,15 +562,13 @@ namespace NewSafetyHelp.CallerPatches
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();
                         
-                        double videoDuration = mainCanvasBehavior.videoPlayer.clip.length;
-                        
-                        mainCanvasBehavior.videoPlayer.prepareCompleted += (VideoPlayer vp) =>
+                        while (mainCanvasBehavior.videoPlayer.isPlaying) // While playing we don't continue.
                         {
-                            videoDuration = (vp.frameCount / vp.frameRate);
-                            Debug.Log("Video duration: " + videoDuration + " seconds");
-                        };
+                            yield return null;
+                        }
                         
-                        yield return new WaitForSeconds((float) videoDuration);
+                        // Afterward we load all main game values.
+                        CustomDesktopHelper.backToMainGame(false);
                     }
                     else // If not, we show the default one.
                     {
@@ -577,7 +576,7 @@ namespace NewSafetyHelp.CallerPatches
                     }
                 }
                 
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC)
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&!CustomCampaignGlobal.inCustomCampaign) // Disable Achievement in Custom Campaign
                 {
                     SteamUserStats.SetAchievement("GameFinished");
                     
@@ -657,6 +656,135 @@ namespace NewSafetyHelp.CallerPatches
                 
                 __result = false;
                 return false; // Skip function with false.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine", new Type[] { })]
+        public static class GameOverCutsceneRoutinePatch
+        {
+            /// <summary>
+            /// Patches the game over cutscene coroutine to also be able to play custom game over cutscenes.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Coroutine to run. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            {
+
+                __result = gameOverCutsceneRoutineChanged(__instance);
+                
+                return false; // Skip function with false.
+            }
+
+            public static IEnumerator gameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
+            {
+                MainCanvasBehavior mainCanvasBehavior = __instance;
+                
+                FieldInfo _shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                if (_shakeAnimationString == null)
+                {
+                    MelonLogger.Error("ERROR: shakeAnimationString is null! Catastrophic failure!");
+                    yield break;
+                }
+                
+                mainCanvasBehavior.cameraAnimator.SetBool((string) _shakeAnimationString.GetValue(__instance), true); // mainCanvasBehavior.shakeAnimationString
+                
+                mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.screenShakeLoop,
+                    GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
+                
+                GlobalVariables.fade.FadeIn(6f);
+                
+                if (GlobalVariables.musicControllerScript.myTrialMusicSource.isPlaying)
+                {
+                    GlobalVariables.musicControllerScript.StopTrialMusic();
+                }
+                
+                yield return new WaitForSeconds(6f);
+                
+                mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+                
+                yield return new WaitForSeconds(1f);
+                
+                mainCanvasBehavior.cutsceneCanvas.SetActive(true);
+
+                if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign
+                {
+                    mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
+                
+                    if (GlobalVariables.isXmasDLC)
+                    {
+                        mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.xmasGameOverClip;
+                    }
+                }
+                else // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        yield break;
+                    }
+
+                    if (!string.IsNullOrEmpty(customCampaign.gameOverCutsceneVideoName)) // If provided
+                    {
+                        mainCanvasBehavior.videoPlayer.url = customCampaign.gameOverCutsceneVideoName;
+                    }
+                    else // If not, we show the default one.
+                    {
+                        mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
+                    }
+                }
+                
+                mainCanvasBehavior.videoPlayer.Play();
+                
+                yield return new WaitForSeconds(1f);
+                
+                GlobalVariables.fade.FadeOut(3f);
+
+                if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
+                {
+                    yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                }
+                else // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        yield break;
+                    }
+                    
+                    if (!string.IsNullOrEmpty(customCampaign.gameOverCutsceneVideoName)) // If provided
+                    {
+                        // Get video length and then wait for it.
+                        mainCanvasBehavior.videoPlayer.Prepare();
+                        
+                        while (mainCanvasBehavior.videoPlayer.isPlaying) // While playing we don't continue.
+                        {
+                            yield return null;
+                        }
+                    }
+                    else // If not, we show the default one.
+                    {
+                        yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                    }
+                }
+                
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign) // Don't show fired achievement in custom campaign.
+                {
+                    SteamUserStats.SetAchievement("Fired");
+                    SteamUserStats.StoreStats();
+                }
+                
+                GlobalVariables.fade.FadeIn(2f);
+                
+                yield return new WaitForSeconds(2f);
+                
+                mainCanvasBehavior.RestartDay();
             }
         }
     }

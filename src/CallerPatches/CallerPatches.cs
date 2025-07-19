@@ -1020,7 +1020,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else if ((bool) _triggerGameOver.GetValue(__instance)) // __instance.triggerGameOver
                 {
-                  GlobalVariables.mainCanvasScript.PlayGameOverCutscene();
+                    GlobalVariables.mainCanvasScript.PlayGameOverCutscene();
                 }
                 else
                 {

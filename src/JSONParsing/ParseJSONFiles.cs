@@ -197,6 +197,7 @@ namespace NewSafetyHelp.JSONParsing
                     
                     // Video Cutscenes
                     string endCutsceneName = "";
+                    string gameOverCutsceneName = "";
                     
                     // Enable apps
                     bool entryBrowserAlwaysActive = false;
@@ -299,6 +300,26 @@ namespace NewSafetyHelp.JSONParsing
                         }
                     }
                     
+                    if (jsonObject.Keys.Contains("custom_campaign_gameover_cutscene_video_name"))
+                    {
+                        gameOverCutsceneName = filePath + "\\" + jsonObject["custom_campaign_gameover_cutscene_video_name"];
+                        
+                        #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Game Over video found: '{gameOverCutsceneName}'");
+                        #endif
+
+                        if (string.IsNullOrEmpty(jsonObject["custom_campaign_gameover_cutscene_video_name"]))
+                        {
+                            MelonLogger.Warning("WARNING: Provided video cutscene name but name is empty. Unable to show custom game over cutscene.");
+                            gameOverCutsceneName = "";
+                        }
+                        else if (!File.Exists(gameOverCutsceneName))
+                        {
+                            MelonLogger.Warning($"WARNING: Provided video cutscene {gameOverCutsceneName} does not exist.");
+                            gameOverCutsceneName = "";
+                        }
+                    }
+                    
                     if (jsonObject.Keys.Contains("custom_campaign_days_names"))
                     {
                         ProxyArray _customCampaignDays = (ProxyArray) jsonObject["custom_campaign_days_names"];
@@ -386,6 +407,7 @@ namespace NewSafetyHelp.JSONParsing
                         warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
                         
                         endCutsceneVideoName = endCutsceneName,
+                        gameOverCutsceneVideoName = gameOverCutsceneName,
                         
                         entryBrowserAlwaysActive = entryBrowserAlwaysActive,
                         scorecardAlwaysActive = scorecardAlwaysActive,

@@ -107,7 +107,7 @@ namespace NewSafetyHelp.CustomCampaign
                         if (!__instance.beatGameUnlock || !(bool) GlobalVariables.saveManagerScript || GlobalVariables.saveManagerScript.savedGameFinished >= 1 || __instance.xmasUnlock && GlobalVariables.isXmasDLC)
                         {
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: GameObject '{__instance.gameObject.name}' is unlocked due to beating the game or being in winter DLC. BeatGameUnlock: '{__instance.beatGameUnlock}'. SaveManagerScript: '{(bool) GlobalVariables.saveManagerScript}'. SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
+                                MelonLogger.Msg($"DEBUG: GameObject '{__instance.gameObject.name}' is unlocked! This may be due to it always being unlocked or by beating the game or being in winter DLC. BeatGameUnlock: '{__instance.beatGameUnlock}'. SaveManagerScript: '{(bool) GlobalVariables.saveManagerScript}'. SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
                             #endif
                             
                             return false;

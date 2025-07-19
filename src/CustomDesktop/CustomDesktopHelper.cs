@@ -263,7 +263,7 @@ namespace NewSafetyHelp.CustomDesktop
             
             customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
             
-            customProgramButton.onClick.AddListener(backToMainGame);
+            customProgramButton.onClick.AddListener(backToMainGameAlsoLoad);
             
             
             // Rename Program Object Name
@@ -285,7 +285,7 @@ namespace NewSafetyHelp.CustomDesktop
             SceneManager.LoadScene("MainMenuScene");
         }
 
-        public static void backToMainGame()
+        public static void backToMainGame(bool alsoLoadMainMenu = true)
         {
             MelonLogger.Msg(ConsoleColor.Green, $"INFO: Going back to the main game.");
             
@@ -299,7 +299,15 @@ namespace NewSafetyHelp.CustomDesktop
             GlobalVariables.saveManagerScript.Load();
             
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
-            SceneManager.LoadScene("MainMenuScene");
+            if (alsoLoadMainMenu)
+            {
+                SceneManager.LoadScene("MainMenuScene");
+            }
+        }
+
+        public static void backToMainGameAlsoLoad()
+        {
+            backToMainGame();
         }
     }
 }

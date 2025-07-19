@@ -56,6 +56,7 @@ namespace NewSafetyHelp.CustomCampaign
         
         // Video Cutscenes
         public string endCutsceneVideoName = ""; // Video shown at the end of the game.
+        public string gameOverCutsceneVideoName = ""; // Video shown at game over.
         
         // Special Saves
         public int savedGameFinished = 0;
