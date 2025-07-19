@@ -435,15 +435,21 @@ namespace NewSafetyHelp.CallerPatches
             public static IEnumerator endingCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
+
+                if (Camera.main == null)
+                {
+                    MelonLogger.Error("ERROR: Camera was null. Catastrophic failure!");
+                    yield break;
+                }
+                
+                if (mainCanvasBehavior.videoPlayer.isPlaying || Camera.main.gameObject.GetComponent<Animator>().GetBool("shake"))
+                {
+                    MelonLogger.Msg("INFO: Ending cutscene is already playing. Not calling again.");
+                    yield break;
+                }
                 
                 if (!GlobalVariables.isXmasDLC)
                 {
-
-                    if (Camera.main == null)
-                    {
-                        MelonLogger.Error("ERROR: Camera was null. Catastrophic failure!");
-                        yield break;
-                    }
                     
                     Camera.main.gameObject.GetComponent<Animator>().SetBool("shake", true);
                     mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.screenShakeLoop, GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
