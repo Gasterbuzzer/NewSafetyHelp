@@ -200,8 +200,10 @@ namespace NewSafetyHelp.JSONParsing
                     
                     // Enable apps
                     bool entryBrowserAlwaysActive = false;
+                    bool scorecardAlwaysActive = false;
+                    bool artbookAlwaysActive = false;
+                    bool arcadeAlwaysActive = false;
                     
-
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
                         customCampaignName = jsonObject["custom_campaign_name"];
@@ -260,6 +262,21 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("entry_browser_always_active"))
                     {
                         entryBrowserAlwaysActive = jsonObject["entry_browser_always_active"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("scorecard_always_active"))
+                    {
+                        scorecardAlwaysActive = jsonObject["scorecard_always_active"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("artbook_always_active"))
+                    {
+                        artbookAlwaysActive = jsonObject["artbook_always_active"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("arcade_always_active"))
+                    {
+                        arcadeAlwaysActive = jsonObject["arcade_always_active"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_end_cutscene_video_name"))
@@ -370,7 +387,10 @@ namespace NewSafetyHelp.JSONParsing
                         
                         endCutsceneVideoName = endCutsceneName,
                         
-                        entryBrowserAlwaysActive = entryBrowserAlwaysActive
+                        entryBrowserAlwaysActive = entryBrowserAlwaysActive,
+                        scorecardAlwaysActive = scorecardAlwaysActive,
+                        artbookAlwaysActive = artbookAlwaysActive,
+                        arcadeAlwaysActive = arcadeAlwaysActive
                     };
                     
                     // Check if any callers have to be added to this campaign.

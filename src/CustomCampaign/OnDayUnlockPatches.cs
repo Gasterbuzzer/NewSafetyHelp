@@ -32,7 +32,8 @@ namespace NewSafetyHelp.CustomCampaign
                     // Special cases / exceptions:
                     if (CustomCampaignGlobal.inCustomCampaign)
                     {
-                        if (handleEntryBrowserUnlocker(ref __instance))
+                        if (handleEntryBrowserUnlocker(ref __instance) || handleScorecardUnlocker(ref __instance) || handleArtbookUnlocker(ref __instance) || handleArcadeUnlocker(ref __instance) ||
+                            handleCustomCampaignIconsTooEarly(ref __instance))
                         {
                             return false;
                         }
@@ -155,6 +156,89 @@ namespace NewSafetyHelp.CustomCampaign
                     MelonLogger.Msg($"DEBUG: Entry Browser Executable is always enabled.");
                 #endif
                                 
+                return true;
+            }
+
+            return false; // If not set to unlock.
+        }
+        
+        public static bool handleScorecardUnlocker(ref OnDayUnlock __instance)
+        {
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+            if (currentCampaign == null)
+            {
+                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                return false;
+            }
+            
+            // If always on. We just leave them on.
+            if (currentCampaign.scorecardAlwaysActive && __instance.gameObject.name == "Scorecard")
+            {
+                                
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Scorecard is always enabled.");
+                #endif
+                                
+                return true;
+            }
+
+            return false; // If not set to unlock.
+        }
+        
+        public static bool handleArtbookUnlocker(ref OnDayUnlock __instance)
+        {
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+            if (currentCampaign == null)
+            {
+                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                return false;
+            }
+            
+            // If always on. We just leave them on.
+            if (currentCampaign.artbookAlwaysActive && __instance.gameObject.name == "Artbook-Executable")
+            {
+                                
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Artbook is always enabled.");
+                #endif
+                                
+                return true;
+            }
+
+            return false; // If not set to unlock.
+        }
+        
+        public static bool handleArcadeUnlocker(ref OnDayUnlock __instance)
+        {
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+            if (currentCampaign == null)
+            {
+                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                return false;
+            }
+            
+            // If always on. We just leave them on.
+            if (currentCampaign.arcadeAlwaysActive && __instance.gameObject.name == "Arcade-Executable")
+            {
+                                
+                #if DEBUG
+                MelonLogger.Msg($"DEBUG: Arcade is always enabled.");
+                #endif
+                                
+                return true;
+            }
+
+            return false; // If not set to unlock.
+        }
+        
+        public static bool handleCustomCampaignIconsTooEarly(ref OnDayUnlock __instance)
+        {
+            // If always on. We just leave them on.
+            if (__instance.gameObject.name == "DLC-Executable(Clone)")
+            {
                 return true;
             }
 

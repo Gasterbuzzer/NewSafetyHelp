@@ -63,6 +63,9 @@ namespace NewSafetyHelp.CustomCampaign
         
         // Always enabled Programs on Desktop
         public bool entryBrowserAlwaysActive = false;
+        public bool scorecardAlwaysActive = false;
+        public bool artbookAlwaysActive = false;
+        public bool arcadeAlwaysActive = false;
         
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();

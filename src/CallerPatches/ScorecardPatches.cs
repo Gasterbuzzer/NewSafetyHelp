@@ -80,10 +80,14 @@ namespace NewSafetyHelp.CallerPatches
                             }
                             
                             ++dayAmount;
-                            UnityEngine.Object.Instantiate<GameObject>(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();
+
+                            if (currentCallerIndex + 1 != GlobalVariables.callerControllerScript.callers.Length) // We are not the last caller.
+                            {
+                                UnityEngine.Object.Instantiate<GameObject>(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();  
+                            }
                             
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Caller is last day caller.");
+                                MelonLogger.Msg($"DEBUG: Scorecard: Caller is last day caller.");
                             #endif
                         }
                         else if (caller.callerProfile.callerMonster !=  null)
