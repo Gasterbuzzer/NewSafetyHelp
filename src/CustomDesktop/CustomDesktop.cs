@@ -76,7 +76,7 @@ namespace NewSafetyHelp.CustomDesktop
                 // Plays beginning segment to desktop.
                 MelonCoroutines.Start(StartupRoutine(__instance));
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.isXmasDLC)
                 {
                     foreach (CustomCampaignExtraInfo customCampaign in CustomCampaignGlobal.customCampaignsAvailable)
                     {
@@ -87,7 +87,7 @@ namespace NewSafetyHelp.CustomDesktop
                     // Hide DLC Button
                     CustomDesktopHelper.enableWinterDLCProgram();
                 }
-                else
+                else if (!GlobalVariables.isXmasDLC)
                 {
                     CustomDesktopHelper.createBackToMainGameButton();
                     
