@@ -54,6 +54,8 @@ namespace NewSafetyHelp.CustomCampaign
 
         public List<bool> savedCallersCorrectAnswer = new List<bool>();
         
+        // Video Cutscenes
+        public string endCutsceneVideoName = ""; // Video shown at the end of the game.
         
         // Special Saves
         public int savedGameFinished = 0;

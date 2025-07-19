@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.ImportFiles;
 using Steamworks;
 using UnityEngine;
+using UnityEngine.Video;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
@@ -468,6 +471,12 @@ namespace NewSafetyHelp.CallerPatches
                 else // Custom Campaign
                 {
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        yield break;
+                    }
                     
                     customCampaign.savedGameFinished = 1;
                     customCampaign.savedGameFinishedDisplay = 1;
@@ -503,14 +512,70 @@ namespace NewSafetyHelp.CallerPatches
                 yield return new WaitForSeconds(0.5f);
                 
                 // Inject custom end clip here.
-                mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
-                if (GlobalVariables.isXmasDLC)
+                if (!CustomCampaignGlobal.inCustomCampaign)
                 {
-                    mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.xmasEndClip;
+                    mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
+                    if (GlobalVariables.isXmasDLC)
+                    {
+                        mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.xmasEndClip;
+                    }
                 }
-                mainCanvasBehavior.videoPlayer.Play();
+                else // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        yield break;
+                    }
+
+                    if (!string.IsNullOrEmpty(customCampaign.endCutsceneVideoName)) // If provided
+                    {
+                        mainCanvasBehavior.videoPlayer.url = customCampaign.endCutsceneVideoName;
+                    }
+                    else // If not, we show the default one.
+                    {
+                        mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
+                    }
+                }
                 
-                yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                mainCanvasBehavior.videoPlayer.Play();
+
+                if (!CustomCampaignGlobal.inCustomCampaign)
+                {
+                    yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                }
+                else // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        yield break;
+                    }
+                    
+                    if (!string.IsNullOrEmpty(customCampaign.endCutsceneVideoName)) // If provided
+                    {
+                        // Get video length and then wait for it.
+                        mainCanvasBehavior.videoPlayer.Prepare();
+                        
+                        double videoDuration = mainCanvasBehavior.videoPlayer.clip.length;
+                        
+                        mainCanvasBehavior.videoPlayer.prepareCompleted += (VideoPlayer vp) =>
+                        {
+                            videoDuration = (vp.frameCount / vp.frameRate);
+                            Debug.Log("Video duration: " + videoDuration + " seconds");
+                        };
+                        
+                        yield return new WaitForSeconds((float) videoDuration);
+                    }
+                    else // If not, we show the default one.
+                    {
+                        yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                    }
+                }
                 
                 if (SteamManager.Initialized && !GlobalVariables.isXmasDLC)
                 {

@@ -131,6 +131,7 @@
     <Compile Include="src\EntryManager\EntryManager.cs" />
     <Compile Include="src\EntryManager\ImageImport.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
+    <Compile Include="src\ImportFiles\VideoHelper.cs" />
     <Compile Include="src\JSONParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\MonsterParsing.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />

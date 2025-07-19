@@ -27,16 +27,9 @@ namespace NewSafetyHelp.CallerPatches
                         
                         MelonLogger.Msg(ConsoleColor.Green, "INFO: Playing custom ending cutscene.");
                         
-                        // Play Ending Cutscene.
-                        // WIP.
-                        // But for now:
-                        
                         GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
                         
-                        GlobalVariables.callerControllerScript.SubmitAnswer();
-                        GlobalVariables.UISoundControllerScript.StopUISoundLooping();
-                        __instance.CloseButton(false, false);
-                        GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
+                        GlobalVariables.mainCanvasScript.PlayEndingCutscene();
                     }
                     else
                     {

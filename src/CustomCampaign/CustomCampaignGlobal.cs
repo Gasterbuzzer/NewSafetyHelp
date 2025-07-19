@@ -563,6 +563,9 @@ namespace NewSafetyHelp.CustomCampaign
                 return;
             }
             
+            // We previously deleted the category, but it doesn't really help as much, so we leave it be.
+            // MelonPreferences.RemoveCategoryFromFile("",currentCampaign.campaignName + currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+            
             // We have a save file, so we reset the values.
             currentCampaign.currentDay = 1;
             currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value = 1;

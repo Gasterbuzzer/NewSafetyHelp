@@ -195,6 +195,9 @@ namespace NewSafetyHelp.JSONParsing
 
                     List<int> warningCallThresholdCallerAmounts = new List<int>();
                     
+                    // Video Cutscenes
+                    string endCutsceneName = "";
+                    
 
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
@@ -246,6 +249,31 @@ namespace NewSafetyHelp.JSONParsing
                         warningThreshold = jsonObject["custom_campaign_warning_threshold"];
                     }
                     
+                    if (jsonObject.Keys.Contains("custom_campaign_remove_main_entries"))
+                    {
+                        removeAllExistingEntries = jsonObject["custom_campaign_remove_main_entries"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_end_cutscene_video_name"))
+                    {
+                        endCutsceneName = filePath + "\\" + jsonObject["custom_campaign_end_cutscene_video_name"];
+                        
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: End cutscene video found: '{endCutsceneName}'");
+                        #endif
+
+                        if (string.IsNullOrEmpty(jsonObject["custom_campaign_end_cutscene_video_name"]))
+                        {
+                            MelonLogger.Warning("WARNING: Provided video cutscene name but name is empty. Unable to show custom end cutscene.");
+                            endCutsceneName = "";
+                        }
+                        else if (!File.Exists(endCutsceneName))
+                        {
+                            MelonLogger.Warning($"WARNING: Provided video cutscene {endCutsceneName} does not exist.");
+                            endCutsceneName = "";
+                        }
+                    }
+                    
                     if (jsonObject.Keys.Contains("custom_campaign_days_names"))
                     {
                         ProxyArray _customCampaignDays = (ProxyArray) jsonObject["custom_campaign_days_names"];
@@ -273,11 +301,7 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         MelonLogger.Warning($"WARNING: No custom campaign icon given for file in {filePath}. Default icon will be shown.");
                     }
-                    
-                    if (jsonObject.Keys.Contains("custom_campaign_remove_main_entries"))
-                    {
-                        removeAllExistingEntries = jsonObject["custom_campaign_remove_main_entries"];
-                    }
+                
                     
                     if (jsonObject.Keys.Contains("custom_campaign_loading_desktop_text1"))
                     {
@@ -334,7 +358,9 @@ namespace NewSafetyHelp.JSONParsing
                         
                         gameOverThreshold = gameOverThreshold,
                         warningThreshold = warningThreshold,
-                        warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts
+                        warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
+                        
+                        endCutsceneVideoName = endCutsceneName
                     };
                     
                     // Check if any callers have to be added to this campaign.
