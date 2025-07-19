@@ -138,6 +138,7 @@
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs" />
+    <Compile Include="src\MainGameBugFixes\UISoundBugFix.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
