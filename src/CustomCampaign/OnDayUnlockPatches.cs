@@ -28,6 +28,16 @@ namespace NewSafetyHelp.CustomCampaign
                 
                 if (!__instance.enableForArcadeMode)
                 {
+                    
+                    // Special cases / exceptions:
+                    if (CustomCampaignGlobal.inCustomCampaign)
+                    {
+                        if (handleEntryBrowserUnlocker(ref __instance))
+                        {
+                            return false;
+                        }
+                    }
+                    
                     if (GlobalVariables.currentDay < __instance.unlockDay)
                     {
                         __instance.gameObject.SetActive(false);
@@ -124,6 +134,31 @@ namespace NewSafetyHelp.CustomCampaign
                 
                 return false; // Skip the original function
             }
+        }
+
+        public static bool handleEntryBrowserUnlocker(ref OnDayUnlock __instance)
+        {
+            
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+            if (currentCampaign == null)
+            {
+                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                return false;
+            }
+            
+            // If always on. We just leave them on.
+            if (currentCampaign.entryBrowserAlwaysActive && __instance.gameObject.name == "EntryBrowser-Executable")
+            {
+                                
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Entry Browser Executable is always enabled.");
+                #endif
+                                
+                return true;
+            }
+
+            return false; // If not set to unlock.
         }
     }
 }

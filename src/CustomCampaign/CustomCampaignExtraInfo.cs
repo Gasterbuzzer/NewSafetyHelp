@@ -61,6 +61,9 @@ namespace NewSafetyHelp.CustomCampaign
         public int savedGameFinished = 0;
         public int savedGameFinishedDisplay = 0;
         
+        // Always enabled Programs on Desktop
+        public bool entryBrowserAlwaysActive = false;
+        
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
     }

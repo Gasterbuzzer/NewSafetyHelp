@@ -198,6 +198,9 @@ namespace NewSafetyHelp.JSONParsing
                     // Video Cutscenes
                     string endCutsceneName = "";
                     
+                    // Enable apps
+                    bool entryBrowserAlwaysActive = false;
+                    
 
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
@@ -252,6 +255,11 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("custom_campaign_remove_main_entries"))
                     {
                         removeAllExistingEntries = jsonObject["custom_campaign_remove_main_entries"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("entry_browser_always_active"))
+                    {
+                        entryBrowserAlwaysActive = jsonObject["entry_browser_always_active"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_end_cutscene_video_name"))
@@ -360,7 +368,9 @@ namespace NewSafetyHelp.JSONParsing
                         warningThreshold = warningThreshold,
                         warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
                         
-                        endCutsceneVideoName = endCutsceneName
+                        endCutsceneVideoName = endCutsceneName,
+                        
+                        entryBrowserAlwaysActive = entryBrowserAlwaysActive
                     };
                     
                     // Check if any callers have to be added to this campaign.
