@@ -550,9 +550,18 @@ namespace NewSafetyHelp.JSONParsing
         {
             if (jsonText is ProxyObject jsonObject)
             {
-
+                // Main
                 string emailSubject = "";
+                string emailSender = "";
+                string emailBody = "";
                 
+                // Image
+                string emailImagePath = "";
+                Sprite emailImage = null;
+
+                // Unlock
+                int emailUnlockDay = 0;
+                int emailUnlockThreshold = 0;
                 
                 // Campaign Values
                 string customCampaignName = "";
@@ -574,11 +583,59 @@ namespace NewSafetyHelp.JSONParsing
                     emailSubject = jsonObject["email_subject"];
                 }
                 
+                if (jsonObject.Keys.Contains("email_sender"))
+                {
+                    emailSender = jsonObject["email_sender"];
+                }
+                
+                if (jsonObject.Keys.Contains("email_body"))
+                {
+                    emailBody = jsonObject["email_body"];
+                }
+                
+                if (jsonObject.Keys.Contains("email_unlock_day"))
+                {
+                    emailUnlockDay = jsonObject["email_unlock_day"];
+                }
+                
+                if (jsonObject.Keys.Contains("email_unlock_threshold"))
+                {
+                    emailUnlockThreshold = jsonObject["email_unlock_threshold"];
+                }
+                
+                if (jsonObject.Keys.Contains("email_image"))
+                {
+                    emailImagePath = jsonObject["email_image"];
+
+                    if (!string.IsNullOrEmpty(emailImagePath))
+                    {
+                        if (File.Exists(emailImagePath))
+                        {
+                            emailImage = ImageImport.LoadImage(filePath + "\\" + emailImagePath);
+                        }
+                        else
+                        {
+                            MelonLogger.Warning($"WARNING: Email at {filePath} has image provided but it does not exist! Not showing any image.");
+                        }
+                    }
+                    else
+                    {
+                        MelonLogger.Warning($"WARNING: Email at {filePath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
+                    }
+                }
+                
                 EmailExtraInfo _customEmail = new EmailExtraInfo
                 {
                     inMainCampaign = inMainCampaign,
                     customCampaignName = customCampaignName,
-                    emailSubject = emailSubject
+                    emailSubject = emailSubject,
+                    senderName = emailSender,
+                    emailBody = emailBody,
+                    
+                    unlockDay = emailUnlockDay,
+                    unlockThreshold = emailUnlockThreshold,
+                    
+                    emailImage = emailImage
                 };
                 
                 if (inMainCampaign)
