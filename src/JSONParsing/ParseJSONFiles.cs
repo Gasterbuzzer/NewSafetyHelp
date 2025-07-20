@@ -556,7 +556,6 @@ namespace NewSafetyHelp.JSONParsing
                 string emailBody = "";
                 
                 // Image
-                string emailImagePath = "";
                 Sprite emailImage = null;
 
                 // Unlock
@@ -605,17 +604,17 @@ namespace NewSafetyHelp.JSONParsing
                 
                 if (jsonObject.Keys.Contains("email_image"))
                 {
-                    emailImagePath = jsonObject["email_image"];
+                    string emailImagePath = jsonObject["email_image"];
 
                     if (!string.IsNullOrEmpty(emailImagePath))
                     {
-                        if (File.Exists(emailImagePath))
+                        if (File.Exists(filePath + "\\" + emailImagePath))
                         {
                             emailImage = ImageImport.LoadImage(filePath + "\\" + emailImagePath);
                         }
                         else
                         {
-                            MelonLogger.Warning($"WARNING: Email at {filePath} has image provided but it does not exist! Not showing any image.");
+                            MelonLogger.Warning($"WARNING: Email at {filePath + "\\" + emailImagePath} has image {emailImagePath} provided but it does not exist! Not showing any image.");
                         }
                     }
                     else

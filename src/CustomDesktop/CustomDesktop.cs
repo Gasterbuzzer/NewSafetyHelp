@@ -5,6 +5,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.Emails;
+using NewSafetyHelp.JSONParsing;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -78,11 +79,22 @@ namespace NewSafetyHelp.CustomDesktop
                 // Plays beginning segment to desktop.
                 MelonCoroutines.Start(StartupRoutine(__instance));
 
-                if (!CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.isXmasDLC)
+                if (!CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.isXmasDLC) // Main Campaign
                 {
                     foreach (CustomCampaignExtraInfo customCampaign in CustomCampaignGlobal.customCampaignsAvailable)
                     {
                         CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
+                    }
+                    
+                    if (ParseJSONFiles.mainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
+                    {
+                        foreach (EmailExtraInfo emailExtra in ParseJSONFiles.mainCampaignEmails)
+                        {
+                            if (emailExtra.inMainCampaign)
+                            {
+                                CustomDesktopHelper.createEmail(emailExtra);
+                            }
+                        }
                     }
                     
                     // Enable DLC Button if DLC is installed.

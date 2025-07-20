@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.Emails;
@@ -163,6 +164,19 @@ namespace NewSafetyHelp.CustomDesktop
 
                 newEmailOnDayUnlock.unlockDay = emailToCreate.unlockDay;
                 newEmailOnDayUnlock.scoreThresholdToUnlock = emailToCreate.unlockThreshold;
+                
+                // Mark the email as not read.
+                
+                FieldInfo _hasClicked = typeof(EmailListingBehavior).GetField("hasClicked", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+                if (_hasClicked == null)
+                {
+                    MelonLogger.Warning("WARNING: HasClicked Field could not be found (null).");
+                }
+                else
+                {
+                    _hasClicked.SetValue(emailListing, false); // emailListing.hasClicked = false;
+                }
                 
                 return newEmail;
             }
