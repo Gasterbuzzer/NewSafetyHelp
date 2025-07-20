@@ -8,6 +8,7 @@ using MelonLoader.TinyJSON;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.ImportFiles;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace NewSafetyHelp.JSONParsing
             Campaign,
             Call,
             Entry,
+            Email,
             Invalid
         }
         
@@ -38,8 +40,14 @@ namespace NewSafetyHelp.JSONParsing
         
         // List of entries that replace yet to be added to custom campaign. Happens when the replacement entries file was found before.
         public static List<EntryExtraInfo> missingReplaceEntriesCustomCampaign = new List<EntryExtraInfo>();
+        
+        // List of emails to be added in a custom campaign when the custom campaign is not parsed yet.
+        public static List<EmailExtraInfo> missingCustomCampaignEmails = new List<EmailExtraInfo>();
+        
+        // List of emails to be added in the main campaign.
+        public static List<EmailExtraInfo> mainCampaignEmails = new List<EmailExtraInfo>();
 
-        public static int amountExtra = 10000;
+        public static int amountExtra = 100000;
         
         // Campaign Information
         const int mainCampaignCallAmount = 116;
@@ -80,6 +88,11 @@ namespace NewSafetyHelp.JSONParsing
                         case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
                             MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
                             CreateMonsterFromJSON(variant, filePath: folderFilePath, entryUnlockerInstance: __instance);
+                            break;
+                        
+                        case JSONParseTypes.Email: // The provided JSON is a email (for custom campaigns).
+                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
+                            CreateEmail(variant, folderFilePath);
                             break;
                         
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -143,6 +156,10 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     return JSONParseTypes.Entry;
                 }
+                else if (jsonObject.Keys.Contains("email_subject") || jsonObject.Keys.Contains("email_in_main_campaign") || jsonObject.Keys.Contains("email_custom_campaign_name")) // Email was provided. 
+                {
+                    return JSONParseTypes.Email;
+                }
                 else // Unknown json type.
                 {
                     return JSONParseTypes.Invalid;
@@ -204,6 +221,9 @@ namespace NewSafetyHelp.JSONParsing
                     bool scorecardAlwaysActive = false;
                     bool artbookAlwaysActive = false;
                     bool arcadeAlwaysActive = false;
+                    
+                    // Emails
+                    bool removeAllDefaultEmails = false;
                     
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
@@ -278,6 +298,11 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("arcade_always_active"))
                     {
                         arcadeAlwaysActive = jsonObject["arcade_always_active"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("remove_default_emails"))
+                    {
+                        removeAllDefaultEmails = jsonObject["remove_default_emails"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_end_cutscene_video_name"))
@@ -412,7 +437,9 @@ namespace NewSafetyHelp.JSONParsing
                         entryBrowserAlwaysActive = entryBrowserAlwaysActive,
                         scorecardAlwaysActive = scorecardAlwaysActive,
                         artbookAlwaysActive = artbookAlwaysActive,
-                        arcadeAlwaysActive = arcadeAlwaysActive
+                        arcadeAlwaysActive = arcadeAlwaysActive,
+                        
+                        removeDefaultEmails = removeAllDefaultEmails
                     };
                     
                     // Check if any callers have to be added to this campaign.
@@ -487,12 +514,99 @@ namespace NewSafetyHelp.JSONParsing
                             }
                         }
                     }
-
-                    // Add to list
+                    
+                    // Check if any emails have to be added to a custom campaign.
+                    if (missingCustomCampaignEmails.Count > 0)
+                    {
+                        // Create a copy of the list to iterate over
+                        List<EmailExtraInfo> tempList = new List<EmailExtraInfo>(missingCustomCampaignEmails);
+                        
+                        foreach (EmailExtraInfo missingEmail in tempList)
+                        {
+                            if (missingEmail.customCampaignName == customCampaignName)
+                            {
+                                
+                                #if DEBUG
+                                    MelonLogger.Msg($"DEBUG: Adding missing email to the custom campaign: {customCampaignName}.");
+                                #endif
+                                
+                                _customCampaign.emails.Add(missingEmail);
+                                missingCustomCampaignEmails.Remove(missingEmail);
+                            }
+                        }
+                    }
+                    
+                    // We finished adding all missing values and now add the campaign as available.
                     CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
             }
         }
 
+        /// <summary>
+        /// Creates a email from a JSON file.
+        /// </summary>
+        /// <param name="jsonText"></param>
+        /// <param name="filePath"></param>
+        public static void CreateEmail(Variant jsonText, string filePath = "")
+        {
+            if (jsonText is ProxyObject jsonObject)
+            {
+
+                string emailSubject = "";
+                
+                
+                // Campaign Values
+                string customCampaignName = "";
+                
+                bool inMainCampaign = false;
+                
+                if (jsonObject.Keys.Contains("email_in_main_campaign"))
+                {
+                    inMainCampaign = jsonObject["email_in_main_campaign"];
+                }
+                
+                if (jsonObject.Keys.Contains("email_custom_campaign_name"))
+                {
+                    customCampaignName = jsonObject["email_custom_campaign_name"];
+                }
+                
+                if (jsonObject.Keys.Contains("email_subject"))
+                {
+                    emailSubject = jsonObject["email_subject"];
+                }
+                
+                EmailExtraInfo _customEmail = new EmailExtraInfo
+                {
+                    inMainCampaign = inMainCampaign,
+                    customCampaignName = customCampaignName,
+                    emailSubject = emailSubject
+                };
+                
+                if (inMainCampaign)
+                {
+                    mainCampaignEmails.Add(_customEmail);
+                }
+                else
+                {
+                    // Add to correct campaign.
+                    CustomCampaignExtraInfo foundCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaignName);
+
+                    if (foundCustomCampaign != null)
+                    {
+                        foundCustomCampaign.emails.Add(_customEmail);
+                            
+                    }
+                    else
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
+                        #endif
+                            
+                        missingCustomCampaignEmails.Add(_customEmail);
+                    }
+                }
+            }
+        }
+        
         /// <summary>
         /// Creates a custom caller from a provided json file.
         /// </summary>

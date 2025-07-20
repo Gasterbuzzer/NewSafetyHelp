@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
 using UnityEngine;
 
@@ -67,6 +68,10 @@ namespace NewSafetyHelp.CustomCampaign
         public bool scorecardAlwaysActive = false;
         public bool artbookAlwaysActive = false;
         public bool arcadeAlwaysActive = false;
+        
+        // Email
+        public bool removeDefaultEmails = false;
+        public List<EmailExtraInfo> emails = new List<EmailExtraInfo>(); // List of custom emails.
         
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();

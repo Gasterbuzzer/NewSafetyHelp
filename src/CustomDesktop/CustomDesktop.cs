@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.Emails;
 using TMPro;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -87,7 +89,7 @@ namespace NewSafetyHelp.CustomDesktop
                     // Hide DLC Button
                     CustomDesktopHelper.enableWinterDLCProgram();
                 }
-                else if (!GlobalVariables.isXmasDLC)
+                else if (!GlobalVariables.isXmasDLC) // Custom Campaign
                 {
                     CustomDesktopHelper.createBackToMainGameButton();
                     
@@ -109,6 +111,21 @@ namespace NewSafetyHelp.CustomDesktop
                     if (!string.IsNullOrEmpty(customCampaign.desktopUsernameText))
                     {
                         CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = customCampaign.desktopUsernameText;
+                    }
+                    
+                    // Add custom emails.
+                    if (customCampaign.emails.Count > 0) // If we have custom emails.
+                    {
+                        foreach (EmailExtraInfo emailExtra in customCampaign.emails)
+                        {
+                            CustomDesktopHelper.createEmail(emailExtra);
+                        }
+                    }
+                    
+                    // Remove all emails from the main game.
+                    if (customCampaign.removeDefaultEmails)
+                    {
+                        CustomDesktopHelper.removeMainGameEmails();
                     }
                 }
 
@@ -297,7 +314,6 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     text.text = str;
                 }
-                
                 
                 return false; // Skip original function.
             }

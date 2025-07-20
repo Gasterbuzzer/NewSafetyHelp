@@ -1,6 +1,7 @@
 ﻿using System;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.Emails;
 using Steamworks;
 using TMPro;
 using UnityEngine;
@@ -46,6 +47,128 @@ namespace NewSafetyHelp.CustomDesktop
             else
             {
                 MelonLogger.Error("ERROR: Failed to find Desktop from Main Menu. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the desktop GameObject which contains all emails.
+        /// </summary>
+        /// <returns>Email List GameObject</returns>
+        public static GameObject getEmailList()
+        {
+            GameObject foundEmailList = getMainMenuCanvas().transform.Find("EmailPopup").Find("EmailsScrollview").Find("Viewport").Find("Content").gameObject;
+
+            if (foundEmailList != null)
+            {
+                return foundEmailList;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find email list from Main Menu Canvas. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Removes all emails from the main campaign.
+        /// </summary>
+        public static void removeMainGameEmails()
+        {
+            GameObject foundEmailList = getEmailList();
+
+            if (foundEmailList != null)
+            {
+                foreach (Transform childEmail in foundEmailList.transform)
+                {
+                    if (childEmail.gameObject.name.Contains("EmailListing"))
+                    {
+                        Object.Destroy(childEmail.gameObject);
+                    }
+                }
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find email list from Main Menu Canvas. Possibly called outside of MainMenuCanvas?");
+            }
+        }
+        
+        /// <summary>
+        /// Creates an email and returns a reference.
+        /// </summary>
+        /// <returns>New Email reference.</returns>
+        public static GameObject createEmail(EmailExtraInfo emailToCreate)
+        {
+            GameObject originalEmail = getEmailList().transform.Find("EmailListing (14)").gameObject;
+            
+            if (originalEmail != null)
+            {
+                GameObject newEmail = Object.Instantiate(originalEmail, originalEmail.transform.parent);
+                
+                EmailListingBehavior emailListing = newEmail.GetComponent<EmailListingBehavior>();
+
+                if (emailListing == null)
+                {
+                    MelonLogger.Error("ERROR: Failed to find email listing behavior for EmailListing");
+                    Object.Destroy(originalEmail);
+                    return null;
+                }
+
+                if (emailToCreate.emailSubject != "")
+                {
+                    newEmail.name = emailToCreate.emailSubject.Replace("EmailListing", "");
+                    
+                    emailListing.myEmail.name = emailToCreate.emailSubject.Replace("EmailListing", "");
+                    
+                    emailListing.mySubjectText.text = emailToCreate.emailSubject;
+                    
+                    // Email Subject
+                    emailListing.myEmail.subjectLine = emailToCreate.emailSubject;
+                }
+                else
+                {
+                    newEmail.name = "UnnamedEmail";
+                    
+                    emailListing.myEmail.name = "UnnamedEmail";
+                    
+                    emailListing.mySubjectText.text = "UnnamedEmail";
+                    
+                    // Email Subject
+                    emailListing.myEmail.subjectLine = "UnnamedEmail";
+                }
+
+                if (emailToCreate.senderName != "")
+                {
+                    emailListing.mySenderText.text = emailToCreate.senderName;
+                    
+                    // Email Sender
+                    emailListing.myEmail.sender = emailToCreate.senderName;
+                }
+                else
+                {
+                    emailListing.mySenderText.text = "SenderNameNotProvided";
+                    
+                    // Email Sender
+                    emailListing.myEmail.sender = "SenderNameNotProvided";
+                }
+                
+                // If empty, it will just not be shown.
+                emailListing.myEmail.emailBody = emailToCreate.emailBody;
+
+                emailListing.myEmail.imageAttachment = emailToCreate.emailImage;
+                
+                // DayUnlock
+
+                OnDayUnlock newEmailOnDayUnlock = newEmail.GetComponent<OnDayUnlock>();
+
+                newEmailOnDayUnlock.unlockDay = emailToCreate.unlockDay;
+                newEmailOnDayUnlock.scoreThresholdToUnlock = emailToCreate.unlockThreshold;
+                
+                return newEmail;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find email to copy from in the Email List. Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
