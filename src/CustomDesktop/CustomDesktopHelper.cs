@@ -107,6 +107,15 @@ namespace NewSafetyHelp.CustomDesktop
                 GameObject newEmail = Object.Instantiate(originalEmail, originalEmail.transform.parent);
                 
                 EmailListingBehavior emailListing = newEmail.GetComponent<EmailListingBehavior>();
+                
+                // We create a new email part of the email listing so that the reference doesn't point to the same one.
+                Email clonedEmail = ScriptableObject.CreateInstance<Email>();
+                
+                emailListing.myEmail = clonedEmail;
+                
+                // Get subject and sender text references correct.
+                emailListing.mySubjectText = newEmail.transform.Find("SubjectText").GetComponent<TextMeshProUGUI>();
+                emailListing.mySenderText = newEmail.transform.Find("FromText").GetComponent<TextMeshProUGUI>();
 
                 if (emailListing == null)
                 {
@@ -176,7 +185,6 @@ namespace NewSafetyHelp.CustomDesktop
                 else
                 {
                     _hasClicked.SetValue(emailListing, false); // emailListing.hasClicked = false;
-                    MelonLogger.Msg($"HasClicked set to: {_hasClicked.GetValue(emailListing)}");
                 }
                 
                 return newEmail;
