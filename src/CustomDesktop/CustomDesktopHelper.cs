@@ -176,6 +176,7 @@ namespace NewSafetyHelp.CustomDesktop
                 else
                 {
                     _hasClicked.SetValue(emailListing, false); // emailListing.hasClicked = false;
+                    MelonLogger.Msg($"HasClicked set to: {_hasClicked.GetValue(emailListing)}");
                 }
                 
                 return newEmail;

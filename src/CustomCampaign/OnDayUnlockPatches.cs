@@ -38,6 +38,10 @@ namespace NewSafetyHelp.CustomCampaign
                             return false;
                         }
                     }
+                    else if (handleCustomCampaignIconsTooEarly(ref __instance))
+                    {
+                        return false;
+                    }
                     
                     if (GlobalVariables.currentDay < __instance.unlockDay)
                     {
