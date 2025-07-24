@@ -24,6 +24,8 @@ namespace NewSafetyHelp.CustomCampaign
         
         public List<CustomCallerExtraInfo> customWarningCallersInCampaign = new List<CustomCallerExtraInfo>(); // Warning Callers in the campaign
         
+        public List<CustomCallerExtraInfo> customGameOverCallersInCampaign = new List<CustomCallerExtraInfo>(); // Game Over Callers in the campaign
+        
         public List<EntryExtraInfo> entriesOnlyInCampaign = new List<EntryExtraInfo>(); // Entries that exist only in this campaign.  
         public List<EntryExtraInfo> entryReplaceOnlyInCampaign = new List<EntryExtraInfo>(); // Entries that should only replace in custom campaign.
         

@@ -463,16 +463,20 @@ namespace NewSafetyHelp.JSONParsing
                             {
                                 
                                 #if DEBUG
-                                    MelonLogger.Msg($"DEBUG: Adding missing custom caller to the custom campaign: {customCampaignName}.");
+                                    MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.callerName} to the custom campaign: {customCampaignName}.");
                                 #endif
 
-                                if (!customCallerCC.isWarningCaller)
+                                if (customCallerCC.isGameOverCaller)
                                 {
-                                    _customCampaign.customCallersInCampaign.Add(customCallerCC);
+                                    _customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
                                 }
-                                else
+                                else if (customCallerCC.isWarningCaller)
                                 {
                                     _customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
+                                }
+                                else 
+                                {
+                                    _customCampaign.customCallersInCampaign.Add(customCallerCC);
                                 }
                                 
                                 missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
@@ -713,6 +717,10 @@ namespace NewSafetyHelp.JSONParsing
                     bool isWarningCaller = false;
                     int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
                     
+                    // GameOver Call
+                    bool isGameOverCaller = false; 
+                    int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
+                    
                     if (jsonObject.Keys.Contains("include_in_main_campaign"))
                     {
                         inMainCampaign = jsonObject["include_in_main_campaign"];
@@ -801,9 +809,20 @@ namespace NewSafetyHelp.JSONParsing
                     {
                         warningCallDay = jsonObject["warning_caller_day"];
                     }
+                    
+                    // GameOver Caller
+                    if (jsonObject.Keys.Contains("is_gameover_caller"))
+                    {
+                        isGameOverCaller = jsonObject["is_gameover_caller"];
+                    }
+                    
+                    if (isGameOverCaller && jsonObject.Keys.Contains("gameover_caller_day"))
+                    {
+                        gameOverCallDay = jsonObject["gameover_caller_day"];
+                    }
 
                     // Check if order is valid and if not, we warn the user.
-                    if (orderInCampaign < 0 && !isWarningCaller)
+                    if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
                     {
                         MelonLogger.Warning($"WARNING: No order was provided for custom caller at '{filePath}'. This could accidentally replace a caller! Set to replace last caller!");
                         orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
@@ -825,7 +844,10 @@ namespace NewSafetyHelp.JSONParsing
                             downedNetworkCaller = downedCall,
                             
                             isWarningCaller = isWarningCaller,
-                            warningCallDay = warningCallDay
+                            warningCallDay = warningCallDay,
+                            
+                            isGameOverCaller = isGameOverCaller,
+                            gameOverCallDay = gameOverCallDay
                         };
 
                     if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
@@ -888,15 +910,18 @@ namespace NewSafetyHelp.JSONParsing
 
                         if (foundCustomCampaign != null)
                         {
-                            if (!_customCaller.isWarningCaller)
+                            if (_customCaller.isGameOverCaller)
                             {
-                                foundCustomCampaign.customCallersInCampaign.Add(_customCaller);  
+                                foundCustomCampaign.customGameOverCallersInCampaign.Add(_customCaller);  
                             }
-                            else
+                            else if (_customCaller.isWarningCaller)
                             {
                                 foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);  
                             }
-                            
+                            else
+                            {
+                                foundCustomCampaign.customCallersInCampaign.Add(_customCaller);  
+                            }
                         }
                         else
                         {

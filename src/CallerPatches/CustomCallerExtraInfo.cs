@@ -34,9 +34,12 @@
         // Special Values
         
         // Warning Call
-
         public bool isWarningCaller = false;
         public int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
+        
+        // GameOver Call
+        public bool isGameOverCaller = false;
+        public int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
         
         // Constructor
         public CustomCallerExtraInfo(int _orderInCampaign) { orderInCampaign = _orderInCampaign;}
