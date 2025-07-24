@@ -262,6 +262,22 @@ namespace NewSafetyHelp.CallerPatches
                   GlobalVariables.fade.FadeOut();
                 }
                 
+                // Custom Enables
+                if (CustomCampaignGlobal.inCustomCampaign)
+                {
+
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null! Unable of enabling skip call button.");
+                    }
+                    else if (customCampaign.alwaysSkipCallButton)
+                    {
+                        CustomDesktopHelper.getCallSkipButton().SetActive(true);
+                    }
+                }
+                
                 GlobalVariables.callerControllerScript.StartCallRoutine();
                 GlobalVariables.introIsPlaying = false;
             }

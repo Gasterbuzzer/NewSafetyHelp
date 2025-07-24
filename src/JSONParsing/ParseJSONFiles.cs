@@ -221,6 +221,8 @@ namespace NewSafetyHelp.JSONParsing
                     bool scorecardAlwaysActive = false;
                     bool artbookAlwaysActive = false;
                     bool arcadeAlwaysActive = false;
+
+                    bool alwaysSkipCallButton = false;
                     
                     // Emails
                     bool removeAllDefaultEmails = false;
@@ -298,6 +300,11 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("arcade_always_active"))
                     {
                         arcadeAlwaysActive = jsonObject["arcade_always_active"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("always_show_skip_call_wait_time"))
+                    {
+                        alwaysSkipCallButton = jsonObject["always_show_skip_call_wait_time"];
                     }
                     
                     if (jsonObject.Keys.Contains("remove_default_emails"))
@@ -438,6 +445,8 @@ namespace NewSafetyHelp.JSONParsing
                         scorecardAlwaysActive = scorecardAlwaysActive,
                         artbookAlwaysActive = artbookAlwaysActive,
                         arcadeAlwaysActive = arcadeAlwaysActive,
+                        
+                        alwaysSkipCallButton = alwaysSkipCallButton,
                         
                         removeDefaultEmails = removeAllDefaultEmails
                     };

@@ -242,6 +242,25 @@ namespace NewSafetyHelp.CustomDesktop
         }
         
         /// <summary>
+        /// Gets the GameObject for the skip call wait time button.
+        /// </summary>
+        /// <returns>Next Call Button GameObject</returns>
+        public static GameObject getCallSkipButton()
+        {
+            GameObject foundNextCallButton = GameObject.Find("MainCanvas").transform.Find("Panel").transform.Find("CallWindow").transform.Find("LargeCallerPortrait").transform.Find("CallSkipButton").gameObject;
+
+            if (foundNextCallButton != null)
+            {
+                return foundNextCallButton;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find next caller button. Possibly called outside of MainCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
         /// Gets the GameObject for the Program icons on the left side on the Desktop.
         /// </summary>
         /// <returns> GameObject for the programs on the left. </returns>
