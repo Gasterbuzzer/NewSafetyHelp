@@ -230,6 +230,13 @@ namespace NewSafetyHelp.JSONParsing
                     // Backgrounds
                     List<Sprite> backgroundSprites = new List<Sprite>();
                     Sprite backgroundFinishedGameSprite = null;
+
+                    bool disableGreenColorBackground = false;
+
+                    bool disableDesktopLogo = false;
+                    Sprite customDesktopLogo = null;
+                    float customDesktopLogoTransparency = 0.2627f;
+
                     
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
@@ -314,6 +321,21 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("remove_default_emails"))
                     {
                         removeAllDefaultEmails = jsonObject["remove_default_emails"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("disable_desktop_logo"))
+                    {
+                        disableDesktopLogo = jsonObject["disable_desktop_logo"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("disable_green_color_on_desktop"))
+                    {
+                        disableGreenColorBackground = jsonObject["disable_green_color_on_desktop"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_desktop_logo_transparency"))
+                    {
+                        customDesktopLogoTransparency = jsonObject["custom_desktop_logo_transparency"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_end_cutscene_video_name"))
@@ -451,6 +473,20 @@ namespace NewSafetyHelp.JSONParsing
                         }
                     }
                     
+                    if (jsonObject.Keys.Contains("custom_desktop_logo_name"))
+                    {
+                        string customDesktopLogoPath = jsonObject["custom_desktop_logo_name"];
+                        
+                        if (string.IsNullOrEmpty(customDesktopLogoPath))
+                        {
+                            MelonLogger.Error($"ERROR: Invalid file name given for '{customDesktopLogoPath}'. Not updating.");
+                        }
+                        else
+                        {
+                            customDesktopLogo = ImageImport.LoadImage(filePath + "\\" + customDesktopLogoPath);
+                        }
+                    }
+                    
                     // Create
                     CustomCampaignExtraInfo _customCampaign = new CustomCampaignExtraInfo
                     {
@@ -487,7 +523,13 @@ namespace NewSafetyHelp.JSONParsing
                         removeDefaultEmails = removeAllDefaultEmails,
                         
                         backgroundSprites = backgroundSprites,
-                        gameFinishedBackground = backgroundFinishedGameSprite
+                        gameFinishedBackground = backgroundFinishedGameSprite,
+                        
+                        disableDesktopLogo = disableDesktopLogo,
+                        customDesktopLogo = customDesktopLogo,
+                        customDesktopLogoTransparency = customDesktopLogoTransparency,
+                        
+                        disableGreenColorBackground = disableGreenColorBackground
                     };
                     
                     // Check if any callers have to be added to this campaign.

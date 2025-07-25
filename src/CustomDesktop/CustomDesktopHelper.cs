@@ -53,6 +53,25 @@ namespace NewSafetyHelp.CustomDesktop
         }
         
         /// <summary>
+        /// Gets the desktop logo GameObject.
+        /// </summary>
+        /// <returns>Logo GameObject</returns>
+        public static GameObject getLogo()
+        {
+            GameObject foundLogo = getDesktop().transform.Find("Logo").gameObject;
+
+            if (foundLogo != null)
+            {
+                return foundLogo;
+            }
+            else
+            {
+                MelonLogger.Error("ERROR: Failed to find Logo from Desktop. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
         /// Gets the desktop GameObject which contains all emails.
         /// </summary>
         /// <returns>Email List GameObject</returns>

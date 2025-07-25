@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
+using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -25,6 +26,12 @@ namespace NewSafetyHelp.CustomCampaign
                     {
                         MelonLogger.Error("ERROR: Custom Campaign null even though its enabled! Calling original function.");
                         return true;
+                    }
+                    
+                    // If to disable the green color overlay.
+                    if (customCampaign.disableGreenColorBackground)
+                    {
+                        __instance.myImage.color = Color.white;
                     }
 
                     if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.savedGameFinishedDisplay == 1) // If we finished the campaign.

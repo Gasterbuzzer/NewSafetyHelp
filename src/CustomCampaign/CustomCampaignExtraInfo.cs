@@ -81,6 +81,12 @@ namespace NewSafetyHelp.CustomCampaign
         // Backgrounds
         public List<Sprite> backgroundSprites = new List<Sprite>();
         public Sprite gameFinishedBackground = null;
+
+        public bool disableDesktopLogo = false; // If to disable the desktop logo "Home Safety Hotline" (Also disables custom ones)
+        public Sprite customDesktopLogo = null; // Logo to show in desktop (if not disabled)
+        public float customDesktopLogoTransparency = 0.2627f;
+
+        public bool disableGreenColorBackground = false; // If to disable the color the background green the same as the main game does.
         
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();

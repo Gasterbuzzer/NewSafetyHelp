@@ -8,6 +8,7 @@ using NewSafetyHelp.Emails;
 using NewSafetyHelp.JSONParsing;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
@@ -138,6 +139,25 @@ namespace NewSafetyHelp.CustomDesktop
                     if (customCampaign.removeDefaultEmails)
                     {
                         CustomDesktopHelper.removeMainGameEmails();
+                    }
+                    
+                    // Hide Logo
+                    if (customCampaign.disableDesktopLogo)
+                    {
+                        CustomDesktopHelper.getLogo().SetActive(false);
+                    }
+                    else if (customCampaign.customDesktopLogo != null) // We have a desktop logo to show.
+                    {
+                        CustomDesktopHelper.getLogo().GetComponent<Image>().sprite = customCampaign.customDesktopLogo;
+                    }
+                    
+                    // Adjust Logo
+                    if (!customCampaign.customDesktopLogoTransparency.Equals(0.2627f)) // If we have a Custom Transparency
+                    {
+                        Color tempColorCopy = CustomDesktopHelper.getLogo().GetComponent<Image>().color;
+                        tempColorCopy.a = customCampaign.customDesktopLogoTransparency;
+
+                        CustomDesktopHelper.getLogo().GetComponent<Image>().color = tempColorCopy;
                     }
                 }
 
