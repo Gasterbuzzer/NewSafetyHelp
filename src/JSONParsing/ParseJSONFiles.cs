@@ -227,6 +227,10 @@ namespace NewSafetyHelp.JSONParsing
                     // Emails
                     bool removeAllDefaultEmails = false;
                     
+                    // Backgrounds
+                    List<Sprite> backgroundSprites = new List<Sprite>();
+                    Sprite backgroundFinishedGameSprite = null;
+                    
                     if (jsonObject.Keys.Contains("custom_campaign_name"))
                     {
                         customCampaignName = jsonObject["custom_campaign_name"];
@@ -415,6 +419,38 @@ namespace NewSafetyHelp.JSONParsing
                         }
                     }
                     
+                    if (jsonObject.Keys.Contains("custom_campaign_desktop_backgrounds"))
+                    {
+                        ProxyArray backgroundNames = (ProxyArray) jsonObject["custom_campaign_desktop_backgrounds"];
+
+                        for (int i = 0; i < backgroundNames.Count; i++)
+                        {
+                            if (string.IsNullOrEmpty(backgroundNames[i]))
+                            {
+                                MelonLogger.Error($"ERROR: Did not find '{backgroundNames[i]}'. Adding null.");
+                                backgroundSprites.Add(null);
+                            }
+                            else
+                            {
+                                backgroundSprites.Add(ImageImport.LoadImage(filePath + "\\" + backgroundNames[i]));
+                            }
+                        }
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_desktop_game_finished_background"))
+                    {
+                        string gameFinishedBackgroundPath = jsonObject["custom_campaign_desktop_game_finished_background"];
+                        
+                        if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
+                        {
+                            MelonLogger.Error($"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating.");
+                        }
+                        else
+                        {
+                            backgroundFinishedGameSprite = ImageImport.LoadImage(filePath + "\\" + gameFinishedBackgroundPath);
+                        }
+                    }
+                    
                     // Create
                     CustomCampaignExtraInfo _customCampaign = new CustomCampaignExtraInfo
                     {
@@ -448,7 +484,10 @@ namespace NewSafetyHelp.JSONParsing
                         
                         alwaysSkipCallButton = alwaysSkipCallButton,
                         
-                        removeDefaultEmails = removeAllDefaultEmails
+                        removeDefaultEmails = removeAllDefaultEmails,
+                        
+                        backgroundSprites = backgroundSprites,
+                        gameFinishedBackground = backgroundFinishedGameSprite
                     };
                     
                     // Check if any callers have to be added to this campaign.

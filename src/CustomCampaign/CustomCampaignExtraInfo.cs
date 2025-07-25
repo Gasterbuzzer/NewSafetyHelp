@@ -78,6 +78,10 @@ namespace NewSafetyHelp.CustomCampaign
         public bool removeDefaultEmails = false;
         public List<EmailExtraInfo> emails = new List<EmailExtraInfo>(); // List of custom emails.
         
+        // Backgrounds
+        public List<Sprite> backgroundSprites = new List<Sprite>();
+        public Sprite gameFinishedBackground = null;
+        
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
     }

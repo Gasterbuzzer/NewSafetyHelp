@@ -1411,7 +1411,6 @@ namespace NewSafetyHelp.CallerPatches
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "TriggerGameOver", new Type[] { })]
         public static class TriggerGameOverPatch
         {
-
             /// <summary>
             /// This function calls the GameOver phone call and triggers the game over cutscene. It is patched to be able to have custom GameOver Callers in custom campaigns.
             /// </summary>
