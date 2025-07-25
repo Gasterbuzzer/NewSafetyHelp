@@ -71,6 +71,9 @@ namespace NewSafetyHelp.CustomCampaign
         public bool artbookAlwaysActive = false;
         public bool arcadeAlwaysActive = false;
         
+        // Program rename.
+        public string renameDesktopIcon = null;
+        
         // Always enable in main game
         public bool alwaysSkipCallButton = false; // If to show the "Next Caller" button, which skips the next caller wait time.
         

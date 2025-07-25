@@ -216,13 +216,16 @@ namespace NewSafetyHelp.JSONParsing
                     string endCutsceneName = "";
                     string gameOverCutsceneName = "";
                     
-                    // Enable apps
+                    // Enable Programs
                     bool entryBrowserAlwaysActive = false;
                     bool scorecardAlwaysActive = false;
                     bool artbookAlwaysActive = false;
                     bool arcadeAlwaysActive = false;
 
                     bool alwaysSkipCallButton = false;
+                    
+                    // Program Settings
+                    string renameMainProgram = "";
                     
                     // Emails
                     bool removeAllDefaultEmails = false;
@@ -336,6 +339,11 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("custom_desktop_logo_transparency"))
                     {
                         customDesktopLogoTransparency = jsonObject["custom_desktop_logo_transparency"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("rename_main_game_desktop_icon"))
+                    {
+                        renameMainProgram = jsonObject["rename_main_game_desktop_icon"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_end_cutscene_video_name"))
@@ -517,6 +525,8 @@ namespace NewSafetyHelp.JSONParsing
                         scorecardAlwaysActive = scorecardAlwaysActive,
                         artbookAlwaysActive = artbookAlwaysActive,
                         arcadeAlwaysActive = arcadeAlwaysActive,
+                        
+                        renameDesktopIcon = renameMainProgram,
                         
                         alwaysSkipCallButton = alwaysSkipCallButton,
                         

@@ -159,6 +159,12 @@ namespace NewSafetyHelp.CustomDesktop
 
                         CustomDesktopHelper.getLogo().GetComponent<Image>().color = tempColorCopy;
                     }
+                    
+                    // Rename main program if wanted
+                    if (!string.IsNullOrEmpty(customCampaign.renameDesktopIcon))
+                    {
+                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = customCampaign.renameDesktopIcon;
+                    }
                 }
 
                 return false; // Skip original function.
