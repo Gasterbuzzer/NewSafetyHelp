@@ -135,14 +135,12 @@ namespace NewSafetyHelp.CustomVideos
                     MelonCoroutines.Start(handleURLVideoBetter(__instance, _playerCurrentPosition));
                 }
                 
-                
                 return false; // Skip the original function
             }
 
             public static IEnumerator handleURLVideoBetter(AudioSamplePlayer __instance, FieldInfo _playerCurrentPosition)
             {
                 __instance.myVideoPlayer.Play();
-                
                 
                 if (__instance.myVideoPlayer.time == 0.0 && __instance.playerTracker.transform.localPosition == __instance.playerStartPosition)
                 {
@@ -166,8 +164,25 @@ namespace NewSafetyHelp.CustomVideos
                 }
                 else
                 {
-                    yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
-                        (float) __instance.myVideoPlayer.clip.length - (float) __instance.myVideoPlayer.time));
+                    if (__instance.myVideoPlayer.clip != null)
+                    {
+                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
+                            (float) __instance.myVideoPlayer.clip.length - (float) __instance.myVideoPlayer.time));
+                    }
+                    else if (!string.IsNullOrEmpty(__instance.myVideoPlayer.url)) // Url is provided.
+                    {
+                        yield return WaitForPrepare(__instance.myVideoPlayer);
+                        
+                        // Compute the duration correctly
+                        float duration = __instance.myVideoPlayer.frameCount / __instance.myVideoPlayer.frameRate;
+                        
+                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
+                            duration - (float) __instance.myVideoPlayer.time));
+                    }
+                    else
+                    {
+                        MelonLogger.Error("ERROR: Unable of playing video as the URL and the Clip are null.");
+                    }
                 }
             }
             
