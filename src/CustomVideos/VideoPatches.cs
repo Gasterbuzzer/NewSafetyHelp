@@ -114,7 +114,7 @@ namespace NewSafetyHelp.CustomVideos
                     return false;
                 }
                 
-                FieldInfo _playerCurrentPosition = typeof(AudioSamplePlayer).GetField("currentPosition", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                FieldInfo _playerCurrentPosition = typeof(AudioSamplePlayer).GetField("playerCurrentPosition", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
 
                 if (_playerCurrentPosition == null)
                 {
