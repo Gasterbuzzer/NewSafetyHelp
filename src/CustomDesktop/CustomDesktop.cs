@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.JSONParsing;
 using TMPro;
@@ -170,6 +171,14 @@ namespace NewSafetyHelp.CustomDesktop
                     if (customCampaign.disableAllDefaultVideos)
                     {
                         CustomDesktopHelper.disableDefaultVideos();
+                    }
+
+                    if (customCampaign.allDesktopVideos.Count > 0)
+                    {
+                        foreach (CustomVideoExtraInfo customVideo in customCampaign.allDesktopVideos)
+                        {
+                            CustomDesktopHelper.createCustomVideoFileProgram(customVideo);
+                        }
                     }
                 }
 

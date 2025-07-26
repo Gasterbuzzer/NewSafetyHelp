@@ -2,6 +2,7 @@
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using Steamworks;
 using TMPro;
@@ -345,6 +346,57 @@ namespace NewSafetyHelp.CustomDesktop
             getLeftPrograms().transform.Find("RealEstateVideo").gameObject.SetActive(false);
             getLeftPrograms().transform.Find("ScienceVideo").gameObject.SetActive(false);
             getLeftPrograms().transform.Find("HikingVideo").gameObject.SetActive(false);
+        }
+        
+        /// <summary>
+        /// Disables all default video programs on the desktop.
+        /// </summary>
+        public static GameObject createCustomVideoFileProgram(CustomVideoExtraInfo customVideo)
+        {
+
+            GameObject trailerFileOriginal = getLeftPrograms().transform.Find("TrailerFile").gameObject;
+            
+            GameObject newCustomVideo = Object.Instantiate(trailerFileOriginal, trailerFileOriginal.transform.parent);
+
+            if (string.IsNullOrEmpty(customVideo.desktopName))
+            {
+                MelonLogger.Error("ERROR: No filename provided for video to be created! Can lead to crashes or unwanted failures.");
+            }
+            
+            newCustomVideo.name = customVideo.desktopName + customVideo.videoURL;
+            
+            // Update desktop name
+            TextMeshProUGUI textChildGameObjectText = newCustomVideo.transform.Find("TextBackground").transform.Find("ExecutableName").gameObject.GetComponent<TextMeshProUGUI>();
+            
+            textChildGameObjectText.text = customVideo.desktopName;
+            
+            // Unlock Day
+            OnDayUnlock onDayUnlock = newCustomVideo.GetComponent<OnDayUnlock>();
+            onDayUnlock.unlockDay = customVideo.unlockDay;
+
+            if (customVideo.unlockDay <= GlobalVariables.currentDay)
+            {
+                newCustomVideo.SetActive(true);
+            }
+            
+            // Fix References
+
+            VideoExecutableFile videoExecutableFile = newCustomVideo.GetComponent<VideoExecutableFile>();
+
+            videoExecutableFile.videoClip = null;
+            
+            // Update on day unlock script to point at the correct onDayUnlock.
+            FieldInfo _onDayUnlock = typeof(VideoExecutableFile).GetField("dayUnlockScript", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+            if (_onDayUnlock == null)
+            {
+                MelonLogger.Error("ERROR: Could not find OnDayUnlock script for VideoExecutableFile!");
+                return null;
+            }
+            
+            _onDayUnlock.SetValue(videoExecutableFile, onDayUnlock);
+            
+            return newCustomVideo;
         }
 
 

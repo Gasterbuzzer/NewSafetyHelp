@@ -8,6 +8,7 @@ using MelonLoader.TinyJSON;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.ImportFiles;
@@ -23,6 +24,7 @@ namespace NewSafetyHelp.JSONParsing
             Call,
             Entry,
             Email,
+            Video,
             Invalid
         }
         
@@ -43,6 +45,9 @@ namespace NewSafetyHelp.JSONParsing
         
         // List of emails to be added in a custom campaign when the custom campaign is not parsed yet.
         public static List<EmailExtraInfo> missingCustomCampaignEmails = new List<EmailExtraInfo>();
+        
+        // List of videos to be added in a custom campaign when the custom campaign is not parsed yet.
+        public static List<CustomVideoExtraInfo> missingCustomCampaignVideo = new List<CustomVideoExtraInfo>();
         
         // List of emails to be added in the main campaign.
         public static List<EmailExtraInfo> mainCampaignEmails = new List<EmailExtraInfo>();
@@ -93,6 +98,11 @@ namespace NewSafetyHelp.JSONParsing
                         case JSONParseTypes.Email: // The provided JSON is a email (for custom campaigns).
                             MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
                             CreateEmail(variant, folderFilePath);
+                            break;
+                        
+                        case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
+                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
+                            CreateVideo(variant, folderFilePath);
                             break;
                         
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -159,6 +169,10 @@ namespace NewSafetyHelp.JSONParsing
                 else if (jsonObject.Keys.Contains("email_subject") || jsonObject.Keys.Contains("email_in_main_campaign") || jsonObject.Keys.Contains("email_custom_campaign_name")) // Email was provided. 
                 {
                     return JSONParseTypes.Email;
+                }
+                else if (jsonObject.Keys.Contains("video_desktop_name") || jsonObject.Keys.Contains("video_file_name") || jsonObject.Keys.Contains("video_unlock_day")) // Video was provided (Desktop Video!)
+                {
+                    return JSONParseTypes.Video;
                 }
                 else // Unknown json type.
                 {
@@ -649,8 +663,107 @@ namespace NewSafetyHelp.JSONParsing
                         }
                     }
                     
+                    // Check if any videos have to be added to a custom campaign.
+                    if (missingCustomCampaignVideo.Count > 0)
+                    {
+                        // Create a copy of the list to iterate over
+                        List<CustomVideoExtraInfo> tempList = new List<CustomVideoExtraInfo>(missingCustomCampaignVideo);
+                        
+                        foreach (CustomVideoExtraInfo missingVideo in tempList)
+                        {
+                            if (missingVideo.customCampaignName == customCampaignName)
+                            {
+                                
+                                #if DEBUG
+                                    MelonLogger.Msg($"DEBUG: Adding missing video to the custom campaign: {customCampaignName}.");
+                                #endif
+                                
+                                _customCampaign.allDesktopVideos.Add(missingVideo);
+                                missingCustomCampaignVideo.Remove(missingVideo);
+                            }
+                        }
+                    }
+
+                    
                     // We finished adding all missing values and now add the campaign as available.
                     CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
+            }
+        }
+        
+        /// <summary>
+        /// Creates a video program from a JSON file.
+        /// </summary>
+        /// <param name="jsonText"></param>
+        /// <param name="filePath"></param>
+        public static void CreateVideo(Variant jsonText, string filePath = "")
+        {
+            if (jsonText is ProxyObject jsonObject)
+            {
+                // Main
+                string videoName = "";
+
+                string videoFilePath = "";
+
+                // Unlock
+                int videoUnlockDay = 0;
+                
+                // Campaign Values
+                string customCampaignName = "";
+                
+                if (jsonObject.Keys.Contains("video_desktop_name"))
+                {
+                    videoName = jsonObject["video_desktop_name"];
+                }
+                
+                if (jsonObject.Keys.Contains("custom_campaign_attached"))
+                {
+                    customCampaignName = jsonObject["custom_campaign_attached"];
+                }
+                
+                if (jsonObject.Keys.Contains("video_unlock_day"))
+                {
+                    videoUnlockDay = jsonObject["video_unlock_day"];
+                }
+                
+                if (jsonObject.Keys.Contains("video_file_name"))
+                {
+                    videoFilePath = filePath + "\\" + jsonObject["video_file_name"];
+                    
+                    if (string.IsNullOrEmpty(videoFilePath))
+                    {
+                        MelonLogger.Warning("WARNING: Provided video path but name is empty. Unable to show show video.");
+                    }
+                    else if (!File.Exists(videoFilePath))
+                    {
+                        MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
+                    }
+                }
+                
+                CustomVideoExtraInfo _customVideo = new CustomVideoExtraInfo
+                {
+                    desktopName = videoName,
+                    customCampaignName = customCampaignName,
+                    
+                    videoURL = videoFilePath,
+                    
+                    unlockDay = videoUnlockDay,
+                };
+                
+                // Add to correct campaign.
+                CustomCampaignExtraInfo foundCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaignName);
+
+                if (foundCustomCampaign != null)
+                {
+                    foundCustomCampaign.allDesktopVideos.Add(_customVideo);
+                }
+                else
+                {
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Found Video before the custom campaign was found / does not exist.");
+                    #endif
+                            
+                    missingCustomCampaignVideo.Add(_customVideo);
+                }
             }
         }
 

@@ -128,6 +128,8 @@
     <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
     <Compile Include="src\CustomDesktop\DateUtil.cs" />
+    <Compile Include="src\CustomVideos\CustomVideoExtraInfo.cs" />
+    <Compile Include="src\CustomVideos\VideoPatches.cs" />
     <Compile Include="src\Emails\EmailExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />

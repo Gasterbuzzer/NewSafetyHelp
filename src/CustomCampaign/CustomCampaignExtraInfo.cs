@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
 using UnityEngine;
@@ -92,6 +93,9 @@ namespace NewSafetyHelp.CustomCampaign
         public float customDesktopLogoTransparency = 0.2627f;
 
         public bool disableGreenColorBackground = false; // If to disable the color the background green the same as the main game does.
+        
+        // Video Programs
+        public List<CustomVideoExtraInfo> allDesktopVideos = new List<CustomVideoExtraInfo>();
         
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
