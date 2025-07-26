@@ -81,7 +81,7 @@ namespace NewSafetyHelp.CustomVideos
                 
                 // Getting the method of the myClearScript
 
-                MethodInfo _refreshVideo = myClearScript.GetType().GetMethod("RefreshVideo", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo _refreshVideo = myClearScript.GetType().GetMethod("RefreshVideo", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public);
                 
                 if (_refreshVideo == null)
                 {
