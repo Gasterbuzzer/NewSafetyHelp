@@ -146,7 +146,7 @@ namespace NewSafetyHelp.CustomVideos
                 {
                     if (__instance.myVideoPlayer.clip != null)
                     {
-                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker, __instance.playerStartPosition, __instance.playerEndPosition, (float)__instance.myVideoPlayer.clip.length));
+                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker, __instance.playerStartPosition, __instance.playerEndPosition, (float)__instance.myVideoPlayer.clip.length));
                     }
                     else if (!string.IsNullOrEmpty(__instance.myVideoPlayer.url)) // Url is provided.
                     {
@@ -155,7 +155,7 @@ namespace NewSafetyHelp.CustomVideos
                         // Compute the duration correctly
                         float duration = __instance.myVideoPlayer.frameCount / __instance.myVideoPlayer.frameRate;
                         
-                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker, __instance.playerStartPosition, __instance.playerEndPosition, duration));
+                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker, __instance.playerStartPosition, __instance.playerEndPosition, duration));
                     }
                     else
                     {
@@ -166,7 +166,7 @@ namespace NewSafetyHelp.CustomVideos
                 {
                     if (__instance.myVideoPlayer.clip != null)
                     {
-                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
+                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
                             (float) __instance.myVideoPlayer.clip.length - (float) __instance.myVideoPlayer.time));
                     }
                     else if (!string.IsNullOrEmpty(__instance.myVideoPlayer.url)) // Url is provided.
@@ -176,7 +176,7 @@ namespace NewSafetyHelp.CustomVideos
                         // Compute the duration correctly
                         float duration = __instance.myVideoPlayer.frameCount / __instance.myVideoPlayer.frameRate;
                         
-                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
+                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
                             duration - (float) __instance.myVideoPlayer.time));
                     }
                     else
