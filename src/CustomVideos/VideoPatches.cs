@@ -4,6 +4,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace NewSafetyHelp.CustomVideos
 {
@@ -94,6 +95,88 @@ namespace NewSafetyHelp.CustomVideos
                 yield return new WaitForSeconds(0.5f);
                 
                 __instance.videoPopup.SetActive(true);
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(AudioSamplePlayer), "PlayOrPauseVideo", new Type[] { })]
+        public static class PlayOrPauseVideoPatch
+        {
+            /// <summary>
+            /// This functions plays the video in the video GUI. It is patched to handle URLs.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, AudioSamplePlayer __instance)
+            {
+                if (!(bool) __instance.myVideoPlayer)
+                {
+                    return false;
+                }
+                
+                FieldInfo _playerCurrentPosition = typeof(AudioSamplePlayer).GetField("currentPosition", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+
+                if (_playerCurrentPosition == null)
+                {
+                    MelonLogger.Error("ERROR: CurrentPosition was null. Calling original function.");
+                    return true;
+                }
+                
+                if (__instance.myVideoPlayer.isPlaying)
+                {
+                    __instance.myVideoPlayer.Pause();
+                    
+                    _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); // __instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                    
+                    __instance.StopAllCoroutines();
+                }
+                else
+                {
+                    MelonCoroutines.Start(handleURLVideoBetter(__instance, _playerCurrentPosition));
+                }
+                
+                
+                return false; // Skip the original function
+            }
+
+            public static IEnumerator handleURLVideoBetter(AudioSamplePlayer __instance, FieldInfo _playerCurrentPosition)
+            {
+                __instance.myVideoPlayer.Play();
+                
+                
+                if (__instance.myVideoPlayer.time == 0.0 && __instance.playerTracker.transform.localPosition == __instance.playerStartPosition)
+                {
+                    if (__instance.myVideoPlayer.clip != null)
+                    {
+                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker, __instance.playerStartPosition, __instance.playerEndPosition, (float)__instance.myVideoPlayer.clip.length));
+                    }
+                    else if (!string.IsNullOrEmpty(__instance.myVideoPlayer.url)) // Url is provided.
+                    {
+                        yield return WaitForPrepare(__instance.myVideoPlayer);
+                        
+                        // Compute the duration correctly
+                        float duration = __instance.myVideoPlayer.frameCount / __instance.myVideoPlayer.frameRate;
+                        
+                        yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker, __instance.playerStartPosition, __instance.playerEndPosition, duration));
+                    }
+                    else
+                    {
+                        MelonLogger.Error("ERROR: Unable of playing video as the URL and the Clip are null.");
+                    }
+                }
+                else
+                {
+                    yield return MelonCoroutines.Start(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
+                        (float) __instance.myVideoPlayer.clip.length - (float) __instance.myVideoPlayer.time));
+                }
+            }
+            
+            public static IEnumerator WaitForPrepare(VideoPlayer vp)
+            {
+                vp.Prepare();
+
+                while (!vp.isPrepared)
+                    yield return null;
             }
         }
     }
