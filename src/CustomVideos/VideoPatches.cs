@@ -194,5 +194,118 @@ namespace NewSafetyHelp.CustomVideos
                     yield return null;
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(AudioSamplePlayer), "Update", new Type[] { })]
+        public static class UpdatePatch
+        {
+            /// <summary>
+            /// This functions handles multiple functionality for the player. It is patched to work with URLs.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, AudioSamplePlayer __instance)
+            {
+                if ((bool) __instance.myAudioSource && __instance.myAudioSource.isPlaying || (bool) __instance.myVideoPlayer && __instance.myVideoPlayer.isPlaying)
+                {
+                    __instance.myImage.sprite = __instance.stopSprite;
+                    __instance.audioLabelText.SetActive(false);
+                }
+                else
+                {
+                    __instance.myImage.sprite = __instance.playSprite;
+                    __instance.audioLabelText.SetActive(true);
+                    if ((bool) __instance.myAudioSource && __instance.playerTracker.transform.localPosition != __instance.playerStartPosition)
+                    {
+                        __instance.StopAllCoroutines();
+                        __instance.playerTracker.transform.localPosition = __instance.playerStartPosition;
+                    }
+                }
+                
+                if (!__instance.scrubbing)
+                {
+                    return false;
+                }
+                
+                if ((bool) __instance.myVideoPlayer && __instance.myVideoPlayer.isPlaying)
+                {
+                    __instance.StopAllCoroutines();
+                    __instance.myVideoPlayer.Pause();
+                }
+
+                if (Camera.main == null)
+                {
+                    MelonLogger.Error("ERROR: Camera missing! Calling original function!");
+                    return true;
+                }
+                
+                __instance.playerTracker.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, __instance.playerTracker.transform.position.y, __instance.playerTracker.transform.position.z);
+                
+                if (__instance.playerTracker.transform.localPosition.x < __instance.playerStartPosition.x)
+                {
+                    __instance.playerTracker.transform.localPosition = __instance.playerStartPosition;
+                }
+                
+                if (__instance.playerTracker.transform.localPosition.x > __instance.playerEndPosition.x)
+                {
+                    __instance.playerTracker.transform.localPosition = __instance.playerEndPosition;
+                }
+                
+                float num = (__instance.playerTracker.transform.localPosition.x - __instance.playerStartPosition.x) / (__instance.playerEndPosition.x - __instance.playerStartPosition.x);
+                
+                FieldInfo _playerCurrentPosition = typeof(AudioSamplePlayer).GetField("playerCurrentPosition", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+
+                if (_playerCurrentPosition == null)
+                {
+                    MelonLogger.Error("ERROR: CurrentPosition was null. Calling original function.");
+                    return true;
+                }
+                
+                if ((bool) __instance.myVideoPlayer)
+                {
+                    MelonCoroutines.Start(handleURLVideoBetter(__instance, _playerCurrentPosition, num));
+                }
+                
+                if ((bool) __instance.myAudioSource)
+                {
+                    __instance.myAudioSource.time = __instance.myAudioSource.clip.length * num;
+                    
+                    _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); //__instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                }
+                
+                return false; // Skip the original function
+            }
+
+            public static IEnumerator handleURLVideoBetter(AudioSamplePlayer __instance, FieldInfo _playerCurrentPosition, float num)
+            {
+                if (__instance.myVideoPlayer.clip != null)
+                {
+                    __instance.myVideoPlayer.time = __instance.myVideoPlayer.clip.length * num;
+                }
+                else if (!string.IsNullOrEmpty(__instance.myVideoPlayer.url)) // URL Provided
+                {
+                    yield return WaitForPrepare(__instance.myVideoPlayer);
+
+                    float duration = __instance.myVideoPlayer.frameCount / __instance.myVideoPlayer.frameRate;
+                    
+                    __instance.myVideoPlayer.time = duration * num;
+                }
+                else
+                {
+                    MelonLogger.Error("ERROR: No URL or Clip provided for video player in update function! Critical error!");
+                    yield break;
+                }
+                
+                _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); //__instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+            }
+            
+            public static IEnumerator WaitForPrepare(VideoPlayer vp)
+            {
+                vp.Prepare();
+
+                while (!vp.isPrepared)
+                    yield return null;
+            }
+        }
     }
 }
