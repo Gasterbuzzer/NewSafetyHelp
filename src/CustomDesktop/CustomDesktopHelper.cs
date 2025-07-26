@@ -335,6 +335,18 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
+        
+        /// <summary>
+        /// Disables all default video programs on the desktop.
+        /// </summary>
+        public static void disableDefaultVideos()
+        {
+            getLeftPrograms().transform.Find("TrailerFile").gameObject.SetActive(false);
+            getLeftPrograms().transform.Find("RealEstateVideo").gameObject.SetActive(false);
+            getLeftPrograms().transform.Find("ScienceVideo").gameObject.SetActive(false);
+            getLeftPrograms().transform.Find("HikingVideo").gameObject.SetActive(false);
+        }
+
 
         /// <summary>
         /// Disables the Winter DLC Program to avoid switching to DLC while custom campaign is active.

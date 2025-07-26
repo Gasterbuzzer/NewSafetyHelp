@@ -71,6 +71,8 @@ namespace NewSafetyHelp.CustomCampaign
         public bool artbookAlwaysActive = false;
         public bool arcadeAlwaysActive = false;
         
+        public bool disableAllDefaultVideos = true;
+        
         // Program rename.
         public string renameDesktopIcon = null;
         
@@ -78,7 +80,7 @@ namespace NewSafetyHelp.CustomCampaign
         public bool alwaysSkipCallButton = false; // If to show the "Next Caller" button, which skips the next caller wait time.
         
         // Email
-        public bool removeDefaultEmails = false;
+        public bool removeDefaultEmails = true;
         public List<EmailExtraInfo> emails = new List<EmailExtraInfo>(); // List of custom emails.
         
         // Backgrounds

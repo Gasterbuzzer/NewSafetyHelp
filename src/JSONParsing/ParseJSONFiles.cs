@@ -221,6 +221,8 @@ namespace NewSafetyHelp.JSONParsing
                     bool scorecardAlwaysActive = false;
                     bool artbookAlwaysActive = false;
                     bool arcadeAlwaysActive = false;
+                    
+                    bool disableDefaultVideos = true;
 
                     bool alwaysSkipCallButton = false;
                     
@@ -228,7 +230,7 @@ namespace NewSafetyHelp.JSONParsing
                     string renameMainProgram = "";
                     
                     // Emails
-                    bool removeAllDefaultEmails = false;
+                    bool removeAllDefaultEmails = true;
                     
                     // Backgrounds
                     List<Sprite> backgroundSprites = new List<Sprite>();
@@ -344,6 +346,11 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("rename_main_game_desktop_icon"))
                     {
                         renameMainProgram = jsonObject["rename_main_game_desktop_icon"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("disable_main_campaign_videos"))
+                    {
+                        disableDefaultVideos = jsonObject["disable_main_campaign_videos"];
                     }
                     
                     if (jsonObject.Keys.Contains("custom_campaign_end_cutscene_video_name"))
@@ -525,6 +532,8 @@ namespace NewSafetyHelp.JSONParsing
                         scorecardAlwaysActive = scorecardAlwaysActive,
                         artbookAlwaysActive = artbookAlwaysActive,
                         arcadeAlwaysActive = arcadeAlwaysActive,
+                        
+                        disableAllDefaultVideos = disableDefaultVideos,
                         
                         renameDesktopIcon = renameMainProgram,
                         

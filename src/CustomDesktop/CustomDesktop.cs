@@ -165,6 +165,12 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = customCampaign.renameDesktopIcon;
                     }
+                    
+                    // Disable default videos.
+                    if (customCampaign.disableAllDefaultVideos)
+                    {
+                        CustomDesktopHelper.disableDefaultVideos();
+                    }
                 }
 
                 return false; // Skip original function.
