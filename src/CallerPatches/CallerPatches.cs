@@ -59,7 +59,7 @@ namespace NewSafetyHelp.CallerPatches
             private static IEnumerator originalCaller(MethodBase __originalMethod, CallerController __instance, CallerProfile profile)
             {
   
-                if (profile == null)
+                if (profile == null && !__instance.arcadeMode)
                 {
                     profile = __instance.callers[__instance.currentCallerID].callerProfile;
                 }
@@ -123,7 +123,11 @@ namespace NewSafetyHelp.CallerPatches
 
                             // Current selection is set to false once the answer for the caller has been submitted.
 
-                            callerAudioSource.clip = item.callerClip.clip;
+                            if (item.callerClip != null && item.callerClip.clip != null)
+                            {
+                                callerAudioSource.clip = item.callerClip.clip;
+                            }
+                            
                             found = true;
                         }
                     }
@@ -143,15 +147,25 @@ namespace NewSafetyHelp.CallerPatches
                         MelonLogger.Msg("INFO: This caller does not have a monster entry. Thus not replaced.");
                     }
 
-                    callerAudioSource.clip = profile.callerClip.clip;
+                    if (profile != null && profile.callerClip != null && profile.callerClip.clip != null)
+                    {
+                        callerAudioSource.clip = profile.callerClip.clip;
+                    }
                 }
 
                 #if DEBUG
-                MelonLogger.Msg($"DEBUG: Caller Audio File Name: {callerAudioSource.name} with {callerAudioSource.clip.name} and {callerAudioSource.clip.length}.");
+                    MelonLogger.Msg($"DEBUG: Caller Audio File Name: {callerAudioSource.name} with {callerAudioSource.clip.name} and {callerAudioSource.clip.length}.");
                 #endif
 
-                callerAudioSource.volume = profile.callerClip.volume;
-                callerAudioSource.Play();
+                if (profile != null && profile.callerClip != null)
+                {
+                    callerAudioSource.volume = profile.callerClip.volume;
+                }
+
+                if (callerAudioSource.clip != null)
+                {
+                    callerAudioSource.Play();
+                }
             }
         }
 
@@ -283,7 +297,7 @@ namespace NewSafetyHelp.CallerPatches
                 if (profile != null && !__instance.arcadeMode && profile.consequenceCallerProfile != null) // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
                 {
                     MelonLogger.Msg($"INFO: Current caller is Consequence Caller.");
-                    Caller callers = CallerPatches.GetConsequenceCaller(profile, ref __instance.callers);
+                    Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
                     
                     if (callers != null)// Caller is valid.
                     {
@@ -984,38 +998,41 @@ namespace NewSafetyHelp.CallerPatches
                     __instance.highestArcadeCombo = __instance.currentArcadeCombo;
                   }
                   else
-                  {
-                      __instance.currentArcadeCombo = 0;
-                      __instance.CreateCustomCaller();
-                    GlobalVariables.mainCanvasScript.NoCallerWindow();
-                    ++__instance.currentStrikes;
-                    
-                    MethodInfo _colorLifeImages = typeof(CallerController).GetMethod("ColorLifeImages", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-                    MethodInfo _cameraShake = typeof(CallerController).GetMethod("CameraShake", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-                    MethodInfo _arcadeFailureRoutine = typeof(CallerController).GetMethod("ArcadeFailureRoutine", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-
-                    if (_colorLifeImages == null || _cameraShake == null || _arcadeFailureRoutine == null)
-                    {
-                        MelonLogger.Error("ERROR: ColorLifeImages or CameraShake or ArcadeFailureRoutine is null. Calling original function.");
-                        return true;
-                    }
-                    
-                    IEnumerator colorLifeImages = (IEnumerator)_colorLifeImages.Invoke(__instance, new object[] { 0.25f });
-
-                    _colorLifeImages.Invoke(__instance, null); // __instance.ColorLifeImages();
-
-                    MelonCoroutines.Start(colorLifeImages); // __instance.StartCoroutine(__instance.CameraShake(0.25f));
-                    
-                    if (__instance.currentStrikes >= __instance.strikesToFailure)
-                    {
+                  { 
+                        __instance.currentArcadeCombo = 0; 
+                        __instance.CreateCustomCaller();
+                        GlobalVariables.mainCanvasScript.NoCallerWindow();
+                        ++__instance.currentStrikes;
                         
-                        IEnumerator arcadeFailureRoutine = (IEnumerator)_arcadeFailureRoutine.Invoke(__instance, null);
-                        MelonCoroutines.Start(arcadeFailureRoutine); // __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
-                    }
-                    else
-                    {
-                        MelonCoroutines.Start(newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
-                    }
+                        MethodInfo _colorLifeImages = typeof(CallerController).GetMethod("ColorLifeImages", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+                        MethodInfo _cameraShake = typeof(CallerController).GetMethod("CameraShake", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+                        MethodInfo _arcadeFailureRoutine = typeof(CallerController).GetMethod("ArcadeFailureRoutine", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+
+                        if (_colorLifeImages == null || _cameraShake == null || _arcadeFailureRoutine == null)
+                        {
+                            MelonLogger.Error("ERROR: ColorLifeImages or CameraShake or ArcadeFailureRoutine is null. Calling original function.");
+                            return true;
+                        }
+                        
+                        _colorLifeImages.Invoke(__instance, null); // __instance.ColorLifeImages();
+                        
+                        IEnumerator cameraShake = (IEnumerator)_cameraShake.Invoke(__instance, new object[] { 0.25f });
+                        
+                        if (cameraShake != null)
+                        {
+                            MelonCoroutines.Start(cameraShake); // __instance.StartCoroutine(__instance.CameraShake(0.25f));
+                        }
+                        
+                        if (__instance.currentStrikes >= __instance.strikesToFailure)
+                        {
+                            
+                            IEnumerator arcadeFailureRoutine = (IEnumerator)_arcadeFailureRoutine.Invoke(__instance, null);
+                            MelonCoroutines.Start(arcadeFailureRoutine); // __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
+                        }
+                        else
+                        {
+                            MelonCoroutines.Start(newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
+                        }
                   }
                 }
                 else if ((bool) _triggerGameOver.GetValue(__instance)) // __instance.triggerGameOver
@@ -1545,6 +1562,91 @@ namespace NewSafetyHelp.CallerPatches
                 triggerGameOver.SetValue(__instance, true); //__instance.triggerGameOver = true;
                 
                 return false; // Skip the original function
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "TypeText", new Type[] { typeof(CallerProfile), typeof(bool) })]
+        public static class TypeTextPatch
+        {
+            /// <summary>
+            /// The original function types out the text of the caller. It is modified to work in custom campaigns arcade mode.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="profile"> The profile of the caller. </param>
+            /// <param name="skip"> If to skip the animation, can work good if no audio is provided. </param>
+            // ReSharper disable once RedundantAssignment
+            // ReSharper disable once InvalidXmlDocComment
+            private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance, ref IEnumerator __result, ref CallerProfile profile, ref bool skip)
+            {
+                
+                __result = typeText(__instance, profile, skip);
+                
+                return false; // Skip the original function
+            }
+
+            public static IEnumerator typeText(CallWindowBehavior __instance, CallerProfile profile, bool skip)
+            {
+                yield return null;
+                
+                int characterCount = __instance.myTranscription.textInfo.characterCount;
+                
+                int counter = 0;
+
+                float waitTime = 0;
+                
+                if (profile.callerClip != null && profile.callerClip.clip != null) // If we have a valid clip.
+                {
+                    waitTime = profile.callerClip.clip.length / characterCount;
+                }
+                else // No caller clip so we skip.
+                {
+                    skip = true;
+                }
+                
+                if (skip)
+                {
+                    counter = characterCount;
+                    __instance.myTranscription.maxVisibleCharacters = counter;
+                }
+                
+                while (counter < characterCount + 1)
+                {
+                    __instance.myTranscription.maxVisibleCharacters = counter;
+                    
+                    if (waitTime > 0.006)
+                    {
+                        counter++;
+                    }
+                    else
+                    {
+                        counter += 2;
+                    }
+                    
+                    if (waitTime > 0.005)
+                    {
+                        yield return new WaitForSecondsRealtime(waitTime);
+                    }
+                    else
+                    {
+                        yield return null;
+                    }
+                }
+                
+                if (profile.callerMonster)
+                {
+                    __instance.holdButton.SetActive(true);
+                    if (GlobalVariables.arcadeMode)
+                    {
+                        GlobalVariables.callerControllerScript.StartCallTimerRoutine();
+                    }
+                }
+                else
+                {
+                    __instance.closeButton.SetActive(true);
+                }
+                
+                yield break;
             }
         }
     }
