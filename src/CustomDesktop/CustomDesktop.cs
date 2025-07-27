@@ -170,7 +170,7 @@ namespace NewSafetyHelp.CustomDesktop
                     // Change main program icon if wanted.
                     if (customCampaign.changeMainGameDesktopIcon != null)
                     {
-                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<Image>().sprite = customCampaign.changeMainGameDesktopIcon;
+                        CustomDesktopHelper.getMainGameProgram().GetComponent<Image>().sprite = customCampaign.changeMainGameDesktopIcon;
                     }
                     
                     // Disable default videos.
