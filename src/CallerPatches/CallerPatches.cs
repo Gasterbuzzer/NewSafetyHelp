@@ -9,6 +9,8 @@ using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
@@ -20,7 +22,6 @@ namespace NewSafetyHelp.CallerPatches
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "CreateCustomCaller", new Type[] { })]
         public static class UpdateArcadeCallerAudio
         {
-
             /// <summary>
             /// Update the list when opening.
             /// </summary>
@@ -28,13 +29,26 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__instance"> Caller of function. </param>
             private static void Postfix(MethodBase __originalMethod, CallerController __instance)
             {
-
                 foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                 {
                     if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name || __instance.currentCustomCaller.callerMonster.monsterID == item.ID) // We found an entry to replace the audio for.
                     {
                         __instance.currentCustomCaller.callerClip = item.callerClip;
                     }
+                }
+
+                if (__instance.currentCustomCaller.callerClip == null) // If we didn't find anything, we set it to a random clip.
+                {
+
+                    MethodInfo pickRandomClip = typeof(CallerController).GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance); 
+                    
+                    if (pickRandomClip == null)
+                    {
+                        MelonLogger.Error("ERROR: PickRandomClip couldn't be found in CallerController.");
+                        return;
+                    }
+                    
+                    __instance.currentCustomCaller.callerClip = (RichAudioClip) pickRandomClip.Invoke(__instance, null); // __instance.PickRandomClip()
                 }
             }
         }
@@ -58,7 +72,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name= "profile"> Profile Parameter. </param>
             private static IEnumerator originalCaller(MethodBase __originalMethod, CallerController __instance, CallerProfile profile)
             {
-  
+                
                 if (profile == null && !__instance.arcadeMode)
                 {
                     profile = __instance.callers[__instance.currentCallerID].callerProfile;
@@ -83,10 +97,17 @@ namespace NewSafetyHelp.CallerPatches
 
                 AudioSource callerAudioSource = (AudioSource) callerAudioSourceGetter.GetValue(__instance);
 
+                if (callerAudioSource == null)
+                {
+                    MelonLogger.Error($"CallerController: callerAudioSource is null");
+                    yield break;
+                }
+
                 callerAudioSource.Stop();
 
-                // Clip replace
+                // Here we replace the clip-
                 bool found = false;
+                
                 if (profile != null && profile.callerMonster != null && !__instance.arcadeMode) // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
                 {
                     foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
@@ -139,7 +160,7 @@ namespace NewSafetyHelp.CallerPatches
                     if (profile != null && profile.callerMonster != null)
                     {
                         #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
+                            MelonLogger.Msg($"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
                         #endif
                     }
                     else
@@ -335,7 +356,7 @@ namespace NewSafetyHelp.CallerPatches
                     {
                             // We are not a consequence caller.
                             // Select one randomly.
-                            int entrySelected = UnityEngine.Random.Range(0, entries.Count - 1);
+                            int entrySelected = Random.Range(0, entries.Count - 1);
 
                             // Audio check
                             ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected])).currentlySelected = true;
@@ -1647,6 +1668,36 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 
                 yield break;
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "NewCallRoutine", typeof(float), typeof(float))]
+        public static class NewCallRoutinePatch
+        {
+            /// <summary>
+            /// The original function waits a bit before calling a new caller. It is patched to not error out after going back to the desktop.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Result of the function. </param>
+            /// <param name="minTime"> Minimum time to wait. </param>
+            /// <param name="maxTime"> Maximum time to wait. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref IEnumerator __result, ref float minTime, ref float maxTime)
+            {
+                __result = newCallRoutine(__instance, minTime, maxTime);
+                
+                return false; // Skip the original function
+            }
+
+            public static IEnumerator newCallRoutine(CallerController __instance, float minTime, float maxTime)
+            {
+                yield return new WaitForSeconds(Random.Range(minTime, maxTime));
+
+                if (GlobalVariables.mainCanvasScript != null && GlobalVariables.mainCanvasScript.callWindow != null)
+                {
+                    GlobalVariables.mainCanvasScript.callWindow.SetActive(true);
+                }
             }
         }
     }
