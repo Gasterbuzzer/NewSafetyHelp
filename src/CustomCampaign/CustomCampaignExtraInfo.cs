@@ -75,7 +75,8 @@ namespace NewSafetyHelp.CustomCampaign
         public bool disableAllDefaultVideos = true;
         
         // Program rename.
-        public string renameDesktopIcon = null;
+        public string renameMainGameDesktopIcon = null; // If not empty, it renames the main game desktop icon.
+        public Sprite changeMainGameDesktopIcon = null; // Changes the sprite (if not null) of the main game desktop icon.
         
         // Always enable in main game
         public bool alwaysSkipCallButton = false; // If to show the "Next Caller" button, which skips the next caller wait time.

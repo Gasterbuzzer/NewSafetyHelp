@@ -242,6 +242,7 @@ namespace NewSafetyHelp.JSONParsing
                     
                     // Program Settings
                     string renameMainProgram = "";
+                    Sprite changeMainProgramSprite = null;
                     
                     // Emails
                     bool removeAllDefaultEmails = true;
@@ -516,6 +517,21 @@ namespace NewSafetyHelp.JSONParsing
                         }
                     }
                     
+                    if (jsonObject.Keys.Contains("main_game_desktop_icon_path"))
+                    {
+                        string customMainGameDesktopIcon = jsonObject["main_game_desktop_icon_path"];
+                        
+                        if (string.IsNullOrEmpty(customMainGameDesktopIcon))
+                        {
+                            MelonLogger.Error($"ERROR: Invalid file name given for '{customMainGameDesktopIcon}'. Not updating.");
+                        }
+                        else
+                        {
+                            changeMainProgramSprite = ImageImport.LoadImage(filePath + "\\" + customMainGameDesktopIcon);
+                        }
+                    }
+
+                    
                     // Create
                     CustomCampaignExtraInfo _customCampaign = new CustomCampaignExtraInfo
                     {
@@ -549,7 +565,8 @@ namespace NewSafetyHelp.JSONParsing
                         
                         disableAllDefaultVideos = disableDefaultVideos,
                         
-                        renameDesktopIcon = renameMainProgram,
+                        renameMainGameDesktopIcon = renameMainProgram,
+                        changeMainGameDesktopIcon = changeMainProgramSprite,
                         
                         alwaysSkipCallButton = alwaysSkipCallButton,
                         

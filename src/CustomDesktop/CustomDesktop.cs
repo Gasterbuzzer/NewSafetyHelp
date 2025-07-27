@@ -162,9 +162,15 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                     
                     // Rename main program if wanted
-                    if (!string.IsNullOrEmpty(customCampaign.renameDesktopIcon))
+                    if (!string.IsNullOrEmpty(customCampaign.renameMainGameDesktopIcon))
                     {
-                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = customCampaign.renameDesktopIcon;
+                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = customCampaign.renameMainGameDesktopIcon;
+                    }
+                    
+                    // Change main program icon if wanted.
+                    if (customCampaign.changeMainGameDesktopIcon != null)
+                    {
+                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<Image>().sprite = customCampaign.changeMainGameDesktopIcon;
                     }
                     
                     // Disable default videos.
