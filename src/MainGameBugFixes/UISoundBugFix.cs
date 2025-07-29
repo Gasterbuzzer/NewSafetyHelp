@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using UnityEngine;
-using Object = System.Object;
 
 namespace NewSafetyHelp.MainGameBugFixes
 {
     public static class UISoundBugFix
     {
-        [HarmonyLib.HarmonyPatch(typeof(UISoundController), "FadeInLoopingSound", new Type[] { typeof(RichAudioClip),  typeof(AudioSource), typeof(float) })]
+        [HarmonyLib.HarmonyPatch(typeof(UISoundController), "FadeInLoopingSound", new[] { typeof(RichAudioClip),  typeof(AudioSource), typeof(float) })]
         public static class FadeInLoopingSoundBugFix
         {
             /// <summary>
@@ -17,6 +15,13 @@ namespace NewSafetyHelp.MainGameBugFixes
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Result of function </param>
+            /// <param name="myRichClip"> Clip to play in fadein. </param>
+            /// <param name="mySource"> Source to play the clip in </param>
+            /// <param name="interpolaterScalar"> Scalar interpolate.</param>
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
+            // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, UISoundController __instance, ref IEnumerator __result, ref RichAudioClip myRichClip, ref AudioSource mySource, ref float interpolaterScalar)
             {
 
@@ -61,7 +66,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                 }
                 else
                 {
-                    MelonLogger.Msg($"UNITY LOG: {mySource.ToString()} is fading in.");
+                    MelonLogger.Msg($"UNITY LOG: {mySource} is fading in.");
                     
                     mySource.clip = myRichClip.clip;
                     mySource.volume = 0.0f;

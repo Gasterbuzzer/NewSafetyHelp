@@ -15,6 +15,8 @@ namespace NewSafetyHelp.CustomCampaign
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, DayNumSpriteSwapper __instance)
             {
 

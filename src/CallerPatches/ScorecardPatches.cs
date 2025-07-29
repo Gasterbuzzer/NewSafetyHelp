@@ -37,7 +37,7 @@ namespace NewSafetyHelp.CallerPatches
                 // Clear List
                 clearListMethod.Invoke(__instance, new object[] { });
                 
-                UnityEngine.Object.Instantiate<GameObject>(__instance.dayListing, __instance.contentHolder);
+                UnityEngine.Object.Instantiate(__instance.dayListing, __instance.contentHolder);
                 
                 int dayAmount = 1;
                 
@@ -48,11 +48,11 @@ namespace NewSafetyHelp.CallerPatches
                         if (caller.callerProfile.increaseTier)
                         {
                             ++dayAmount;
-                            UnityEngine.Object.Instantiate<GameObject>(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();
+                            UnityEngine.Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();
                         }
                         else if (caller.callerProfile.callerMonster !=  null)
                         {
-                            GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(__instance.callerListing, __instance.contentHolder);
+                            GameObject gameObject = UnityEngine.Object.Instantiate(__instance.callerListing, __instance.contentHolder);
                             gameObject.GetComponentInChildren<TextMeshProUGUI>().text = caller.callerProfile.callerName;
                             gameObject.GetComponentInChildren<Toggle>().isOn = caller.answeredCorrectly;
                         }
@@ -74,7 +74,7 @@ namespace NewSafetyHelp.CallerPatches
                         {
                             if (caller.callerProfile.callerMonster !=  null) // Since custom callers could also be the last caller. We also create a profile for them.
                             {
-                                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(__instance.callerListing, __instance.contentHolder);
+                                GameObject gameObject = UnityEngine.Object.Instantiate(__instance.callerListing, __instance.contentHolder);
                                 gameObject.GetComponentInChildren<TextMeshProUGUI>().text = caller.callerProfile.callerName;
                                 gameObject.GetComponentInChildren<Toggle>().isOn = caller.answeredCorrectly;
                             }
@@ -83,7 +83,7 @@ namespace NewSafetyHelp.CallerPatches
 
                             if (currentCallerIndex + 1 != GlobalVariables.callerControllerScript.callers.Length) // We are not the last caller.
                             {
-                                UnityEngine.Object.Instantiate<GameObject>(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();  
+                                UnityEngine.Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();  
                             }
                             
                             #if DEBUG
@@ -92,7 +92,7 @@ namespace NewSafetyHelp.CallerPatches
                         }
                         else if (caller.callerProfile.callerMonster !=  null)
                         {
-                            GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(__instance.callerListing, __instance.contentHolder);
+                            GameObject gameObject = UnityEngine.Object.Instantiate(__instance.callerListing, __instance.contentHolder);
                             gameObject.GetComponentInChildren<TextMeshProUGUI>().text = caller.callerProfile.callerName;
                             gameObject.GetComponentInChildren<Toggle>().isOn = caller.answeredCorrectly;
                         }

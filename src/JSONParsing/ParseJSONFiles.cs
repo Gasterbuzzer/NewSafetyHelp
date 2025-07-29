@@ -95,7 +95,7 @@ namespace NewSafetyHelp.JSONParsing
                             CreateMonsterFromJSON(variant, filePath: folderFilePath, entryUnlockerInstance: __instance);
                             break;
                         
-                        case JSONParseTypes.Email: // The provided JSON is a email (for custom campaigns).
+                        case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
                             MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
                             CreateEmail(variant, folderFilePath);
                             break;
@@ -785,7 +785,7 @@ namespace NewSafetyHelp.JSONParsing
         }
 
         /// <summary>
-        /// Creates a email from a JSON file.
+        /// Creates an email from a JSON file.
         /// </summary>
         /// <param name="jsonText"></param>
         /// <param name="filePath"></param>

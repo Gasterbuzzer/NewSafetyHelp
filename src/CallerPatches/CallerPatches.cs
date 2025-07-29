@@ -255,7 +255,7 @@ namespace NewSafetyHelp.CallerPatches
                                 MelonLogger.Msg($"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
                             }
 
-                            if (UnityEngine.Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
+                            if (Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
                             {
                                 if (!item.allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
                                 {
@@ -1281,7 +1281,7 @@ namespace NewSafetyHelp.CallerPatches
 
                                     if (allWarningCallsWithoutDay.Count > 0)
                                     {
-                                        warningCallerToday = allWarningCallsWithoutDay[UnityEngine.Random.Range(0, allWarningCallsWithoutDay.Count)]; // Choose a random one from the available list.
+                                        warningCallerToday = allWarningCallsWithoutDay[Random.Range(0, allWarningCallsWithoutDay.Count)]; // Choose a random one from the available list.
                                     }
                                 }
                                 
@@ -1289,7 +1289,7 @@ namespace NewSafetyHelp.CallerPatches
                                 List<CustomCallerExtraInfo> allWarningCallsForToday = customCampaign.customWarningCallersInCampaign.FindAll(warningCaller => warningCaller.warningCallDay == GlobalVariables.currentDay);
                                 if (allWarningCallsForToday.Count > 0)
                                 {
-                                    warningCallerToday = allWarningCallsForToday[UnityEngine.Random.Range(0, allWarningCallsForToday.Count)]; // Choose a random one from the available list.
+                                    warningCallerToday = allWarningCallsForToday[Random.Range(0, allWarningCallsForToday.Count)]; // Choose a random one from the available list.
                                 }
                             }
 
@@ -1487,13 +1487,13 @@ namespace NewSafetyHelp.CallerPatches
                         if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller => customCaller.gameOverCallDay <= -1))
                         {
                             // Will choose a random game over caller if all are set at -1.
-                            customCallerGameOverChosen = customCampaign.customGameOverCallersInCampaign.FindAll(customCaller => customCaller.gameOverCallDay <= -1)[UnityEngine.Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
+                            customCallerGameOverChosen = customCampaign.customGameOverCallersInCampaign.FindAll(customCaller => customCaller.gameOverCallDay <= -1)[Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
                         }
                         
                         // If any exist that are valid for the current day, we instead replace it with those.
                         if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller => customCaller.gameOverCallDay == GlobalVariables.currentDay))
                         {
-                            customCallerGameOverChosen = customCampaign.customGameOverCallersInCampaign.FindAll(customCaller => customCaller.gameOverCallDay == GlobalVariables.currentDay)[UnityEngine.Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
+                            customCallerGameOverChosen = customCampaign.customGameOverCallersInCampaign.FindAll(customCaller => customCaller.gameOverCallDay == GlobalVariables.currentDay)[Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
                         }
                         
                         // Create custom caller and then replace gameOverCall with it.
@@ -1586,7 +1586,7 @@ namespace NewSafetyHelp.CallerPatches
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "TypeText", new Type[] { typeof(CallerProfile), typeof(bool) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "TypeText", new[] { typeof(CallerProfile), typeof(bool) })]
         public static class TypeTextPatch
         {
             /// <summary>

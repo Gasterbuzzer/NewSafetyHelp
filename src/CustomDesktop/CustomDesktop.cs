@@ -10,7 +10,6 @@ using NewSafetyHelp.JSONParsing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local

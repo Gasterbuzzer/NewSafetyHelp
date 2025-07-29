@@ -20,6 +20,8 @@ namespace NewSafetyHelp.CustomVideos
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to be called. </param>
             // ReSharper disable once RedundantAssignment
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, VideoExecutableFile __instance, ref IEnumerator __result)
             {
 
@@ -107,6 +109,8 @@ namespace NewSafetyHelp.CustomVideos
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once RedundantAssignment
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, AudioSamplePlayer __instance)
             {
                 if (!(bool) __instance.myVideoPlayer)
@@ -204,6 +208,8 @@ namespace NewSafetyHelp.CustomVideos
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once RedundantAssignment
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, AudioSamplePlayer __instance)
             {
                 if ((bool) __instance.myAudioSource && __instance.myAudioSource.isPlaying || (bool) __instance.myVideoPlayer && __instance.myVideoPlayer.isPlaying)
