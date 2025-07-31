@@ -46,8 +46,6 @@
         public string customCampaignName = "NO_CUSTOM_CAMPAIGN_NAME";
 
         // Constructor
-        public EntryExtraInfo(int _id) { ID = _id; Name = null; }
-        public EntryExtraInfo(string _name) { Name = _name; ID = null; }
         public EntryExtraInfo(string _name, int _id) { Name = _name; ID = _id; }
 
         /// <summary>

@@ -244,15 +244,18 @@ namespace NewSafetyHelp.CallerPatches
 
                             if (item.allowCallAgainOverRestart)
                             {
-
-                                MelonLogger.Msg($"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
+                                #if DEBUG
+                                    MelonLogger.Msg($"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
+                                #endif
 
                                 entryAlreadyCalledBeforeEntry.Value = false; // Reset the entry. If not allowed to store the value.
                             }
 
                             if (entryAlreadyCalledBeforeEntry.Value)
                             {
-                                MelonLogger.Msg($"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
+                                #if DEBUG
+                                    MelonLogger.Msg($"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
+                                #endif
                             }
 
                             if (Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
