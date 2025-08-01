@@ -2,7 +2,9 @@
 using System;
 using System.Reflection;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.ErrorDebugging;
 using NewSafetyHelp.JSONParsing;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -19,18 +21,21 @@ namespace NewSafetyHelp
         {
             // Entries are created when needed.
             persistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
+            
+            // Subscribe to Unity's logging system
+            Application.logMessageReceived += UnityLogHook.HandleUnityLog;
         }
 
         public override void OnLateInitializeMelon()
         {
             #if DEBUG
-            SceneManager.LoadScene("MainMenuScene");
+                SceneManager.LoadScene("MainMenuScene");
 
-            //SceneManager.LoadScene("MainScene");
+                //SceneManager.LoadScene("MainScene");
 
-            //SceneManager.LoadScene("MainMenuSceneXmas");
+                //SceneManager.LoadScene("MainMenuSceneXmas");
 
-            //SceneManager.LoadScene("Computer3DSceneXmas");
+                //SceneManager.LoadScene("Computer3DSceneXmas");
             #endif
         }
 
