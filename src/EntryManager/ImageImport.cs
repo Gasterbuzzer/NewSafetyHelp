@@ -32,9 +32,9 @@ namespace NewSafetyHelp.EntryManager
 
             // Create a sprite from the texture
             Sprite newSprite = Sprite.Create(
-                texture,
-                new Rect(0, 0, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f)
+                texture,                                        // Texture Data
+                new Rect(0, 0, texture.width, texture.height),  // Size
+                new Vector2(0.5f, 0.5f)                         // Pivot
             );
 
             return newSprite;

@@ -37,6 +37,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="com.rlabrecque.steamworks.net">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
+    </Reference>
     <Reference Include="MelonLoader">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
@@ -49,6 +52,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.Postprocessing.Runtime">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Unity.Postprocessing.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -76,6 +85,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
@@ -96,19 +108,42 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.VideoModule">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
+    <Compile Include="src\Audio\UISoundPatch.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
+    <Compile Include="src\CallerPatches\CloseButtonPatches.cs" />
+    <Compile Include="src\CallerPatches\CustomCallerExtraInfo.cs" />
+    <Compile Include="src\CallerPatches\MainCanvasPatches.cs" />
+    <Compile Include="src\CallerPatches\ScorecardPatches.cs" />
+    <Compile Include="src\CustomCampaign\DesktopBackgroundPatches.cs" />
+    <Compile Include="src\CustomCampaign\CustomCampaignExtraInfo.cs" />
+    <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
+    <Compile Include="src\CustomCampaign\OnDayUnlockPatches.cs" />
+    <Compile Include="src\CustomCampaign\SavingManagerPatchesCC.cs" />
+    <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
+    <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
+    <Compile Include="src\CustomDesktop\DateUtil.cs" />
+    <Compile Include="src\CustomVideos\CustomVideoExtraInfo.cs" />
+    <Compile Include="src\CustomVideos\VideoPatches.cs" />
+    <Compile Include="src\Emails\EmailExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryExtraInfo.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
     <Compile Include="src\EntryManager\ImageImport.cs" />
+    <Compile Include="src\ErrorDebugging\UnityLogHook.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
+    <Compile Include="src\ImportFiles\VideoHelper.cs" />
     <Compile Include="src\JSONParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\MonsterParsing.cs" />
-    <Compile Include="src\JSONParsing\ParseMonster.cs" />
+    <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs" />
+    <Compile Include="src\MainGameBugFixes\UISoundBugFix.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
@@ -118,7 +153,6 @@
     <None Include="build_after.bat" />
     <None Include="README.md" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)\build_after.bat</PostBuildEvent>

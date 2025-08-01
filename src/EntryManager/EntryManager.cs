@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using UnityEngine;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.EntryManager
 {
@@ -28,23 +30,30 @@ namespace NewSafetyHelp.EntryManager
                 MelonLogger.Msg($"DEBUG: Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
                 #endif
 
-                // Before adding we check if the ID already exists.
+                // Before adding we check if the ID already exists. And if yes, we replace it.
                 int idToCheck = newProfile.monsterID;
 
-                for (int i = 0; i < monsterProfiles.Length; i++)
-                {
-                    if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
-                    {
-                        if (profileName != "NONE") // Not display it if we are just readding things that are more than welcome to replace entries.
-                        {
-                            MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
-                        }
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Checking IDS with monster profile array of size {monsterProfiles.Length}.");
+                #endif
 
-                        monsterProfiles[i] = newProfile;
-                        return; // Replaced the profile and we return.
+                if (monsterProfiles.Length > 0 && idToCheck != -1)
+                {
+                    for (int i = 0; i < monsterProfiles.Length; i++)
+                    {
+                        if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
+                        {
+                            if (profileName != "NONE") // Not display it if we are just readding things that are more than welcome to replace entries.
+                            {
+                                MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
+                            }
+
+                            monsterProfiles[i] = newProfile;
+                            return; // Replaced the profile and we return.
+                        }
                     }
                 }
-
+                
                 // Create a new array with an extra slot
                 MonsterProfile[] newArray = new MonsterProfile[monsterProfiles.Length + 1];
 
@@ -159,11 +168,11 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterProfiles"> Reference of the monsterProfile to replace find the entry in. </param>
         /// <param name="monsterName"> Name of the entry to find. </param>
         /// <param name="monsterID"> Alternative way of finding the entry. </param>
-        public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles, string monsterName, int monsterID = -1)
+        public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles, string monsterName = "SKIP_MONSTER_NAME_TO_SEARCH", int monsterID = -1)
         {
             foreach (MonsterProfile entryProfile in monsterProfiles)
             {
-                if (entryProfile.monsterName == monsterName || (entryProfile.monsterID == monsterID && monsterID >= 0))
+                if ((entryProfile.monsterName == monsterName && monsterName != "SKIP_MONSTER_NAME_TO_SEARCH") || (entryProfile.monsterID == monsterID && monsterID >= 0))
                 {
                     return entryProfile; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
                 }
@@ -217,7 +226,7 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
         {
-            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.monsterName, y.monsterName));
+            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.monsterName, y.monsterName, StringComparison.InvariantCulture));
         }
     }
 
@@ -242,7 +251,9 @@ namespace NewSafetyHelp.EntryManager
         {
             // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
 
-            MelonLogger.Msg("INFO: If tier/permission levels for extra entries were lost, they will now be readded.");
+            #if DEBUG
+                MelonLogger.Msg("DEBUG: If tier/permission levels for extra entries were lost, they will now be readded.");
+            #endif
 
             for (int i = 0; i < entriesReaddTierOne.Count; i++)
             {
