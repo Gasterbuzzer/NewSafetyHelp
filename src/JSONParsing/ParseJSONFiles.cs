@@ -156,7 +156,7 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     return JSONParseTypes.Campaign;
                 }
-                else if (jsonObject.Keys.Contains("custom_caller") || jsonObject.Keys.Contains("custom_caller_name")
+                else if (jsonObject.Keys.Contains("custom_caller_transcript") || jsonObject.Keys.Contains("custom_caller_name")
                          || jsonObject.Keys.Contains("order_in_campaign") || jsonObject.Keys.Contains("custom_caller_audio_clip_name")) // Custom Call added either to main campaign or custom campaign.
                 {
                     return JSONParseTypes.Call;
@@ -915,263 +915,255 @@ namespace NewSafetyHelp.JSONParsing
         {
             if (jsonText is ProxyObject jsonObject)
             {
-                if (jsonObject.Keys.Contains("custom_caller") && jsonObject["custom_caller"]) // Sanity Check
+                // Actual logic
+
+                bool inMainCampaign = false;
+
+                string customCampaign = "NO_CUSTOM_CAMPAIGN";
+                    
+                // Caller Information
+                string customCallerName = "NO_CUSTOM_CALLER_NAME";
+                string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
+                int orderInCampaign = -1;
+
+                bool increasesTier = false;
+                bool isLastCallerOfDay = false;
+
+                bool downedCall = false; // If the entries cannot be accessed while the caller is calling.
+                    
+                string customCallerAudioPath = "";
+                    
+                int customCallerConsequenceCallerID = -1; // If this call is due to a consequence caller. You can provide it here.
+                    
+                Sprite customCallerImage = null;
+                    
+                string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
+                int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
+                    
+                // Warning Call
+
+                bool isWarningCaller = false;
+                int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
+                    
+                // GameOver Call
+                bool isGameOverCaller = false; 
+                int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
+                    
+                if (jsonObject.Keys.Contains("include_in_main_campaign"))
                 {
-                    // Actual logic
+                    inMainCampaign = jsonObject["include_in_main_campaign"];
+                }
+                else if (jsonObject.Keys.Contains("custom_campaign_attached"))
+                {
+                    customCampaign = jsonObject["custom_campaign_attached"];
+                }
 
-                    bool inMainCampaign = false;
+                if (jsonObject.Keys.Contains("custom_caller_name"))
+                {
+                    customCallerName = jsonObject["custom_caller_name"];
+                }
 
-                    string customCampaign = "NO_CUSTOM_CAMPAIGN";
-                    
-                    // Caller Information
-                    string customCallerName = "NO_CUSTOM_CALLER_NAME";
-                    string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
-                    int orderInCampaign = -1;
+                if (jsonObject.Keys.Contains("custom_caller_transcript"))
+                {
+                    customCallerTranscript = jsonObject["custom_caller_transcript"];
+                }
 
-                    bool increasesTier = false;
-                    bool isLastCallerOfDay = false;
-
-                    bool downedCall = false; // If the entries cannot be accessed while the caller is calling.
-                    
-                    string customCallerAudioPath = "";
-                    
-                    int customCallerConsequenceCallerID = -1; // If this call is due to a consequence caller. You can provide it here.
-                    
-                    Sprite customCallerImage = null;
-                    
-                    string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
-                    int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
-                    
-                    // Warning Call
-
-                    bool isWarningCaller = false;
-                    int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
-                    
-                    // GameOver Call
-                    bool isGameOverCaller = false; 
-                    int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
-                    
-                    if (jsonObject.Keys.Contains("include_in_main_campaign"))
-                    {
-                        inMainCampaign = jsonObject["include_in_main_campaign"];
-                    }
-                    else if (jsonObject.Keys.Contains("custom_campaign_attached"))
-                    {
-                        customCampaign = jsonObject["custom_campaign_attached"];
-                    }
-
-                    if (jsonObject.Keys.Contains("custom_caller_name"))
-                    {
-                        customCallerName = jsonObject["custom_caller_name"];
-                    }
-
-                    if (jsonObject.Keys.Contains("custom_caller_transcript"))
-                    {
-                        customCallerTranscript = jsonObject["custom_caller_transcript"];
-                    }
-
-                    if (jsonObject.Keys.Contains("custom_caller_image_name"))
-                    {
-                        string customCallerImageLocation = jsonObject["custom_caller_image_name"];
+                if (jsonObject.Keys.Contains("custom_caller_image_name"))
+                {
+                    string customCallerImageLocation = jsonObject["custom_caller_image_name"];
                         
-                        if (string.IsNullOrEmpty(customCallerImageLocation))
-                        {
-                            MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. No image will be shown.");
-                        }
-                        else
-                        {
-                            customCallerImage = ImageImport.LoadImage(filePath + "\\" + customCallerImageLocation);
-                        }
+                    if (string.IsNullOrEmpty(customCallerImageLocation))
+                    {
+                        MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. No image will be shown.");
                     }
                     else
                     {
-                        MelonLogger.Warning($"WARNING: No custom caller portrait given for file in {filePath}. No image will be shown.");
+                        customCallerImage = ImageImport.LoadImage(filePath + "\\" + customCallerImageLocation);
                     }
-
-                    if (jsonObject.Keys.Contains("order_in_campaign"))
-                    {
-                        orderInCampaign =  jsonObject["order_in_campaign"];
-                    }
-                    
-                    if (jsonObject.Keys.Contains("custom_caller_monster_name"))
-                    {
-                        customCallerMonsterName =  jsonObject["custom_caller_monster_name"];
-                    }
-                    
-                    if (jsonObject.Keys.Contains("custom_caller_monster_id"))
-                    {
-                        customCallerMonsterID =  jsonObject["custom_caller_monster_id"];
-                    }
-                    
-                    if (jsonObject.Keys.Contains("custom_caller_increases_tier"))
-                    {
-                        increasesTier =  (bool) jsonObject["custom_caller_increases_tier"];
-                    }
-                    
-                    if (jsonObject.Keys.Contains("custom_caller_last_caller_day"))
-                    {
-                        isLastCallerOfDay =  (bool) jsonObject["custom_caller_last_caller_day"];
-                    }
-
-                    if (jsonObject.Keys.Contains("custom_caller_audio_clip_name"))
-                    {
-                        customCallerAudioPath = filePath + "\\" +  jsonObject["custom_caller_audio_clip_name"];
-                    }
-
-                    if (jsonObject.Keys.Contains("custom_caller_consequence_caller_id"))
-                    {
-                        customCallerConsequenceCallerID = jsonObject["custom_caller_consequence_caller_id"];
-                    }
-                    
-                    if (jsonObject.Keys.Contains("custom_caller_downed_network"))
-                    {
-                        downedCall = jsonObject["custom_caller_downed_network"];
-                    }
-                    
-                    // Warning Caller
-                    
-                    if (jsonObject.Keys.Contains("is_warning_caller"))
-                    {
-                        isWarningCaller = jsonObject["is_warning_caller"];
-                    }
-                    
-                    if (isWarningCaller && jsonObject.Keys.Contains("warning_caller_day"))
-                    {
-                        warningCallDay = jsonObject["warning_caller_day"];
-                    }
-                    
-                    // GameOver Caller
-                    if (jsonObject.Keys.Contains("is_gameover_caller"))
-                    {
-                        isGameOverCaller = jsonObject["is_gameover_caller"];
-                    }
-                    
-                    if (isGameOverCaller && jsonObject.Keys.Contains("gameover_caller_day"))
-                    {
-                        gameOverCallDay = jsonObject["gameover_caller_day"];
-                    }
-
-                    // Check if order is valid and if not, we warn the user.
-                    if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
-                    {
-                        MelonLogger.Warning($"WARNING: No order was provided for custom caller at '{filePath}'. This could accidentally replace a caller! Set to replace last caller!");
-                        orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
-                    }
-                    
-                    // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-                    CustomCallerExtraInfo _customCaller = new CustomCallerExtraInfo(orderInCampaign)
-                        {
-                            callerName = customCallerName,
-                            callerImage = customCallerImage,
-                            callTranscript = customCallerTranscript,
-                            monsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
-                            inCustomCampaign = !inMainCampaign,
-                            callerIncreasesTier = increasesTier,
-                            callerClipPath = customCallerAudioPath,
-                            consequenceCallerID = customCallerConsequenceCallerID,
-                            belongsToCustomCampaign = customCampaign,
-                            lastDayCaller = isLastCallerOfDay,
-                            downedNetworkCaller = downedCall,
-                            
-                            isWarningCaller = isWarningCaller,
-                            warningCallDay = warningCallDay,
-                            
-                            isGameOverCaller = isGameOverCaller,
-                            gameOverCallDay = gameOverCallDay
-                        };
-
-                    if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
-                    {
-                        _customCaller.monsterNameAttached = customCallerMonsterName;
-                    }
-
-                    // Custom Caller Audio Path (Later gets added with coroutine)
-                    if (jsonObject.Keys.Contains("custom_caller_audio_clip_name"))
-                    {
-                        if (string.IsNullOrEmpty(customCallerAudioPath))
-                        {
-                            MelonLogger.Warning($"WARNING: No caller audio given for file in {filePath}. No audio will be heard.");
-                        }
-                        else if (!File.Exists(customCallerAudioPath)) // Check if location is valid now, since we are storing it now.
-                        {
-                            MelonLogger.Error($"ERROR: Location {filePath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
-                        }
-                        else // Valid location, so we load in the value.
-                        {
-                            MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
-                                (
-                                    (myReturnValue) =>
-                                    {
-                                        if (myReturnValue != null)
-                                        {
-                                            // Add the audio
-                                            _customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                            _customCaller.isCallerClipLoaded = true;
-                                            
-                                            if (AudioImport.currentLoadingAudios.Count <= 0)
-                                            {
-                                                // We finished loading all audios. We call the start function again.
-                                                AudioImport.reCallCallerListStart();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            MelonLogger.Error($"ERROR: Failed to load audio clip {customCallerAudioPath} for custom caller.");
-                                        }
-
-                                    },
-                                    customCallerAudioPath)
-                            );
-                            
-                            
-                        }
-                    }
-                    
-                    // Now after parsing all values, we add the custom caller to our map
-
-                    if (inMainCampaign)
-                    {
-                        customCallerMainGame.Add(orderInCampaign, _customCaller);
-                    }
-                    else
-                    {
-                        // Add to correct campaign.
-                        CustomCampaignExtraInfo foundCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaign);
-
-                        if (foundCustomCampaign != null)
-                        {
-                            if (_customCaller.isGameOverCaller)
-                            {
-                                foundCustomCampaign.customGameOverCallersInCampaign.Add(_customCaller);  
-                            }
-                            else if (_customCaller.isWarningCaller)
-                            {
-                                foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);  
-                            }
-                            else
-                            {
-                                foundCustomCampaign.customCallersInCampaign.Add(_customCaller);  
-                            }
-                        }
-                        else
-                        {
-                            #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
-                            #endif
-                            
-                            missingCustomCallerCallersCustomCampaign.Add(_customCaller);
-                        }
-                    }
-                    
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Finished adding this custom caller.");
-                    #endif
-                    
                 }
                 else
                 {
-                    MelonLogger.Error($"ERROR: Provided custom caller '{filePath}' does not have the flag 'custom_caller = true', thus it got skipped.");
+                    MelonLogger.Warning($"WARNING: No custom caller portrait given for file in {filePath}. No image will be shown.");
                 }
+
+                if (jsonObject.Keys.Contains("order_in_campaign"))
+                {
+                    orderInCampaign =  jsonObject["order_in_campaign"];
+                }
+                    
+                if (jsonObject.Keys.Contains("custom_caller_monster_name"))
+                {
+                    customCallerMonsterName =  jsonObject["custom_caller_monster_name"];
+                }
+                    
+                if (jsonObject.Keys.Contains("custom_caller_monster_id"))
+                {
+                    customCallerMonsterID =  jsonObject["custom_caller_monster_id"];
+                }
+                    
+                if (jsonObject.Keys.Contains("custom_caller_increases_tier"))
+                {
+                    increasesTier =  (bool) jsonObject["custom_caller_increases_tier"];
+                }
+                    
+                if (jsonObject.Keys.Contains("custom_caller_last_caller_day"))
+                {
+                    isLastCallerOfDay =  (bool) jsonObject["custom_caller_last_caller_day"];
+                }
+
+                if (jsonObject.Keys.Contains("custom_caller_audio_clip_name"))
+                {
+                    customCallerAudioPath = filePath + "\\" +  jsonObject["custom_caller_audio_clip_name"];
+                }
+
+                if (jsonObject.Keys.Contains("custom_caller_consequence_caller_id"))
+                {
+                    customCallerConsequenceCallerID = jsonObject["custom_caller_consequence_caller_id"];
+                }
+                    
+                if (jsonObject.Keys.Contains("custom_caller_downed_network"))
+                {
+                    downedCall = jsonObject["custom_caller_downed_network"];
+                }
+                    
+                // Warning Caller
+                    
+                if (jsonObject.Keys.Contains("is_warning_caller"))
+                {
+                    isWarningCaller = jsonObject["is_warning_caller"];
+                }
+                    
+                if (isWarningCaller && jsonObject.Keys.Contains("warning_caller_day"))
+                {
+                    warningCallDay = jsonObject["warning_caller_day"];
+                }
+                    
+                // GameOver Caller
+                if (jsonObject.Keys.Contains("is_gameover_caller"))
+                {
+                    isGameOverCaller = jsonObject["is_gameover_caller"];
+                }
+                    
+                if (isGameOverCaller && jsonObject.Keys.Contains("gameover_caller_day"))
+                {
+                    gameOverCallDay = jsonObject["gameover_caller_day"];
+                }
+
+                // Check if order is valid and if not, we warn the user.
+                if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
+                {
+                    MelonLogger.Warning($"WARNING: No order was provided for custom caller at '{filePath}'. This could accidentally replace a caller! Set to replace last caller!");
+                    orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
+                }
+                    
+                // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
+                CustomCallerExtraInfo _customCaller = new CustomCallerExtraInfo(orderInCampaign)
+                {
+                    callerName = customCallerName,
+                    callerImage = customCallerImage,
+                    callTranscript = customCallerTranscript,
+                    monsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
+                    inCustomCampaign = !inMainCampaign,
+                    callerIncreasesTier = increasesTier,
+                    callerClipPath = customCallerAudioPath,
+                    consequenceCallerID = customCallerConsequenceCallerID,
+                    belongsToCustomCampaign = customCampaign,
+                    lastDayCaller = isLastCallerOfDay,
+                    downedNetworkCaller = downedCall,
+                            
+                    isWarningCaller = isWarningCaller,
+                    warningCallDay = warningCallDay,
+                            
+                    isGameOverCaller = isGameOverCaller,
+                    gameOverCallDay = gameOverCallDay
+                };
+
+                if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
+                {
+                    _customCaller.monsterNameAttached = customCallerMonsterName;
+                }
+
+                // Custom Caller Audio Path (Later gets added with coroutine)
+                if (jsonObject.Keys.Contains("custom_caller_audio_clip_name"))
+                {
+                    if (string.IsNullOrEmpty(customCallerAudioPath))
+                    {
+                        MelonLogger.Warning($"WARNING: No caller audio given for file in {filePath}. No audio will be heard.");
+                    }
+                    else if (!File.Exists(customCallerAudioPath)) // Check if location is valid now, since we are storing it now.
+                    {
+                        MelonLogger.Error($"ERROR: Location {filePath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
+                    }
+                    else // Valid location, so we load in the value.
+                    {
+                        MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
+                            (
+                                (myReturnValue) =>
+                                {
+                                    if (myReturnValue != null)
+                                    {
+                                        // Add the audio
+                                        _customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                        _customCaller.isCallerClipLoaded = true;
+                                            
+                                        if (AudioImport.currentLoadingAudios.Count <= 0)
+                                        {
+                                            // We finished loading all audios. We call the start function again.
+                                            AudioImport.reCallCallerListStart();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        MelonLogger.Error($"ERROR: Failed to load audio clip {customCallerAudioPath} for custom caller.");
+                                    }
+
+                                },
+                                customCallerAudioPath)
+                        );
+                            
+                            
+                    }
+                }
+                    
+                // Now after parsing all values, we add the custom caller to our map
+
+                if (inMainCampaign)
+                {
+                    customCallerMainGame.Add(orderInCampaign, _customCaller);
+                }
+                else
+                {
+                    // Add to correct campaign.
+                    CustomCampaignExtraInfo foundCustomCampaign = CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch => customCampaignSearch.campaignName == customCampaign);
+
+                    if (foundCustomCampaign != null)
+                    {
+                        if (_customCaller.isGameOverCaller)
+                        {
+                            foundCustomCampaign.customGameOverCallersInCampaign.Add(_customCaller);  
+                        }
+                        else if (_customCaller.isWarningCaller)
+                        {
+                            foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);  
+                        }
+                        else
+                        {
+                            foundCustomCampaign.customCallersInCampaign.Add(_customCaller);  
+                        }
+                    }
+                    else
+                    {
+                        #if DEBUG
+                                MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
+                        #endif
+                            
+                        missingCustomCallerCallersCustomCampaign.Add(_customCaller);
+                    }
+                }
+                    
+                #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Finished adding this custom caller.");
+                #endif
             }
         }
 
