@@ -948,13 +948,18 @@ namespace NewSafetyHelp.JSONParsing
                 bool isGameOverCaller = false; 
                 int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
                     
-                if (jsonObject.Keys.Contains("include_in_main_campaign"))
+                
+                if (jsonObject.Keys.Contains("custom_campaign_attached"))
+                {
+                    customCampaign = jsonObject["custom_campaign_attached"];
+                }
+                else if (jsonObject.Keys.Contains("include_in_main_campaign"))
                 {
                     inMainCampaign = jsonObject["include_in_main_campaign"];
                 }
-                else if (jsonObject.Keys.Contains("custom_campaign_attached"))
+                else
                 {
-                    customCampaign = jsonObject["custom_campaign_attached"];
+                    MelonLogger.Error("ERROR: Provided custom caller is not attached to either custom campaign or main campaign?");
                 }
 
                 if (jsonObject.Keys.Contains("custom_caller_name"))
@@ -1025,7 +1030,7 @@ namespace NewSafetyHelp.JSONParsing
                     downedCall = jsonObject["custom_caller_downed_network"];
                 }
                     
-                // Warning Caller
+                // Warning Caller Section
                     
                 if (jsonObject.Keys.Contains("is_warning_caller"))
                 {
@@ -1037,7 +1042,8 @@ namespace NewSafetyHelp.JSONParsing
                     warningCallDay = jsonObject["warning_caller_day"];
                 }
                     
-                // GameOver Caller
+                // GameOver Caller Section
+                
                 if (jsonObject.Keys.Contains("is_gameover_caller"))
                 {
                     isGameOverCaller = jsonObject["is_gameover_caller"];
@@ -1128,6 +1134,7 @@ namespace NewSafetyHelp.JSONParsing
 
                 if (inMainCampaign)
                 {
+                    MelonLogger.Msg("INFO: Found entry to add to the main game.");
                     customCallerMainGame.Add(orderInCampaign, _customCaller);
                 }
                 else
