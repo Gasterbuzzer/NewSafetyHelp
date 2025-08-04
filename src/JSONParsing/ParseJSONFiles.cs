@@ -916,11 +916,10 @@ namespace NewSafetyHelp.JSONParsing
             if (jsonText is ProxyObject jsonObject)
             {
                 // Actual logic
-
                 bool inMainCampaign = false;
 
                 string customCampaign = "NO_CUSTOM_CAMPAIGN";
-                    
+                
                 // Caller Information
                 string customCallerName = "NO_CUSTOM_CALLER_NAME";
                 string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
