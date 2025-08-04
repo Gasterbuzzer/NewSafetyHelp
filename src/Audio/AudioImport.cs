@@ -35,6 +35,16 @@ namespace NewSafetyHelp.Audio
             if (!File.Exists(path))
             {
                 MelonLogger.Error($"ERROR: Given path to file {path} of type {_audioType.ToString()} does not exist.");
+                
+                // Fix for audio failing to load causing a freeze.
+                currentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
+
+                // If all audios finished loading we continue letting the game run.
+                if (currentLoadingAudios.Count <= 0)
+                {
+                    Time.timeScale = 1.0f;
+                }
+                
                 yield break;
             }
 

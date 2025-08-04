@@ -86,7 +86,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 if (!replaceEntry)
                 {
-                    MelonLogger.Warning($"WARNING: No Arcade Calls given for file in {filePath}. Defaulting to empty values.");
+                    MelonLogger.Msg($"Info: No Arcade Calls given for file in {filePath}. Defaulting to empty values.");
                 }
             }
 
