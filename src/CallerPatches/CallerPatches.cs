@@ -829,7 +829,7 @@ namespace NewSafetyHelp.CallerPatches
                             }
                             else
                             {
-                                MelonLogger.Error("ERROR. Provided original caller for consequence caller does not exist! Check that you have the correct amnount of callers!");
+                                MelonLogger.Error("ERROR. Provided original caller for consequence caller does not exist! Check that you have the correct amount of callers!");
                             }
                         }
                     }
