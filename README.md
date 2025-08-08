@@ -15,7 +15,7 @@ A mod that allows adding/modifying Entity entries from the game Home Safety Hotl
 5. Start your game and enjoy.
 
 # Using the Mod
-See the Wiki here on GitHub for Documentation and a small Tutorial [Link](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
+See the Wiki here on GitHub for the documentation and some tutorials: [Link](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
 
 # Building the project
 Project can be built with: .NET Framework 4.7.2
