@@ -651,9 +651,14 @@ namespace NewSafetyHelp.CallerPatches
                         {
                             callerProfile.callerMonster = null; 
                         }
-
+                        
                         if (customCaller.Value.consequenceCallerID >= 0)
                         {
+                            if (__instance.callers[customCaller.Value.consequenceCallerID].callerProfile == null)
+                            {
+                                MelonLogger.Warning("WARNING: Provided consequence caller but profile is null? Setting to null.");
+                            }
+                            
                             callerProfile.consequenceCallerProfile = __instance.callers[customCaller.Value.consequenceCallerID].callerProfile;
                         }
                         else
@@ -707,6 +712,9 @@ namespace NewSafetyHelp.CallerPatches
                     {
                         MelonLogger.Warning("WARNING: Custom Campaign has no custom caller assigned! Unexpected behavior will occur when in campaign.");
                     }
+                    
+                    // Reference list for consequence caller (after adding all profiles).
+                    Dictionary<int, int> listOfConsequenceCallers = new Dictionary<int, int>();
                     
                     // Add all customCallers in Callers list.
                     foreach (CustomCallerExtraInfo customCallerCC in currentCustomCampaign.customCallersInCampaign)
@@ -777,14 +785,53 @@ namespace NewSafetyHelp.CallerPatches
                                 newProfile.callerMonster = foundMonster;
                             }
                         }
+
+                        if (customCallerCC.consequenceCallerID >= 0) // We have a consequence caller ID provided.
+                        {
+                            listOfConsequenceCallers.Add(customCallerCC.orderInCampaign, customCallerCC.consequenceCallerID); // Add for processing later.
+                        }
                         
                         // Increase Tier
                         newProfile.increaseTier = customCallerCC.callerIncreasesTier;
                         
-                        __instance.callers[customCallerCC.orderInCampaign] = new Caller
+                        // Sanity check if we actually have a valid order provided.
+                        if (customCallerCC.orderInCampaign < 0 || customCallerCC.orderInCampaign >= currentCustomCampaign.customCallersInCampaign.Count)
                         {
-                            callerProfile = newProfile
-                        };
+                            MelonLogger.Error($"ERROR: Provided order is not valid! (Might be missing a caller(s) in between callers!) (Info: Provided Order: {customCallerCC.orderInCampaign}; CampaignSize: {currentCustomCampaign.customCallersInCampaign.Count})");
+                        }
+                        else
+                        {
+                            __instance.callers[customCallerCC.orderInCampaign] = new Caller
+                            {
+                                callerProfile = newProfile
+                            };
+                        }
+                    }
+                    
+                    // Add references for consequence caller.
+
+                    if (listOfConsequenceCallers.Count > 0)
+                    {
+                        foreach (KeyValuePair<int, int> customCallerIDWithConsequenceCaller in listOfConsequenceCallers)
+                        {
+                            if (customCallerIDWithConsequenceCaller.Value < currentCustomCampaign.customCallersInCampaign.Count) // We have a valid ConsequenceCaller ID.
+                            {
+                                // We check if the current consequence caller and the original caller exists.
+                                if ((__instance.callers[customCallerIDWithConsequenceCaller.Key] != null) && (__instance.callers[customCallerIDWithConsequenceCaller.Value] != null))
+                                {
+                                    // It exists
+                                    __instance.callers[customCallerIDWithConsequenceCaller.Key].callerProfile.consequenceCallerProfile = __instance.callers[customCallerIDWithConsequenceCaller.Value].callerProfile;
+                                }
+                                else
+                                {
+                                    MelonLogger.Error("ERROR: Provided consequence caller cannot be created! Check if was created correctly! (Either original caller or the current consequence caller failed)");
+                                }
+                            }
+                            else
+                            {
+                                MelonLogger.Error("ERROR. Provided original caller for consequence caller does not exist! Check that you have the correct amnount of callers!");
+                            }
+                        }
                     }
                 }
 
