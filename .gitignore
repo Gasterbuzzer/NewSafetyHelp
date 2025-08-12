@@ -3,3 +3,6 @@
 /obj
 config.txt
 /bin
+
+.idea/
+*.iml
