@@ -328,6 +328,10 @@ namespace NewSafetyHelp.CustomDesktop
 
             if (winterDLCProgram != null)
             {
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Found the DLC Icon.");
+                #endif
+                
                 return winterDLCProgram;
             }
             else
@@ -502,6 +506,9 @@ namespace NewSafetyHelp.CustomDesktop
             
             // Rename CustomProgramIcon
             customProgramIcon.name = customProgramName;
+            
+            // Enable if disabled.
+            customProgramIcon.SetActive(true);
         }
         
         public static void createBackToMainGameButton()
