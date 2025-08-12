@@ -102,7 +102,7 @@ namespace NewSafetyHelp.CustomDesktop
                     // Hide DLC Button
                     CustomDesktopHelper.enableWinterDLCProgram();
                 }
-                else if (!GlobalVariables.isXmasDLC) // Custom Campaign
+                else if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.isXmasDLC) // Custom Campaign
                 {
                     CustomDesktopHelper.createBackToMainGameButton();
                     

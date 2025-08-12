@@ -414,10 +414,22 @@ namespace NewSafetyHelp.CustomDesktop
         public static void enableWinterDLCProgram()
         {
             
-            if (!SteamManager.Initialized || SteamApps.BIsDlcInstalled(new AppId_t(2914730U))) // No DLC, we don't activate.
+            if (!SteamManager.Initialized || !SteamApps.BIsDlcInstalled(new AppId_t(2914730U))) // No DLC, we don't activate.
             {
+                
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: DLC is not installed. Not activating DLC.");
+                #endif
+
+                // To make sure the DLC isn't enabled by accident.
+                disableWinterDLCProgram();
+                
                 return;
             }
+            
+            #if DEBUG
+                MelonLogger.Msg($"DEBUG: DLC is installed. Activating DLC!");
+            #endif
             
             getWinterDLCProgram().SetActive(true);
         }
