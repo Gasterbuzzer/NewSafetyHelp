@@ -38,7 +38,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// Returns the current campaign as CustomCampaignExtraInfo.
         /// </summary>
         /// <returns>CustomCampaignExtraInfo Object of the current activate custom campaign.</returns>
-        public static CustomCampaignExtraInfo getCustomCampaignExtraInfo()
+        public static CustomCampaignExtraInfo getActiveCustomCampaign()
         {
             return customCampaignsAvailable.Find(scannedCampaign => scannedCampaign.campaignName == currentCustomCampaignName);
         }
@@ -48,9 +48,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <param name="orderID">Order number in the current custom campaign.</param>
         /// <returns>CustomCallerExtraInfo Object with the returned object. If not found, default. </returns>
-        public static CustomCallerExtraInfo getCustomCampaignCustomCallerByOrderID(int orderID)
+        public static CustomCallerExtraInfo getCustomCallerFromActiveCampaign(int orderID)
         {
-            return getCustomCampaignExtraInfo().customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == orderID);
+            return getActiveCustomCampaign().customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == orderID);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace NewSafetyHelp.CustomCampaign
         public static void addAllCustomCampaignEntriesToArray(ref MonsterProfileList _monsterProfileList)
         {
             
-            CustomCampaignExtraInfo customCampaignExtraInfo = getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
 
             if (customCampaignExtraInfo == null)
             {
@@ -89,7 +89,7 @@ namespace NewSafetyHelp.CustomCampaign
 
         public static void replaceAllProvidedCampaignEntries(ref MonsterProfileList _monsterProfileList)
         {
-            CustomCampaignExtraInfo customCampaignExtraInfo = getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
 
             if (customCampaignExtraInfo == null || !inCustomCampaign)
             {
@@ -151,7 +151,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         public static void initializeCustomCampaignOnce()
         {
-            CustomCampaignExtraInfo currentCampaign = getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -232,7 +232,7 @@ namespace NewSafetyHelp.CustomCampaign
                 return;
             }
             
-            CustomCampaignExtraInfo currentCampaign = getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -390,7 +390,7 @@ namespace NewSafetyHelp.CustomCampaign
                 return;
             }
             
-            CustomCampaignExtraInfo currentCampaign = getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -535,7 +535,7 @@ namespace NewSafetyHelp.CustomCampaign
                 return;
             }
             
-            CustomCampaignExtraInfo currentCampaign = getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {

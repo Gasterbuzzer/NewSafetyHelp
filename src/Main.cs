@@ -36,6 +36,7 @@ namespace NewSafetyHelp
                 //SceneManager.LoadScene("MainMenuSceneXmas");
 
                 //SceneManager.LoadScene("Computer3DSceneXmas");
+                
             #endif
         }
 
@@ -51,7 +52,7 @@ namespace NewSafetyHelp
 
     // Add new Entries.
     [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
-    public static class MonsterEntries
+    public static class MainClassForMonsterEntries
     {
 
         // Check if we already added the creatures, if yes, we do not do it again.
@@ -115,7 +116,7 @@ namespace NewSafetyHelp
                     return;
                 }
 
-                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                 if (customCampaign == null)
                 {
@@ -131,8 +132,6 @@ namespace NewSafetyHelp
                 {
                     __instance.allEntries.monsterProfiles = copyMonsterProfiles;
                 }
-                
-                // Now we add the new entries.
                 
                 MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added... (Custom Campaign)");
 

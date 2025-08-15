@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CustomCampaign;
 using UnityEngine;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -18,7 +19,8 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="newProfile"> The new monster to add. </param>
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         /// <param name="profileName"> Name of the profile to be added, used for debugging. </param>
-        public static void AddMonsterToTheProfile(MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles, string profileName)
+        /// <param name="isPermissionAdd"> If the current add is being added to a tier / permission array and not a normal add. </param>
+        public static void AddMonsterToTheProfile(MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles, string profileName, bool isPermissionAdd = false)
         {
             if (monsterProfiles == null) // Empty MonsterProfile array, so we create a new one.
             {
@@ -27,23 +29,30 @@ namespace NewSafetyHelp.EntryManager
             else
             {
                 #if DEBUG
-                MelonLogger.Msg($"DEBUG: Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
+                    if (profileName != "NO_PRINT")
+                    {
+                        MelonLogger.Msg($"DEBUG: Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
+                    }
                 #endif
 
                 // Before adding we check if the ID already exists. And if yes, we replace it.
                 int idToCheck = newProfile.monsterID;
 
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Checking IDS with monster profile array of size {monsterProfiles.Length}.");
+                    if (profileName != "NO_PRINT")
+                    {
+                        MelonLogger.Msg($"DEBUG: Checking IDS with monster profile array of size {monsterProfiles.Length}.");
+                    }
                 #endif
-
-                if (monsterProfiles.Length > 0 && idToCheck != -1)
+    
+                // Check if it is a duplicate. Not done for permission adds.
+                if (!isPermissionAdd && monsterProfiles.Length > 0 && idToCheck != -1)
                 {
                     for (int i = 0; i < monsterProfiles.Length; i++)
                     {
                         if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
                         {
-                            if (profileName != "NONE") // Not display it if we are just readding things that are more than welcome to replace entries.
+                            if (profileName != "NONE" && profileName != "NO_PRINT") // Not display it if we are just readding things that are more than welcome to replace entries.
                             {
                                 MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
                             }
@@ -95,7 +104,6 @@ namespace NewSafetyHelp.EntryManager
                     case "sixthTierUnlocks":
                         FixPermissionOverride.entriesReaddTierSix.Add(newProfile);
                         break;
-
                 }
                 
             }
@@ -257,49 +265,101 @@ namespace NewSafetyHelp.EntryManager
 
             for (int i = 0; i < entriesReaddTierOne.Count; i++)
             {
-                if (!__instance.firstTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                if (!__instance.firstTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE");
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
             for (int i = 0; i < entriesReaddTierTwo.Count; i++)
             {
-                if (!__instance.secondTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                if (!__instance.secondTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE");
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
             for (int i = 0; i < entriesReaddTierThree.Count; i++)
             {
-                if (!__instance.thirdTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                if (!__instance.thirdTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE");
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
             for (int i = 0; i < entriesReaddTierFour.Count; i++)
             {
-                if (!__instance.fourthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                if (!__instance.fourthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE");
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
             for (int i = 0; i < entriesReaddTierFive.Count; i++)
             {
-                if (!__instance.fifthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                if (!__instance.fifthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE");
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
             for (int i = 0; i < entriesReaddTierSix.Count; i++)
             {
-                if (!__instance.sixthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i]))
+                if (!__instance.sixthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE");
+                    EntryManager.AddMonsterToTheProfile(entriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
+                }
+            }
+        }
+    }
+    
+    // Patches the entry unlocker to accept all default entries in custom campaign if the option was provided.
+    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "CheckMonsterIsUnlocked", new Type[] { typeof(MonsterProfile) })]
+    public static class CheckMonsterIsUnlockedPatch
+    {
+        /// <summary>
+        /// If the current custom campaign is active, and we have the option enabled to show all default at 0 permission tier. We show them.
+        /// </summary>
+        /// <param name="__originalMethod"> Method Caller </param>
+        /// <param name="__instance"> Caller of function instance </param>
+        /// <param name="profileToCheck"> Profile to check. </param>
+        /// <param name="__result"> Result if to show it or not. </param>
+        private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance, ref MonsterProfile profileToCheck, ref bool __result)
+        {
+            // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
+            
+            // Custom Campaign to reset default entry permission.
+            if (CustomCampaignGlobal.inCustomCampaign)
+            {
+                if (profileToCheck == null)
+                {
+                    MelonLogger.Error("ERROR: Profile to check is empty!");
+                    return;
+                }
+                
+                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                
+                if (customCampaign == null)
+                {
+                    MelonLogger.Error("ERROR: No active custom campaign!");
+                    return;
+                }
+
+                if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission)
+                {
+                    if (MainClassForMonsterEntries.copyMonsterProfiles != null)
+                    {
+                        // We have the copies. So we can check if to enable it.
+                        if (MainClassForMonsterEntries.copyMonsterProfiles.Contains(profileToCheck)) // A default entry to show. We return true.
+                        {
+                            __result = true;
+                        }
+                        
+                    }
+                    else
+                    {
+                        MelonLogger.Error("ERROR: Copy of entry profiles does not exist! Possibly called before initialization.");
+                    }
                 }
             }
         }

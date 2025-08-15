@@ -38,7 +38,7 @@ namespace NewSafetyHelp.CustomDesktop
                 if (CustomCampaignGlobal.inCustomCampaign)
                 {
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -113,7 +113,7 @@ namespace NewSafetyHelp.CustomDesktop
                 // Change username text if available
                 if (CustomCampaignGlobal.inCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -316,7 +316,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     // Get our stored values
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {

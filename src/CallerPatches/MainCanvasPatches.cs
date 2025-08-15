@@ -64,7 +64,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign Values
                 {
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (currentCustomCampaign != null)
                     {
@@ -264,7 +264,7 @@ namespace NewSafetyHelp.CallerPatches
                 if (CustomCampaignGlobal.inCustomCampaign)
                 {
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -351,7 +351,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -395,7 +395,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                     
                     customCampaign.currentDay = GlobalVariables.currentDay;
                     customCampaign.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
@@ -491,7 +491,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -543,7 +543,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -569,7 +569,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -658,7 +658,7 @@ namespace NewSafetyHelp.CallerPatches
                     }
                     else // Custom Campaign
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCampaignCustomCallerByOrderID(GlobalVariables.callerControllerScript.currentCallerID);
+                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         
                         if (customCaller == null)
                         {
@@ -740,7 +740,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -770,7 +770,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

@@ -220,6 +220,8 @@ namespace NewSafetyHelp.JSONParsing
                     
                     bool removeAllExistingEntries = false;
                     
+                    bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0.
+                    
                     // Thresholds
                     int gameOverThreshold = 60; // Threshold when to trigger game over.
                     int warningThreshold = 60; // Threshold when to trigger a warning call.
@@ -311,6 +313,11 @@ namespace NewSafetyHelp.JSONParsing
                     if (jsonObject.Keys.Contains("custom_campaign_remove_main_entries"))
                     {
                         removeAllExistingEntries = jsonObject["custom_campaign_remove_main_entries"];
+                    }
+                    
+                    if (jsonObject.Keys.Contains("custom_campaign_empty_main_entries_permission"))
+                    {
+                        resetDefaultEntriesPermission = jsonObject["custom_campaign_empty_main_entries_permission"];
                     }
                     
                     if (jsonObject.Keys.Contains("entry_browser_always_active"))
@@ -542,6 +549,7 @@ namespace NewSafetyHelp.JSONParsing
                         campaignDesktopName = customCampaignDesktopName,
                         
                         removeExistingEntries = removeAllExistingEntries,
+                        resetDefaultEntriesPermission = resetDefaultEntriesPermission,
                         
                         loadingTexts = loadingTexts,
                         
@@ -1287,6 +1295,7 @@ namespace NewSafetyHelp.JSONParsing
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
+                                    // ReSharper disable once AccessToModifiedClosure
                                     newExtra.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else
@@ -1323,6 +1332,7 @@ namespace NewSafetyHelp.JSONParsing
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
+                                    // ReSharper disable once AccessToModifiedClosure
                                     newExtra.consequenceCallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else

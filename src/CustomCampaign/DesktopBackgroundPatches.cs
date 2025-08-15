@@ -22,7 +22,7 @@ namespace NewSafetyHelp.CustomCampaign
 
                 if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

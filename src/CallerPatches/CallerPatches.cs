@@ -554,7 +554,7 @@ namespace NewSafetyHelp.CallerPatches
                 else
                 {
                     
-                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.getCustomCampaignExtraInfo().campaignDays);
+                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.getActiveCustomCampaign().campaignDays);
                 }
                 
                 
@@ -703,7 +703,7 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                     
                     // Clear callers array with amount of campaign callers.
                     __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
@@ -884,13 +884,13 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCampaignCustomCallerByOrderID(__instance.currentCallerID);
+                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(__instance.currentCallerID);
 
                     if (customCallerFound == null)
                     {
                         MelonLogger.Error($"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
 
-                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.getCustomCampaignExtraInfo().customCallersInCampaign)
+                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.getActiveCustomCampaign().customCallersInCampaign)
                         {
                             MelonLogger.Error($"{customCallerE.callerName} : {customCallerE.orderInCampaign}");
                         }
@@ -1271,7 +1271,7 @@ namespace NewSafetyHelp.CallerPatches
                          MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
                     #endif
                     
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -1522,7 +1522,7 @@ namespace NewSafetyHelp.CallerPatches
                 
                 if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

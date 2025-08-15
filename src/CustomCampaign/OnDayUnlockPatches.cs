@@ -70,7 +70,7 @@ namespace NewSafetyHelp.CustomCampaign
                         }
                         else // Custom Campaign
                         {
-                            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+                            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                             if (currentCampaign == null)
                             {
@@ -144,7 +144,7 @@ namespace NewSafetyHelp.CustomCampaign
         public static bool handleEntryBrowserUnlocker(ref OnDayUnlock __instance)
         {
             
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -168,7 +168,7 @@ namespace NewSafetyHelp.CustomCampaign
         
         public static bool handleScorecardUnlocker(ref OnDayUnlock __instance)
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -192,7 +192,7 @@ namespace NewSafetyHelp.CustomCampaign
         
         public static bool handleArtbookUnlocker(ref OnDayUnlock __instance)
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -216,7 +216,7 @@ namespace NewSafetyHelp.CustomCampaign
         
         public static bool handleArcadeUnlocker(ref OnDayUnlock __instance)
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getCustomCampaignExtraInfo();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
             if (currentCampaign == null)
             {

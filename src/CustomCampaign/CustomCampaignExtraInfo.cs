@@ -33,6 +33,8 @@ namespace NewSafetyHelp.CustomCampaign
         public List<string> campaignDayStrings = new List<string>();
         
         public bool removeExistingEntries = false; // Removes all existing entries and only shows custom entries.
+
+        public bool resetDefaultEntriesPermission = false; // Resets all default entries to not needing any permission to be viewed. (Like a continuation of the main game)
         
         public int gameOverThreshold = 60;  // Game Over Threshold
         public int warningThreshold = 60;  // Warning Threshold

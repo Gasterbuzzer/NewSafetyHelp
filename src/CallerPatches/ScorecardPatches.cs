@@ -64,7 +64,7 @@ namespace NewSafetyHelp.CallerPatches
                     
                     foreach (Caller caller in GlobalVariables.callerControllerScript.callers)
                     {
-                        CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCampaignCustomCallerByOrderID(currentCallerIndex);
+                        CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(currentCallerIndex);
                         
                         #if DEBUG
                             MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}.");
