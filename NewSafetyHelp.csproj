@@ -148,6 +148,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="config.txt" />
+    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="build_after.bat" />
