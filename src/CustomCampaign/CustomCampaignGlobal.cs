@@ -124,10 +124,23 @@ namespace NewSafetyHelp.CustomCampaign
                     replaceEntry => replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
                 );
                 
-                // MelonLogger.Msg($"DEBUG: Comparing Names: '{realEntry.monsterName}' with {customCampaignExtraInfo.entryReplaceOnlyInCampaign[0].Name}");
-
-
-                if (entryFound != null) // It exists, so replace it.
+                // If we delete the entry or replace it.
+                if (entryFound != null && entryFound.deleteEntry) // Delete
+                {
+                    if (string.IsNullOrEmpty(entryFound.Name))
+                    {
+                        MelonLogger.Warning("WARNING: Monster entry was not found. Is is the correct name?");
+                        continue;
+                    }
+                    
+                    // Delete by name.
+                    EntryManager.EntryManager.DeleteMonsterProfile(ref _monsterProfileList.monsterProfiles, null, entryFound.Name);
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Deleting entry '{entryFound.Name}' in custom campaign.");
+                    #endif
+                }
+                else if (entryFound != null) // It exists, so replace it.
                 {
                     if (entryFound.referenceCopyEntry == null)
                     {

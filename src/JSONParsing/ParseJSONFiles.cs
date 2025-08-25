@@ -1274,6 +1274,8 @@ namespace NewSafetyHelp.JSONParsing
             bool _inCustomCampaign = false;
             string _customCampaignName = "NO_CUSTOM_CAMPAIGN_NAME";
 
+            bool deleteReplaceEntry = false;
+
             // Phobias
             bool _spiderPhobia = false;
             bool _spiderPhobiaIncluded = false;
@@ -1298,7 +1300,7 @@ namespace NewSafetyHelp.JSONParsing
             MonsterParsing.parseEntry(ref jObjectParsed, ref filePath, ref accessLevel, ref accessLevelAdded,
                 ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign, ref _monsterName,
                 ref _monsterDescription, ref _arcadeCalls,
-                ref _monsterPortrait, ref _monsterPortraitLocation, ref _monsterAudioClipLocation,
+                ref _monsterPortrait, ref _monsterPortraitLocation, ref _monsterAudioClipLocation, ref deleteReplaceEntry,
                 ref _inCustomCampaign, ref _customCampaignName);
 
             // Parse Phobias
@@ -1322,7 +1324,7 @@ namespace NewSafetyHelp.JSONParsing
                 ref _callerTranscript, ref _callerPortrait, ref _callerReplaceChance, ref _callerRestartCallAgain,
                 ref accessLevel, ref onlyDLC,
                 ref includeDLC, ref includeMainCampaign, ref _consequenceCallerName, ref _consequenceCallerTranscript,
-                ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait, ref _inCustomCampaign,
+                ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait, ref deleteReplaceEntry,  ref _inCustomCampaign,
                 ref _customCampaignName);
 
             // Caller Audio Path (Later gets added with coroutine)
@@ -1519,7 +1521,7 @@ namespace NewSafetyHelp.JSONParsing
 
         public static void createNewExtra(ref EntryExtraInfo newExtra, ref string _monsterName, ref int newID, ref bool replaceEntry, ref string _callerName, ref string _callerTranscript, ref Sprite _callerPortrait, ref float _callerReplaceChance,
             ref bool _callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _consequenceCallerName, ref string _consequenceCallerTranscript, ref string _consequenceCallerImageLocation,
-            ref Sprite _consequenceCallerPortrait, ref bool _inCustomCampaign, ref string _customCampaignName)
+            ref Sprite _consequenceCallerPortrait, ref bool deleteReplaceEntry, ref bool _inCustomCampaign, ref string _customCampaignName)
         {
             newExtra = new EntryExtraInfo(_monsterName, newID)
             {
@@ -1553,6 +1555,18 @@ namespace NewSafetyHelp.JSONParsing
             // Custom Campaign
             newExtra.onlyCustomCampaign = _inCustomCampaign;
             newExtra.customCampaignName = _customCampaignName;
+
+            if (deleteReplaceEntry)
+            {
+                if (replaceEntry)
+                {
+                    newExtra.deleteEntry = deleteReplaceEntry;
+                }
+                else
+                {
+                    MelonLogger.Warning($"WARNING: Provided entry '{_monsterName}' cannot be deleted as it is not replacing an entry.");
+                }
+            }
         }
 
         public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry, ref string filePath, ref bool onlyDLC, ref bool includeDLC, ref EntryUnlockController entryUnlockerInstance, ref bool inCustomCampaign,
@@ -1631,7 +1645,7 @@ namespace NewSafetyHelp.JSONParsing
                 return;
             }
 
-            MelonLogger.Msg($"INFO: Found in the original list {_monsterName} / {newID}. Now replacing/updating the entry with given information for {_monsterName} / {newID}.");
+            MelonLogger.Msg($"INFO: Found in the original list {_monsterName} / {newID}. Now replacing/updating (for the main campaign / custom campaign) the entry with given information for {_monsterName} / {newID}.");
 
             // Portrait
             if (!string.IsNullOrEmpty(_monsterPortraitLocation))

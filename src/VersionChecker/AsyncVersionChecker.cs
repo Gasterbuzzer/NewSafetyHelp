@@ -78,7 +78,7 @@ namespace NewSafetyHelp.VersionChecker
 
                 if (!resp.IsSuccessStatusCode) // We failed connecting.
                 {
-                    MelonLogger.Warning($"WARNING: GitHub API returned error code {resp.StatusCode}. Unable of checking for updates.");
+                    MelonLogger.Warning($"WARNING: GitHub API returned error code {resp.StatusCode}. Could not check for updates.");
                     return null;
                 }
                 

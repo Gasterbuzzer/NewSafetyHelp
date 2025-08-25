@@ -108,6 +108,66 @@ namespace NewSafetyHelp.EntryManager
                 
             }
         }
+        
+        /// <summary>
+        /// Deletes an entry that was provided from the list.
+        /// </summary>
+        /// <param name="monsterProfiles"> Array of monster profiles. </param>
+        /// <param name="profileToDelete"> Entry to delete. </param>
+        /// <param name="monsterName"> Entry to delete. (Search via name instead) </param>
+        public static void DeleteMonsterProfile(ref MonsterProfile[] monsterProfiles, MonsterProfile profileToDelete = null, string monsterName = "NOT_PROVIDED")
+        {
+            if (monsterProfiles == null) // Empty MonsterProfile array, we skip.
+            {
+                MelonLogger.Warning("WARNING: Profile to be deleted was not found! Empty entry.");
+                return;
+            }
+            else
+            {
+                // Check if it exists and find the index of that entry.
+                int monsterProfileIndex = -1;
+                
+                if (profileToDelete != null)
+                {
+                    monsterProfileIndex = Array.FindIndex(monsterProfiles, p => p == profileToDelete);
+                }
+                else if (monsterName != "NOT_PROVIDED")
+                {
+                    monsterProfileIndex = Array.FindIndex(monsterProfiles, p => p.monsterName == monsterName);
+                }
+                else
+                {
+                    MelonLogger.Warning("WARNING: No name and no profile provided. Unable of deleting.");
+                    return;
+                }
+                
+                if (monsterProfileIndex < 0) // Not found.
+                {
+                    MelonLogger.Warning("WARNING: Profile to be deleted was not found! Unknown entry.");
+                    return;
+                }
+                
+                // Create a new array with one less entry.
+                MonsterProfile[] newArray = new MonsterProfile[monsterProfiles.Length - 1];
+
+                // Copy existing profiles 
+                
+                // Copy: Before the index.
+                for (int i = 0; i < monsterProfileIndex; i++)
+                {
+                    newArray[i] = monsterProfiles[i]; 
+                }
+                
+                // Copy: After the index.
+                for (int i = monsterProfileIndex + 1; i < monsterProfiles.Length; i++)
+                {
+                    newArray[i - 1] = monsterProfiles[i]; 
+                }
+
+                // Replace the old array
+                monsterProfiles = newArray;
+            }
+        }
 
         /// <summary>
         /// Creates a new Monster with the given parameters and returns it.

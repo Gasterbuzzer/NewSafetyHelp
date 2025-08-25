@@ -44,6 +44,7 @@
         // Custom Campaign
         public bool onlyCustomCampaign = false;
         public string customCampaignName = "NO_CUSTOM_CAMPAIGN_NAME";
+        public bool deleteEntry = false; // If to delete the entry (Only works in replacing mode)
 
         // Constructor
         public EntryExtraInfo(string _name, int _id) { Name = _name; ID = _id; }

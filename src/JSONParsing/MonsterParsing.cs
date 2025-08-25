@@ -9,7 +9,8 @@ namespace NewSafetyHelp.JSONParsing
     public static class MonsterParsing
     {
         public static void parseEntry(ref JObject jsonObjectParsed, ref string filePath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _monsterName,
-            ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait, ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation, ref bool _inCustomCampaign,  ref string _customCampaignName)
+            ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait, ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation, ref bool deleteReplaceEntry, ref bool _inCustomCampaign,
+            ref string _customCampaignName)
         {
             /* 
              * Monster Information
@@ -147,6 +148,13 @@ namespace NewSafetyHelp.JSONParsing
                 _customCampaignName = (string) jsonObjectParsed["attached_custom_campaign_name"];
                 _inCustomCampaign = true;
             }
+            
+            // Parse if the "replace" entry should be deleted.
+            if (jsonObjectParsed.ContainsKey("delete_entry"))
+            {
+                deleteReplaceEntry = (bool) jsonObjectParsed["delete_entry"];
+            }
+            
         }
 
         public static void parsePhobias(ref JObject jsonObjectParsed, ref string filePath, ref bool _spiderPhobia, ref bool _spiderPhobiaIncluded, ref bool _darknessPhobia, ref bool _darknessPhobiaIncluded, ref bool _dogPhobia, ref bool _dogPhobiaIncluded,
