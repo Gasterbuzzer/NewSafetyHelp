@@ -6,3 +6,4 @@ config.txt
 
 .idea/
 *.iml
+/NewSafetyHelp.sln.DotSettings.user

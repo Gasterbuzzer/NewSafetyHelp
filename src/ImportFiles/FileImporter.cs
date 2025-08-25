@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using MelonLoader;
+using MelonLoader.Utils;
 
 namespace NewSafetyHelp.ImportFiles
 {
@@ -10,7 +11,7 @@ namespace NewSafetyHelp.ImportFiles
         /// </summary>
         public static string GetUserDataFolderPath()
         {
-            string modFolder = Path.Combine(MelonUtils.UserDataDirectory, "NewSafetyHelp");
+            string modFolder = Path.Combine(MelonEnvironment.UserDataDirectory, "NewSafetyHelp");
 
             if (!Directory.Exists(modFolder)) // Our cute folder.
             {

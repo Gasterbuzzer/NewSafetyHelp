@@ -1,14 +1,13 @@
-﻿using System.Linq;
-using MelonLoader;
-using MelonLoader.TinyJSON;
+﻿using MelonLoader;
 using NewSafetyHelp.EntryManager;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing
 {
     public static class CallerParsing
     {
-        public static void parseCaller(ref ProxyObject jsonObject, ref string filePath, ref string _callerAudioClipLocation, ref string _callerName, ref string _callerTranscript, ref string _callerImageLocation,  ref float _callerReplaceChance, ref bool _callerRestartCallAgain,
+        public static void parseCaller(ref JObject jsonObjectParsed, ref string filePath, ref string _callerAudioClipLocation, ref string _callerName, ref string _callerTranscript, ref string _callerImageLocation,  ref float _callerReplaceChance, ref bool _callerRestartCallAgain,
             ref Sprite _callerPortrait, ref bool replaceEntry, ref EntryExtraInfo newExtra)
         {
             /* 
@@ -16,21 +15,21 @@ namespace NewSafetyHelp.JSONParsing
             */
 
             // Caller Name
-            if (jsonObject.Keys.Contains("caller_name"))
+            if (jsonObjectParsed.ContainsKey("caller_name"))
             {
-                _callerName = jsonObject["caller_name"];
+                _callerName = (string) jsonObjectParsed["caller_name"];
             }
 
             // Caller Transcript
-            if (jsonObject.Keys.Contains("caller_transcript"))
+            if (jsonObjectParsed.ContainsKey("caller_transcript"))
             {
-                _callerTranscript = jsonObject["caller_transcript"];
+                _callerTranscript = (string) jsonObjectParsed["caller_transcript"];
             }
 
             // Caller Image
-            if (jsonObject.Keys.Contains("caller_image_name"))
+            if (jsonObjectParsed.ContainsKey("caller_image_name"))
             {
-                _callerImageLocation = jsonObject["caller_image_name"];
+                _callerImageLocation = (string) jsonObjectParsed["caller_image_name"];
 
                 if (string.IsNullOrEmpty(_callerImageLocation))
                 {
@@ -45,42 +44,42 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Caller Replace Chance
-            if (jsonObject.Keys.Contains("caller_chance"))
+            if (jsonObjectParsed.ContainsKey("caller_chance"))
             {
-                _callerReplaceChance = jsonObject["caller_chance"];
+                _callerReplaceChance = (float) jsonObjectParsed["caller_chance"];
             }
 
 
             // If to store the information if it was already called once.
-            if (jsonObject.Keys.Contains("allow_calling_again_over_restarts"))
+            if (jsonObjectParsed.ContainsKey("allow_calling_again_over_restarts"))
             {
-                _callerRestartCallAgain = jsonObject["allow_calling_again_over_restarts"];
+                _callerRestartCallAgain = (bool) jsonObjectParsed["allow_calling_again_over_restarts"];
             }
             
         }
 
-        public static void parseConsequenceCaller(ref ProxyObject jsonObject, ref string filePath, ref string _consequenceCallerName, ref string _consequenceCallerTranscript, ref string _consequenceCallerImageLocation, ref Sprite _consequenceCallerPortrait)
+        public static void parseConsequenceCaller(ref JObject jsonObjectParsed, ref string filePath, ref string _consequenceCallerName, ref string _consequenceCallerTranscript, ref string _consequenceCallerImageLocation, ref Sprite _consequenceCallerPortrait)
         {
             /* 
             * Consequence Caller Information
             */
 
             // Consequence Caller Name
-            if (jsonObject.Keys.Contains("consequence_caller_name"))
+            if (jsonObjectParsed.ContainsKey("consequence_caller_name"))
             {
-                _consequenceCallerName = jsonObject["consequence_caller_name"];
+                _consequenceCallerName = (string) jsonObjectParsed["consequence_caller_name"];
             }
 
             // Consequence Caller Transcript
-            if (jsonObject.Keys.Contains("consequence_caller_transcript"))
+            if (jsonObjectParsed.ContainsKey("consequence_caller_transcript"))
             {
-                _consequenceCallerTranscript = jsonObject["consequence_caller_transcript"];
+                _consequenceCallerTranscript = (string) jsonObjectParsed["consequence_caller_transcript"];
             }
 
             // Consequence Caller Image
-            if (jsonObject.Keys.Contains("consequence_caller_image_name"))
+            if (jsonObjectParsed.ContainsKey("consequence_caller_image_name"))
             {
-                _consequenceCallerImageLocation = jsonObject["consequence_caller_image_name"];
+                _consequenceCallerImageLocation = (string) jsonObjectParsed["consequence_caller_image_name"];
 
                 if (string.IsNullOrEmpty(_consequenceCallerImageLocation))
                 {

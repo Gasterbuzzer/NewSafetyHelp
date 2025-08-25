@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using MelonLoader;
-using MelonLoader.TinyJSON;
 using NewSafetyHelp.EntryManager;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing
 {
     public static class MonsterParsing
     {
-        public static void parseEntry(ref ProxyObject jsonObject, ref string filePath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _monsterName,
+        public static void parseEntry(ref JObject jsonObjectParsed, ref string filePath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _monsterName,
             ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait, ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation, ref bool _inCustomCampaign,  ref string _customCampaignName)
         {
             /* 
@@ -17,15 +16,15 @@ namespace NewSafetyHelp.JSONParsing
             */
 
             // Replace Entry rather than add it, important for warnings.
-            if (jsonObject.Keys.Contains("replace_entry"))
+            if (jsonObjectParsed.ContainsKey("replace_entry"))
             {
-                replaceEntry = jsonObject["replace_entry"];
+                replaceEntry = (bool) jsonObjectParsed["replace_entry"];
             }
 
             // Monster Name
-            if (jsonObject.Keys.Contains("monster_name"))
+            if (jsonObjectParsed.ContainsKey("monster_name"))
             {
-                _monsterName = jsonObject["monster_name"];
+                _monsterName = (string) jsonObjectParsed["monster_name"];
             }
             else
             {
@@ -36,9 +35,9 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Monster Description
-            if (jsonObject.Keys.Contains("monster_description"))
+            if (jsonObjectParsed.ContainsKey("monster_description"))
             {
-                _monsterDescription = jsonObject["monster_description"];
+                _monsterDescription = (string) jsonObjectParsed["monster_description"];
             }
             else
             {
@@ -50,36 +49,36 @@ namespace NewSafetyHelp.JSONParsing
 
 
             // DLC xMas
-            if (jsonObject.Keys.Contains("only_dlc"))
+            if (jsonObjectParsed.ContainsKey("only_dlc"))
             {
-                onlyDLC = jsonObject["only_dlc"];
+                onlyDLC = (bool) jsonObjectParsed["only_dlc"];
             }
-            if (jsonObject.Keys.Contains("include_dlc"))
+            if (jsonObjectParsed.ContainsKey("include_dlc"))
             {
-                includeDLC = jsonObject["include_dlc"];
+                includeDLC = (bool) jsonObjectParsed["include_dlc"];
             }
 
-            if (jsonObject.Keys.Contains("include_campaign")) // Currently is used to distinguish if a caller should appear in the main campaign and if in custom campaign.
+            if (jsonObjectParsed.ContainsKey("include_campaign")) // Currently is used to distinguish if a caller should appear in the main campaign and if in custom campaign.
             {
                 // OLD COMMENT, kind of incorrect but useful to know what I thought: (Unsure, what exactly it does, since it does not prevent it from appearing in the campaign.)
-                includeMainCampaign = jsonObject["include_campaign"];
+                includeMainCampaign = (bool) jsonObjectParsed["include_campaign"];
             }
 
 
             // Access Level and Arcade Calls
-            if (jsonObject.Keys.Contains("access_level"))
+            if (jsonObjectParsed.ContainsKey("access_level"))
             {
-                accessLevel = jsonObject["access_level"];
+                accessLevel = (int) jsonObjectParsed["access_level"];
                 accessLevelAdded = true;
             }
 
-            if (jsonObject.Keys.Contains("arcade_calls"))
+            if (jsonObjectParsed.ContainsKey("arcade_calls"))
             {
-                var test = (ProxyArray)jsonObject["arcade_calls"];
+                JArray test = (JArray) jsonObjectParsed["arcade_calls"];
 
-                foreach (Variant arcadeCustomCall in test)
+                foreach (JToken arcadeCustomCall in test)
                 {
-                    _arcadeCalls.Add(arcadeCustomCall);
+                    _arcadeCalls.Add((string) arcadeCustomCall);
                 }
             }
             else
@@ -92,9 +91,9 @@ namespace NewSafetyHelp.JSONParsing
 
 
             // Image
-            if (jsonObject.Keys.Contains("monster_portrait_image_name"))
+            if (jsonObjectParsed.ContainsKey("monster_portrait_image_name"))
             {
-                _monsterPortraitLocation = jsonObject["monster_portrait_image_name"];
+                _monsterPortraitLocation = (string) jsonObjectParsed["monster_portrait_image_name"];
 
                 if (string.IsNullOrEmpty(_monsterPortraitLocation))
                 {
@@ -119,9 +118,9 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Monster Audio Path (Later gets added with coroutine)
-            if (jsonObject.Keys.Contains("monster_audio_clip_name"))
+            if (jsonObjectParsed.ContainsKey("monster_audio_clip_name"))
             {
-                _monsterAudioClipLocation = jsonObject["monster_audio_clip_name"];
+                _monsterAudioClipLocation = (string) jsonObjectParsed["monster_audio_clip_name"];
 
                 if (string.IsNullOrEmpty(_monsterAudioClipLocation) && !replaceEntry)
                 {
@@ -138,19 +137,19 @@ namespace NewSafetyHelp.JSONParsing
             
             // Custom Campaign
 
-            if (jsonObject.Keys.Contains("attached_custom_campaign_name"))
+            if (jsonObjectParsed.ContainsKey("attached_custom_campaign_name"))
             {
                 
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Found an entry that is custom campaign only.");
                 #endif
                 
-                _customCampaignName = jsonObject["attached_custom_campaign_name"];
+                _customCampaignName = (string) jsonObjectParsed["attached_custom_campaign_name"];
                 _inCustomCampaign = true;
             }
         }
 
-        public static void parsePhobias(ref ProxyObject jsonObject, ref string filePath, ref bool _spiderPhobia, ref bool _spiderPhobiaIncluded, ref bool _darknessPhobia, ref bool _darknessPhobiaIncluded, ref bool _dogPhobia, ref bool _dogPhobiaIncluded,
+        public static void parsePhobias(ref JObject jsonObjectParsed, ref string filePath, ref bool _spiderPhobia, ref bool _spiderPhobiaIncluded, ref bool _darknessPhobia, ref bool _darknessPhobiaIncluded, ref bool _dogPhobia, ref bool _dogPhobiaIncluded,
             ref bool _holesPhobia, ref bool _holesPhobiaIncluded, ref bool _insectPhobia, ref bool _insectPhobiaIncluded, ref bool _watchingPhobia, ref bool _watchingPhobiaIncluded, ref bool _tightSpacePhobia, ref bool _tightSpacePhobiaIncluded)
         {
             /* 
@@ -159,45 +158,45 @@ namespace NewSafetyHelp.JSONParsing
 
             // Phobias, they don't require to be warned, since they optional.
 
-            if (jsonObject.Keys.Contains("spider_phobia"))
+            if (jsonObjectParsed.ContainsKey("spider_phobia"))
             {
-                _spiderPhobia = jsonObject["spider_phobia"];
+                _spiderPhobia = (bool) jsonObjectParsed["spider_phobia"];
                 _spiderPhobiaIncluded = true;
             }
 
-            if (jsonObject.Keys.Contains("darkness_phobia"))
+            if (jsonObjectParsed.ContainsKey("darkness_phobia"))
             {
-                _darknessPhobia = jsonObject["darkness_phobia"];
+                _darknessPhobia = (bool) jsonObjectParsed["darkness_phobia"];
                 _darknessPhobiaIncluded = true;
             }
 
-            if (jsonObject.Keys.Contains("dog_phobia"))
+            if (jsonObjectParsed.ContainsKey("dog_phobia"))
             {
-                _dogPhobia = jsonObject["dog_phobia"];
+                _dogPhobia = (bool) jsonObjectParsed["dog_phobia"];
                 _dogPhobiaIncluded = true;
             }
 
-            if (jsonObject.Keys.Contains("holes_phobia"))
+            if (jsonObjectParsed.ContainsKey("holes_phobia"))
             {
-                _holesPhobia = jsonObject["holes_phobia"];
+                _holesPhobia = (bool) jsonObjectParsed["holes_phobia"];
                 _holesPhobiaIncluded = true;
             }
 
-            if (jsonObject.Keys.Contains("insect_phobia"))
+            if (jsonObjectParsed.ContainsKey("insect_phobia"))
             {
-                _insectPhobia = jsonObject["insect_phobia"];
+                _insectPhobia = (bool) jsonObjectParsed["insect_phobia"];
                 _insectPhobiaIncluded = true;
             }
 
-            if (jsonObject.Keys.Contains("watching_phobia"))
+            if (jsonObjectParsed.ContainsKey("watching_phobia"))
             {
-                _watchingPhobia = jsonObject["watching_phobia"];
+                _watchingPhobia = (bool) jsonObjectParsed["watching_phobia"];
                 _watchingPhobiaIncluded = true;
             }
 
-            if (jsonObject.Keys.Contains("tight_space_phobia"))
+            if (jsonObjectParsed.ContainsKey("tight_space_phobia"))
             {
-                _tightSpacePhobia = jsonObject["tight_space_phobia"];
+                _tightSpacePhobia = (bool) jsonObjectParsed["tight_space_phobia"];
                 _tightSpacePhobiaIncluded = true;
             }
         }

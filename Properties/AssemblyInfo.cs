@@ -1,6 +1,5 @@
 ﻿using MelonLoader;
 using NewSafetyHelp;
-using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -8,7 +7,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NewSafetyHelp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A mod for Home Safety Hotline, which allows adding new features and campaigns.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("NewSafetyHelp")]
@@ -31,10 +30,10 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("2.1.0.0")]
-[assembly: AssemblyFileVersion("2.1.0.0")]
+[assembly: AssemblyVersion("2.1.1.0")]
+[assembly: AssemblyFileVersion("2.1.1.0")]
 
-[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "2.1.0", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
-[assembly: MelonAuthorColor(ConsoleColor.Magenta)]
+[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "2.1.1", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
+[assembly: MelonAuthorColor(1, 208, 12, 252)]
 [assembly: MelonGame("Night Signal Entertainment", "Home Safety Hotline")]
 [assembly: MelonPriority(99)]
