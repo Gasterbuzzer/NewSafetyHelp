@@ -7,6 +7,7 @@ using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.VersionChecker;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -187,6 +188,12 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                 }
 
+                if (MainClassForMonsterEntries._showUpdateMessage)
+                {
+                    MainClassForMonsterEntries._showUpdateMessage = false;
+                    AsyncVersionChecker.showUpdateMessage();
+                }
+                
                 return false; // Skip original function.
             }
 

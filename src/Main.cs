@@ -6,6 +6,8 @@ using NewSafetyHelp.ErrorDebugging;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using NewSafetyHelp.VersionChecker;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable RedundantDefaultMemberInitializer
@@ -24,6 +26,9 @@ namespace NewSafetyHelp
             
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;
+            
+            // Check for updates.
+            _ = AsyncVersionChecker.checkForUpdates();
         }
 
         public override void OnLateInitializeMelon()
@@ -55,6 +60,9 @@ namespace NewSafetyHelp
     public static class MainClassForMonsterEntries
     {
 
+        // If we show the update message again.
+        public static bool _showUpdateMessage = false;
+        
         // Check if we already added the creatures, if yes, we do not do it again.
         public static bool isInitializedMainOnce = false;
 

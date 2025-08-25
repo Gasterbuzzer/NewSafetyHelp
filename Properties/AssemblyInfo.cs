@@ -23,15 +23,14 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("9e2a6c17-9bee-4db1-a42f-f7c09a8601d6")]
 
-// Version information for an assembly consists of the following four values:
+// Version information for an assembly consists of the following three values:
 //
 //      Major Version
 //      Minor Version
 //      Build Number
-//      Revision
 //
-[assembly: AssemblyVersion("2.1.1.0")]
-[assembly: AssemblyFileVersion("2.1.1.0")]
+[assembly: AssemblyVersion("2.1.1")]
+[assembly: AssemblyFileVersion("2.1.1")]
 
 [assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "2.1.1", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
 [assembly: MelonAuthorColor(1, 208, 12, 252)]
