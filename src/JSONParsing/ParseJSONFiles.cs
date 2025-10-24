@@ -238,7 +238,9 @@ namespace NewSafetyHelp.JSONParsing
                     
             bool removeAllExistingEntries = false;
 
-            bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0.
+            bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0. (Also hides NEW tag from entry name)
+
+            bool doShowNewTagForMainGameEntries = false; // If to show the NEW in entry names when the permission is set 0 for the first day.
 
             // Thresholds
             int gameOverThreshold = 60; // Threshold when to trigger game over.
@@ -336,6 +338,17 @@ namespace NewSafetyHelp.JSONParsing
             if (jObjectParsed.ContainsKey("custom_campaign_empty_main_entries_permission"))
             {
                 resetDefaultEntriesPermission = (bool) jObjectParsed["custom_campaign_empty_main_entries_permission"];
+
+                if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out JToken resultNewTag))
+                {
+                    doShowNewTagForMainGameEntries = (bool) resultNewTag;
+                }
+            }
+            
+            // Sanity check in case it was passed but no entries have been reset to 0th permission.
+            if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out _) && !resetDefaultEntriesPermission)
+            {
+                MelonLogger.Warning("WARNING: Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
             }
 
             if (jObjectParsed.ContainsKey("entry_browser_always_active"))
@@ -573,6 +586,7 @@ namespace NewSafetyHelp.JSONParsing
 
                 removeExistingEntries = removeAllExistingEntries,
                 resetDefaultEntriesPermission = resetDefaultEntriesPermission,
+                doShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
 
                 loadingTexts = loadingTexts,
 

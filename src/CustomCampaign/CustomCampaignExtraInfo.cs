@@ -36,6 +36,8 @@ namespace NewSafetyHelp.CustomCampaign
 
         public bool resetDefaultEntriesPermission = false; // Resets all default entries to not needing any permission to be viewed. (Like a continuation of the main game)
         
+        public bool doShowNewTagForMainGameEntries = false; // If main game entries get reset, they do not keep the NEW tag. If one however, does want it to be included, then one can use this option.
+        
         public int gameOverThreshold = 60;  // Game Over Threshold
         public int warningThreshold = 60;  // Warning Threshold
         public List<int> warningCallThresholdCallerAmounts  = new List<int>(); // Amount of calls per day until the warning is allowed to appear.
