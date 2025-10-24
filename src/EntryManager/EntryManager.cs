@@ -414,12 +414,42 @@ namespace NewSafetyHelp.EntryManager
                         {
                             __result = true;
                         }
-                        
                     }
                     else
                     {
                         MelonLogger.Error("ERROR: Copy of entry profiles does not exist! Possibly called before initialization.");
                     }
+                }
+            }
+        }
+    }
+    
+    [HarmonyLib.HarmonyPatch(typeof(EntryListingBehavior), "ShowEntryInfo", new Type[] { })]
+    public static class ShowEntryInfoPatch
+    {
+        /// <summary>
+        /// Postfixes the show entry info to not show "NEW" on main campaign entries if in a custom campaign.
+        /// </summary>
+        /// <param name="__originalMethod"> Method Caller </param>
+        /// <param name="__instance"> Caller of function instance </param>
+        private static void Postfix(MethodBase __originalMethod, EntryListingBehavior __instance)
+        {
+            if (CustomCampaignGlobal.inCustomCampaign)
+            {
+                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+
+                if (customCampaign == null)
+                {
+                    MelonLogger.Error("ERROR: No active custom campaign!");
+                    return;
+                }
+
+                if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission && !customCampaign.doShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
+                {
+                    if (MainClassForMonsterEntries.copyMonsterProfiles.Contains(__instance.myProfile)) // Contained in main campaign.
+                    {
+                        __instance.myText.text = __instance.myProfile.monsterName;
+                    }   
                 }
             }
         }

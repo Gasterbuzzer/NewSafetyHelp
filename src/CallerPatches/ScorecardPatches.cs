@@ -50,7 +50,7 @@ namespace NewSafetyHelp.CallerPatches
                             ++dayAmount;
                             UnityEngine.Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();
                         }
-                        else if (caller.callerProfile.callerMonster !=  null)
+                        else if (caller.callerProfile.callerMonster !=null)
                         {
                             GameObject gameObject = UnityEngine.Object.Instantiate(__instance.callerListing, __instance.contentHolder);
                             gameObject.GetComponentInChildren<TextMeshProUGUI>().text = caller.callerProfile.callerName;
@@ -64,7 +64,19 @@ namespace NewSafetyHelp.CallerPatches
                     
                     foreach (Caller caller in GlobalVariables.callerControllerScript.callers)
                     {
+                        if (caller == null)
+                        {
+                            MelonLogger.Warning($"WARNING: There seems to be an empty custom caller. Possible missing caller? (Index {currentCallerIndex})");
+                            continue;
+                        }
+                        
                         CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(currentCallerIndex);
+
+                        if (customCallerFound == null)
+                        {
+                            MelonLogger.Warning($"WARNING: There seems to be an empty custom caller. Possible missing caller? (Index {currentCallerIndex})");
+                            continue;
+                        }
                         
                         #if DEBUG
                             MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}.");
@@ -103,6 +115,35 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 
                 return false; // Skip function with false.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "LoadCallerAnswers", new Type[] { })]
+        public static class LoadCallerAnswersPatch
+        {
+
+            /// <summary>
+            /// Patches the scorecard load caller answers to gracefully handle null callers. (Broken caller list)
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedParameter.Local
+            private static bool Prefix(MethodBase __originalMethod, ScorecardBehavior __instance)
+            {
+                if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length != GlobalVariables.callerControllerScript.callers.Length)
+                {
+                    return false;
+                }
+                
+                for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
+                {
+                    if (GlobalVariables.callerControllerScript.callers[index] != null)
+                    {
+                        GlobalVariables.callerControllerScript.callers[index].answeredCorrectly = GlobalVariables.saveManagerScript.savedCallerCorrectAnswers[index];
+                    }
+                }
+                
+                return false; // Skip original function with false.
             }
         }
     }

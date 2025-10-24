@@ -79,7 +79,7 @@ namespace NewSafetyHelp.CustomDesktop
                 }
 
                 // Plays beginning segment to desktop.
-                MelonCoroutines.Start(StartupRoutine(__instance));
+                __instance.StartCoroutine(StartupRoutine(__instance));
 
                 if (!CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.isXmasDLC) // Main Campaign
                 {

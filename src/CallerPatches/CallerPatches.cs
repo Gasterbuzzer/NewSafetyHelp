@@ -1049,7 +1049,7 @@ namespace NewSafetyHelp.CallerPatches
                   {
                       __instance.CreateCustomCaller();
                       
-                      MelonCoroutines.Start(newCallRoutine); // this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
+                      __instance.StartCoroutine(newCallRoutine); // this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
                       
                       GlobalVariables.mainCanvasScript.NoCallerWindow();
                       
@@ -1091,18 +1091,18 @@ namespace NewSafetyHelp.CallerPatches
                         
                         if (cameraShake != null)
                         {
-                            MelonCoroutines.Start(cameraShake); // __instance.StartCoroutine(__instance.CameraShake(0.25f));
+                            __instance.StartCoroutine(cameraShake); // __instance.StartCoroutine(__instance.CameraShake(0.25f));
                         }
                         
                         if (__instance.currentStrikes >= __instance.strikesToFailure)
                         {
                             
                             IEnumerator arcadeFailureRoutine = (IEnumerator)_arcadeFailureRoutine.Invoke(__instance, null);
-                            MelonCoroutines.Start(arcadeFailureRoutine); // __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
+                            __instance.StartCoroutine(arcadeFailureRoutine); // __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
                         }
                         else
                         {
-                            MelonCoroutines.Start(newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
+                            __instance.StartCoroutine(newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
                         }
                   }
                 }
@@ -1138,7 +1138,7 @@ namespace NewSafetyHelp.CallerPatches
                     {
                         if (!GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) && GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
-                            MelonCoroutines.Start(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
+                            __instance.StartCoroutine(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
                         
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
@@ -1146,7 +1146,7 @@ namespace NewSafetyHelp.CallerPatches
                     
                         if (GlobalVariables.isXmasDLC && GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
-                            MelonCoroutines.Start(newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine());
+                            __instance.StartCoroutine(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
                         
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
@@ -1162,8 +1162,8 @@ namespace NewSafetyHelp.CallerPatches
                     
                         if (GlobalVariables.currentDay < (int) _lastDayNum.GetValue(__instance)) //__instance.lastDayNum
                         {
-                            MelonCoroutines.Start(GlobalVariables.mainCanvasScript.EndDayRoutine()); //  GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
-                      
+                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine()); //  GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
                         }
@@ -1171,17 +1171,19 @@ namespace NewSafetyHelp.CallerPatches
                     }
                   
                     if (__instance.currentCallerID + 1 < __instance.callers.Length)
-                    { 
-                        MelonCoroutines.Start(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine()); 
+                    {
+                        __instance.StartCoroutine(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine()); 
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                     }
                   
                     if (GlobalVariables.isXmasDLC && __instance.currentCallerID == __instance.callers.Length - 4)
                     {
+                        // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
                         GlobalVariables.mainCanvasScript.cameraAnimator.SetBool("xmasTension", true);
                     }
                     else
                     {
+                        // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
                         GlobalVariables.mainCanvasScript.cameraAnimator.SetBool("xmasTension", false);
                     }
                 }
@@ -1293,7 +1295,7 @@ namespace NewSafetyHelp.CallerPatches
                             MelonLogger.Msg($"DEBUG: Warning caller checks started.");
                         #endif
                         
-                        int callersTodayRequiredWarning = -1;
+                        int callersTodayRequiredWarning;
                         
                         if (GlobalVariables.currentDay <= customCampaign.warningCallThresholdCallerAmounts.Count) // We have enough information per day until the warning call appears.
                         {
@@ -1749,6 +1751,60 @@ namespace NewSafetyHelp.CallerPatches
                     GlobalVariables.mainCanvasScript.callWindow.SetActive(true);
                 }
             }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PickRandomClip")]
+        public static class PickRandomClipPatch
+        {
+            /// <summary>
+            /// The original function picks a random caller clip. Since missing callers may cause issues or errors. We now inform the user and prevent the issue.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Result of the function. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref RichAudioClip __result)
+            {
+                if (__instance.randomCallerClips.Length <= 0)
+                {
+                    MelonLogger.Warning("WARNING: No caller audio available for caller!");
+                    __result = null;
+                    return false;
+                }
+                
+                int num = Random.Range(0, __instance.randomCallerClips.Length);
+                __result = __instance.randomCallerClips[num];
+                
+                return false; // Skip the original function
+            }
+            
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PickRandomPic")]
+        public static class PickRandomPicPatch
+        {
+            /// <summary>
+            /// The original function picks a random caller picture. Since missing callers may cause issues or errors. We now inform the user and prevent the issue.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Result of the function. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref Sprite __result)
+            {
+                if (__instance.randomCallerPics.Length <= 0)
+                {
+                    MelonLogger.Warning("WARNING: No image available for caller!");
+                    __result = null;
+                    return false;
+                }
+                
+                int num = Random.Range(0, __instance.randomCallerPics.Length);
+                __result = __instance.randomCallerPics[num];
+                
+                return false; // Skip the original function
+            }
+            
         }
     }
 }

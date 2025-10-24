@@ -66,56 +66,61 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void LoadJsonFilesFromFolder(string folderFilePath, EntryUnlockController __instance)
         {
-            string[] filesDataPath = Directory.GetFiles(folderFilePath);
+            string[] filesDataPath = Directory.GetFiles(folderFilePath, "*.json", SearchOption.AllDirectories);
 
             foreach (string jsonPathFile in filesDataPath)
             {
-                if (jsonPathFile.ToLower().EndsWith(".json"))
+                MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
+
+                string jsonString = File.ReadAllText(jsonPathFile);
+
+                JObject jObjectParse = JObject.Parse(jsonString);
+
+                JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, folderFilePath);
+
+                switch (jsonType)
                 {
-                    MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
+                    case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
+                        CreateCustomCampaign(jObjectParse, folderFilePath);
+                        break;
 
-                    string jsonString = File.ReadAllText(jsonPathFile);
+                    case JSONParseTypes.Call: // The provided JSON is a standalone call.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
+                        CreateCustomCaller(jObjectParse, folderFilePath);
+                        break;
 
-                    JObject jObjectParse = JObject.Parse(jsonString);
+                    case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
+                        CreateMonsterFromJSON(jObjectParse, filePath: folderFilePath,
+                            entryUnlockerInstance: __instance);
+                        break;
 
-                    JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, folderFilePath);
+                    case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
+                        CreateEmail(jObjectParse, folderFilePath);
+                        break;
 
-                    switch (jsonType)
-                    {
-                        case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
-                            CreateCustomCampaign(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Call: // The provided JSON is a standalone call.
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
-                            CreateCustomCaller(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
-                            CreateMonsterFromJSON(jObjectParse, filePath: folderFilePath, entryUnlockerInstance: __instance);
-                            break;
-                        
-                        case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
-                            CreateEmail(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
-                            CreateVideo(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
-                            MelonLogger.Error("ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
-                            break;
-                        
-                        default: // Unknown Error
-                            MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
-                            break;
-                    }
+                    case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
+                        CreateVideo(jObjectParse, folderFilePath);
+                        break;
+
+                    case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
+                        MelonLogger.Error(
+                            "ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
+                        break;
+
+                    default: // Unknown Error
+                        MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
+                        break;
                 }
+                
             }
         }
 
@@ -233,7 +238,9 @@ namespace NewSafetyHelp.JSONParsing
                     
             bool removeAllExistingEntries = false;
 
-            bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0.
+            bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0. (Also hides NEW tag from entry name)
+
+            bool doShowNewTagForMainGameEntries = false; // If to show the NEW in entry names when the permission is set 0 for the first day.
 
             // Thresholds
             int gameOverThreshold = 60; // Threshold when to trigger game over.
@@ -244,6 +251,9 @@ namespace NewSafetyHelp.JSONParsing
             // Video Cutscenes
             string endCutsceneName = "";
             string gameOverCutsceneName = "";
+            
+            // Music
+            bool useRandomMusic = true;
 
             // Enable Programs
             bool entryBrowserAlwaysActive = false;
@@ -331,6 +341,17 @@ namespace NewSafetyHelp.JSONParsing
             if (jObjectParsed.ContainsKey("custom_campaign_empty_main_entries_permission"))
             {
                 resetDefaultEntriesPermission = (bool) jObjectParsed["custom_campaign_empty_main_entries_permission"];
+
+                if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out JToken resultNewTag))
+                {
+                    doShowNewTagForMainGameEntries = (bool) resultNewTag;
+                }
+            }
+            
+            // Sanity check in case it was passed but no entries have been reset to 0th permission.
+            if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out _) && !resetDefaultEntriesPermission)
+            {
+                MelonLogger.Warning("WARNING: Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
             }
 
             if (jObjectParsed.ContainsKey("entry_browser_always_active"))
@@ -381,6 +402,11 @@ namespace NewSafetyHelp.JSONParsing
             if (jObjectParsed.ContainsKey("rename_main_game_desktop_icon"))
             {
                 renameMainProgram = (string) jObjectParsed["rename_main_game_desktop_icon"];
+            }
+            
+            if (jObjectParsed.TryGetValue("always_randomize_music", out JToken alwaysRandomizeMusicValue))
+            {
+                disableDefaultVideos = (bool) alwaysRandomizeMusicValue;
             }
 
             if (jObjectParsed.ContainsKey("disable_main_campaign_videos"))
@@ -568,6 +594,7 @@ namespace NewSafetyHelp.JSONParsing
 
                 removeExistingEntries = removeAllExistingEntries,
                 resetDefaultEntriesPermission = resetDefaultEntriesPermission,
+                doShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
 
                 loadingTexts = loadingTexts,
 
@@ -583,6 +610,8 @@ namespace NewSafetyHelp.JSONParsing
 
                 endCutsceneVideoName = endCutsceneName,
                 gameOverCutsceneVideoName = gameOverCutsceneName,
+                
+                alwaysRandomMusic = useRandomMusic,
 
                 entryBrowserAlwaysActive = entryBrowserAlwaysActive,
                 scorecardAlwaysActive = scorecardAlwaysActive,
