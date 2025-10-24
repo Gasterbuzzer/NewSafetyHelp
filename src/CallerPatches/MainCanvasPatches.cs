@@ -295,7 +295,7 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 #if DEBUG
-                MelonLogger.Msg($"DEBUG: Calling EndDayRoutine.");
+                    MelonLogger.Msg($"DEBUG: Calling EndDayRoutine.");
                 #endif
                 
                 __result = endDayRoutineChanged(__instance);
@@ -318,14 +318,14 @@ namespace NewSafetyHelp.CallerPatches
                 mainCanvasBehavior.clockOutElements.SetActive(true);
                 mainCanvasBehavior.clockOutButton.SetActive(true);
                 mainCanvasBehavior.clockInElements.SetActive(false);
-
+                
                 while (!mainCanvasBehavior.clockedOut)
                 {
                     yield return null;
                 }
                     
                 yield return new WaitForSeconds(6f);
-
+                
                 if (!GlobalVariables.isXmasDLC)
                 {
                     
@@ -361,7 +361,6 @@ namespace NewSafetyHelp.CallerPatches
 
                     customCampaign.savedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
                 }
-               
                 
                 FieldInfo _progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
@@ -395,7 +394,14 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
+                    
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaign is null. Catastrophic failure!");
+                        yield break;
+                    }
                     
                     customCampaign.currentDay = GlobalVariables.currentDay;
                     customCampaign.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
@@ -408,10 +414,13 @@ namespace NewSafetyHelp.CallerPatches
                     {
                         flagArray.Add(false);
                     }
-
+                    
                     for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
                     {
-                        flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
+                        if (GlobalVariables.callerControllerScript.callers[index] != null) // Sanity check in case there were some unset callers.
+                        {
+                            flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
+                        }
                     }
                     
                     customCampaign.savedCallersCorrectAnswer = flagArray;
@@ -423,6 +432,7 @@ namespace NewSafetyHelp.CallerPatches
                 yield return null;
                 
                 mainCanvasBehavior.ExitToMenu();
+                
                 mainCanvasBehavior.StartCoroutine(mainCanvasBehavior.StartSoftwareRoutine());
             }
         }
@@ -807,5 +817,36 @@ namespace NewSafetyHelp.CallerPatches
                 mainCanvasBehavior.RestartDay();
             }
         }
+        
+        
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "LoadCallerAnswers", new Type[] { })]
+        public static class LoadCallerAnswersPatch
+        {
+            /// <summary>
+            /// Patches the load caller answers to gracefully accept null values.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance)
+            {
+                if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length != GlobalVariables.callerControllerScript.callers.Length)
+                {
+                    return false;
+                }
+                
+                for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
+                {
+                    if (GlobalVariables.callerControllerScript.callers[index] != null)
+                    {
+                        GlobalVariables.callerControllerScript.callers[index].answeredCorrectly = GlobalVariables.saveManagerScript.savedCallerCorrectAnswers[index];
+                    }
+                }
+                
+                return false; // Skip function with false.
+            }
+            
+        }
+        
     }
 }

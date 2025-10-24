@@ -66,56 +66,61 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void LoadJsonFilesFromFolder(string folderFilePath, EntryUnlockController __instance)
         {
-            string[] filesDataPath = Directory.GetFiles(folderFilePath);
+            string[] filesDataPath = Directory.GetFiles(folderFilePath, "*.json", SearchOption.AllDirectories);
 
             foreach (string jsonPathFile in filesDataPath)
             {
-                if (jsonPathFile.ToLower().EndsWith(".json"))
+                MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
+
+                string jsonString = File.ReadAllText(jsonPathFile);
+
+                JObject jObjectParse = JObject.Parse(jsonString);
+
+                JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, folderFilePath);
+
+                switch (jsonType)
                 {
-                    MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
+                    case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
+                        CreateCustomCampaign(jObjectParse, folderFilePath);
+                        break;
 
-                    string jsonString = File.ReadAllText(jsonPathFile);
+                    case JSONParseTypes.Call: // The provided JSON is a standalone call.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
+                        CreateCustomCaller(jObjectParse, folderFilePath);
+                        break;
 
-                    JObject jObjectParse = JObject.Parse(jsonString);
+                    case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
+                        CreateMonsterFromJSON(jObjectParse, filePath: folderFilePath,
+                            entryUnlockerInstance: __instance);
+                        break;
 
-                    JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, folderFilePath);
+                    case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
+                        CreateEmail(jObjectParse, folderFilePath);
+                        break;
 
-                    switch (jsonType)
-                    {
-                        case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
-                            CreateCustomCampaign(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Call: // The provided JSON is a standalone call.
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
-                            CreateCustomCaller(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
-                            CreateMonsterFromJSON(jObjectParse, filePath: folderFilePath, entryUnlockerInstance: __instance);
-                            break;
-                        
-                        case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
-                            CreateEmail(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
-                            MelonLogger.Msg($"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
-                            CreateVideo(jObjectParse, folderFilePath);
-                            break;
-                        
-                        case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
-                            MelonLogger.Error("ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
-                            break;
-                        
-                        default: // Unknown Error
-                            MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
-                            break;
-                    }
+                    case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
+                        CreateVideo(jObjectParse, folderFilePath);
+                        break;
+
+                    case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
+                        MelonLogger.Error(
+                            "ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
+                        break;
+
+                    default: // Unknown Error
+                        MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
+                        break;
                 }
+                
             }
         }
 
