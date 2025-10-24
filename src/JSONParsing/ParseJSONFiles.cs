@@ -406,7 +406,7 @@ namespace NewSafetyHelp.JSONParsing
             
             if (jObjectParsed.TryGetValue("always_randomize_music", out JToken alwaysRandomizeMusicValue))
             {
-                disableDefaultVideos = (bool) alwaysRandomizeMusicValue;
+                useRandomMusic = (bool) alwaysRandomizeMusicValue;
             }
 
             if (jObjectParsed.ContainsKey("disable_main_campaign_videos"))
