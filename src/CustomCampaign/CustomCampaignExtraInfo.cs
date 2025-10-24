@@ -66,6 +66,9 @@ namespace NewSafetyHelp.CustomCampaign
         public string endCutsceneVideoName = ""; // Video shown at the end of the game.
         public string gameOverCutsceneVideoName = ""; // Video shown at game over.
         
+        // Music
+        public bool alwaysRandomMusic = true; // If the provided music is to be always randomly chosen. 
+        
         // Special Saves
         public int savedGameFinished = 0;
         public int savedGameFinishedDisplay = 0;

@@ -251,6 +251,9 @@ namespace NewSafetyHelp.JSONParsing
             // Video Cutscenes
             string endCutsceneName = "";
             string gameOverCutsceneName = "";
+            
+            // Music
+            bool useRandomMusic = true;
 
             // Enable Programs
             bool entryBrowserAlwaysActive = false;
@@ -399,6 +402,11 @@ namespace NewSafetyHelp.JSONParsing
             if (jObjectParsed.ContainsKey("rename_main_game_desktop_icon"))
             {
                 renameMainProgram = (string) jObjectParsed["rename_main_game_desktop_icon"];
+            }
+            
+            if (jObjectParsed.TryGetValue("always_randomize_music", out JToken alwaysRandomizeMusicValue))
+            {
+                disableDefaultVideos = (bool) alwaysRandomizeMusicValue;
             }
 
             if (jObjectParsed.ContainsKey("disable_main_campaign_videos"))
@@ -602,6 +610,8 @@ namespace NewSafetyHelp.JSONParsing
 
                 endCutsceneVideoName = endCutsceneName,
                 gameOverCutsceneVideoName = gameOverCutsceneName,
+                
+                alwaysRandomMusic = useRandomMusic,
 
                 entryBrowserAlwaysActive = entryBrowserAlwaysActive,
                 scorecardAlwaysActive = scorecardAlwaysActive,
