@@ -11,6 +11,7 @@ using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.JSONParsing.CustomCampaignParsing;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 // ReSharper disable MemberCanBePrivate.Global
@@ -156,7 +157,7 @@ namespace NewSafetyHelp.JSONParsing
         /// <returns></returns>
         public static bool containsKeys(List<string> keys, JObject json)
         {
-            return keys.Any(key => json.ContainsKey(key)); // Checks if any of the keys is in the json via the flag ContainsKey
+            return keys.Any(json.ContainsKey); // Checks if any of the keys is in the json via the flag ContainsKey
         }
         
         /// <summary>
@@ -212,431 +213,10 @@ namespace NewSafetyHelp.JSONParsing
                 return;
             }
             
-            // Desktop
             string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
-            string customCampaignDesktopName = "NO_NAME\nPROVIDED";
-            Sprite customCampaignSprite = null;
-                    
-            // Initialize the strings empty.
-            List<List<string>> loadingTexts = new List<List<string>>()
-            {
-                new List<string>() {""}, // First inner list with one empty string
-                new List<string>() {""}  // Second inner list with one empty string
-            };
             
-            // Date and Username
-            string desktopUsernameText = "";
-            int desktopDateStartYear = -1;
-            int desktopDateStartMonth = -1;
-            int desktopDateStartDay = -1;
-            bool useEuropeDateFormat = false;
-                    
-            // Campaign Settings
-            int customCampaignDays = 7;
-                    
-            List<string> customCampaignDaysNames = new List<string>();
-                    
-            bool removeAllExistingEntries = false;
-
-            bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0. (Also hides NEW tag from entry name)
-
-            bool doShowNewTagForMainGameEntries = false; // If to show the NEW in entry names when the permission is set 0 for the first day.
-
-            // Thresholds
-            int gameOverThreshold = 60; // Threshold when to trigger game over.
-            int warningThreshold = 60; // Threshold when to trigger a warning call.
-
-            List<int> warningCallThresholdCallerAmounts = new List<int>();
-
-            // Video Cutscenes
-            string endCutsceneName = "";
-            string gameOverCutsceneName = "";
+            CustomCampaignExtraInfo _customCampaign = CustomCampaignParsing.CustomCampaignParsing.parseCampaignFile(ref jObjectParsed, ref filePath, ref customCampaignName);
             
-            // Music
-            bool useRandomMusic = true;
-
-            // Enable Programs
-            bool entryBrowserAlwaysActive = false;
-            bool scorecardAlwaysActive = false;
-            bool artbookAlwaysActive = false;
-            bool arcadeAlwaysActive = false;
-
-            bool disableDefaultVideos = true;
-
-            bool alwaysSkipCallButton = false;
-
-            // Program Settings
-            string renameMainProgram = "";
-            Sprite changeMainProgramSprite = null;
-
-            // Emails
-            bool removeAllDefaultEmails = true;
-
-            // Backgrounds
-            List<Sprite> backgroundSprites = new List<Sprite>();
-            Sprite backgroundFinishedGameSprite = null;
-
-            bool disableGreenColorBackground = false;
-
-            bool disableDesktopLogo = false;
-            Sprite customDesktopLogo = null;
-            float customDesktopLogoTransparency = 0.2627f;
-
-
-            if (jObjectParsed.ContainsKey("custom_campaign_name"))
-            {
-                customCampaignName = (string) jObjectParsed["custom_campaign_name"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_desktop_name"))
-            {
-                customCampaignDesktopName = (string) jObjectParsed["custom_campaign_desktop_name"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_days"))
-            {
-                customCampaignDays = (int) jObjectParsed["custom_campaign_days"];
-            }
-
-            if (jObjectParsed.ContainsKey("desktop_username_text"))
-            {
-                desktopUsernameText = (string) jObjectParsed["desktop_username_text"];
-            }
-
-            if (jObjectParsed.ContainsKey("start_year"))
-            {
-                desktopDateStartYear = (int) jObjectParsed["start_year"];
-            }
-
-            if (jObjectParsed.ContainsKey("start_month"))
-            {
-                desktopDateStartMonth = (int) jObjectParsed["start_month"];
-            }
-
-            if (jObjectParsed.ContainsKey("start_day"))
-            {
-                desktopDateStartDay = (int) jObjectParsed["start_day"];
-            }
-
-            if (jObjectParsed.ContainsKey("use_europe_date_format"))
-            {
-                useEuropeDateFormat = (bool) jObjectParsed["use_europe_date_format"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_gameover_threshold"))
-            {
-                gameOverThreshold = (int) jObjectParsed["custom_campaign_gameover_threshold"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_warning_threshold"))
-            {
-                warningThreshold = (int) jObjectParsed["custom_campaign_warning_threshold"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_remove_main_entries"))
-            {
-                removeAllExistingEntries = (bool) jObjectParsed["custom_campaign_remove_main_entries"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_empty_main_entries_permission"))
-            {
-                resetDefaultEntriesPermission = (bool) jObjectParsed["custom_campaign_empty_main_entries_permission"];
-
-                if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out JToken resultNewTag))
-                {
-                    doShowNewTagForMainGameEntries = (bool) resultNewTag;
-                }
-            }
-            
-            // Sanity check in case it was passed but no entries have been reset to 0th permission.
-            if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out _) && !resetDefaultEntriesPermission)
-            {
-                MelonLogger.Warning("WARNING: Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
-            }
-
-            if (jObjectParsed.ContainsKey("entry_browser_always_active"))
-            {
-                entryBrowserAlwaysActive = (bool) jObjectParsed["entry_browser_always_active"];
-            }
-
-            if (jObjectParsed.ContainsKey("scorecard_always_active"))
-            {
-                scorecardAlwaysActive = (bool) jObjectParsed["scorecard_always_active"];
-            }
-
-            if (jObjectParsed.ContainsKey("artbook_always_active"))
-            {
-                artbookAlwaysActive = (bool) jObjectParsed["artbook_always_active"];
-            }
-
-            if (jObjectParsed.ContainsKey("arcade_always_active"))
-            {
-                arcadeAlwaysActive = (bool) jObjectParsed["arcade_always_active"];
-            }
-
-            if (jObjectParsed.ContainsKey("always_show_skip_call_wait_time"))
-            {
-                alwaysSkipCallButton = (bool) jObjectParsed["always_show_skip_call_wait_time"];
-            }
-
-            if (jObjectParsed.ContainsKey("remove_default_emails"))
-            {
-                removeAllDefaultEmails = (bool) jObjectParsed["remove_default_emails"];
-            }
-
-            if (jObjectParsed.ContainsKey("disable_desktop_logo"))
-            {
-                disableDesktopLogo = (bool) jObjectParsed["disable_desktop_logo"];
-            }
-
-            if (jObjectParsed.ContainsKey("disable_green_color_on_desktop"))
-            {
-                disableGreenColorBackground = (bool) jObjectParsed["disable_green_color_on_desktop"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_desktop_logo_transparency"))
-            {
-                customDesktopLogoTransparency = (float) jObjectParsed["custom_desktop_logo_transparency"];
-            }
-
-            if (jObjectParsed.ContainsKey("rename_main_game_desktop_icon"))
-            {
-                renameMainProgram = (string) jObjectParsed["rename_main_game_desktop_icon"];
-            }
-            
-            if (jObjectParsed.TryGetValue("always_randomize_music", out JToken alwaysRandomizeMusicValue))
-            {
-                useRandomMusic = (bool) alwaysRandomizeMusicValue;
-            }
-
-            if (jObjectParsed.ContainsKey("disable_main_campaign_videos"))
-            {
-                disableDefaultVideos = (bool) jObjectParsed["disable_main_campaign_videos"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_end_cutscene_video_name"))
-            {
-                endCutsceneName = filePath + "\\" + jObjectParsed["custom_campaign_end_cutscene_video_name"];
-
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: End cutscene video found: '{endCutsceneName}'");
-                #endif
-
-                if (string.IsNullOrEmpty((string) jObjectParsed["custom_campaign_end_cutscene_video_name"]))
-                {
-                    MelonLogger.Warning(
-                        "WARNING: Provided video cutscene name but name is empty. Unable to show custom end cutscene.");
-                    endCutsceneName = "";
-                }
-                else if (!File.Exists(endCutsceneName))
-                {
-                    MelonLogger.Warning($"WARNING: Provided video cutscene {endCutsceneName} does not exist.");
-                    endCutsceneName = "";
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_gameover_cutscene_video_name"))
-            {
-                gameOverCutsceneName = filePath + "\\" + jObjectParsed["custom_campaign_gameover_cutscene_video_name"];
-
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Game Over video found: '{gameOverCutsceneName}'");
-                #endif
-
-                if (string.IsNullOrEmpty((string) jObjectParsed["custom_campaign_gameover_cutscene_video_name"]))
-                {
-                    MelonLogger.Warning(
-                        "WARNING: Provided video cutscene name but name is empty. Unable to show custom game over cutscene.");
-                    gameOverCutsceneName = "";
-                }
-                else if (!File.Exists(gameOverCutsceneName))
-                {
-                    MelonLogger.Warning($"WARNING: Provided video cutscene {gameOverCutsceneName} does not exist.");
-                    gameOverCutsceneName = "";
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_days_names"))
-            {
-                JArray _customCampaignDays = (JArray) jObjectParsed["custom_campaign_days_names"];
-
-                foreach (JToken arcadeCustomCall in _customCampaignDays)
-                {
-                    customCampaignDaysNames.Add((string) arcadeCustomCall);
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_icon_image_name"))
-            {
-                string customCampaignImagePath = (string) jObjectParsed["custom_campaign_icon_image_name"];
-
-                if (string.IsNullOrEmpty(customCampaignImagePath))
-                {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. Default icon will be shown.");
-                }
-                else
-                {
-                    customCampaignSprite = ImageImport.LoadImage(filePath + "\\" + customCampaignImagePath);
-                }
-            }
-            else
-            {
-                MelonLogger.Warning(
-                    $"WARNING: No custom campaign icon given for file in {filePath}. Default icon will be shown.");
-            }
-
-
-            if (jObjectParsed.ContainsKey("custom_campaign_loading_desktop_text1"))
-            {
-                JArray _loadingText = (JArray) jObjectParsed["custom_campaign_loading_desktop_text1"];
-
-                loadingTexts[0] = new List<string>();
-
-                for (int i = 0; i < _loadingText.Count; i++)
-                {
-                    loadingTexts[0].Add((string) _loadingText[i]);
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_loading_desktop_text2"))
-            {
-                JArray _loadingText = (JArray)jObjectParsed["custom_campaign_loading_desktop_text2"];
-
-                loadingTexts[1] = new List<string>();
-
-                for (int i = 0; i < _loadingText.Count; i++)
-                {
-                    loadingTexts[1].Add((string) _loadingText[i]);
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_threshold_amount"))
-            {
-                JArray thresholdAmount = (JArray)jObjectParsed["custom_campaign_threshold_amount"];
-
-                for (int i = 0; i < thresholdAmount.Count; i++)
-                {
-                    warningCallThresholdCallerAmounts.Add((int) thresholdAmount[i]);
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_desktop_backgrounds"))
-            {
-                JArray backgroundNames = (JArray)jObjectParsed["custom_campaign_desktop_backgrounds"];
-
-                for (int i = 0; i < backgroundNames.Count; i++)
-                {
-                    if (string.IsNullOrEmpty((string) backgroundNames[i]))
-                    {
-                        MelonLogger.Error($"ERROR: Did not find '{backgroundNames[i]}'. Adding null.");
-                        backgroundSprites.Add(null);
-                    }
-                    else
-                    {
-                        backgroundSprites.Add(ImageImport.LoadImage(filePath + "\\" + backgroundNames[i]));
-                    }
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_desktop_game_finished_background"))
-            {
-                string gameFinishedBackgroundPath = (string) jObjectParsed["custom_campaign_desktop_game_finished_background"];
-
-                if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating.");
-                }
-                else
-                {
-                    backgroundFinishedGameSprite = ImageImport.LoadImage(filePath + "\\" + gameFinishedBackgroundPath);
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("custom_desktop_logo_name"))
-            {
-                string customDesktopLogoPath = (string) jObjectParsed["custom_desktop_logo_name"];
-
-                if (string.IsNullOrEmpty(customDesktopLogoPath))
-                {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{customDesktopLogoPath}'. Not updating.");
-                }
-                else
-                {
-                    customDesktopLogo = ImageImport.LoadImage(filePath + "\\" + customDesktopLogoPath);
-                }
-            }
-
-            if (jObjectParsed.ContainsKey("main_game_desktop_icon_path"))
-            {
-                string customMainGameDesktopIcon = (string) jObjectParsed["main_game_desktop_icon_path"];
-
-                if (string.IsNullOrEmpty(customMainGameDesktopIcon))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{customMainGameDesktopIcon}'. Not updating.");
-                }
-                else
-                {
-                    changeMainProgramSprite = ImageImport.LoadImage(filePath + "\\" + customMainGameDesktopIcon);
-                }
-            }
-
-
-            // Create
-            CustomCampaignExtraInfo _customCampaign = new CustomCampaignExtraInfo
-            {
-                campaignName = customCampaignName,
-                campaignDays = customCampaignDays,
-                campaignIcon = customCampaignSprite,
-                campaignDayStrings = customCampaignDaysNames,
-                campaignDesktopName = customCampaignDesktopName,
-
-                removeExistingEntries = removeAllExistingEntries,
-                resetDefaultEntriesPermission = resetDefaultEntriesPermission,
-                doShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
-
-                loadingTexts = loadingTexts,
-
-                desktopUsernameText = desktopUsernameText,
-                desktopDateStartYear = desktopDateStartYear,
-                desktopDateStartMonth = desktopDateStartMonth,
-                desktopDateStartDay = desktopDateStartDay,
-                useEuropeDateFormat = useEuropeDateFormat,
-
-                gameOverThreshold = gameOverThreshold,
-                warningThreshold = warningThreshold,
-                warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
-
-                endCutsceneVideoName = endCutsceneName,
-                gameOverCutsceneVideoName = gameOverCutsceneName,
-                
-                alwaysRandomMusic = useRandomMusic,
-
-                entryBrowserAlwaysActive = entryBrowserAlwaysActive,
-                scorecardAlwaysActive = scorecardAlwaysActive,
-                artbookAlwaysActive = artbookAlwaysActive,
-                arcadeAlwaysActive = arcadeAlwaysActive,
-
-                disableAllDefaultVideos = disableDefaultVideos,
-
-                renameMainGameDesktopIcon = renameMainProgram,
-                changeMainGameDesktopIcon = changeMainProgramSprite,
-
-                alwaysSkipCallButton = alwaysSkipCallButton,
-
-                removeDefaultEmails = removeAllDefaultEmails,
-
-                backgroundSprites = backgroundSprites,
-                gameFinishedBackground = backgroundFinishedGameSprite,
-
-                disableDesktopLogo = disableDesktopLogo,
-                customDesktopLogo = customDesktopLogo,
-                customDesktopLogoTransparency = customDesktopLogoTransparency,
-
-                disableGreenColorBackground = disableGreenColorBackground
-            };
-
             // Check if any callers have to be added to this campaign.
             if (missingCustomCallerCallersCustomCampaign.Count > 0)
             {
@@ -768,56 +348,11 @@ namespace NewSafetyHelp.JSONParsing
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as a video. Possible syntax mistake?");
                 return;
             }
-
-            // Main
-            string videoName = "";
-
-            string videoFilePath = "";
-
-            // Unlock
-            int videoUnlockDay = 0;
-
+            
             // Campaign Values
             string customCampaignName = "";
 
-            if (jObjectParsed.ContainsKey("video_desktop_name"))
-            {
-                videoName = (string) jObjectParsed["video_desktop_name"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_campaign_attached"))
-            {
-                customCampaignName = (string) jObjectParsed["custom_campaign_attached"];
-            }
-
-            if (jObjectParsed.ContainsKey("video_unlock_day"))
-            {
-                videoUnlockDay = (int) jObjectParsed["video_unlock_day"];
-            }
-
-            if (jObjectParsed.ContainsKey("video_file_name"))
-            {
-                videoFilePath = filePath + "\\" + (string) jObjectParsed["video_file_name"];
-
-                if (string.IsNullOrEmpty(videoFilePath))
-                {
-                    MelonLogger.Warning("WARNING: Provided video path but name is empty. Unable to show show video.");
-                }
-                else if (!File.Exists(videoFilePath))
-                {
-                    MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
-                }
-            }
-
-            CustomVideoExtraInfo _customVideo = new CustomVideoExtraInfo
-            {
-                desktopName = videoName,
-                customCampaignName = customCampaignName,
-
-                videoURL = videoFilePath,
-
-                unlockDay = videoUnlockDay,
-            };
+            CustomVideoExtraInfo _customVideo = VideoParsing.ParseVideo(ref jObjectParsed, ref filePath, ref customCampaignName);
 
             // Add to correct campaign.
             CustomCampaignExtraInfo foundCustomCampaign =
@@ -850,95 +385,13 @@ namespace NewSafetyHelp.JSONParsing
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as a email. Possible syntax mistake?");
                 return;
             }
-
-            // Main
-            string emailSubject = "";
-            string emailSender = "";
-            string emailBody = "";
-
-            // Image
-            Sprite emailImage = null;
-
-            // Unlock
-            int emailUnlockDay = 0;
-            int emailUnlockThreshold = 0;
-
+            
             // Campaign Values
             string customCampaignName = "";
-
             bool inMainCampaign = false;
 
-            if (jObjectParsed.ContainsKey("email_in_main_campaign"))
-            {
-                inMainCampaign = (bool) jObjectParsed["email_in_main_campaign"];
-            }
-
-            if (jObjectParsed.ContainsKey("email_custom_campaign_name"))
-            {
-                customCampaignName = (string) jObjectParsed["email_custom_campaign_name"];
-            }
-
-            if (jObjectParsed.ContainsKey("email_subject"))
-            {
-                emailSubject = (string) jObjectParsed["email_subject"];
-            }
-
-            if (jObjectParsed.ContainsKey("email_sender"))
-            {
-                emailSender = (string) jObjectParsed["email_sender"];
-            }
-
-            if (jObjectParsed.ContainsKey("email_body"))
-            {
-                emailBody = (string) jObjectParsed["email_body"];
-            }
-
-            if (jObjectParsed.ContainsKey("email_unlock_day"))
-            {
-                emailUnlockDay = (int) jObjectParsed["email_unlock_day"];
-            }
-
-            if (jObjectParsed.ContainsKey("email_unlock_threshold"))
-            {
-                emailUnlockThreshold = (int) jObjectParsed["email_unlock_threshold"];
-            }
-
-            if (jObjectParsed.ContainsKey("email_image"))
-            {
-                string emailImagePath = (string) jObjectParsed["email_image"];
-
-                if (!string.IsNullOrEmpty(emailImagePath))
-                {
-                    if (File.Exists(filePath + "\\" + emailImagePath))
-                    {
-                        emailImage = ImageImport.LoadImage(filePath + "\\" + emailImagePath);
-                    }
-                    else
-                    {
-                        MelonLogger.Warning(
-                            $"WARNING: Email at {filePath + "\\" + emailImagePath} has image {emailImagePath} provided but it does not exist! Not showing any image.");
-                    }
-                }
-                else
-                {
-                    MelonLogger.Warning(
-                        $"WARNING: Email at {filePath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
-                }
-            }
-
-            EmailExtraInfo _customEmail = new EmailExtraInfo
-            {
-                inMainCampaign = inMainCampaign,
-                customCampaignName = customCampaignName,
-                emailSubject = emailSubject,
-                senderName = emailSender,
-                emailBody = emailBody,
-
-                unlockDay = emailUnlockDay,
-                unlockThreshold = emailUnlockThreshold,
-
-                emailImage = emailImage
-            };
+            EmailExtraInfo _customEmail = EmailParsing.ParseEmail(ref jObjectParsed, ref filePath,
+                ref customCampaignName, ref inMainCampaign);
 
             if (inMainCampaign)
             {
@@ -958,7 +411,7 @@ namespace NewSafetyHelp.JSONParsing
                 else
                 {
                     #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
+                        MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
                     #endif
 
                     missingCustomCampaignEmails.Add(_customEmail);
@@ -980,177 +433,22 @@ namespace NewSafetyHelp.JSONParsing
             }
             
             // Actual logic
-            bool inMainCampaign = false;
-
             string customCampaign = "NO_CUSTOM_CAMPAIGN";
-
-            // Caller Information
-            string customCallerName = "NO_CUSTOM_CALLER_NAME";
-            string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
+            bool inMainCampaign = false;
+            
+            // Campaign Values
             int orderInCampaign = -1;
-
-            bool increasesTier = false;
-            bool isLastCallerOfDay = false;
-
-            bool downedCall = false; // If the entries cannot be accessed while the caller is calling.
-
+            
+            // Entry / Monster
+            string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
+            
+            // Audio
             string customCallerAudioPath = "";
 
-            int customCallerConsequenceCallerID =
-                -1; // If this call is due to a consequence caller. You can provide it here.
-
-            Sprite customCallerImage = null;
-
-            string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
-            int customCallerMonsterID =
-                -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
-
-            // Warning Call
-
-            bool isWarningCaller = false;
-            int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
-
-            // GameOver Call
-            bool isGameOverCaller = false;
-            int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
-
-
-            if (jObjectParsed.ContainsKey("custom_campaign_attached"))
-            {
-                customCampaign = (string) jObjectParsed["custom_campaign_attached"];
-            }
-            else if (jObjectParsed.ContainsKey("include_in_main_campaign"))
-            {
-                inMainCampaign = (bool) jObjectParsed["include_in_main_campaign"];
-            }
-            else
-            {
-                MelonLogger.Error(
-                    "ERROR: Provided custom caller is not attached to either custom campaign or main campaign?");
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_name"))
-            {
-                customCallerName = (string) jObjectParsed["custom_caller_name"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_transcript"))
-            {
-                customCallerTranscript = (string) jObjectParsed["custom_caller_transcript"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_image_name"))
-            {
-                string customCallerImageLocation = (string) jObjectParsed["custom_caller_image_name"];
-
-                if (string.IsNullOrEmpty(customCallerImageLocation))
-                {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. No image will be shown.");
-                }
-                else
-                {
-                    customCallerImage = ImageImport.LoadImage(filePath + "\\" + customCallerImageLocation);
-                }
-            }
-            else
-            {
-                MelonLogger.Warning(
-                    $"WARNING: No custom caller portrait given for file in {filePath}. No image will be shown.");
-            }
-
-            if (jObjectParsed.ContainsKey("order_in_campaign"))
-            {
-                orderInCampaign = (int) jObjectParsed["order_in_campaign"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_monster_name"))
-            {
-                customCallerMonsterName = (string) jObjectParsed["custom_caller_monster_name"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_monster_id"))
-            {
-                customCallerMonsterID = (int) jObjectParsed["custom_caller_monster_id"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_increases_tier"))
-            {
-                increasesTier = (bool) jObjectParsed["custom_caller_increases_tier"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_last_caller_day"))
-            {
-                isLastCallerOfDay = (bool) jObjectParsed["custom_caller_last_caller_day"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_audio_clip_name"))
-            {
-                customCallerAudioPath = filePath + "\\" + jObjectParsed["custom_caller_audio_clip_name"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_consequence_caller_id"))
-            {
-                customCallerConsequenceCallerID = (int) jObjectParsed["custom_caller_consequence_caller_id"];
-            }
-
-            if (jObjectParsed.ContainsKey("custom_caller_downed_network"))
-            {
-                downedCall = (bool) jObjectParsed["custom_caller_downed_network"];
-            }
-
-            // Warning Caller Section
-
-            if (jObjectParsed.ContainsKey("is_warning_caller"))
-            {
-                isWarningCaller = (bool) jObjectParsed["is_warning_caller"];
-            }
-
-            if (isWarningCaller && jObjectParsed.ContainsKey("warning_caller_day"))
-            {
-                warningCallDay = (int) jObjectParsed["warning_caller_day"];
-            }
-
-            // GameOver Caller Section
-
-            if (jObjectParsed.ContainsKey("is_gameover_caller"))
-            {
-                isGameOverCaller = (bool) jObjectParsed["is_gameover_caller"];
-            }
-
-            if (isGameOverCaller && jObjectParsed.ContainsKey("gameover_caller_day"))
-            {
-                gameOverCallDay = (int) jObjectParsed["gameover_caller_day"];
-            }
-
-            // Check if order is valid and if not, we warn the user.
-            if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
-            {
-                MelonLogger.Warning(
-                    $"WARNING: No order was provided for custom caller at '{filePath}'. This could accidentally replace a caller! Set to replace last caller!");
-                orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
-            }
-
             // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo _customCaller = new CustomCallerExtraInfo(orderInCampaign)
-            {
-                callerName = customCallerName,
-                callerImage = customCallerImage,
-                callTranscript = customCallerTranscript,
-                monsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
-                inCustomCampaign = !inMainCampaign,
-                callerIncreasesTier = increasesTier,
-                callerClipPath = customCallerAudioPath,
-                consequenceCallerID = customCallerConsequenceCallerID,
-                belongsToCustomCampaign = customCampaign,
-                lastDayCaller = isLastCallerOfDay,
-                downedNetworkCaller = downedCall,
-
-                isWarningCaller = isWarningCaller,
-                warningCallDay = warningCallDay,
-
-                isGameOverCaller = isGameOverCaller,
-                gameOverCallDay = gameOverCallDay
-            };
+            CustomCallerExtraInfo _customCaller = CustomCallerParsing.ParseCustomCaller(ref jObjectParsed, ref filePath,
+                ref customCampaign, ref inMainCampaign, ref customCallerMonsterName, ref customCallerAudioPath,
+                ref orderInCampaign, mainCampaignCallAmount, ref customCallerMainGame);
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
@@ -1357,9 +655,9 @@ namespace NewSafetyHelp.JSONParsing
                 ref _customCampaignName);
 
             // Caller Audio Path (Later gets added with coroutine)
-            if (jObjectParsed.ContainsKey("caller_audio_clip_name"))
+            if (jObjectParsed.TryGetValue("caller_audio_clip_name", out var callerAudioClipNameValue))
             {
-                _callerAudioClipLocation = (string) jObjectParsed["caller_audio_clip_name"];
+                _callerAudioClipLocation = (string) callerAudioClipNameValue;
                 string callerAudioClipLocationLambdaCopy = _callerAudioClipLocation; // Create copy for lambda function.
 
                 if (string.IsNullOrEmpty(_callerAudioClipLocation) && !replaceEntry)
@@ -1398,9 +696,9 @@ namespace NewSafetyHelp.JSONParsing
 
 
             // Consequence Caller Audio Path (Later gets added with coroutine)
-            if (jObjectParsed.ContainsKey("consequence_caller_audio_clip_name"))
+            if (jObjectParsed.TryGetValue("consequence_caller_audio_clip_name", out var consequenceCallerAudioClipNameValue))
             {
-                _consequenceCallerAudioClipLocation = (string) jObjectParsed["consequence_caller_audio_clip_name"];
+                _consequenceCallerAudioClipLocation = (string) consequenceCallerAudioClipNameValue;
 
                 if (string.IsNullOrEmpty(_consequenceCallerAudioClipLocation) && !replaceEntry)
                 {
