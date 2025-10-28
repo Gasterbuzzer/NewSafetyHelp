@@ -325,7 +325,7 @@ namespace NewSafetyHelp.EntryManager
 
             for (int i = 0; i < entriesReaddTierOne.Count; i++)
             {
-                if (!__instance.firstTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
+                if (!__instance.firstTierUnlocks.monsterProfiles.Contains(entriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
                     EntryManager.AddMonsterToTheProfile(entriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
                 }
@@ -333,7 +333,7 @@ namespace NewSafetyHelp.EntryManager
 
             for (int i = 0; i < entriesReaddTierTwo.Count; i++)
             {
-                if (!__instance.secondTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
+                if (!__instance.secondTierUnlocks.monsterProfiles.Contains(entriesReaddTierTwo[i])) // Avoid duplicate adding.
                 {
                     EntryManager.AddMonsterToTheProfile(entriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
                 }
@@ -341,7 +341,7 @@ namespace NewSafetyHelp.EntryManager
 
             for (int i = 0; i < entriesReaddTierThree.Count; i++)
             {
-                if (!__instance.thirdTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
+                if (!__instance.thirdTierUnlocks.monsterProfiles.Contains(entriesReaddTierThree[i])) // Avoid duplicate adding.
                 {
                     EntryManager.AddMonsterToTheProfile(entriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
                 }
@@ -349,7 +349,7 @@ namespace NewSafetyHelp.EntryManager
 
             for (int i = 0; i < entriesReaddTierFour.Count; i++)
             {
-                if (!__instance.fourthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
+                if (!__instance.fourthTierUnlocks.monsterProfiles.Contains(entriesReaddTierFour[i])) // Avoid duplicate adding.
                 {
                     EntryManager.AddMonsterToTheProfile(entriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
                 }
@@ -357,7 +357,7 @@ namespace NewSafetyHelp.EntryManager
 
             for (int i = 0; i < entriesReaddTierFive.Count; i++)
             {
-                if (!__instance.fifthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
+                if (!__instance.fifthTierUnlocks.monsterProfiles.Contains(entriesReaddTierFive[i])) // Avoid duplicate adding.
                 {
                     EntryManager.AddMonsterToTheProfile(entriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
                 }
@@ -365,7 +365,7 @@ namespace NewSafetyHelp.EntryManager
 
             for (int i = 0; i < entriesReaddTierSix.Count; i++)
             {
-                if (!__instance.sixthTierUnlocks.monsterProfiles.Contains<MonsterProfile>(entriesReaddTierOne[i])) // Avoid duplicate adding.
+                if (!__instance.sixthTierUnlocks.monsterProfiles.Contains(entriesReaddTierSix[i])) // Avoid duplicate adding.
                 {
                     EntryManager.AddMonsterToTheProfile(entriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
                 }

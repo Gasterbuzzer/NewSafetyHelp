@@ -74,7 +74,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     }
                 }
 
-                __instance.myTranscription.maxVisibleCharacters += 50; // Ensures no missing characters.
+                __instance.myTranscription.maxVisibleCharacters = int.MaxValue; // Ensures no missing characters.
                 
                 if (profile.callerMonster != null)
                 {
