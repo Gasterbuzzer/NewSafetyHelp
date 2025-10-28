@@ -8,13 +8,12 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 {
     public static class MonsterParsing
     {
-        public static void parseEntry(ref JObject jsonObjectParsed, ref string usermodFolderPath, ref int accessLevel,
-            ref bool accessLevelAdded, ref bool replaceEntry, ref bool onlyDLC, ref bool includeDLC,
-            ref bool includeMainCampaign, ref string _monsterName,
+        public static void parseEntry(ref JObject jsonObjectParsed, ref string usermodFolderPath,
+            ref string jsonFolderPath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry,
+            ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _monsterName, 
             ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait,
             ref string _monsterPortraitLocation, ref string _monsterAudioClipLocation, ref bool deleteReplaceEntry,
-            ref bool _inCustomCampaign,
-            ref string _customCampaignName)
+            ref bool _inCustomCampaign, ref string _customCampaignName)
         {
             /* 
              * Monster Information
@@ -113,7 +112,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 }
                 else
                 {
-                    _monsterPortrait = ImageImport.LoadImage(usermodFolderPath + "\\" + _monsterPortraitLocation);
+                    _monsterPortrait = ImageImport.LoadImage(jsonFolderPath + "\\" + _monsterPortraitLocation,
+                        usermodFolderPath + "\\" + _monsterPortraitLocation);
                 }
             }
             else
@@ -163,17 +163,13 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             
         }
 
-        public static void parsePhobias(ref JObject jsonObjectParsed, ref string usermodFolderPath, ref bool _spiderPhobia,
+        public static void parsePhobias(ref JObject jsonObjectParsed, ref bool _spiderPhobia,
             ref bool _spiderPhobiaIncluded, ref bool _darknessPhobia, ref bool _darknessPhobiaIncluded,
             ref bool _dogPhobia, ref bool _dogPhobiaIncluded,
             ref bool _holesPhobia, ref bool _holesPhobiaIncluded, ref bool _insectPhobia, ref bool _insectPhobiaIncluded,
             ref bool _watchingPhobia, ref bool _watchingPhobiaIncluded, ref bool _tightSpacePhobia,
             ref bool _tightSpacePhobiaIncluded)
         {
-            /* 
-             * Monster Information
-            */
-
             // Phobias, they don't require to be warned, since they optional.
 
             if (jsonObjectParsed.TryGetValue("spider_phobia", out var spiderPhobiaValue))

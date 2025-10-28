@@ -15,6 +15,7 @@ using NewSafetyHelp.JSONParsing.CustomCampaignParsing;
 using NewSafetyHelp.JSONParsing.EntryParsing;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 
@@ -179,29 +180,31 @@ namespace NewSafetyHelp.JSONParsing
             
             if (containsKeys(new List<string> {"custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name"}, json)) // Added Campaign Settings
             {
-                    return JSONParseTypes.Campaign;
+                return JSONParseTypes.Campaign;
             }
-            else if (containsKeys(new List<string> {"custom_caller_transcript", "custom_caller_name", "order_in_campaign", "custom_caller_audio_clip_name"}, json)) // Custom Call added either to main campaign or custom campaign.
+            
+            if (containsKeys(new List<string> {"custom_caller_transcript", "custom_caller_name", "order_in_campaign", "custom_caller_audio_clip_name"}, json)) // Custom Call added either to main campaign or custom campaign.
             {
                 return JSONParseTypes.Call;
             }
-            else if (containsKeys(new List<string> {"monster_name", "replace_entry", "caller_name"}, json)) // Entry was provided.
+            
+            if (containsKeys(new List<string> {"monster_name", "replace_entry", "caller_name"}, json)) // Entry was provided.
             {
                 return JSONParseTypes.Entry;
             }
-            else if (containsKeys(new List<string> {"email_subject", "email_in_main_campaign", "email_custom_campaign_name"}, json)) // Email was provided. 
+            
+            if (containsKeys(new List<string> {"email_subject", "email_in_main_campaign", "email_custom_campaign_name"}, json)) // Email was provided. 
             {
                 return JSONParseTypes.Email;
             }
-            else if (containsKeys(new List<string> {"video_desktop_name", "video_file_name", "video_unlock_day"}, json)) // Video was provided (Desktop Video!)
+            
+            if (containsKeys(new List<string> {"video_desktop_name", "video_file_name", "video_unlock_day"}, json)) // Video was provided (Desktop Video!)
             {
                 return JSONParseTypes.Video;
             }
-            else // Unknown json type or was unable of parsing it.
-            {
-                return JSONParseTypes.Invalid;
-            }
-                
+            
+            // Unknown JSON type or failed parsing the file.
+            return JSONParseTypes.Invalid;
         }
 
         /// <summary>
@@ -209,6 +212,7 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="jObjectParsed"></param>
         /// <param name="usermodFolderPath"></param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
         public static void CreateCustomCampaign(JObject jObjectParsed, string usermodFolderPath = "",
             string jsonFolderPath = "")
         {
@@ -222,7 +226,7 @@ namespace NewSafetyHelp.JSONParsing
             
             CustomCampaignExtraInfo _customCampaign = 
                 CustomCampaignParsing.CustomCampaignParsing.parseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
-                    ref customCampaignName);
+                    ref jsonFolderPath, ref customCampaignName);
             
             // Check if any callers have to be added to this campaign.
             if (missingCustomCallerCallersCustomCampaign.Count > 0)
@@ -348,6 +352,7 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="jObjectParsed"> JObject parsed. </param>
         /// <param name="usermodFolderPath">Path to JSON file.</param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
         public static void CreateVideo(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
@@ -359,7 +364,8 @@ namespace NewSafetyHelp.JSONParsing
             // Campaign Values
             string customCampaignName = "";
 
-            CustomVideoExtraInfo _customVideo = VideoParsing.ParseVideo(ref jObjectParsed, ref usermodFolderPath, ref customCampaignName);
+            CustomVideoExtraInfo _customVideo = VideoParsing.ParseVideo(ref jObjectParsed, ref usermodFolderPath,
+                ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
             CustomCampaignExtraInfo foundCustomCampaign =
@@ -385,6 +391,7 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="jObjectParsed">JSON Parsed</param>
         /// <param name="usermodFolderPath">Filepath to JSON file.</param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
         public static void CreateEmail(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
@@ -398,6 +405,7 @@ namespace NewSafetyHelp.JSONParsing
             bool inMainCampaign = false;
 
             EmailExtraInfo _customEmail = EmailParsing.ParseEmail(ref jObjectParsed, ref usermodFolderPath,
+                ref jsonFolderPath,
                 ref customCampaignName, ref inMainCampaign);
 
             if (inMainCampaign)
@@ -431,6 +439,7 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="jObjectParsed"></param>
         /// <param name="usermodFolderPath"></param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
         public static void CreateCustomCaller(JObject jObjectParsed, string usermodFolderPath = "",
             string jsonFolderPath = "")
         {
@@ -441,7 +450,7 @@ namespace NewSafetyHelp.JSONParsing
             }
             
             // Actual logic
-            string customCampaign = "NO_CUSTOM_CAMPAIGN";
+            string customCampaignName = "NO_CUSTOM_CAMPAIGN";
             bool inMainCampaign = false;
             
             // Campaign Values
@@ -454,8 +463,9 @@ namespace NewSafetyHelp.JSONParsing
             string customCallerAudioPath = "";
 
             // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo _customCaller = CustomCallerParsing.ParseCustomCaller(ref jObjectParsed, ref usermodFolderPath,
-                ref customCampaign, ref inMainCampaign, ref customCallerMonsterName, ref customCallerAudioPath,
+            CustomCallerExtraInfo _customCaller = CustomCallerParsing.ParseCustomCaller(ref jObjectParsed, 
+                ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign, 
+                ref customCallerMonsterName, ref customCallerAudioPath,
                 ref orderInCampaign, mainCampaignCallAmount, ref customCallerMainGame);
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
@@ -469,14 +479,13 @@ namespace NewSafetyHelp.JSONParsing
                 if (string.IsNullOrEmpty(customCallerAudioPath))
                 {
                     MelonLogger.Warning(
-                        $"WARNING: No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
+                        $"WARNING: No caller audio given for file in {jsonFolderPath}. No audio will be heard.");
                 }
-                else if
-                    (!File.Exists(
-                         customCallerAudioPath)) // Check if location is valid now, since we are storing it now.
+                // Check if location is valid now, since we are storing it now.
+                else if (!File.Exists(customCallerAudioPath)) 
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {usermodFolderPath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
+                        $"ERROR: Location {jsonFolderPath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -519,7 +528,7 @@ namespace NewSafetyHelp.JSONParsing
                 // Add to correct campaign.
                 CustomCampaignExtraInfo foundCustomCampaign =
                     CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                        customCampaignSearch.campaignName == customCampaign);
+                        customCampaignSearch.campaignName == customCampaignName);
 
                 if (foundCustomCampaign != null)
                 {
@@ -558,6 +567,7 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="newID"> If we wish to provide the ID via parameter. </param>
         /// <param name="usermodFolderPath"> Folder path to the entries directory </param>
         /// <param name="entryUnlockerInstance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
         public static void CreateMonsterFromJSON(JObject jObjectParsed, int newID = -1, string usermodFolderPath = "",
             string jsonFolderPath = "",
             EntryUnlockController entryUnlockerInstance = null)
@@ -592,7 +602,6 @@ namespace NewSafetyHelp.JSONParsing
             string _monsterAudioClipLocation = "";
 
             // Caller Audio
-            string _callerAudioClipLocation = "";
             string _callerName = "NO_CALLER_NAME";
             string _callerTranscript = "NO_TRANSCRIPT";
             string _callerImageLocation = "";
@@ -634,24 +643,21 @@ namespace NewSafetyHelp.JSONParsing
 
             // We extract the info and save it (if the file is valid)
             // Parse Entry
-            MonsterParsing.parseEntry(ref jObjectParsed, ref usermodFolderPath, ref accessLevel, ref accessLevelAdded,
-                ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign, ref _monsterName,
-                ref _monsterDescription, ref _arcadeCalls,
-                ref _monsterPortrait, ref _monsterPortraitLocation, ref _monsterAudioClipLocation, ref deleteReplaceEntry,
+            MonsterParsing.parseEntry(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref accessLevel,
+                ref accessLevelAdded, ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign,
+                ref _monsterName, ref _monsterDescription, ref _arcadeCalls, ref _monsterPortrait,
+                ref _monsterPortraitLocation, ref _monsterAudioClipLocation, ref deleteReplaceEntry, 
                 ref _inCustomCampaign, ref _customCampaignName);
 
             // Parse Phobias
-            MonsterParsing.parsePhobias(ref jObjectParsed, ref usermodFolderPath, ref _spiderPhobia, ref _spiderPhobiaIncluded,
+            MonsterParsing.parsePhobias(ref jObjectParsed, ref _spiderPhobia, ref _spiderPhobiaIncluded,
                 ref _darknessPhobia, ref _darknessPhobiaIncluded, ref _dogPhobia, ref _dogPhobiaIncluded,
-                ref _holesPhobia, ref _holesPhobiaIncluded,
-                ref _insectPhobia, ref _insectPhobiaIncluded, ref _watchingPhobia, ref _watchingPhobiaIncluded,
-                ref _tightSpacePhobia, ref _tightSpacePhobiaIncluded);
+                ref _holesPhobia, ref _holesPhobiaIncluded, ref _insectPhobia, ref _insectPhobiaIncluded,
+                ref _watchingPhobia, ref _watchingPhobiaIncluded, ref _tightSpacePhobia, ref _tightSpacePhobiaIncluded);
 
             // Parse Default Caller
-            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref _callerAudioClipLocation, ref _callerName,
-                ref _callerTranscript, ref _callerImageLocation, ref _callerReplaceChance, ref _callerRestartCallAgain,
-                ref _callerPortrait,
-                ref replaceEntry, ref newExtra);
+            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref _callerName, ref _callerTranscript,
+                ref _callerImageLocation, ref _callerReplaceChance, ref _callerRestartCallAgain, ref _callerPortrait);
 
             CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref _consequenceCallerName,
                 ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait);
@@ -660,30 +666,37 @@ namespace NewSafetyHelp.JSONParsing
             createNewExtra(ref newExtra, ref _monsterName, ref newID, ref replaceEntry, ref _callerName,
                 ref _callerTranscript, ref _callerPortrait, ref _callerReplaceChance, ref _callerRestartCallAgain,
                 ref accessLevel, ref onlyDLC,
-                ref includeDLC, ref includeMainCampaign, ref _consequenceCallerName, ref _consequenceCallerTranscript,
-                ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait, ref deleteReplaceEntry,  ref _inCustomCampaign,
-                ref _customCampaignName);
+                ref includeDLC, ref includeMainCampaign, ref _consequenceCallerName, ref _consequenceCallerTranscript, 
+                ref _consequenceCallerPortrait, ref deleteReplaceEntry, ref _inCustomCampaign, ref _customCampaignName);
 
             // Caller Audio Path (Later gets added with coroutine)
             if (jObjectParsed.TryGetValue("caller_audio_clip_name", out var callerAudioClipNameValue))
             {
-                _callerAudioClipLocation = (string) callerAudioClipNameValue;
+                string _callerAudioClipLocation = (string) callerAudioClipNameValue;
                 string callerAudioClipLocationLambdaCopy = _callerAudioClipLocation; // Create copy for lambda function.
 
                 if (string.IsNullOrEmpty(_callerAudioClipLocation) && !replaceEntry)
                 {
-                    MelonLogger.Msg($"INFO: No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
+                    MelonLogger.Msg($"INFO: No caller audio given for file in {jsonFolderPath}. No audio will be heard.");
                 }
-                else if
-                    (!File.Exists(usermodFolderPath + "\\" +
-                                  _callerAudioClipLocation)) // Check if location is valid now, since we are storing it now.
+                // Check if location is valid now, since we are storing it now.
+                else if (!File.Exists(jsonFolderPath + "\\" + _callerAudioClipLocation) &&
+                         !File.Exists(usermodFolderPath + "\\" + _callerAudioClipLocation)) 
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {usermodFolderPath} does not contain {_callerAudioClipLocation}. Unable to add audio.");
+                        $"ERROR: Location {jsonFolderPath} does not contain {_callerAudioClipLocation}. Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
-                    MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
+                    // Use correct location.
+                    string audioLocation = jsonFolderPath + "\\" + _callerAudioClipLocation;
+
+                    if (!File.Exists(audioLocation))
+                    {
+                        audioLocation = usermodFolderPath + "\\" + _callerAudioClipLocation;
+                    }
+                    
+                    MelonCoroutines.Start(UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
@@ -699,7 +712,7 @@ namespace NewSafetyHelp.JSONParsing
                                         $"ERROR: Failed to load audio clip {callerAudioClipLocationLambdaCopy}.");
                                 }
                             },
-                            usermodFolderPath + "\\" + _callerAudioClipLocation)
+                            audioLocation)
                     );
                 }
             }
@@ -714,15 +727,25 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     MelonLogger.Msg($"INFO: No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
                 }
-                else if
-                    (!File.Exists(usermodFolderPath + "\\" +
-                                  _consequenceCallerAudioClipLocation)) // Check if location is valid now, since we are storing it now.
+                // Check if location is valid now, since we are storing it now.
+                else if (!File.Exists(jsonFolderPath + "\\" + _consequenceCallerAudioClipLocation) &&
+                         !File.Exists(usermodFolderPath + "\\" + _consequenceCallerAudioClipLocation)) 
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {usermodFolderPath} does not contain {_consequenceCallerAudioClipLocation}. Unable to add audio.");
+                        $"ERROR: Location {jsonFolderPath} does not contain {_consequenceCallerAudioClipLocation}." +
+                        " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
+                    
+                    // Use correct location.
+                    string audioLocation = jsonFolderPath + "\\" + _consequenceCallerAudioClipLocation;
+
+                    if (!File.Exists(audioLocation))
+                    {
+                        audioLocation = usermodFolderPath + "\\" + _consequenceCallerAudioClipLocation;
+                    }
+                    
                     MelonCoroutines.Start(UpdateAudioClip
                         (
                             (myReturnValue) =>
@@ -739,7 +762,7 @@ namespace NewSafetyHelp.JSONParsing
                                         $"ERROR: Failed to load audio clip {_consequenceCallerAudioClipLocation}.");
                                 }
                             },
-                            usermodFolderPath + "\\" + _consequenceCallerAudioClipLocation)
+                            audioLocation)
                     );
                 }
             }
@@ -752,7 +775,8 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Generate new ID if not provided.
-            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref usermodFolderPath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref _inCustomCampaign, ref _customCampaignName);
+            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref jsonFolderPath,
+                ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref _inCustomCampaign);
 
             if (replaceEntry) // We replace an Entry
             {
@@ -761,14 +785,26 @@ namespace NewSafetyHelp.JSONParsing
                 MonsterProfile foundMonster = null;
                 MonsterProfile foundMonsterXMAS = null; // For replacing DLC version as well
 
-                replaceEntryFunction(ref usermodFolderPath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription, ref replaceEntry,
-                    ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia, 
-                    ref _holesPhobiaIncluded, ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded, ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia, ref foundMonster, ref foundMonsterXMAS,
-                    ref _inCustomCampaign, ref _customCampaignName);
+                replaceEntryFunction(ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, 
+                    ref newID, ref _monsterPortraitLocation, ref _monsterPortrait,
+                    ref _monsterDescription, ref replaceEntry, ref _arcadeCalls, ref accessLevel, ref accessLevelAdded,
+                    ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded,
+                    ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia, ref _holesPhobiaIncluded,
+                    ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded,
+                    ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia, ref foundMonster,
+                    ref foundMonsterXMAS, ref _inCustomCampaign, ref _customCampaignName);
 
                 // We replace the audio if needed.
                 if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
                 {
+                    // Use correct location.
+                    string audioLocation = jsonFolderPath + "\\" + _monsterAudioClipLocation;
+
+                    if (!File.Exists(audioLocation))
+                    {
+                        audioLocation = usermodFolderPath + "\\" + _monsterAudioClipLocation;
+                    }
+                    
                     MelonCoroutines.Start(UpdateAudioClip
                     (
                         (myReturnValue) =>
@@ -784,7 +820,7 @@ namespace NewSafetyHelp.JSONParsing
                             }
 
                         },
-                        usermodFolderPath + "\\" + _monsterAudioClipLocation)
+                        audioLocation)
                     );
                 }
 
@@ -793,14 +829,23 @@ namespace NewSafetyHelp.JSONParsing
             {
                 MonsterProfile _newMonster = null;
 
-                createNewEntryFunction(ref usermodFolderPath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription,
-                    ref replaceEntry, ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia,
-                    ref _holesPhobiaIncluded, ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded, ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia,
-                    ref _newMonster, ref _inCustomCampaign, ref _customCampaignName);
+                createNewEntryFunction(ref entryUnlockerInstance, ref onlyDLC, ref includeDLC,
+                    ref _monsterName, ref newID, ref _monsterPortrait, ref _monsterDescription, ref _arcadeCalls,
+                    ref accessLevel, ref includeMainCampaign, ref _spiderPhobia, ref _darknessPhobia, ref _dogPhobia,
+                    ref _holesPhobia, ref _insectPhobia, ref _watchingPhobia, ref _tightSpacePhobia, ref _newMonster,
+                    ref _inCustomCampaign, ref _customCampaignName);
 
                 // Add audio to it
                 if (!string.IsNullOrEmpty(_monsterAudioClipLocation))
                 {
+                    // Use correct location.
+                    string audioLocation = jsonFolderPath + "\\" + _monsterAudioClipLocation;
+
+                    if (!File.Exists(audioLocation))
+                    {
+                        audioLocation = usermodFolderPath + "\\" + _monsterAudioClipLocation;
+                    }
+                    
                     MelonCoroutines.Start(UpdateAudioClip
                     (
                         (myReturnValue) =>
@@ -815,7 +860,7 @@ namespace NewSafetyHelp.JSONParsing
                             }
 
                         },
-                        usermodFolderPath + "\\" + _monsterAudioClipLocation)
+                        audioLocation)
                     );
                 }
             }
@@ -833,7 +878,8 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="callback"> Callback function for returning values and doing stuff with it that require the coroutine to finish first. </param>
         /// <param name="audioPath"> Path to the audio file. </param>
         /// <param name="_audioType"> Audio type to parse. </param>
-        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath, AudioType _audioType = AudioType.WAV)
+        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath,
+            AudioType _audioType = AudioType.WAV)
         {
             AudioClip monsterSoundClip = null;
 
@@ -856,9 +902,12 @@ namespace NewSafetyHelp.JSONParsing
             callback(monsterSoundClip);
         }
 
-        public static void createNewExtra(ref EntryExtraInfo newExtra, ref string _monsterName, ref int newID, ref bool replaceEntry, ref string _callerName, ref string _callerTranscript, ref Sprite _callerPortrait, ref float _callerReplaceChance,
-            ref bool _callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _consequenceCallerName, ref string _consequenceCallerTranscript, ref string _consequenceCallerImageLocation,
-            ref Sprite _consequenceCallerPortrait, ref bool deleteReplaceEntry, ref bool _inCustomCampaign, ref string _customCampaignName)
+        public static void createNewExtra(ref EntryExtraInfo newExtra, ref string _monsterName, ref int newID,
+            ref bool replaceEntry, ref string _callerName, ref string _callerTranscript, ref Sprite _callerPortrait,
+            ref float _callerReplaceChance, ref bool _callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC,
+            ref bool includeDLC, ref bool includeMainCampaign, ref string _consequenceCallerName,
+            ref string _consequenceCallerTranscript, ref Sprite _consequenceCallerPortrait, 
+            ref bool deleteReplaceEntry, ref bool _inCustomCampaign, ref string _customCampaignName)
         {
             newExtra = new EntryExtraInfo(_monsterName, newID)
             {
@@ -906,8 +955,9 @@ namespace NewSafetyHelp.JSONParsing
             }
         }
 
-        public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry, ref string filePath, ref bool onlyDLC, ref bool includeDLC, ref EntryUnlockController entryUnlockerInstance, ref bool inCustomCampaign,
-            ref string customCampaignName)
+        public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry, 
+            ref string jsonFolderPath, ref bool onlyDLC, ref bool includeDLC, 
+            ref EntryUnlockController entryUnlockerInstance, ref bool inCustomCampaign)
         {
             // Update ID if not given.
             if (newID == -1 && !replaceEntry && !inCustomCampaign) 
@@ -944,15 +994,20 @@ namespace NewSafetyHelp.JSONParsing
             
             newExtra.ID = newID;
             
-            MelonLogger.Msg($"INFO: Defaulting to a new Monster ID {newExtra.ID} for file in {filePath}.");
-            MelonLogger.Msg($"(This intended and recommended way of providing the ID.)");
+            MelonLogger.Msg($"INFO: Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
+            MelonLogger.Msg("(This intended and recommended way of providing the ID.)");
         }
 
-        public static void replaceEntryFunction(ref string filePath, ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, ref string _monsterAudioClipLocation,
-            ref string _monsterPortraitLocation, ref Sprite _monsterPortrait, ref string _monsterDescription, ref bool replaceEntry, ref List<string> _arcadeCalls, ref int accessLevel, ref bool accessLevelAdded, ref bool includeMainCampaign,
-            ref bool _spiderPhobiaIncluded, ref bool _spiderPhobia, ref bool _darknessPhobiaIncluded, ref bool _darknessPhobia, ref bool _dogPhobiaIncluded, ref bool _dogPhobia, ref bool _holesPhobiaIncluded, ref bool _holesPhobia,
-            ref bool _insectPhobiaIncluded, ref bool _insectPhobia, ref bool _watchingPhobiaIncluded, ref bool _watchingPhobia, ref bool _tightSpacePhobiaIncluded, ref bool _tightSpacePhobia,
-            ref MonsterProfile foundMonster, ref MonsterProfile foundMonsterXMAS, ref bool inCustomCampaign, ref string customCampaignName)
+        public static void replaceEntryFunction(ref EntryUnlockController entryUnlockerInstance, 
+            ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, 
+            ref string _monsterPortraitLocation, ref Sprite _monsterPortrait, ref string _monsterDescription,
+            ref bool replaceEntry, ref List<string> _arcadeCalls, ref int accessLevel, ref bool accessLevelAdded,
+            ref bool includeMainCampaign, ref bool _spiderPhobiaIncluded, ref bool _spiderPhobia,
+            ref bool _darknessPhobiaIncluded, ref bool _darknessPhobia, ref bool _dogPhobiaIncluded,
+            ref bool _dogPhobia, ref bool _holesPhobiaIncluded, ref bool _holesPhobia, ref bool _insectPhobiaIncluded,
+            ref bool _insectPhobia, ref bool _watchingPhobiaIncluded, ref bool _watchingPhobia,
+            ref bool _tightSpacePhobiaIncluded, ref bool _tightSpacePhobia, ref MonsterProfile foundMonster,
+            ref MonsterProfile foundMonsterXMAS, ref bool inCustomCampaign, ref string customCampaignName)
         {
 
             if (onlyDLC)
@@ -1231,10 +1286,11 @@ namespace NewSafetyHelp.JSONParsing
             }
         }
     
-        public static void createNewEntryFunction(ref string filePath, ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID, ref string _monsterAudioClipLocation,
-            ref string _monsterPortraitLocation, ref Sprite _monsterPortrait, ref string _monsterDescription, ref bool replaceEntry, ref List<string> _arcadeCalls, ref int accessLevel, ref bool accessLevelAdded, ref bool includeMainCampaign,
-            ref bool _spiderPhobiaIncluded, ref bool _spiderPhobia, ref bool _darknessPhobiaIncluded, ref bool _darknessPhobia, ref bool _dogPhobiaIncluded, ref bool _dogPhobia, ref bool _holesPhobiaIncluded, ref bool _holesPhobia,
-            ref bool _insectPhobiaIncluded, ref bool _insectPhobia, ref bool _watchingPhobiaIncluded, ref bool _watchingPhobia, ref bool _tightSpacePhobiaIncluded, ref bool _tightSpacePhobia,
+        public static void createNewEntryFunction(ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC,
+            ref bool includeDLC, ref string _monsterName, ref int newID, ref Sprite _monsterPortrait,
+            ref string _monsterDescription, ref List<string> _arcadeCalls, ref int accessLevel, 
+            ref bool includeMainCampaign, ref bool _spiderPhobia, ref bool _darknessPhobia, ref bool _dogPhobia,
+            ref bool _holesPhobia, ref bool _insectPhobia, ref bool _watchingPhobia, ref bool _tightSpacePhobia,
             ref MonsterProfile _newMonster, ref bool inCustomCampaign, ref string customCampaignName)
         {
             

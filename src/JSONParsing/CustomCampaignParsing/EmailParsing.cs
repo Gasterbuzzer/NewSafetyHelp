@@ -10,7 +10,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
     public static class EmailParsing
     {
         public static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
-            ref string customCampaignName, ref bool inMainCampaign)
+            ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign)
         {
             // Main
             string emailSubject = "";
@@ -65,20 +65,22 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
                 if (!string.IsNullOrEmpty(emailImagePath))
                 {
-                    if (File.Exists(usermodFolderPath + "\\" + emailImagePath))
+                    if (File.Exists(jsonFolderPath + "\\" + emailImagePath) || 
+                        File.Exists(usermodFolderPath + "\\" + emailImagePath))
                     {
-                        emailImage = ImageImport.LoadImage(usermodFolderPath + "\\" + emailImagePath);
+                        emailImage = ImageImport.LoadImage(jsonFolderPath + "\\" + emailImagePath,
+                            usermodFolderPath + "\\" + emailImagePath);
                     }
                     else
                     {
                         MelonLogger.Warning(
-                            $"WARNING: Email at {usermodFolderPath + "\\" + emailImagePath} has image {emailImagePath} provided but it does not exist! Not showing any image.");
+                            $"WARNING: Email {emailImagePath} has image option provided but it could not be found! Not showing any image.");
                     }
                 }
                 else
                 {
                     MelonLogger.Warning(
-                        $"WARNING: Email at {usermodFolderPath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
+                        $"WARNING: Email at {jsonFolderPath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
                 }
             }
             

@@ -8,7 +8,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
     public static class VideoParsing
     {
         public static CustomVideoExtraInfo ParseVideo(ref JObject jObjectParsed, ref string usermodFolderPath,
-            ref string customCampaignName)
+            ref string jsonFolderPath, ref string customCampaignName)
         {
             // Main
             string videoName = "";
@@ -35,7 +35,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
             if (jObjectParsed.TryGetValue("video_file_name", out var videoFileNameValue))
             {
-                videoFilePath = usermodFolderPath + "\\" + (string) videoFileNameValue;
+                videoFilePath = jsonFolderPath + "\\" + (string) videoFileNameValue;
+                string videoFileAlternativePath = usermodFolderPath + "\\" + (string) videoFileNameValue;
 
                 if (string.IsNullOrEmpty(videoFilePath))
                 {
@@ -43,7 +44,15 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else if (!File.Exists(videoFilePath))
                 {
-                    MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
+                    if (!File.Exists(videoFileAlternativePath))
+                    {
+                        MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
+                    }
+                    else
+                    {
+                        videoFilePath = videoFileAlternativePath;
+                    }
+                    
                 }
             }
             

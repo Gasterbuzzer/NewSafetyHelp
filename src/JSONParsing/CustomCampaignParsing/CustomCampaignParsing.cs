@@ -11,6 +11,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
     public static class CustomCampaignParsing
     {
         public static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
+            ref string jsonFolderPath,
             ref string customCampaignName)
         {
             // Desktop
@@ -49,8 +50,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
             List<int> warningCallThresholdCallerAmounts = new List<int>();
 
             // Video Cutscenes
-            string endCutsceneName = "";
-            string gameOverCutsceneName = "";
+            string endCutscenePath = "";
+            string gameOverCutscenePath = "";
             
             // Music
             bool useRandomMusic = true;
@@ -173,7 +174,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else
                 {
-                    customCampaignSprite = ImageImport.LoadImage(usermodFolderPath + "\\" + customCampaignImagePath);
+                    customCampaignSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customCampaignImagePath,
+                        usermodFolderPath + "\\" + customCampaignImagePath);
                 }
             }
             else
@@ -181,8 +183,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 MelonLogger.Warning(
                     $"WARNING: No custom campaign icon given for file in {usermodFolderPath}. Default icon will be shown.");
             }
-
-
+            
             if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text1", out var customCampaignLoadingDesktopText1Value))
             {
                 JArray _loadingText = (JArray) customCampaignLoadingDesktopText1Value;
@@ -217,45 +218,61 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
             }
             
-            if (jObjectParsed.ContainsKey("custom_campaign_end_cutscene_video_name"))
+            if (jObjectParsed.TryGetValue("custom_campaign_end_cutscene_video_name", out var customCampaignEndCutsceneVideoNameValue))
             {
-                endCutsceneName = usermodFolderPath + "\\" + jObjectParsed["custom_campaign_end_cutscene_video_name"];
+                endCutscenePath = jsonFolderPath + "\\" + (string) customCampaignEndCutsceneVideoNameValue;
+                string endCutsceneAlternativePath = usermodFolderPath + "\\" + (string) customCampaignEndCutsceneVideoNameValue;
 
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: End cutscene video found: '{endCutsceneName}'");
+                    MelonLogger.Msg($"DEBUG: End cutscene video found: '{(string) customCampaignEndCutsceneVideoNameValue}'");
                 #endif
 
-                if (string.IsNullOrEmpty((string) jObjectParsed["custom_campaign_end_cutscene_video_name"]))
+                if (string.IsNullOrEmpty((string) customCampaignEndCutsceneVideoNameValue))
                 {
                     MelonLogger.Warning(
                         "WARNING: Provided video cutscene name but name is empty. Unable to show custom end cutscene.");
-                    endCutsceneName = "";
+                    endCutscenePath = "";
                 }
-                else if (!File.Exists(endCutsceneName))
+                else if (!File.Exists(endCutscenePath))
                 {
-                    MelonLogger.Warning($"WARNING: Provided video cutscene {endCutsceneName} does not exist.");
-                    endCutsceneName = "";
+                    if (!File.Exists(endCutsceneAlternativePath))
+                    {
+                        MelonLogger.Warning($"WARNING: Provided video cutscene {endCutscenePath} does not exist.");
+                        endCutscenePath = "";
+                    }
+                    else
+                    {
+                        endCutscenePath = endCutsceneAlternativePath;
+                    }
                 }
             }
 
-            if (jObjectParsed.ContainsKey("custom_campaign_gameover_cutscene_video_name"))
+            if (jObjectParsed.TryGetValue("custom_campaign_gameover_cutscene_video_name", out var customCampaignGameoverCutsceneVideoNameValue))
             {
-                gameOverCutsceneName = usermodFolderPath + "\\" + jObjectParsed["custom_campaign_gameover_cutscene_video_name"];
+                gameOverCutscenePath = jsonFolderPath + "\\" + (string) customCampaignGameoverCutsceneVideoNameValue;
+                string gameOverCutsceneAlternativePath = usermodFolderPath + "\\" + (string) customCampaignGameoverCutsceneVideoNameValue;
 
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Game Over video found: '{gameOverCutsceneName}'");
+                    MelonLogger.Msg($"DEBUG: Game Over video found: '{gameOverCutscenePath}'");
                 #endif
 
-                if (string.IsNullOrEmpty((string) jObjectParsed["custom_campaign_gameover_cutscene_video_name"]))
+                if (string.IsNullOrEmpty((string) customCampaignGameoverCutsceneVideoNameValue))
                 {
                     MelonLogger.Warning(
                         "WARNING: Provided video cutscene name but name is empty. Unable to show custom game over cutscene.");
-                    gameOverCutsceneName = "";
+                    gameOverCutscenePath = "";
                 }
-                else if (!File.Exists(gameOverCutsceneName))
+                else if (!File.Exists(gameOverCutscenePath))
                 {
-                    MelonLogger.Warning($"WARNING: Provided video cutscene {gameOverCutsceneName} does not exist.");
-                    gameOverCutsceneName = "";
+                    if (!File.Exists(gameOverCutsceneAlternativePath))
+                    {
+                        MelonLogger.Warning($"WARNING: Provided video cutscene {gameOverCutscenePath} does not exist.");
+                        gameOverCutscenePath = "";
+                    }
+                    else
+                    {
+                        gameOverCutscenePath = gameOverCutsceneAlternativePath;
+                    }
                 }
             }
             
@@ -315,7 +332,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else
                 {
-                    changeMainProgramSprite = ImageImport.LoadImage(usermodFolderPath + "\\" + customMainGameDesktopIcon);
+                    changeMainProgramSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customMainGameDesktopIcon,
+                        usermodFolderPath + "\\" + customMainGameDesktopIcon);
                 }
             }
             
@@ -332,7 +350,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                     }
                     else
                     {
-                        backgroundSprites.Add(ImageImport.LoadImage(usermodFolderPath + "\\" + backgroundNames[i]));
+                        backgroundSprites.Add(ImageImport.LoadImage(jsonFolderPath + "\\" + backgroundNames[i],
+                            usermodFolderPath + "\\" + backgroundNames[i]));
                     }
                 }
             }
@@ -348,7 +367,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else
                 {
-                    backgroundFinishedGameSprite = ImageImport.LoadImage(usermodFolderPath + "\\" + gameFinishedBackgroundPath);
+                    backgroundFinishedGameSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + gameFinishedBackgroundPath,
+                        usermodFolderPath + "\\" + gameFinishedBackgroundPath);
                 }
             }
 
@@ -377,7 +397,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else
                 {
-                    customDesktopLogo = ImageImport.LoadImage(usermodFolderPath + "\\" + customDesktopLogoPath);
+                    customDesktopLogo = ImageImport.LoadImage(jsonFolderPath + "\\" + customDesktopLogoPath,
+                        usermodFolderPath + "\\" + customDesktopLogoPath);
                 }
             }
             
@@ -407,8 +428,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 warningThreshold = warningThreshold,
                 warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
 
-                endCutsceneVideoName = endCutsceneName,
-                gameOverCutsceneVideoName = gameOverCutsceneName,
+                endCutsceneVideoName = endCutscenePath,
+                gameOverCutsceneVideoName = gameOverCutscenePath,
                 
                 alwaysRandomMusic = useRandomMusic,
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
 using NewSafetyHelp.EntryManager;
@@ -9,9 +10,9 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 {
     public static class CustomCallerParsing
     {
-        public static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string filePath,
-            ref string customCampaignName, ref bool inMainCampaign, ref string customCallerMonsterName,
-            ref string customCallerAudioPath, ref int orderInCampaign,
+        public static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
+            ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign, 
+            ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,
             int mainCampaignCallAmount, ref Dictionary<int, CustomCallerExtraInfo> customCallerMainGame)
         {
             
@@ -71,17 +72,18 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
                 if (string.IsNullOrEmpty(customCallerImageLocation))
                 {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. No image will be shown.");
+                    MelonLogger.Error($"ERROR: Invalid file name given for '{usermodFolderPath}'. No image will be shown.");
                 }
                 else
                 {
-                    customCallerImage = ImageImport.LoadImage(filePath + "\\" + customCallerImageLocation);
+                    customCallerImage = ImageImport.LoadImage(jsonFolderPath + "\\" + customCallerImageLocation,
+                        usermodFolderPath + "\\" + customCallerImageLocation);
                 }
             }
             else
             {
                 MelonLogger.Warning(
-                    $"WARNING: No custom caller portrait given for file in {filePath}. No image will be shown.");
+                    $"WARNING: No custom caller portrait given for file in {usermodFolderPath}. No image will be shown.");
             }
 
             if (jObjectParsed.TryGetValue("order_in_campaign", out var orderInCampaignValue))
@@ -111,7 +113,23 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
             if (jObjectParsed.TryGetValue("custom_caller_audio_clip_name", out var customCallerAudioClipNameValue))
             {
-                customCallerAudioPath = filePath + "\\" + customCallerAudioClipNameValue;
+                if (!File.Exists(jsonFolderPath + "\\" + customCallerAudioClipNameValue))
+                {
+                    if (!File.Exists(usermodFolderPath + "\\" + customCallerAudioClipNameValue))
+                    {
+                        MelonLogger.Warning($"WARNING: Could not find provided audio file for custom caller at '{jsonFolderPath}'.");
+                    }
+                    else
+                    {
+                        customCallerAudioPath = usermodFolderPath + "\\" + customCallerAudioClipNameValue;
+                    }
+                }
+                else
+                {
+                    customCallerAudioPath = jsonFolderPath + "\\" + customCallerAudioClipNameValue;
+                }
+                
+                
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_consequence_caller_id", out var customCallerConsequenceCallerIDValue))
@@ -152,7 +170,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
             {
                 MelonLogger.Warning(
-                    $"WARNING: No order was provided for custom caller at '{filePath}'. This could accidentally replace a caller! Set to replace last caller!");
+                    $"WARNING: No order was provided for custom caller at '{jsonFolderPath}'. " +
+                    "This could accidentally replace a caller! Set to replace last caller!");
                 orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
             }
             

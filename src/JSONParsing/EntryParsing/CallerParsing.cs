@@ -8,14 +8,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
     public static class CallerParsing
     {
         public static void parseCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
-            ref string _callerAudioClipLocation, ref string _callerName, ref string _callerTranscript,
-            ref string _callerImageLocation,  ref float _callerReplaceChance, ref bool _callerRestartCallAgain,
-            ref Sprite _callerPortrait, ref bool replaceEntry, ref EntryExtraInfo newExtra)
+            ref string _callerName, ref string _callerTranscript, ref string _callerImageLocation,
+            ref float _callerReplaceChance, ref bool _callerRestartCallAgain, ref Sprite _callerPortrait)
         {
-            /* 
-             * Caller Information
-            */
-
             // Caller Name
             if (jsonObjectParsed.TryGetValue("caller_name", out var callerNameValue))
             {
@@ -41,7 +36,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 }
                 else
                 {
-                    _callerPortrait = ImageImport.LoadImage(usermodFolderPath + "\\" + _callerImageLocation);
+                    _callerPortrait = ImageImport.LoadImage(jsonObjectParsed + "\\" + _callerImageLocation,
+                        usermodFolderPath + "\\" + _callerImageLocation);
                 }
             }
 
@@ -93,7 +89,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 }
                 else
                 {
-                    _consequenceCallerPortrait = ImageImport.LoadImage(usermodFolderPath + "\\" + _consequenceCallerImageLocation);
+                    _consequenceCallerPortrait = ImageImport.LoadImage(jsonObjectParsed + "\\" + _consequenceCallerImageLocation,
+                        usermodFolderPath + "\\" + _consequenceCallerImageLocation);
                 }
             }
         }
