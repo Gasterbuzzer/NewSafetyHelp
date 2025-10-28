@@ -12,6 +12,7 @@ using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.CustomCampaignParsing;
+using NewSafetyHelp.JSONParsing.EntryParsing;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 // ReSharper disable MemberCanBePrivate.Global
@@ -61,76 +62,12 @@ namespace NewSafetyHelp.JSONParsing
         const int mainCampaignCallAmount = 116;
         
         /// <summary>
-        /// Function for adding a single entry.
-        /// </summary>
-        /// <param name="folderFilePath"> Path to the folder containing the entry. </param>
-        /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
-        public static void LoadJsonFilesFromFolder(string folderFilePath, EntryUnlockController __instance)
-        {
-            string[] filesDataPath = Directory.GetFiles(folderFilePath, "*.json", SearchOption.AllDirectories);
-
-            foreach (string jsonPathFile in filesDataPath)
-            {
-                MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
-
-                string jsonString = File.ReadAllText(jsonPathFile);
-
-                JObject jObjectParse = JObject.Parse(jsonString);
-
-                JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, folderFilePath);
-
-                switch (jsonType)
-                {
-                    case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
-                        CreateCustomCampaign(jObjectParse, folderFilePath);
-                        break;
-
-                    case JSONParseTypes.Call: // The provided JSON is a standalone call.
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
-                        CreateCustomCaller(jObjectParse, folderFilePath);
-                        break;
-
-                    case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
-                        CreateMonsterFromJSON(jObjectParse, filePath: folderFilePath,
-                            entryUnlockerInstance: __instance);
-                        break;
-
-                    case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
-                        CreateEmail(jObjectParse, folderFilePath);
-                        break;
-
-                    case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
-                        CreateVideo(jObjectParse, folderFilePath);
-                        break;
-
-                    case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
-                        MelonLogger.Error(
-                            "ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
-                        break;
-
-                    default: // Unknown Error
-                        MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
-                        break;
-                }
-                
-            }
-        }
-
-        /// <summary>
         /// Goes through all directories in the mods userdata folder and tries adding parsing it, if it contains an entry or something to be added.
         /// </summary>
         /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
         public static void LoadAllJSON(EntryUnlockController __instance)
         {
+            // Halt the game while we are parsing and loading all necessary files.
             Time.timeScale = 0.0f;
             
             string userDataPath = FileImporter.GetUserDataFolderPath();
@@ -146,6 +83,73 @@ namespace NewSafetyHelp.JSONParsing
             if (AudioImport.currentLoadingAudios.Count <= 0)
             {
                 Time.timeScale = 1.0f;
+            }
+        }
+        
+        /// <summary>
+        /// Function for adding a single entry.
+        /// </summary>
+        /// <param name="modFolderPath"> Path to the folder containing the entry. </param>
+        /// <param name="__instance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
+        public static void LoadJsonFilesFromFolder(string modFolderPath, EntryUnlockController __instance)
+        {
+            string[] filesDataPath = Directory.GetFiles(modFolderPath, "*.json", SearchOption.AllDirectories);
+
+            foreach (string jsonPathFile in filesDataPath)
+            {
+                MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
+
+                string jsonString = File.ReadAllText(jsonPathFile);
+
+                string jsonFolderPath = Path.GetDirectoryName(jsonPathFile);
+
+                JObject jObjectParse = JObject.Parse(jsonString);
+
+                JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, modFolderPath);
+
+                switch (jsonType)
+                {
+                    case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
+                        CreateCustomCampaign(jObjectParse, modFolderPath, jsonFolderPath);
+                        break;
+
+                    case JSONParseTypes.Call: // The provided JSON is a standalone call.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
+                        CreateCustomCaller(jObjectParse, modFolderPath, jsonFolderPath);
+                        break;
+
+                    case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
+                        CreateMonsterFromJSON(jObjectParse, usermodFolderPath: modFolderPath,
+                            jsonFolderPath: jsonFolderPath, entryUnlockerInstance: __instance);
+                        break;
+
+                    case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
+                        CreateEmail(jObjectParse, modFolderPath, jsonFolderPath);
+                        break;
+
+                    case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
+                        MelonLogger.Msg(
+                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
+                        CreateVideo(jObjectParse, modFolderPath, jsonFolderPath);
+                        break;
+
+                    case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
+                        MelonLogger.Error(
+                            "ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
+                        break;
+
+                    default: // Unknown Error
+                        MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
+                        break;
+                }
+                
             }
         }
 
@@ -204,10 +208,11 @@ namespace NewSafetyHelp.JSONParsing
         /// Creates a custom campaign from a provided json file.
         /// </summary>
         /// <param name="jObjectParsed"></param>
-        /// <param name="filePath"></param>
-        public static void CreateCustomCampaign(JObject jObjectParsed, string filePath = "")
+        /// <param name="usermodFolderPath"></param>
+        public static void CreateCustomCampaign(JObject jObjectParsed, string usermodFolderPath = "",
+            string jsonFolderPath = "")
         {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(filePath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom campaign. Possible syntax mistake?");
                 return;
@@ -215,7 +220,9 @@ namespace NewSafetyHelp.JSONParsing
             
             string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
             
-            CustomCampaignExtraInfo _customCampaign = CustomCampaignParsing.CustomCampaignParsing.parseCampaignFile(ref jObjectParsed, ref filePath, ref customCampaignName);
+            CustomCampaignExtraInfo _customCampaign = 
+                CustomCampaignParsing.CustomCampaignParsing.parseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
+                    ref customCampaignName);
             
             // Check if any callers have to be added to this campaign.
             if (missingCustomCallerCallersCustomCampaign.Count > 0)
@@ -340,10 +347,10 @@ namespace NewSafetyHelp.JSONParsing
         /// Creates a video program from a JSON file.
         /// </summary>
         /// <param name="jObjectParsed"> JObject parsed. </param>
-        /// <param name="filePath">Path to JSON file.</param>
-        public static void CreateVideo(JObject jObjectParsed, string filePath = "")
+        /// <param name="usermodFolderPath">Path to JSON file.</param>
+        public static void CreateVideo(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
         {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(filePath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as a video. Possible syntax mistake?");
                 return;
@@ -352,7 +359,7 @@ namespace NewSafetyHelp.JSONParsing
             // Campaign Values
             string customCampaignName = "";
 
-            CustomVideoExtraInfo _customVideo = VideoParsing.ParseVideo(ref jObjectParsed, ref filePath, ref customCampaignName);
+            CustomVideoExtraInfo _customVideo = VideoParsing.ParseVideo(ref jObjectParsed, ref usermodFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
             CustomCampaignExtraInfo foundCustomCampaign =
@@ -377,10 +384,10 @@ namespace NewSafetyHelp.JSONParsing
         /// Creates an email from a JSON file.
         /// </summary>
         /// <param name="jObjectParsed">JSON Parsed</param>
-        /// <param name="filePath">Filepath to JSON file.</param>
-        public static void CreateEmail(JObject jObjectParsed, string filePath = "")
+        /// <param name="usermodFolderPath">Filepath to JSON file.</param>
+        public static void CreateEmail(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
         {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(filePath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as a email. Possible syntax mistake?");
                 return;
@@ -390,7 +397,7 @@ namespace NewSafetyHelp.JSONParsing
             string customCampaignName = "";
             bool inMainCampaign = false;
 
-            EmailExtraInfo _customEmail = EmailParsing.ParseEmail(ref jObjectParsed, ref filePath,
+            EmailExtraInfo _customEmail = EmailParsing.ParseEmail(ref jObjectParsed, ref usermodFolderPath,
                 ref customCampaignName, ref inMainCampaign);
 
             if (inMainCampaign)
@@ -423,10 +430,11 @@ namespace NewSafetyHelp.JSONParsing
         /// Creates a custom caller from a provided json file.
         /// </summary>
         /// <param name="jObjectParsed"></param>
-        /// <param name="filePath"></param>
-        public static void CreateCustomCaller(JObject jObjectParsed, string filePath = "")
+        /// <param name="usermodFolderPath"></param>
+        public static void CreateCustomCaller(JObject jObjectParsed, string usermodFolderPath = "",
+            string jsonFolderPath = "")
         {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(filePath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom caller. Possible syntax mistake?");
                 return;
@@ -446,7 +454,7 @@ namespace NewSafetyHelp.JSONParsing
             string customCallerAudioPath = "";
 
             // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo _customCaller = CustomCallerParsing.ParseCustomCaller(ref jObjectParsed, ref filePath,
+            CustomCallerExtraInfo _customCaller = CustomCallerParsing.ParseCustomCaller(ref jObjectParsed, ref usermodFolderPath,
                 ref customCampaign, ref inMainCampaign, ref customCallerMonsterName, ref customCallerAudioPath,
                 ref orderInCampaign, mainCampaignCallAmount, ref customCallerMainGame);
 
@@ -461,14 +469,14 @@ namespace NewSafetyHelp.JSONParsing
                 if (string.IsNullOrEmpty(customCallerAudioPath))
                 {
                     MelonLogger.Warning(
-                        $"WARNING: No caller audio given for file in {filePath}. No audio will be heard.");
+                        $"WARNING: No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
                 }
                 else if
                     (!File.Exists(
                          customCallerAudioPath)) // Check if location is valid now, since we are storing it now.
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {filePath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
+                        $"ERROR: Location {usermodFolderPath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -548,12 +556,14 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="jObjectParsed"> JSON Data for reading. </param>
         /// <param name="newID"> If we wish to provide the ID via parameter. </param>
-        /// <param name="filePath"> Folder path to the entries directory </param>
+        /// <param name="usermodFolderPath"> Folder path to the entries directory </param>
         /// <param name="entryUnlockerInstance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
-        public static void CreateMonsterFromJSON(JObject jObjectParsed, int newID = -1, string filePath = "", EntryUnlockController entryUnlockerInstance = null)
+        public static void CreateMonsterFromJSON(JObject jObjectParsed, int newID = -1, string usermodFolderPath = "",
+            string jsonFolderPath = "",
+            EntryUnlockController entryUnlockerInstance = null)
         {
             
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(filePath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as an entry. Possible syntax mistake?");
                 return;
@@ -624,26 +634,26 @@ namespace NewSafetyHelp.JSONParsing
 
             // We extract the info and save it (if the file is valid)
             // Parse Entry
-            MonsterParsing.parseEntry(ref jObjectParsed, ref filePath, ref accessLevel, ref accessLevelAdded,
+            MonsterParsing.parseEntry(ref jObjectParsed, ref usermodFolderPath, ref accessLevel, ref accessLevelAdded,
                 ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign, ref _monsterName,
                 ref _monsterDescription, ref _arcadeCalls,
                 ref _monsterPortrait, ref _monsterPortraitLocation, ref _monsterAudioClipLocation, ref deleteReplaceEntry,
                 ref _inCustomCampaign, ref _customCampaignName);
 
             // Parse Phobias
-            MonsterParsing.parsePhobias(ref jObjectParsed, ref filePath, ref _spiderPhobia, ref _spiderPhobiaIncluded,
+            MonsterParsing.parsePhobias(ref jObjectParsed, ref usermodFolderPath, ref _spiderPhobia, ref _spiderPhobiaIncluded,
                 ref _darknessPhobia, ref _darknessPhobiaIncluded, ref _dogPhobia, ref _dogPhobiaIncluded,
                 ref _holesPhobia, ref _holesPhobiaIncluded,
                 ref _insectPhobia, ref _insectPhobiaIncluded, ref _watchingPhobia, ref _watchingPhobiaIncluded,
                 ref _tightSpacePhobia, ref _tightSpacePhobiaIncluded);
 
             // Parse Default Caller
-            CallerParsing.parseCaller(ref jObjectParsed, ref filePath, ref _callerAudioClipLocation, ref _callerName,
+            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref _callerAudioClipLocation, ref _callerName,
                 ref _callerTranscript, ref _callerImageLocation, ref _callerReplaceChance, ref _callerRestartCallAgain,
                 ref _callerPortrait,
                 ref replaceEntry, ref newExtra);
 
-            CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref filePath, ref _consequenceCallerName,
+            CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref _consequenceCallerName,
                 ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait);
 
             // Create new extra info.
@@ -662,14 +672,14 @@ namespace NewSafetyHelp.JSONParsing
 
                 if (string.IsNullOrEmpty(_callerAudioClipLocation) && !replaceEntry)
                 {
-                    MelonLogger.Msg($"INFO: No caller audio given for file in {filePath}. No audio will be heard.");
+                    MelonLogger.Msg($"INFO: No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
                 }
                 else if
-                    (!File.Exists(filePath + "\\" +
+                    (!File.Exists(usermodFolderPath + "\\" +
                                   _callerAudioClipLocation)) // Check if location is valid now, since we are storing it now.
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {filePath} does not contain {_callerAudioClipLocation}. Unable to add audio.");
+                        $"ERROR: Location {usermodFolderPath} does not contain {_callerAudioClipLocation}. Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -689,7 +699,7 @@ namespace NewSafetyHelp.JSONParsing
                                         $"ERROR: Failed to load audio clip {callerAudioClipLocationLambdaCopy}.");
                                 }
                             },
-                            filePath + "\\" + _callerAudioClipLocation)
+                            usermodFolderPath + "\\" + _callerAudioClipLocation)
                     );
                 }
             }
@@ -702,14 +712,14 @@ namespace NewSafetyHelp.JSONParsing
 
                 if (string.IsNullOrEmpty(_consequenceCallerAudioClipLocation) && !replaceEntry)
                 {
-                    MelonLogger.Msg($"INFO: No caller audio given for file in {filePath}. No audio will be heard.");
+                    MelonLogger.Msg($"INFO: No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
                 }
                 else if
-                    (!File.Exists(filePath + "\\" +
+                    (!File.Exists(usermodFolderPath + "\\" +
                                   _consequenceCallerAudioClipLocation)) // Check if location is valid now, since we are storing it now.
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {filePath} does not contain {_consequenceCallerAudioClipLocation}. Unable to add audio.");
+                        $"ERROR: Location {usermodFolderPath} does not contain {_consequenceCallerAudioClipLocation}. Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -729,7 +739,7 @@ namespace NewSafetyHelp.JSONParsing
                                         $"ERROR: Failed to load audio clip {_consequenceCallerAudioClipLocation}.");
                                 }
                             },
-                            filePath + "\\" + _consequenceCallerAudioClipLocation)
+                            usermodFolderPath + "\\" + _consequenceCallerAudioClipLocation)
                     );
                 }
             }
@@ -742,7 +752,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Generate new ID if not provided.
-            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref filePath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref _inCustomCampaign, ref _customCampaignName);
+            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref usermodFolderPath, ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref _inCustomCampaign, ref _customCampaignName);
 
             if (replaceEntry) // We replace an Entry
             {
@@ -751,7 +761,7 @@ namespace NewSafetyHelp.JSONParsing
                 MonsterProfile foundMonster = null;
                 MonsterProfile foundMonsterXMAS = null; // For replacing DLC version as well
 
-                replaceEntryFunction(ref filePath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription, ref replaceEntry,
+                replaceEntryFunction(ref usermodFolderPath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription, ref replaceEntry,
                     ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia, 
                     ref _holesPhobiaIncluded, ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded, ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia, ref foundMonster, ref foundMonsterXMAS,
                     ref _inCustomCampaign, ref _customCampaignName);
@@ -774,7 +784,7 @@ namespace NewSafetyHelp.JSONParsing
                             }
 
                         },
-                        filePath + "\\" + _monsterAudioClipLocation)
+                        usermodFolderPath + "\\" + _monsterAudioClipLocation)
                     );
                 }
 
@@ -783,7 +793,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 MonsterProfile _newMonster = null;
 
-                createNewEntryFunction(ref filePath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription,
+                createNewEntryFunction(ref usermodFolderPath, ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName, ref newID, ref _monsterAudioClipLocation, ref _monsterPortraitLocation, ref _monsterPortrait, ref _monsterDescription,
                     ref replaceEntry, ref _arcadeCalls, ref accessLevel, ref accessLevelAdded, ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded, ref _darknessPhobia, ref _dogPhobiaIncluded, ref _dogPhobia,
                     ref _holesPhobiaIncluded, ref _holesPhobia, ref _insectPhobiaIncluded, ref _insectPhobia, ref _watchingPhobiaIncluded, ref _watchingPhobia, ref _tightSpacePhobiaIncluded, ref _tightSpacePhobia,
                     ref _newMonster, ref _inCustomCampaign, ref _customCampaignName);
@@ -805,7 +815,7 @@ namespace NewSafetyHelp.JSONParsing
                             }
 
                         },
-                        filePath + "\\" + _monsterAudioClipLocation)
+                        usermodFolderPath + "\\" + _monsterAudioClipLocation)
                     );
                 }
             }

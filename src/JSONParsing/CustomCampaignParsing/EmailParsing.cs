@@ -9,7 +9,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 {
     public static class EmailParsing
     {
-        public static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string filePath,
+        public static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string customCampaignName, ref bool inMainCampaign)
         {
             // Main
@@ -65,20 +65,20 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
                 if (!string.IsNullOrEmpty(emailImagePath))
                 {
-                    if (File.Exists(filePath + "\\" + emailImagePath))
+                    if (File.Exists(usermodFolderPath + "\\" + emailImagePath))
                     {
-                        emailImage = ImageImport.LoadImage(filePath + "\\" + emailImagePath);
+                        emailImage = ImageImport.LoadImage(usermodFolderPath + "\\" + emailImagePath);
                     }
                     else
                     {
                         MelonLogger.Warning(
-                            $"WARNING: Email at {filePath + "\\" + emailImagePath} has image {emailImagePath} provided but it does not exist! Not showing any image.");
+                            $"WARNING: Email at {usermodFolderPath + "\\" + emailImagePath} has image {emailImagePath} provided but it does not exist! Not showing any image.");
                     }
                 }
                 else
                 {
                     MelonLogger.Warning(
-                        $"WARNING: Email at {filePath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
+                        $"WARNING: Email at {usermodFolderPath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
                 }
             }
             

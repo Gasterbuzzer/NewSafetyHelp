@@ -7,7 +7,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 {
     public static class VideoParsing
     {
-        public static CustomVideoExtraInfo ParseVideo(ref JObject jObjectParsed, ref string filePath,
+        public static CustomVideoExtraInfo ParseVideo(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string customCampaignName)
         {
             // Main
@@ -35,7 +35,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
             if (jObjectParsed.TryGetValue("video_file_name", out var videoFileNameValue))
             {
-                videoFilePath = filePath + "\\" + (string) videoFileNameValue;
+                videoFilePath = usermodFolderPath + "\\" + (string) videoFileNameValue;
 
                 if (string.IsNullOrEmpty(videoFilePath))
                 {

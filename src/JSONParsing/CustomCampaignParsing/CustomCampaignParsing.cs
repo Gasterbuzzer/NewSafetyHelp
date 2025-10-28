@@ -10,7 +10,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 {
     public static class CustomCampaignParsing
     {
-        public static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string filePath,
+        public static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string customCampaignName)
         {
             // Desktop
@@ -169,17 +169,17 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
                 if (string.IsNullOrEmpty(customCampaignImagePath))
                 {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{filePath}'. Default icon will be shown.");
+                    MelonLogger.Error($"ERROR: Invalid file name given for '{usermodFolderPath}'. Default icon will be shown.");
                 }
                 else
                 {
-                    customCampaignSprite = ImageImport.LoadImage(filePath + "\\" + customCampaignImagePath);
+                    customCampaignSprite = ImageImport.LoadImage(usermodFolderPath + "\\" + customCampaignImagePath);
                 }
             }
             else
             {
                 MelonLogger.Warning(
-                    $"WARNING: No custom campaign icon given for file in {filePath}. Default icon will be shown.");
+                    $"WARNING: No custom campaign icon given for file in {usermodFolderPath}. Default icon will be shown.");
             }
 
 
@@ -219,7 +219,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
             
             if (jObjectParsed.ContainsKey("custom_campaign_end_cutscene_video_name"))
             {
-                endCutsceneName = filePath + "\\" + jObjectParsed["custom_campaign_end_cutscene_video_name"];
+                endCutsceneName = usermodFolderPath + "\\" + jObjectParsed["custom_campaign_end_cutscene_video_name"];
 
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: End cutscene video found: '{endCutsceneName}'");
@@ -240,7 +240,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
             if (jObjectParsed.ContainsKey("custom_campaign_gameover_cutscene_video_name"))
             {
-                gameOverCutsceneName = filePath + "\\" + jObjectParsed["custom_campaign_gameover_cutscene_video_name"];
+                gameOverCutsceneName = usermodFolderPath + "\\" + jObjectParsed["custom_campaign_gameover_cutscene_video_name"];
 
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Game Over video found: '{gameOverCutsceneName}'");
@@ -315,7 +315,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else
                 {
-                    changeMainProgramSprite = ImageImport.LoadImage(filePath + "\\" + customMainGameDesktopIcon);
+                    changeMainProgramSprite = ImageImport.LoadImage(usermodFolderPath + "\\" + customMainGameDesktopIcon);
                 }
             }
             
@@ -332,7 +332,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                     }
                     else
                     {
-                        backgroundSprites.Add(ImageImport.LoadImage(filePath + "\\" + backgroundNames[i]));
+                        backgroundSprites.Add(ImageImport.LoadImage(usermodFolderPath + "\\" + backgroundNames[i]));
                     }
                 }
             }
@@ -348,7 +348,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else
                 {
-                    backgroundFinishedGameSprite = ImageImport.LoadImage(filePath + "\\" + gameFinishedBackgroundPath);
+                    backgroundFinishedGameSprite = ImageImport.LoadImage(usermodFolderPath + "\\" + gameFinishedBackgroundPath);
                 }
             }
 
@@ -377,7 +377,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 }
                 else
                 {
-                    customDesktopLogo = ImageImport.LoadImage(filePath + "\\" + customDesktopLogoPath);
+                    customDesktopLogo = ImageImport.LoadImage(usermodFolderPath + "\\" + customDesktopLogoPath);
                 }
             }
             

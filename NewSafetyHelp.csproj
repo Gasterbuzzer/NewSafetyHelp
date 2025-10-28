@@ -142,12 +142,12 @@
     <Compile Include="src\ErrorDebugging\UnityLogHook.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
     <Compile Include="src\ImportFiles\VideoHelper.cs" />
-    <Compile Include="src\JSONParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\CustomCampaignParsing\CustomCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CustomCampaignParsing\CustomCampaignParsing.cs" />
     <Compile Include="src\JSONParsing\CustomCampaignParsing\EmailParsing.cs" />
     <Compile Include="src\JSONParsing\CustomCampaignParsing\VideoParsing.cs" />
-    <Compile Include="src\JSONParsing\MonsterParsing.cs" />
+    <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
+    <Compile Include="src\JSONParsing\EntryParsing\MonsterParsing.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
