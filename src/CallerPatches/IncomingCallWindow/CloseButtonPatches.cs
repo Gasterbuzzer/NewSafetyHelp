@@ -3,7 +3,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 
-namespace NewSafetyHelp.CallerPatches
+namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
     public static class CloseButtonPatches
     {
