@@ -327,10 +327,6 @@ namespace NewSafetyHelp.CustomCampaign
                 {
                     if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be but who knows.
                     {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Saved Answer {i}: {currentCampaign.savedCallersCorrectAnswer[i]}.");
-                        #endif
-                        
                         currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value where have at that index.
                     }
                     else
@@ -443,10 +439,6 @@ namespace NewSafetyHelp.CustomCampaign
             {
                 if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") != null)
                 {
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Loaded Answer {i}: {currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value}.");
-                    #endif
-                    
                     currentCampaign.savedCallersCorrectAnswer.Add(currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value);
                 }
                 else

@@ -32,24 +32,28 @@ namespace NewSafetyHelp.CallerPatches
             {
                 foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                 {
-                    if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name || __instance.currentCustomCaller.callerMonster.monsterID == item.ID) // We found an entry to replace the audio for.
+                    if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name ||
+                        __instance.currentCustomCaller.callerMonster.monsterID ==
+                        item.ID) // We found an entry to replace the audio for.
                     {
                         __instance.currentCustomCaller.callerClip = item.callerClip;
                     }
                 }
 
-                if (__instance.currentCustomCaller.callerClip == null) // If we didn't find anything, we set it to a random clip.
+                if (__instance.currentCustomCaller.callerClip ==
+                    null) // If we didn't find anything, we set it to a random clip.
                 {
+                    MethodInfo pickRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
+                        BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
 
-                    MethodInfo pickRandomClip = typeof(CallerController).GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance); 
-                    
                     if (pickRandomClip == null)
                     {
                         MelonLogger.Error("ERROR: PickRandomClip couldn't be found in CallerController.");
                         return;
                     }
-                    
-                    __instance.currentCustomCaller.callerClip = (RichAudioClip) pickRandomClip.Invoke(__instance, null); // __instance.PickRandomClip()
+
+                    __instance.currentCustomCaller.callerClip =
+                        (RichAudioClip)pickRandomClip.Invoke(__instance, null); // __instance.PickRandomClip()
                 }
             }
         }
@@ -59,7 +63,8 @@ namespace NewSafetyHelp.CallerPatches
         public static class UpdateCampaignCallerAudio
         {
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, CallerProfile profile, ref IEnumerator __result)
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, CallerProfile profile,
+                ref IEnumerator __result)
             {
                 __result = originalCaller(__originalMethod, __instance, profile);
                 return false; // Skip the original coroutine
@@ -71,9 +76,9 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name= "profile"> Profile Parameter. </param>
-            private static IEnumerator originalCaller(MethodBase __originalMethod, CallerController __instance, CallerProfile profile)
+            private static IEnumerator originalCaller(MethodBase __originalMethod, CallerController __instance,
+                CallerProfile profile)
             {
-                
                 if (profile == null && !__instance.arcadeMode)
                 {
                     profile = __instance.callers[__instance.currentCallerID].callerProfile;
@@ -88,7 +93,8 @@ namespace NewSafetyHelp.CallerPatches
 
                 // Get callerAudioSource
                 Type callerController = typeof(CallerController);
-                var callerAudioSourceGetter = callerController.GetField("callerAudioSource", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                var callerAudioSourceGetter = callerController.GetField("callerAudioSource",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (callerAudioSourceGetter == null)
                 {
@@ -96,7 +102,7 @@ namespace NewSafetyHelp.CallerPatches
                     yield break;
                 }
 
-                AudioSource callerAudioSource = (AudioSource) callerAudioSourceGetter.GetValue(__instance);
+                AudioSource callerAudioSource = (AudioSource)callerAudioSourceGetter.GetValue(__instance);
 
                 if (callerAudioSource == null)
                 {
@@ -108,8 +114,10 @@ namespace NewSafetyHelp.CallerPatches
 
                 // Here we replace the clip-
                 bool found = false;
-                
-                if (profile != null && profile.callerMonster != null && !__instance.arcadeMode) // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
+
+                if (profile != null && profile.callerMonster != null &&
+                    !__instance
+                        .arcadeMode) // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
                 {
                     foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                     {
@@ -123,11 +131,13 @@ namespace NewSafetyHelp.CallerPatches
                                 if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
-                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, true);
+                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(
+                                        item.Name + item.callerName, true);
                                 }
                                 else
                                 {
-                                    NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName).Value = true;
+                                    NewSafetyHelpMainClass.persistantEntrySave
+                                        .GetEntry<bool>(item.Name + item.callerName).Value = true;
                                 }
                             }
                             else
@@ -135,11 +145,13 @@ namespace NewSafetyHelp.CallerPatches
                                 if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
-                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false); // Store it as false
+                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(
+                                        item.Name + item.callerName, false); // Store it as false
                                 }
                                 else
                                 {
-                                    NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName).Value = false;
+                                    NewSafetyHelpMainClass.persistantEntrySave
+                                        .GetEntry<bool>(item.Name + item.callerName).Value = false;
                                 }
                             }
 
@@ -149,7 +161,7 @@ namespace NewSafetyHelp.CallerPatches
                             {
                                 callerAudioSource.clip = item.callerClip.clip;
                             }
-                            
+
                             found = true;
                         }
                     }
@@ -161,7 +173,8 @@ namespace NewSafetyHelp.CallerPatches
                     if (profile != null && profile.callerMonster != null)
                     {
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
+                        MelonLogger.Msg(
+                            $"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
                         #endif
                     }
                     else
@@ -176,7 +189,8 @@ namespace NewSafetyHelp.CallerPatches
                 }
 
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Caller Audio File Name: {callerAudioSource.name} with {callerAudioSource.clip.name} and {callerAudioSource.clip.length}.");
+                MelonLogger.Msg(
+                    $"DEBUG: Caller Audio File Name: {callerAudioSource.name} with {callerAudioSource.clip.name} and {callerAudioSource.clip.length}.");
                 #endif
 
                 if (profile != null && profile.callerClip != null)
@@ -192,7 +206,7 @@ namespace NewSafetyHelp.CallerPatches
         }
 
         // Patches the caller to replace it with another with random chance.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", new [] { typeof(CallerProfile)})]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", new[] { typeof(CallerProfile) })]
         public static class UpdateCampaignCallerRandom
         {
             /// <summary>
@@ -201,11 +215,11 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__originalMethod"> Original Method Caller </param>
             /// <param name="__instance"> Function Caller Instance </param>
             /// <param name="profile"> Caller Profile that called </param>
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref CallerProfile profile)
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+                ref CallerProfile profile)
             {
-
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: New caller is calling.");
+                MelonLogger.Msg($"DEBUG: New caller is calling.");
                 #endif
 
                 if (profile == null)
@@ -235,9 +249,9 @@ namespace NewSafetyHelp.CallerPatches
                 {
                     foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                     {
-                        if (item.inMainCampaign && !item.alreadyCalledOnce && !item.currentlySelected) // Find a valid entry.
+                        if (item.inMainCampaign && !item.alreadyCalledOnce &&
+                            !item.currentlySelected) // Find a valid entry.
                         {
-
                             // Create Entry if not existent and if allowed
 
                             MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry;
@@ -245,36 +259,46 @@ namespace NewSafetyHelp.CallerPatches
                             if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
                             {
                                 // ReSharper disable once RedundantTypeArgumentsOfMethod
-                                entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(item.Name + item.callerName, false);
+                                entryAlreadyCalledBeforeEntry =
+                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(
+                                        item.Name + item.callerName, false);
                             }
                             else
                             {
-                                entryAlreadyCalledBeforeEntry = NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name + item.callerName);
+                                entryAlreadyCalledBeforeEntry =
+                                    NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name +
+                                        item.callerName);
                             }
 
                             if (item.allowCallAgainOverRestart)
                             {
                                 #if DEBUG
-                                    MelonLogger.Msg($"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
+                                MelonLogger.Msg(
+                                    $"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
                                 #endif
 
-                                entryAlreadyCalledBeforeEntry.Value = false; // Reset the entry. If not allowed to store the value.
+                                entryAlreadyCalledBeforeEntry.Value =
+                                    false; // Reset the entry. If not allowed to store the value.
                             }
 
                             if (entryAlreadyCalledBeforeEntry.Value)
                             {
                                 #if DEBUG
-                                    MelonLogger.Msg($"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
+                                MelonLogger.Msg(
+                                    $"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
                                 #endif
                             }
 
                             if (Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
                             {
-                                if (!item.allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
+                                if (!item
+                                        .allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
                                 {
-                                    if (!entryAlreadyCalledBeforeEntry.Value && item.permissionLevel <= GlobalVariables.currentDay) // We never called it. And make sure we can actually access the callers' entry.
+                                    if (!entryAlreadyCalledBeforeEntry.Value &&
+                                        item.permissionLevel <=
+                                        GlobalVariables
+                                            .currentDay) // We never called it. And make sure we can actually access the callers' entry.
                                     {
-
                                         if (GlobalVariables.isXmasDLC) // If DLC
                                         {
                                             if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
@@ -282,13 +306,15 @@ namespace NewSafetyHelp.CallerPatches
                                                 entries.Add(item);
                                                 replaceTrue = true;
 
-                                                MelonLogger.Msg($"INFO: Saved Entry '{item.Name}' to not be called in the future.");
+                                                MelonLogger.Msg(
+                                                    $"INFO: Saved Entry '{item.Name}' to not be called in the future.");
 
                                                 entryAlreadyCalledBeforeEntry.Value = true;
                                             }
                                             else
                                             {
-                                                MelonLogger.Msg($"INFO: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
+                                                MelonLogger.Msg(
+                                                    $"INFO: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
                                             }
                                         }
                                         else // Main Game
@@ -296,7 +322,8 @@ namespace NewSafetyHelp.CallerPatches
                                             entries.Add(item);
                                             replaceTrue = true;
 
-                                            MelonLogger.Msg($"INFO: Saved Entry '{item.Name}' to not be called in the future.");
+                                            MelonLogger.Msg(
+                                                $"INFO: Saved Entry '{item.Name}' to not be called in the future.");
 
                                             entryAlreadyCalledBeforeEntry.Value = true;
                                         }
@@ -305,13 +332,14 @@ namespace NewSafetyHelp.CallerPatches
                                 }
                                 else // We are allowed to ignore it.
                                 {
-                                    if (item.permissionLevel <= GlobalVariables.currentDay) // Make sure we can actually access the callers' entry.
+                                    if (item.permissionLevel <=
+                                        GlobalVariables
+                                            .currentDay) // Make sure we can actually access the callers' entry.
                                     {
                                         if (GlobalVariables.isXmasDLC) // If DLC
                                         {
                                             if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
                                             {
-
                                                 entries.Add(item);
                                                 replaceTrue = true;
                                             }
@@ -328,19 +356,26 @@ namespace NewSafetyHelp.CallerPatches
                     }
                 }
 
-                if (profile != null && !__instance.arcadeMode && profile.consequenceCallerProfile != null) // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
+                if (profile != null && !__instance.arcadeMode &&
+                    profile.consequenceCallerProfile !=
+                    null) // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
                 {
                     MelonLogger.Msg($"INFO: Current caller is Consequence Caller.");
                     Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
-                    
-                    if (callers != null)// Caller is valid.
+
+                    if (callers != null) // Caller is valid.
                     {
                         MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
-                        
-                        if (ParseJSONFiles.entriesExtraInfo.Exists(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name)) // IF the consequence caller has been replaced once.
+
+                        if (ParseJSONFiles.entriesExtraInfo.Exists(item =>
+                                item.referenceProfileNameInternal ==
+                                callers.callerProfile.consequenceCallerProfile
+                                    .name)) // IF the consequence caller has been replaced once.
                         {
                             MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
-                            EntryExtraInfo foundExtraInfo = ParseJSONFiles.entriesExtraInfo.Find(item => item.referenceProfileNameInternal == callers.callerProfile.consequenceCallerProfile.name);
+                            EntryExtraInfo foundExtraInfo = ParseJSONFiles.entriesExtraInfo.Find(item =>
+                                item.referenceProfileNameInternal ==
+                                callers.callerProfile.consequenceCallerProfile.name);
 
                             if (foundExtraInfo == null)
                             {
@@ -354,7 +389,8 @@ namespace NewSafetyHelp.CallerPatches
                             profile.callerPortrait = foundExtraInfo.consequenceCallerImage;
                             profile.callerClip = foundExtraInfo.consequenceCallerClip;
 
-                            MelonLogger.Msg($"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
+                            MelonLogger.Msg(
+                                $"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
                         }
                     }
                     else
@@ -363,37 +399,42 @@ namespace NewSafetyHelp.CallerPatches
                     }
                 }
                 // Replace information about the caller with a random entry
-                else if (replaceTrue && profile != null && profile.callerMonster != null && !__instance.arcadeMode && profile.consequenceCallerProfile == null) // If any entry won the chance to replace this call, replace it.
+                else if (replaceTrue && profile != null && profile.callerMonster != null && !__instance.arcadeMode &&
+                         profile.consequenceCallerProfile ==
+                         null) // If any entry won the chance to replace this call, replace it.
                 {
                     if (entries.Count > 0) // We actually found at least one.
                     {
-                            // We are not a consequence caller.
-                            // Select one randomly.
-                            int entrySelected = Random.Range(0, entries.Count - 1);
+                        // We are not a consequence caller.
+                        // Select one randomly.
+                        int entrySelected = Random.Range(0, entries.Count - 1);
 
-                            // Audio check
-                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected])).currentlySelected = true;
+                        // Audio check
+                        ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                            .currentlySelected = true;
 
-                            // Get a "copy"
-                            EntryExtraInfo selected = entries[entrySelected];
+                        // Get a "copy"
+                        EntryExtraInfo selected = entries[entrySelected];
 
-                            // Replace caller with custom caller
-                            profile.callerName = selected.callerName;
+                        // Replace caller with custom caller
+                        profile.callerName = selected.callerName;
 
-                            if (selected.callerImage != null) // If Image provided
-                            {
-                                profile.callerPortrait = selected.callerImage;
-                            }
+                        if (selected.callerImage != null) // If Image provided
+                        {
+                            profile.callerPortrait = selected.callerImage;
+                        }
 
-                            profile.callTranscription = selected.callTranscript;
+                        profile.callTranscription = selected.callTranscript;
 
-                            if (profile != null && profile.callerMonster != null)
-                            {
-                                MelonLogger.Msg($"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
-                            }
+                        if (profile != null && profile.callerMonster != null)
+                        {
+                            MelonLogger.Msg(
+                                $"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                        }
 
-                            // We store a reference to the caller for finding later if the consequence caller calls.
-                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected])).referenceProfileNameInternal = profile.name;
+                        // We store a reference to the caller for finding later if the consequence caller calls.
+                        ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                            .referenceProfileNameInternal = profile.name;
                     }
                 }
 
@@ -410,7 +451,7 @@ namespace NewSafetyHelp.CallerPatches
         }
 
         // Patches the caller to replace it with another with random chance.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", new [] { typeof(MonsterProfile) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", new[] { typeof(MonsterProfile) })]
         public static class ReplaceAnswerWithReplacedAnswer
         {
             /// <summary>
@@ -419,12 +460,13 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__originalMethod"> Original Method Caller. </param>
             /// <param name="__instance"> Function Caller Instance </param>
             /// <param name="monsterID"> Monster Profile that was selected </param>
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref MonsterProfile monsterID)
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+                ref MonsterProfile monsterID)
             {
-
                 // Get DynamicCaller
                 Type callerController = typeof(CallerController);
-                FieldInfo dynamicCaller = callerController.GetField("dynamicCaller", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                FieldInfo dynamicCaller = callerController.GetField("dynamicCaller",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (dynamicCaller == null)
                 {
@@ -434,7 +476,6 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (monsterID != null) // Monster Valid
                 {
-
                     ++__instance.callersToday;
 
                     // Get replaced monster if valid
@@ -452,14 +493,15 @@ namespace NewSafetyHelp.CallerPatches
                             found = true;
                         }
                     }
-                    
+
                     if (!found) // We do not replace, so we default back to the current caller.
                     {
                         monsterToCheck = __instance.callers[__instance.currentCallerID].callerProfile.callerMonster;
-                        MelonLogger.Msg($"INFO: The caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}.");
+                        MelonLogger.Msg(
+                            $"INFO: The caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}.");
 
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: The previous caller was not replaced by any custom caller.");
+                        MelonLogger.Msg($"DEBUG: The previous caller was not replaced by any custom caller.");
                         #endif
                     }
 
@@ -472,7 +514,9 @@ namespace NewSafetyHelp.CallerPatches
                         // Debug Info in case the replacement worked.
                         if (found)
                         {
-                            MelonLogger.Msg("INFO: Selected the correct replaced entry.");
+                            #if DEBUG
+                            MelonLogger.Msg("DEBUG: Selected the correct replaced entry.");
+                            #endif
                         }
                     }
                     else // If wrong
@@ -480,10 +524,11 @@ namespace NewSafetyHelp.CallerPatches
                         if (CustomCampaignGlobal.inCustomCampaign)
                         {
                             CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
-                            
+
                             if (customCampaign == null)
                             {
-                                MelonLogger.Error("ERROR: CustomCampaign is null! Unable of checking if to skip checking the caller answer.");
+                                MelonLogger.Error(
+                                    "ERROR: CustomCampaign is null! Unable of checking if to skip checking the caller answer.");
                                 __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
                                 return false;
                             }
@@ -491,6 +536,7 @@ namespace NewSafetyHelp.CallerPatches
                             if (customCampaign.skipCallersCorrectly)
                             {
                                 __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                                ++__instance.correctCallsToday;
                             }
                             else
                             {
@@ -503,14 +549,15 @@ namespace NewSafetyHelp.CallerPatches
                             if (GlobalVariables.isXmasDLC) // If wrong and DLC
                             {
                                 // Get TriggerXMAS Lights
-                                MethodInfo triggerXmasLight = callerController.GetMethod("TriggerXmasLight", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                            
+                                MethodInfo triggerXmasLight = callerController.GetMethod("TriggerXmasLight",
+                                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
                                 if (triggerXmasLight == null)
                                 {
                                     MelonLogger.Error("ERROR: triggerXmasLight is null!");
                                     return true;
                                 }
-                            
+
                                 triggerXmasLight.Invoke(__instance, new object[] { });
 
                                 GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
@@ -524,7 +571,9 @@ namespace NewSafetyHelp.CallerPatches
                         }
                     }
                 }
-                else if (!(bool)dynamicCaller.GetValue(__instance)) // Monster not provided and a dynamic caller. So we set it to true.
+                else if
+                    (!(bool)dynamicCaller
+                         .GetValue(__instance)) // Monster not provided and a dynamic caller. So we set it to true.
                 {
                     __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
 
@@ -551,11 +600,11 @@ namespace NewSafetyHelp.CallerPatches
                 if (profileToCheck == caller.callerProfile)
                     return caller; // Returns the caller
             }
-            
+
             return null;
         }
 
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "Start", new Type[] {})]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "Start", new Type[] { })]
         public static class AddCustomCampaign
         {
             /// <summary>
@@ -566,17 +615,18 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
                 #if DEBUG
-                    MelonLogger.Msg(ConsoleColor.Magenta, $"DEBUG: Called Start from the class CallerController.");
+                MelonLogger.Msg(ConsoleColor.Magenta, $"DEBUG: Called Start from the class CallerController.");
                 #endif
 
                 Type callerController = typeof(CallerController);
-                
+
                 // Original Code
                 GlobalVariables.callerControllerScript = __instance;
-                
+
                 __instance.arcadeMode = GlobalVariables.arcadeMode;
-                
-                FieldInfo _lastDayNum = callerController.GetField("lastDayNum", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                FieldInfo _lastDayNum = callerController.GetField("lastDayNum",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (_lastDayNum == null)
                 {
@@ -590,26 +640,26 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else
                 {
-                    
                     _lastDayNum.SetValue(__instance, CustomCampaignGlobal.getActiveCustomCampaign().campaignDays);
                 }
-                
-                
-                FieldInfo _callerAudioSource = callerController.GetField("callerAudioSource", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+
+                FieldInfo _callerAudioSource = callerController.GetField("callerAudioSource",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (_callerAudioSource == null)
                 {
                     MelonLogger.Error("ERROR: CallerAudioSource is null!");
                     return true;
                 }
-                
+
                 _callerAudioSource.SetValue(__instance, __instance.GetComponent<AudioSource>());
-                
+
                 if (__instance.arcadeMode)
                 {
                     __instance.CreateCustomCaller();
                 }
-                
+
                 if (GlobalVariables.isXmasDLC)
                 {
                     __instance.callers = null;
@@ -619,15 +669,16 @@ namespace NewSafetyHelp.CallerPatches
                     _lastDayNum.SetValue(__instance, __instance.xmasLastDay);
                     __instance.downedNetworkCalls = __instance.xmasDownedNetworkCalls;
                 }
-                
-                
+
+
                 /*
                  * Add Custom Callers / Campaign Callers.
                  */
-                
+
                 if (!CustomCampaignGlobal.inCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
-                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in ParseJSONFiles.customCallerMainGame)
+                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in ParseJSONFiles
+                                 .customCallerMainGame)
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {
@@ -637,19 +688,21 @@ namespace NewSafetyHelp.CallerPatches
 
                         if (customCaller.Value.inCustomCampaign)
                         {
-                            MelonLogger.Warning("WARNING: Custom Caller is marked as custom campaign but is also main campaign! Skipping.");
+                            MelonLogger.Warning(
+                                "WARNING: Custom Caller is marked as custom campaign but is also main campaign! Skipping.");
                             continue;
                         }
-                        
+
                         // Is Valid
-                        
+
                         CallerProfile callerProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
                         if (!customCaller.Value.isCallerClipLoaded)
                         {
-                            MelonLogger.Msg("INFO: Audio is still loading for this custom caller. It will be updated once the audio has been updated.");
+                            MelonLogger.Msg(
+                                "INFO: Audio is still loading for this custom caller. It will be updated once the audio has been updated.");
                         }
-                        
+
                         callerProfile.callerName = customCaller.Value.callerName;
                         callerProfile.callTranscription = customCaller.Value.callTranscript;
                         callerProfile.callerPortrait = customCaller.Value.callerImage;
@@ -658,26 +711,32 @@ namespace NewSafetyHelp.CallerPatches
 
                         if (customCaller.Value.monsterNameAttached != "NO_MONSTER_NAME")
                         {
-                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, customCaller.Value.monsterNameAttached);
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
+                                ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
+                                    .allEntries.monsterProfiles, customCaller.Value.monsterNameAttached);
 
                             if (foundMonster == null)
                             {
-                                MelonLogger.Warning($"WARNING: Provided Monster Name for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
-                                callerProfile.callerMonster = null; 
+                                MelonLogger.Warning(
+                                    $"WARNING: Provided Monster Name for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
+                                callerProfile.callerMonster = null;
                             }
                             else
                             {
                                 callerProfile.callerMonster = foundMonster;
                             }
                         }
-                        else if(customCaller.Value.monsterIDAttached >= 0) // Check for ID monster.
+                        else if (customCaller.Value.monsterIDAttached >= 0) // Check for ID monster.
                         {
-                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, monsterID: customCaller.Value.monsterIDAttached);
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
+                                ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
+                                    .allEntries.monsterProfiles, monsterID: customCaller.Value.monsterIDAttached);
 
                             if (foundMonster == null)
                             {
-                                MelonLogger.Warning($"WARNING: Provided monster ID for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
-                                callerProfile.callerMonster = null; 
+                                MelonLogger.Warning(
+                                    $"WARNING: Provided monster ID for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
+                                callerProfile.callerMonster = null;
                             }
                             else
                             {
@@ -686,42 +745,45 @@ namespace NewSafetyHelp.CallerPatches
                         }
                         else // No caller monster.
                         {
-                            callerProfile.callerMonster = null; 
+                            callerProfile.callerMonster = null;
                         }
-                        
+
                         if (customCaller.Value.consequenceCallerID >= 0)
                         {
                             if (__instance.callers[customCaller.Value.consequenceCallerID].callerProfile == null)
                             {
-                                MelonLogger.Warning("WARNING: Provided consequence caller but profile is null? Setting to null.");
+                                MelonLogger.Warning(
+                                    "WARNING: Provided consequence caller but profile is null? Setting to null.");
                             }
-                            
-                            callerProfile.consequenceCallerProfile = __instance.callers[customCaller.Value.consequenceCallerID].callerProfile;
+
+                            callerProfile.consequenceCallerProfile =
+                                __instance.callers[customCaller.Value.consequenceCallerID].callerProfile;
                         }
                         else
                         {
                             callerProfile.consequenceCallerProfile = null;
                         }
-                        
+
                         Caller newCustomCaller = new Caller
                         {
                             answeredCorrectly = false,
                             callerProfile = callerProfile
                         };
-                        
+
                         // Insert our custom caller.
                         __instance.callers[customCaller.Key] = newCustomCaller;
-                        
                     }
                 }
                 else // We are in a custom campaign.
                 {
                     // Attempt to hijack caller list.
-                    
+
                     // Fallback for missing picture or audio.
-                    MethodInfo getRandomPicMethod = callerController.GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                
-                    MethodInfo getRandomClip = callerController.GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                    MethodInfo getRandomPicMethod = callerController.GetMethod("PickRandomPic",
+                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    MethodInfo getRandomClip = callerController.GetMethod("PickRandomClip",
+                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                     if (getRandomPicMethod == null || getRandomClip == null)
                     {
@@ -734,88 +796,100 @@ namespace NewSafetyHelp.CallerPatches
                         MelonLogger.Error("ERROR: Custom Campaign is set to be true but no custom campaign is active!");
                         return true;
                     }
-                    else if (!CustomCampaignGlobal.customCampaignsAvailable.Exists(scannedCampaign => scannedCampaign.campaignName == CustomCampaignGlobal.currentCustomCampaignName)) // Custom Campaign is not registered.
+                    else if (!CustomCampaignGlobal.customCampaignsAvailable.Exists(scannedCampaign =>
+                                 scannedCampaign.campaignName ==
+                                 CustomCampaignGlobal.currentCustomCampaignName)) // Custom Campaign is not registered.
                     {
-                        MelonLogger.Error("ERROR: Current Custom Campaign has not been properly setup! Stopping loading.");
+                        MelonLogger.Error(
+                            "ERROR: Current Custom Campaign has not been properly setup! Stopping loading.");
                         return true;
                     }
 
                     CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
-                    
+
                     // Clear callers array with amount of campaign callers.
                     __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
 
                     if (currentCustomCampaign.customCallersInCampaign.Count <= 0)
                     {
-                        MelonLogger.Warning("WARNING: Custom Campaign has no custom caller assigned! Unexpected behavior will occur when in campaign.");
+                        MelonLogger.Warning(
+                            "WARNING: Custom Campaign has no custom caller assigned! Unexpected behavior will occur when in campaign.");
                     }
-                    
+
                     // Reference list for consequence caller (after adding all profiles).
                     Dictionary<int, int> listOfConsequenceCallers = new Dictionary<int, int>();
-                    
+
                     // Add all customCallers in Callers list.
                     foreach (CustomCallerExtraInfo customCallerCC in currentCustomCampaign.customCallersInCampaign)
                     {
                         CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
-                        
+
                         newProfile.callerName = customCallerCC.callerName;
                         newProfile.callTranscription = customCallerCC.callTranscript;
 
                         // Clip
                         if (customCallerCC.callerClip == null)
                         {
-
                             if (AudioImport.currentLoadingAudios.Count > 0)
                             {
-                                MelonLogger.Msg($"INFO : Custom Caller '{customCallerCC.callerName}' is still loading its audio. Using fallback for now.");
+                                MelonLogger.Msg(
+                                    $"INFO : Custom Caller '{customCallerCC.callerName}' is still loading its audio. Using fallback for now.");
                             }
                             else // No Loading Audio
                             {
-                                MelonLogger.Warning($"WARNING: Custom Caller '{customCallerCC.callerName}' does not have any valid audio clip! Using fallback instead of real audio. ");
+                                MelonLogger.Warning(
+                                    $"WARNING: Custom Caller '{customCallerCC.callerName}' does not have any valid audio clip! Using fallback instead of real audio. ");
                             }
-                            
-                            newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, new object[] { });
+
+                            newProfile.callerClip = (RichAudioClip)getRandomClip.Invoke(__instance, new object[] { });
                         }
                         else
                         {
                             newProfile.callerClip = customCallerCC.callerClip;
                         }
-                        
+
                         // Sprite
                         if (customCallerCC.callerImage == null)
                         {
-                            MelonLogger.Warning($"WARNING: Custom Caller '{(customCallerCC.callerName != null ? $"{customCallerCC.callerName}" : "")}' does not have any valid image / sprite. Using fallback for now.");
-                            
-                            newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, new object[] { });
+                            MelonLogger.Warning(
+                                $"WARNING: Custom Caller '{(customCallerCC.callerName != null ? $"{customCallerCC.callerName}" : "")}' does not have any valid image / sprite. Using fallback for now.");
+
+                            newProfile.callerPortrait = (Sprite)getRandomPicMethod.Invoke(__instance, new object[] { });
                         }
                         else
                         {
                             newProfile.callerPortrait = customCallerCC.callerImage;
                         }
-                        
+
                         // Adding Entry to Caller if valid.
                         if (customCallerCC.monsterNameAttached != "NO_MONSTER_NAME")
                         {
-                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, customCallerCC.monsterNameAttached);
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
+                                ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
+                                    .allEntries.monsterProfiles, customCallerCC.monsterNameAttached);
 
                             if (foundMonster == null)
                             {
-                                MelonLogger.Warning($"WARNING: Provided Monster Name for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
-                                newProfile.callerMonster = null; 
+                                MelonLogger.Warning(
+                                    $"WARNING: Provided Monster Name for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
+                                newProfile.callerMonster = null;
                             }
                             else
                             {
                                 newProfile.callerMonster = foundMonster;
                             }
                         }
-                        else if(customCallerCC.monsterIDAttached >= 0) // Check for ID monster.
+                        else if (customCallerCC.monsterIDAttached >= 0) // Check for ID monster.
                         {
-                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>().allEntries.monsterProfiles, monsterID: customCallerCC.monsterIDAttached);
+                            MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
+                                ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
+                                    .allEntries.monsterProfiles, monsterID: customCallerCC.monsterIDAttached);
 
                             if (foundMonster == null)
                             {
-                                MelonLogger.Warning($"WARNING: Provided monster ID for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
-                                newProfile.callerMonster = null; 
+                                MelonLogger.Warning(
+                                    $"WARNING: Provided monster ID for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
+                                newProfile.callerMonster = null;
                             }
                             else
                             {
@@ -825,14 +899,16 @@ namespace NewSafetyHelp.CallerPatches
 
                         if (customCallerCC.consequenceCallerID >= 0) // We have a consequence caller ID provided.
                         {
-                            listOfConsequenceCallers.Add(customCallerCC.orderInCampaign, customCallerCC.consequenceCallerID); // Add for processing later.
+                            listOfConsequenceCallers.Add(customCallerCC.orderInCampaign,
+                                customCallerCC.consequenceCallerID); // Add for processing later.
                         }
-                        
+
                         // Increase Tier
                         newProfile.increaseTier = customCallerCC.callerIncreasesTier;
-                        
+
                         // Sanity check if we actually have a valid order provided.
-                        if (customCallerCC.orderInCampaign < 0 || customCallerCC.orderInCampaign >= currentCustomCampaign.customCallersInCampaign.Count)
+                        if (customCallerCC.orderInCampaign < 0 || customCallerCC.orderInCampaign >=
+                            currentCustomCampaign.customCallersInCampaign.Count)
                         {
                             MelonLogger.Error("ERROR: " +
                                               "Provided order is not valid! (Might be missing a caller(s) in between callers!)" +
@@ -841,45 +917,53 @@ namespace NewSafetyHelp.CallerPatches
                         }
                         else
                         {
-                            if (__instance.callers[customCallerCC.orderInCampaign] != null) // Adding to non-empty caller.
+                            if (__instance.callers[customCallerCC.orderInCampaign] !=
+                                null) // Adding to non-empty caller.
                             {
                                 MelonLogger.Error("ERROR:" +
                                                   $" Provided caller {newProfile.callerName}" +
                                                   " has replaced a previous caller at " +
                                                   $"position {customCallerCC.orderInCampaign}! Reducing array size by 1 to compensate. Things might break!");
-                                
+
                                 Array.Resize(ref __instance.callers, __instance.callers.Length - 1);
                             }
-                            
+
                             __instance.callers[customCallerCC.orderInCampaign] = new Caller
                             {
                                 callerProfile = newProfile
                             };
                         }
                     }
-                    
+
                     // Add references for consequence caller.
 
                     if (listOfConsequenceCallers.Count > 0)
                     {
                         foreach (KeyValuePair<int, int> customCallerIDWithConsequenceCaller in listOfConsequenceCallers)
                         {
-                            if (customCallerIDWithConsequenceCaller.Value < currentCustomCampaign.customCallersInCampaign.Count) // We have a valid ConsequenceCaller ID.
+                            if (customCallerIDWithConsequenceCaller.Value <
+                                currentCustomCampaign.customCallersInCampaign
+                                    .Count) // We have a valid ConsequenceCaller ID.
                             {
                                 // We check if the current consequence caller and the original caller exists.
-                                if ((__instance.callers[customCallerIDWithConsequenceCaller.Key] != null) && (__instance.callers[customCallerIDWithConsequenceCaller.Value] != null))
+                                if ((__instance.callers[customCallerIDWithConsequenceCaller.Key] != null) &&
+                                    (__instance.callers[customCallerIDWithConsequenceCaller.Value] != null))
                                 {
                                     // It exists
-                                    __instance.callers[customCallerIDWithConsequenceCaller.Key].callerProfile.consequenceCallerProfile = __instance.callers[customCallerIDWithConsequenceCaller.Value].callerProfile;
+                                    __instance.callers[customCallerIDWithConsequenceCaller.Key].callerProfile
+                                        .consequenceCallerProfile = __instance
+                                        .callers[customCallerIDWithConsequenceCaller.Value].callerProfile;
                                 }
                                 else
                                 {
-                                    MelonLogger.Error("ERROR: Provided consequence caller cannot be created! Check if was created correctly! (Either original caller or the current consequence caller failed)");
+                                    MelonLogger.Error(
+                                        "ERROR: Provided consequence caller cannot be created! Check if was created correctly! (Either original caller or the current consequence caller failed)");
                                 }
                             }
                             else
                             {
-                                MelonLogger.Error("ERROR. Provided original caller for consequence caller does not exist! Check that you have the correct amount of callers!");
+                                MelonLogger.Error(
+                                    "ERROR. Provided original caller for consequence caller does not exist! Check that you have the correct amount of callers!");
                             }
                         }
                     }
@@ -888,17 +972,17 @@ namespace NewSafetyHelp.CallerPatches
                 // Sanity check to prevent the callers from freezing up.
                 if (__instance.callers.Length < 2)
                 {
-                    MelonLogger.Error("ERROR: Amount of callers is less than 2. It is highly recommended to have at least 2 to avoid any soft locks by the game.");
+                    MelonLogger.Error(
+                        "ERROR: Amount of callers is less than 2. It is highly recommended to have at least 2 to avoid any soft locks by the game.");
                 }
 
                 return false; // Skip the original function
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "IsLastCallOfDay", new Type[] { })]
         public static class LastCallOfDayPatch
         {
-
             /// <summary>
             /// Changes the function to also return if the last caller of the day to check for custom callers.
             /// </summary>
@@ -907,63 +991,69 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__result"> Result of original function. </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref bool __result)
             {
-
                 Type callerController = typeof(CallerController);
-                FieldInfo lastDayNumField = callerController.GetField("lastDayNum", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                FieldInfo lastDayNumField = callerController.GetField("lastDayNum",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (lastDayNumField == null)
                 {
-                    MelonLogger.Error($"CallerController: lastDayNumField is null! Unable of checking if caller is last day.");
+                    MelonLogger.Error(
+                        $"CallerController: lastDayNumField is null! Unable of checking if caller is last day.");
                     return true;
                 }
-                
+
                 if (!CustomCampaignGlobal.inCustomCampaign) // In main Campaign.
                 {
                     bool mainCampaignResult; // False
 
-                    if (GlobalVariables.currentDay < (int) lastDayNumField.GetValue(__instance))
+                    if (GlobalVariables.currentDay < (int)lastDayNumField.GetValue(__instance))
                     {
-                        mainCampaignResult = __instance.callers[__instance.currentCallerID + 1].callerProfile.increaseTier;
+                        mainCampaignResult = __instance.callers[__instance.currentCallerID + 1].callerProfile
+                            .increaseTier;
                     }
                     else
                     {
-                        mainCampaignResult = __instance.callers[__instance.currentCallerID + 1] == __instance.callers[__instance.callers.Length - 1];
+                        mainCampaignResult = __instance.callers[__instance.currentCallerID + 1] ==
+                                             __instance.callers[__instance.callers.Length - 1];
                     }
-                    
+
                     __result = mainCampaignResult;
                 }
                 else // Custom Campaign
                 {
-                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(__instance.currentCallerID);
+                    CustomCallerExtraInfo customCallerFound =
+                        CustomCampaignGlobal.getCustomCallerFromActiveCampaign(__instance.currentCallerID);
 
                     if (customCallerFound == null)
                     {
-                        MelonLogger.Error($"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
+                        MelonLogger.Error(
+                            $"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
 
-                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.getActiveCustomCampaign().customCallersInCampaign)
+                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.getActiveCustomCampaign()
+                                     .customCallersInCampaign)
                         {
                             MelonLogger.Error($"{customCallerE.callerName} : {customCallerE.orderInCampaign}");
                         }
-                        
+
                         return true;
                     }
-                    
+
                     // If the last caller of the day, this will result in true.
                     __result = customCallerFound.lastDayCaller;
-                    
+
                     #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Last caller of day: {__result} for caller {customCallerFound.callerName}.");
+                    MelonLogger.Msg(
+                        $"DEBUG: Last caller of day: {__result} for caller {customCallerFound.callerName}.");
                     #endif
                 }
-                
+
                 return false; // Skip the original function
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "IncreaseTier", new Type[] { })]
         public static class IncreaseTierPatch
         {
-
             /// <summary>
             /// Changes the function increase tier patch to work with better with custom campaigns.
             /// </summary>
@@ -971,22 +1061,22 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, EntryUnlockController __instance)
             {
-                
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Running increase tier!");
+                MelonLogger.Msg($"DEBUG: Running increase tier!");
                 #endif
-                
+
                 ++__instance.currentTier;
-                
+
                 // Get Private Methods (Original: this.OnIncreasedTierEvent(); )
                 Type entryUnlockControllerType = typeof(EntryUnlockController);
-                
-                FieldInfo onIncreasedTierEvent = entryUnlockControllerType.GetField("OnIncreasedTierEvent", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                FieldInfo onIncreasedTierEvent = entryUnlockControllerType.GetField("OnIncreasedTierEvent",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (onIncreasedTierEvent != null)
                 {
-                    Delegate del = (Delegate) onIncreasedTierEvent.GetValue(__instance);
-                    
+                    Delegate del = (Delegate)onIncreasedTierEvent.GetValue(__instance);
+
                     if (del != null)
                     {
                         del.DynamicInvoke(); // call with parameters if required by TierUpdate signature
@@ -994,7 +1084,7 @@ namespace NewSafetyHelp.CallerPatches
                     else
                     {
                         #if DEBUG
-                            MelonLogger.Msg("No subscribers for OnIncreasedTierEvent.");
+                        MelonLogger.Msg("No subscribers for OnIncreasedTierEvent.");
                         #endif
                     }
                 }
@@ -1004,31 +1094,33 @@ namespace NewSafetyHelp.CallerPatches
                 }
 
 
-                if (GlobalVariables.currentDay >= 7 && !CustomCampaignGlobal.inCustomCampaign) // Patched to work better with custom campaigns.
+                if (GlobalVariables.currentDay >= 7 &&
+                    !CustomCampaignGlobal.inCustomCampaign) // Patched to work better with custom campaigns.
                 {
                     return false;
                 }
-                   
-                GlobalVariables.mainCanvasScript.CreateError("PERMISSIONS HAVE BEEN UPDATED. NEW ENTRIES NOW AVAILABLE.");
-                
+
+                GlobalVariables.mainCanvasScript.CreateError(
+                    "PERMISSIONS HAVE BEEN UPDATED. NEW ENTRIES NOW AVAILABLE.");
+
                 return false; // Skip the original function
             }
         }
-        
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", new [] { typeof(MonsterProfile)})]
+
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", new[] { typeof(MonsterProfile) })]
         public static class SubmitAnswerPatch
         {
-
             /// <summary>
             /// Changes the function to work with better with custom campaigns. By also increasing tier on last call if available.
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="monsterID"> Reference to parameter having the monster ID. </param>
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref MonsterProfile monsterID)
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+                ref MonsterProfile monsterID)
             {
-                
-                FieldInfo _onCallConcluded = typeof(CallerController).GetField("OnCallConcluded", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static |  BindingFlags.Public);
+                FieldInfo _onCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
                 if (_onCallConcluded == null)
                 {
@@ -1046,35 +1138,40 @@ namespace NewSafetyHelp.CallerPatches
                     else
                     {
                         #if DEBUG
-                            MelonLogger.Msg("DEBUG WARNING: OnCallConcluded has no subscribers unable of executing. Ignoring.");
+                        MelonLogger.Msg(
+                            "DEBUG WARNING: OnCallConcluded has no subscribers unable of executing. Ignoring.");
                         #endif
                     }
                 }
-                
+
                 // Some reflection.
-                MethodInfo _newCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+                MethodInfo _newCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
                 if (_newCallRoutine == null)
                 {
                     MelonLogger.Error("ERROR: NewCallRoutine is null. Calling original function.");
                     return true;
                 }
-                      
-                IEnumerator newCallRoutine = (IEnumerator)_newCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
-                IEnumerator newCallRoutineDefaultValues = (IEnumerator)_newCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
 
-                
+                IEnumerator newCallRoutine = (IEnumerator)_newCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
+                IEnumerator newCallRoutineDefaultValues =
+                    (IEnumerator)_newCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
+
+
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
-                
-                FieldInfo _callerAudioSource = typeof(CallerController).GetField("callerAudioSource", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static |  BindingFlags.Public);
+
+                FieldInfo _callerAudioSource = typeof(CallerController).GetField("callerAudioSource",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
                 if (_callerAudioSource == null)
                 {
                     MelonLogger.Error("ERROR: callerAudioSource is null. Calling original function.");
                     return true;
                 }
-                
-                FieldInfo _triggerGameOver = typeof(CallerController).GetField("triggerGameOver", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static |  BindingFlags.Public);
+
+                FieldInfo _triggerGameOver = typeof(CallerController).GetField("triggerGameOver",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
                 if (_triggerGameOver == null)
                 {
@@ -1084,148 +1181,167 @@ namespace NewSafetyHelp.CallerPatches
 
                 AudioSource callerAudioSource = (AudioSource)_callerAudioSource.GetValue(__instance);
                 callerAudioSource.Stop(); // __instance.callerAudioSource.Stop();
-                
+
                 if (__instance.arcadeMode)
                 {
-                    
-                  ++__instance.currentArcadeCallTotal;
-                  
-                  if (__instance.callTimer > __instance.callTimerMinimum)
-                  {
-                      __instance.callTimer -= 5;
-                  }
-                  
-                  if (monsterID == __instance.currentCustomCaller.callerMonster)
-                  {
-                      __instance.CreateCustomCaller();
-                      
-                      __instance.StartCoroutine(newCallRoutine); // this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
-                      
-                      GlobalVariables.mainCanvasScript.NoCallerWindow();
-                      
-                     ++__instance.currentArcadeCombo;
-                     
-                    float num = __instance.currentArcadeCombo;
-                    if (num > 10.0)
+                    ++__instance.currentArcadeCallTotal;
+
+                    if (__instance.callTimer > __instance.callTimerMinimum)
                     {
-                        num = 10f;
+                        __instance.callTimer -= 5;
                     }
-                    
-                    __instance.playerScore += __instance.pointsPerCall * num;
-                    if (__instance.currentArcadeCombo <= __instance.highestArcadeCombo)
+
+                    if (monsterID == __instance.currentCustomCaller.callerMonster)
                     {
-                        return false;
+                        __instance.CreateCustomCaller();
+
+                        __instance.StartCoroutine(
+                            newCallRoutine); // this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
+
+                        GlobalVariables.mainCanvasScript.NoCallerWindow();
+
+                        ++__instance.currentArcadeCombo;
+
+                        float num = __instance.currentArcadeCombo;
+                        if (num > 10.0)
+                        {
+                            num = 10f;
+                        }
+
+                        __instance.playerScore += __instance.pointsPerCall * num;
+                        if (__instance.currentArcadeCombo <= __instance.highestArcadeCombo)
+                        {
+                            return false;
+                        }
+
+                        __instance.highestArcadeCombo = __instance.currentArcadeCombo;
                     }
-                    __instance.highestArcadeCombo = __instance.currentArcadeCombo;
-                  }
-                  else
-                  { 
-                        __instance.currentArcadeCombo = 0; 
+                    else
+                    {
+                        
+                        __instance.currentArcadeCombo = 0;
                         __instance.CreateCustomCaller();
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                         ++__instance.currentStrikes;
-                        
-                        MethodInfo _colorLifeImages = typeof(CallerController).GetMethod("ColorLifeImages", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-                        MethodInfo _cameraShake = typeof(CallerController).GetMethod("CameraShake", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-                        MethodInfo _arcadeFailureRoutine = typeof(CallerController).GetMethod("ArcadeFailureRoutine", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+
+                        MethodInfo _colorLifeImages = typeof(CallerController).GetMethod("ColorLifeImages",
+                            BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+                        MethodInfo _cameraShake = typeof(CallerController).GetMethod("CameraShake",
+                            BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+                        MethodInfo _arcadeFailureRoutine = typeof(CallerController).GetMethod("ArcadeFailureRoutine",
+                            BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
 
                         if (_colorLifeImages == null || _cameraShake == null || _arcadeFailureRoutine == null)
                         {
-                            MelonLogger.Error("ERROR: ColorLifeImages or CameraShake or ArcadeFailureRoutine is null. Calling original function.");
+                            MelonLogger.Error(
+                                "ERROR: ColorLifeImages or CameraShake or ArcadeFailureRoutine is null. Calling original function.");
                             return true;
                         }
-                        
+
                         _colorLifeImages.Invoke(__instance, null); // __instance.ColorLifeImages();
-                        
+
                         IEnumerator cameraShake = (IEnumerator)_cameraShake.Invoke(__instance, new object[] { 0.25f });
-                        
+
                         if (cameraShake != null)
                         {
-                            __instance.StartCoroutine(cameraShake); // __instance.StartCoroutine(__instance.CameraShake(0.25f));
+                            __instance.StartCoroutine(
+                                cameraShake); // __instance.StartCoroutine(__instance.CameraShake(0.25f));
                         }
-                        
+
                         if (__instance.currentStrikes >= __instance.strikesToFailure)
                         {
-                            
-                            IEnumerator arcadeFailureRoutine = (IEnumerator)_arcadeFailureRoutine.Invoke(__instance, null);
-                            __instance.StartCoroutine(arcadeFailureRoutine); // __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
+                            IEnumerator arcadeFailureRoutine =
+                                (IEnumerator)_arcadeFailureRoutine.Invoke(__instance, null);
+                            __instance.StartCoroutine(
+                                arcadeFailureRoutine); // __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
                         }
                         else
                         {
-                            __instance.StartCoroutine(newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
+                            __instance.StartCoroutine(
+                                newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
                         }
-                  }
+                    }
                 }
-                else if ((bool) _triggerGameOver.GetValue(__instance)) // __instance.triggerGameOver
+                else if ((bool)_triggerGameOver.GetValue(__instance)) // __instance.triggerGameOver
                 {
                     GlobalVariables.mainCanvasScript.PlayGameOverCutscene();
                 }
-                else
+                else // Main Game
                 {
-                    
-                    MethodInfo _checkCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+                    MethodInfo _checkCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer",
+                        BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
 
                     if (_checkCallerAnswer == null)
                     {
                         MelonLogger.Error("ERROR: CheckCallerAnswer is null. Calling original function.");
                         return true;
                     }
-                    
-                    _checkCallerAnswer.Invoke(__instance, new object[] {monsterID}); // __instance.CheckCallerAnswer(monsterID);
-                    
+
+                    _checkCallerAnswer.Invoke(__instance,
+                        new object[] { monsterID }); // __instance.CheckCallerAnswer(monsterID);
+
                     // Before checking, it is the last call of the day, we check if we can increase the tier.
-                    
+
                     #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Increase tier? (For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) {__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
+                    MelonLogger.Msg(
+                        $"DEBUG: Increase tier? (For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) {__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
                     #endif
-                    
+
                     if (__instance.callers[__instance.currentCallerID].callerProfile.increaseTier)
                     {
                         __instance.IncreaseTier();
                     }
-                    
+
                     if (__instance.IsLastCallOfDay())
                     {
-                        if (!GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) && GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                        if (!GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) &&
+                            GlobalVariables.currentDay > 1 &&
+                            GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
-                            __instance.StartCoroutine(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
-                        
+                            __instance.StartCoroutine(
+                                newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
+
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
                         }
-                    
-                        if (GlobalVariables.isXmasDLC && GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+
+                        if (GlobalVariables.isXmasDLC &&
+                            GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold &&
+                            GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
-                            __instance.StartCoroutine(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
-                        
+                            __instance.StartCoroutine(
+                                newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
+
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
                         }
-                    
-                        FieldInfo _lastDayNum = typeof(CallerController).GetField("lastDayNum", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+                        FieldInfo _lastDayNum = typeof(CallerController).GetField("lastDayNum",
+                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
                         if (_lastDayNum == null)
                         {
                             MelonLogger.Error("ERROR: lastDayNum is null. Calling original function.");
                             return true;
                         }
-                    
-                        if (GlobalVariables.currentDay < (int) _lastDayNum.GetValue(__instance)) //__instance.lastDayNum
+
+                        if (GlobalVariables.currentDay < (int)_lastDayNum.GetValue(__instance)) //__instance.lastDayNum
                         {
-                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine()); //  GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
-                            
+                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
+                                .EndDayRoutine()); //  GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
+
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
                         }
-                    
                     }
-                  
+
                     if (__instance.currentCallerID + 1 < __instance.callers.Length)
                     {
-                        __instance.StartCoroutine(newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine()); 
+                        __instance.StartCoroutine(
+                            newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine()); 
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                     }
-                  
+
                     if (GlobalVariables.isXmasDLC && __instance.currentCallerID == __instance.callers.Length - 4)
                     {
                         // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
@@ -1237,16 +1353,15 @@ namespace NewSafetyHelp.CallerPatches
                         GlobalVariables.mainCanvasScript.cameraAnimator.SetBool("xmasTension", false);
                     }
                 }
-                
+
                 return false; // Skip the original function
             }
         }
-        
-        
+
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "AnswerCaller", new Type[] { })]
         public static class AnswerCallerPatch
         {
-
             /// <summary>
             /// Patches answer caller to have more features for custom campaigns.
             /// </summary>
@@ -1254,18 +1369,21 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
-
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Called Answer Caller Method.");
+                MelonLogger.Msg($"DEBUG: Called Answer Caller Method.");
                 #endif
-                
-                FieldInfo _givenWarning = typeof(CallerController).GetField("givenWarning", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-                FieldInfo _firstCaller = typeof(CallerController).GetField("firstCaller", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-                MethodInfo _answerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+
+                FieldInfo _givenWarning = typeof(CallerController).GetField("givenWarning",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+                FieldInfo _firstCaller = typeof(CallerController).GetField("firstCaller",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+                MethodInfo _answerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall",
+                    BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
 
                 if (_givenWarning == null || _answerDynamicCall == null || _firstCaller == null)
                 {
-                    MelonLogger.Error("ERROR: givenWarning or AnswerDynamicCall or firstCaller is null. Calling original function.");
+                    MelonLogger.Error(
+                        "ERROR: givenWarning or AnswerDynamicCall or firstCaller is null. Calling original function.");
                     return true;
                 }
 
@@ -1273,42 +1391,71 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign.
                 {
-                    if (GlobalVariables.isXmasDLC && GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                    if (GlobalVariables.isXmasDLC &&
+                        GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold &&
+                        GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                     {
                         __instance.TriggerGameOver();
                     }
-                    else if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) && GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                    else if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() &&
+                             !GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) &&
+                             GlobalVariables.currentDay > 1 &&
+                             GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                     {
                         __instance.TriggerGameOver();
                     }
-                    else if (GlobalVariables.currentDay == 1 && __instance.callersToday == 3 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (GlobalVariables.currentDay == 1 && __instance.callersToday == 3 &&
+                             !__instance.ScoreIsPassing(__instance.warningThreshold) &&
+                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _answerDynamicCall.Invoke(__instance,
+                            new object[]
+                                { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
                         _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
-                    else if (GlobalVariables.currentDay == 2 && __instance.callersToday == 2 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (GlobalVariables.currentDay == 2 && __instance.callersToday == 2 &&
+                             !__instance.ScoreIsPassing(__instance.warningThreshold) &&
+                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _answerDynamicCall.Invoke(__instance,
+                            new object[]
+                                { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
                         _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
-                    else if (GlobalVariables.currentDay == 3 && __instance.callersToday == 3 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (GlobalVariables.currentDay == 3 && __instance.callersToday == 3 &&
+                             !__instance.ScoreIsPassing(__instance.warningThreshold) &&
+                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _answerDynamicCall.Invoke(__instance,
+                            new object[]
+                                { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
                         _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
-                    else if (GlobalVariables.currentDay == 4 && __instance.callersToday == 4 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (GlobalVariables.currentDay == 4 && __instance.callersToday == 4 &&
+                             !__instance.ScoreIsPassing(__instance.warningThreshold) &&
+                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _answerDynamicCall.Invoke(__instance,
+                            new object[]
+                                { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
                         _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
-                    else if (GlobalVariables.currentDay == 5 && __instance.callersToday == 5 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (GlobalVariables.currentDay == 5 && __instance.callersToday == 5 &&
+                             !__instance.ScoreIsPassing(__instance.warningThreshold) &&
+                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _answerDynamicCall.Invoke(__instance,
+                            new object[]
+                                { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
                         _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
-                    else if (GlobalVariables.currentDay == 6 && __instance.callersToday == 7 && !__instance.ScoreIsPassing(__instance.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (GlobalVariables.currentDay == 6 && __instance.callersToday == 7 &&
+                             !__instance.ScoreIsPassing(__instance.warningThreshold) &&
+                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                        _answerDynamicCall.Invoke(__instance,
+                            new object[]
+                                { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
                         _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
                     else
@@ -1318,11 +1465,10 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else if (CustomCampaignGlobal.inCustomCampaign)
                 {
-                    
                     #if DEBUG
-                         MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
+                    MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
                     #endif
-                    
+
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
@@ -1331,25 +1477,30 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    int[] callersTodayMainCampaign = new int[] {3, 2, 3, 4, 5, 7};
+                    int[] callersTodayMainCampaign = new int[] { 3, 2, 3, 4, 5, 7 };
 
                     // Not Arcade Mode, is last call of day?, not DLC, threshold correct, current day is after day 1 and no save immunity.
-                    if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(customCampaign.gameOverThreshold) && GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                    if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC &&
+                        !__instance.ScoreIsPassing(customCampaign.gameOverThreshold) &&
+                        GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                     {
                         __instance.TriggerGameOver();
                     }
-                    else if (!__instance.ScoreIsPassing(customCampaign.warningThreshold) && !(bool) _givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (!__instance.ScoreIsPassing(customCampaign.warningThreshold) &&
+                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Warning caller checks started.");
+                        MelonLogger.Msg($"DEBUG: Warning caller checks started.");
                         #endif
-                        
+
                         int callersTodayRequiredWarning;
-                        
-                        if (GlobalVariables.currentDay <= customCampaign.warningCallThresholdCallerAmounts.Count) // We have enough information per day until the warning call appears.
+
+                        if (GlobalVariables.currentDay <=
+                            customCampaign.warningCallThresholdCallerAmounts
+                                .Count) // We have enough information per day until the warning call appears.
                         {
-                            callersTodayRequiredWarning = customCampaign.warningCallThresholdCallerAmounts[GlobalVariables.currentDay - 1];
+                            callersTodayRequiredWarning =
+                                customCampaign.warningCallThresholdCallerAmounts[GlobalVariables.currentDay - 1];
                         }
                         else
                         {
@@ -1364,72 +1515,86 @@ namespace NewSafetyHelp.CallerPatches
                         }
 
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Warning caller check for callers today required: {callersTodayRequiredWarning}. Current amount of callers: {__instance.callersToday}.");
+                        MelonLogger.Msg(
+                            $"DEBUG: Warning caller check for callers today required: {callersTodayRequiredWarning}. Current amount of callers: {__instance.callersToday}.");
                         #endif
-                        
-                        if (__instance.callersToday == callersTodayRequiredWarning) // Now the warning call should appear.
-                        {
-                            
-                            CustomCallerExtraInfo warningCallerToday = null;
-                            
-                            // Try finding a warning caller.
-                            if (customCampaign.customWarningCallersInCampaign.Count > 0) // We actually have any warning call to insert here.
-                            {
-                                
-                                if (customCampaign.customWarningCallersInCampaign.Exists(warningCaller => warningCaller.warningCallDay <= -1)) // If we have warning caller without a day attached we use this one before trying to find a more fitting one.
-                                {
 
-                                    List<CustomCallerExtraInfo> allWarningCallsWithoutDay = customCampaign.customWarningCallersInCampaign.FindAll(warningCaller => warningCaller.warningCallDay <= -1);
+                        if (__instance.callersToday ==
+                            callersTodayRequiredWarning) // Now the warning call should appear.
+                        {
+                            CustomCallerExtraInfo warningCallerToday = null;
+
+                            // Try finding a warning caller.
+                            if (customCampaign.customWarningCallersInCampaign.Count >
+                                0) // We actually have any warning call to insert here.
+                            {
+                                if (customCampaign.customWarningCallersInCampaign.Exists(warningCaller =>
+                                        warningCaller.warningCallDay <=
+                                        -1)) // If we have warning caller without a day attached we use this one before trying to find a more fitting one.
+                                {
+                                    List<CustomCallerExtraInfo> allWarningCallsWithoutDay =
+                                        customCampaign.customWarningCallersInCampaign.FindAll(warningCaller =>
+                                            warningCaller.warningCallDay <= -1);
 
                                     if (allWarningCallsWithoutDay.Count > 0)
                                     {
-                                        warningCallerToday = allWarningCallsWithoutDay[Random.Range(0, allWarningCallsWithoutDay.Count)]; // Choose a random one from the available list.
+                                        warningCallerToday =
+                                            allWarningCallsWithoutDay
+                                                [Random.Range(0, allWarningCallsWithoutDay.Count)]; // Choose a random one from the available list.
                                     }
                                 }
-                                
+
                                 // Try finding a warning call that is set for the current day.
-                                List<CustomCallerExtraInfo> allWarningCallsForToday = customCampaign.customWarningCallersInCampaign.FindAll(warningCaller => warningCaller.warningCallDay == GlobalVariables.currentDay);
+                                List<CustomCallerExtraInfo> allWarningCallsForToday =
+                                    customCampaign.customWarningCallersInCampaign.FindAll(warningCaller =>
+                                        warningCaller.warningCallDay == GlobalVariables.currentDay);
                                 if (allWarningCallsForToday.Count > 0)
                                 {
-                                    warningCallerToday = allWarningCallsForToday[Random.Range(0, allWarningCallsForToday.Count)]; // Choose a random one from the available list.
+                                    warningCallerToday =
+                                        allWarningCallsForToday
+                                            [Random.Range(0, allWarningCallsForToday.Count)]; // Choose a random one from the available list.
                                 }
                             }
 
                             // If we found a warning call to replace it, we insert it here.
                             if (warningCallerToday != null)
                             {
-                                
                                 #if DEBUG
-                                    MelonLogger.Msg($"DEBUG: Warning caller found to replace! {warningCallerToday.callerName}.");
+                                MelonLogger.Msg(
+                                    $"DEBUG: Warning caller found to replace! {warningCallerToday.callerName}.");
                                 #endif
-                                
+
                                 CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
-                                
+
                                 newProfile.callerName = warningCallerToday.callerName;
                                 newProfile.callTranscription = warningCallerToday.callTranscript;
 
                                 // Fallback for missing picture or audio.
-                                MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                
-                                MethodInfo getRandomClip = typeof(CallerController).GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                                MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic",
+                                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                                MethodInfo getRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
+                                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                                 if (getRandomPicMethod == null || getRandomClip == null)
                                 {
-                                    MelonLogger.Error("ERROR: getRandomPicMethod or getRandomClip is null! Calling original function.");
+                                    MelonLogger.Error(
+                                        "ERROR: getRandomPicMethod or getRandomClip is null! Calling original function.");
                                     return true;
                                 }
-                                
+
                                 if (warningCallerToday.callerImage != null)
                                 {
                                     newProfile.callerPortrait = warningCallerToday.callerImage;
                                 }
                                 else
                                 {
-                                    MelonLogger.Warning("WARNING: Warning-Caller has no caller image, using random image.");
-                                    
-                                    newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, null);
+                                    MelonLogger.Warning(
+                                        "WARNING: Warning-Caller has no caller image, using random image.");
+
+                                    newProfile.callerPortrait = (Sprite)getRandomPicMethod.Invoke(__instance, null);
                                 }
-                                
+
                                 if (warningCallerToday.callerClip != null)
                                 {
                                     newProfile.callerClip = warningCallerToday.callerClip;
@@ -1438,43 +1603,54 @@ namespace NewSafetyHelp.CallerPatches
                                 {
                                     if (AudioImport.currentLoadingAudios.Count > 0)
                                     {
-                                        MelonLogger.Warning("WARNING: Warning-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");
+                                        MelonLogger.Warning(
+                                            "WARNING: Warning-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");
                                     }
                                     else
                                     {
-                                        MelonLogger.Warning("WARNING: Warning-Caller has no audio! Using audio fallback. If you provided an audio but this error shows up, check for any errors before!");
+                                        MelonLogger.Warning(
+                                            "WARNING: Warning-Caller has no audio! Using audio fallback. If you provided an audio but this error shows up, check for any errors before!");
                                     }
-                                    
-                                    newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, null);
+
+                                    newProfile.callerClip = (RichAudioClip)getRandomClip.Invoke(__instance, null);
                                 }
 
-                                if (!string.IsNullOrEmpty(warningCallerToday.monsterNameAttached) || warningCallerToday.monsterIDAttached != -1)
+                                if (!string.IsNullOrEmpty(warningCallerToday.monsterNameAttached) ||
+                                    warningCallerToday.monsterIDAttached != -1)
                                 {
-                                    MelonLogger.Warning("WARNING: A monster was provided for the warning caller, but warning callers do not use any entries! Will default to none.");
+                                    MelonLogger.Warning(
+                                        "WARNING: A monster was provided for the warning caller, but warning callers do not use any entries! Will default to none.");
                                 }
-                                
+
                                 newProfile.callerMonster = null;
 
-                                
+
                                 if (warningCallerToday.callerIncreasesTier)
                                 {
-                                    MelonLogger.Warning("WARNING: Increase tier was provided for a warning caller! It will be set to false!");
+                                    MelonLogger.Warning(
+                                        "WARNING: Increase tier was provided for a warning caller! It will be set to false!");
                                 }
-                                
+
                                 newProfile.increaseTier = false;
 
-                                
+
                                 if (warningCallerToday.consequenceCallerID != -1)
                                 {
-                                    MelonLogger.Warning("WARNING: Warning callers cannot be consequence caller, ignoring option.");
+                                    MelonLogger.Warning(
+                                        "WARNING: Warning callers cannot be consequence caller, ignoring option.");
                                 }
+
                                 newProfile.consequenceCallerProfile = null;
-                                
+
                                 __instance.warningCall = newProfile;
                             }
-                            
+
                             // Insert warning caller.
-                            _answerDynamicCall.Invoke(__instance, new object[] { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
+                            _answerDynamicCall.Invoke(__instance,
+                                new object[]
+                                {
+                                    __instance.warningCall
+                                }); // __instance.AnswerDynamicCall(__instance.warningCall);
                             _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);   
                         }
                         else
@@ -1541,13 +1717,12 @@ namespace NewSafetyHelp.CallerPatches
                                     __instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length
                                 }))); // __instance.delayedLargeWindowDisplayRoutine = __instance.StartCoroutine(__instance.WaitTillCallEndRoutine(__instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length));
                     }
-
                 }
 
                 return false; // Skip function with false.
-                }
+            }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "TriggerGameOver", new Type[] { })]
         public static class TriggerGameOverPatch
         {
@@ -1558,20 +1733,22 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
-                
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Triggering GameOver Call + GameOver Cutscene.");
+                MelonLogger.Msg($"DEBUG: Triggering GameOver Call + GameOver Cutscene.");
                 #endif
-                
-                MethodInfo answerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-                FieldInfo triggerGameOver = typeof(CallerController).GetField("triggerGameOver", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                MethodInfo answerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall",
+                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo triggerGameOver = typeof(CallerController).GetField("triggerGameOver",
+                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
                 if (answerDynamicCall == null || triggerGameOver == null)
                 {
-                    MelonLogger.Error("ERROR: AnswerDynamicCall or triggerGameOver is null. Calling original function.");
+                    MelonLogger.Error(
+                        "ERROR: AnswerDynamicCall or triggerGameOver is null. Calling original function.");
                     return true;
                 }
-                
+
                 if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
                 {
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
@@ -1586,53 +1763,65 @@ namespace NewSafetyHelp.CallerPatches
                     {
                         CustomCallerExtraInfo customCallerGameOverChosen = null;
 
-                        if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller => customCaller.gameOverCallDay <= -1))
+                        if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller =>
+                                customCaller.gameOverCallDay <= -1))
                         {
                             // Will choose a random game over caller if all are set at -1.
-                            customCallerGameOverChosen = customCampaign.customGameOverCallersInCampaign.FindAll(customCaller => customCaller.gameOverCallDay <= -1)[Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
+                            customCallerGameOverChosen =
+                                customCampaign.customGameOverCallersInCampaign.FindAll(customCaller =>
+                                    customCaller.gameOverCallDay <= -1)[
+                                    Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
                         }
-                        
+
                         // If any exist that are valid for the current day, we instead replace it with those.
-                        if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller => customCaller.gameOverCallDay == GlobalVariables.currentDay))
+                        if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller =>
+                                customCaller.gameOverCallDay == GlobalVariables.currentDay))
                         {
-                            customCallerGameOverChosen = customCampaign.customGameOverCallersInCampaign.FindAll(customCaller => customCaller.gameOverCallDay == GlobalVariables.currentDay)[Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
+                            customCallerGameOverChosen =
+                                customCampaign.customGameOverCallersInCampaign.FindAll(customCaller =>
+                                    customCaller.gameOverCallDay == GlobalVariables.currentDay)[
+                                    Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
                         }
-                        
+
                         // Create custom caller and then replace gameOverCall with it.
                         if (customCallerGameOverChosen != null)
                         {
-                                
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: GameOver caller found to replace! {customCallerGameOverChosen.callerName}.");
+                            MelonLogger.Msg(
+                                $"DEBUG: GameOver caller found to replace! {customCallerGameOverChosen.callerName}.");
                             #endif
-                                
+
                             CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
-                                
+
                             newProfile.callerName = customCallerGameOverChosen.callerName;
                             newProfile.callTranscription = customCallerGameOverChosen.callTranscript;
 
                             // Fallback for missing picture or audio.
-                            MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                
-                            MethodInfo getRandomClip = typeof(CallerController).GetMethod("PickRandomClip", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                            MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic",
+                                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                            MethodInfo getRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
+                                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                             if (getRandomPicMethod == null || getRandomClip == null)
                             {
-                                MelonLogger.Error("ERROR: getRandomPicMethod or getRandomClip is null! Calling original function.");
+                                MelonLogger.Error(
+                                    "ERROR: getRandomPicMethod or getRandomClip is null! Calling original function.");
                                 return true;
                             }
-                                
+
                             if (customCallerGameOverChosen.callerImage != null)
                             {
                                 newProfile.callerPortrait = customCallerGameOverChosen.callerImage;
                             }
                             else
                             {
-                                MelonLogger.Warning("WARNING: GameOver-Caller has no caller image, using random image.");
-                                    
-                                newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, null);
+                                MelonLogger.Warning(
+                                    "WARNING: GameOver-Caller has no caller image, using random image.");
+
+                                newProfile.callerPortrait = (Sprite)getRandomPicMethod.Invoke(__instance, null);
                             }
-                                
+
                             if (customCallerGameOverChosen.callerClip != null)
                             {
                                 newProfile.callerClip = customCallerGameOverChosen.callerClip;
@@ -1641,53 +1830,61 @@ namespace NewSafetyHelp.CallerPatches
                             {
                                 if (AudioImport.currentLoadingAudios.Count > 0)
                                 {
-                                    MelonLogger.Warning("WARNING: GameOver-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");
+                                    MelonLogger.Warning(
+                                        "WARNING: GameOver-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");
                                 }
                                 else
                                 {
-                                    MelonLogger.Warning("WARNING: GameOver-Caller has no audio! Using audio fallback. If you provided an audio but this error shows up, check for any errors before!");
+                                    MelonLogger.Warning(
+                                        "WARNING: GameOver-Caller has no audio! Using audio fallback. If you provided an audio but this error shows up, check for any errors before!");
                                 }
-                                    
-                                newProfile.callerClip = (RichAudioClip) getRandomClip.Invoke(__instance, null);
+
+                                newProfile.callerClip = (RichAudioClip)getRandomClip.Invoke(__instance, null);
                             }
 
-                            if (!string.IsNullOrEmpty(customCallerGameOverChosen.monsterNameAttached) || customCallerGameOverChosen.monsterIDAttached != -1)
+                            if (!string.IsNullOrEmpty(customCallerGameOverChosen.monsterNameAttached) ||
+                                customCallerGameOverChosen.monsterIDAttached != -1)
                             {
-                                MelonLogger.Warning("WARNING: A monster was provided for the GameOver caller, but GameOver callers do not use any entries! Will default to none.");
+                                MelonLogger.Warning(
+                                    "WARNING: A monster was provided for the GameOver caller, but GameOver callers do not use any entries! Will default to none.");
                             }
-                                
+
                             newProfile.callerMonster = null;
 
-                                
+
                             if (customCallerGameOverChosen.callerIncreasesTier)
                             {
-                                MelonLogger.Warning("WARNING: Increase tier was provided for a GameOver caller! It will be set to false!");
+                                MelonLogger.Warning(
+                                    "WARNING: Increase tier was provided for a GameOver caller! It will be set to false!");
                             }
-                                
+
                             newProfile.increaseTier = false;
 
-                                
+
                             if (customCallerGameOverChosen.consequenceCallerID != -1)
                             {
-                                MelonLogger.Warning("WARNING: GameOver Callers cannot be consequence caller, ignoring option.");
+                                MelonLogger.Warning(
+                                    "WARNING: GameOver Callers cannot be consequence caller, ignoring option.");
                             }
+
                             newProfile.consequenceCallerProfile = null;
-                                
+
                             __instance.gameOverCall = newProfile; // Replace the GameOver caller
                         }
                     }
                 }
-                
+
                 // If any custom caller was "injected", we can now call it.
-                
-                answerDynamicCall.Invoke(__instance, new object[] {__instance.gameOverCall}); //__instance.AnswerDynamicCall(__instance.gameOverCall);
-                    
+
+                answerDynamicCall.Invoke(__instance,
+                    new object[] { __instance.gameOverCall }); //__instance.AnswerDynamicCall(__instance.gameOverCall);
+
                 triggerGameOver.SetValue(__instance, true); //__instance.triggerGameOver = true;
-                
+
                 return false; // Skip the original function
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "TypeText", new[] { typeof(CallerProfile), typeof(bool) })]
         public static class TypeTextPatch
         {
@@ -1700,24 +1897,24 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="skip"> If to skip the animation, can work good if no audio is provided. </param>
             // ReSharper disable once RedundantAssignment
             // ReSharper disable once InvalidXmlDocComment
-            private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance, ref IEnumerator __result, ref CallerProfile profile, ref bool skip)
+            private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance,
+                ref IEnumerator __result, ref CallerProfile profile, ref bool skip)
             {
-                
                 __result = typeText(__instance, profile, skip);
-                
+
                 return false; // Skip the original function
             }
 
             public static IEnumerator typeText(CallWindowBehavior __instance, CallerProfile profile, bool skip)
             {
                 yield return null;
-                
+
                 int characterCount = __instance.myTranscription.textInfo.characterCount;
-                
+
                 int counter = 0;
 
                 float waitTime = 0;
-                
+
                 if (profile.callerClip != null && profile.callerClip.clip != null) // If we have a valid clip.
                 {
                     waitTime = profile.callerClip.clip.length / characterCount;
@@ -1726,17 +1923,17 @@ namespace NewSafetyHelp.CallerPatches
                 {
                     skip = true;
                 }
-                
+
                 if (skip)
                 {
                     counter = characterCount;
                     __instance.myTranscription.maxVisibleCharacters = counter;
                 }
-                
+
                 while (counter < characterCount + 1)
                 {
                     __instance.myTranscription.maxVisibleCharacters = counter;
-                    
+
                     if (waitTime > 0.006)
                     {
                         counter++;
@@ -1745,7 +1942,7 @@ namespace NewSafetyHelp.CallerPatches
                     {
                         counter += 2;
                     }
-                    
+
                     if (waitTime > 0.005)
                     {
                         yield return new WaitForSecondsRealtime(waitTime);
@@ -1755,7 +1952,7 @@ namespace NewSafetyHelp.CallerPatches
                         yield return null;
                     }
                 }
-                
+
                 if (profile.callerMonster)
                 {
                     __instance.holdButton.SetActive(true);
@@ -1768,11 +1965,11 @@ namespace NewSafetyHelp.CallerPatches
                 {
                     __instance.closeButton.SetActive(true);
                 }
-                
+
                 yield return null;
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "NewCallRoutine", typeof(float), typeof(float))]
         public static class NewCallRoutinePatch
         {
@@ -1785,10 +1982,11 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="minTime"> Minimum time to wait. </param>
             /// <param name="maxTime"> Maximum time to wait. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref IEnumerator __result, ref float minTime, ref float maxTime)
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+                ref IEnumerator __result, ref float minTime, ref float maxTime)
             {
                 __result = newCallRoutine(__instance, minTime, maxTime);
-                
+
                 return false; // Skip the original function
             }
 
@@ -1802,7 +2000,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "PickRandomClip")]
         public static class PickRandomClipPatch
         {
@@ -1813,7 +2011,8 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref RichAudioClip __result)
+            private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+                ref RichAudioClip __result)
             {
                 if (__instance.randomCallerClips.Length <= 0)
                 {
@@ -1821,15 +2020,14 @@ namespace NewSafetyHelp.CallerPatches
                     __result = null;
                     return false;
                 }
-                
+
                 int num = Random.Range(0, __instance.randomCallerClips.Length);
                 __result = __instance.randomCallerClips[num];
-                
+
                 return false; // Skip the original function
             }
-            
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "PickRandomPic")]
         public static class PickRandomPicPatch
         {
@@ -1848,13 +2046,12 @@ namespace NewSafetyHelp.CallerPatches
                     __result = null;
                     return false;
                 }
-                
+
                 int num = Random.Range(0, __instance.randomCallerPics.Length);
                 __result = __instance.randomCallerPics[num];
-                
+
                 return false; // Skip the original function
             }
-            
         }
     }
 }

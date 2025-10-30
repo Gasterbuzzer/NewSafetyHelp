@@ -74,7 +74,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
                         
                         if (customCaller == null)
                         {
@@ -84,6 +84,14 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         
                         if (!GlobalVariables.isXmasDLC && customCaller.downedNetworkCaller)
                         {
+
+                            #if DEBUG
+                                MelonLogger.Msg($"DEBUG: Custom caller is set to play warped phone call sound" +
+                                                $" (INFO: Downed Network? {customCaller.downedNetworkCaller};" +
+                                                $" Caller Name: {customCaller.callerName}" +
+                                                ").");
+                            #endif
+                            
                             GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.phoneCallWarped);
                             return false;
                         }
