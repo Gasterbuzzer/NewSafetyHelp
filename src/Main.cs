@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;

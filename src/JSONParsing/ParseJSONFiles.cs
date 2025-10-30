@@ -7,6 +7,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;

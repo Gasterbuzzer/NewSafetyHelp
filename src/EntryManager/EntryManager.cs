@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local

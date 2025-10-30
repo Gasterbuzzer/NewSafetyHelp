@@ -2,6 +2,7 @@
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -328,7 +329,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 if (string.IsNullOrEmpty(customMainGameDesktopIcon))
                 {
                     MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{customMainGameDesktopIcon}'. Not updating.");
+                        $"ERROR: Invalid file name given for '{customMainGameDesktopIcon}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
                 }
                 else
                 {
@@ -363,7 +364,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
                 {
                     MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating.");
+                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
                 }
                 else
                 {
@@ -393,7 +394,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
                 if (string.IsNullOrEmpty(customDesktopLogoPath))
                 {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{customDesktopLogoPath}'. Not updating.");
+                    MelonLogger.Error($"ERROR: Invalid file name given for '{customDesktopLogoPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
                 }
                 else
                 {

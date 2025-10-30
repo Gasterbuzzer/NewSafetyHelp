@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

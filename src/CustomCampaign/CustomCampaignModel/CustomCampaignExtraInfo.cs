@@ -6,7 +6,7 @@ using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign
+namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 {
     public class CustomCampaignExtraInfo
     {

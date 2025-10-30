@@ -72,7 +72,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
 
                 if (string.IsNullOrEmpty(customCallerImageLocation))
                 {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{usermodFolderPath}'. No image will be shown.");
+                    MelonLogger.Error($"ERROR: Invalid file name given for '{usermodFolderPath}'. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
                 }
                 else
                 {
@@ -83,7 +83,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
             else
             {
                 MelonLogger.Warning(
-                    $"WARNING: No custom caller portrait given for file in {usermodFolderPath}. No image will be shown.");
+                    $"WARNING: No custom caller portrait given for file in {usermodFolderPath}. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
             }
 
             if (jObjectParsed.TryGetValue("order_in_campaign", out var orderInCampaignValue))
@@ -117,7 +117,7 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 {
                     if (!File.Exists(usermodFolderPath + "\\" + customCallerAudioClipNameValue))
                     {
-                        MelonLogger.Warning($"WARNING: Could not find provided audio file for custom caller at '{jsonFolderPath}'.");
+                        MelonLogger.Warning($"WARNING: Could not find provided audio file for custom caller at '{jsonFolderPath}' {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
                     }
                     else
                     {
@@ -171,7 +171,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
             {
                 MelonLogger.Warning(
                     $"WARNING: No order was provided for custom caller at '{jsonFolderPath}'. " +
-                    "This could accidentally replace a caller! Set to replace last caller!");
+                    "This could accidentally replace a caller! Set to replace last caller! " +
+                    $"{((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"(Caller Name: {customCallerName})" : "")}");
                 orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
             }
             

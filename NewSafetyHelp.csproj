@@ -127,8 +127,8 @@
     <Compile Include="src\CallerPatches\IncomingCallWindow\TypeTextPatches.cs" />
     <Compile Include="src\CallerPatches\MainCanvasPatches.cs" />
     <Compile Include="src\CallerPatches\ScorecardPatches.cs" />
+    <Compile Include="src\CustomCampaign\CustomCampaignModel\CustomCampaignExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\DesktopBackgroundPatches.cs" />
-    <Compile Include="src\CustomCampaign\CustomCampaignExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaign\OnDayUnlockPatches.cs" />
     <Compile Include="src\CustomCampaign\SavingManagerPatchesCC.cs" />

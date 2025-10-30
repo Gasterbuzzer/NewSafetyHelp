@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using Steamworks;
 using UnityEngine;

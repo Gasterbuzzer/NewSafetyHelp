@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
@@ -209,7 +210,16 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (profile == null)
                 {
-                    profile = __instance.callers[__instance.currentCallerID].callerProfile;
+                    if (__instance.callers[__instance.currentCallerID] != null)
+                    {
+                        profile = __instance.callers[__instance.currentCallerID].callerProfile;
+                    }
+                    else
+                    {
+                        MelonLogger.Error("ERROR: Caller is null. Unable of calling. " +
+                                          "You may have a duplicate caller (Meaning the same ID on two callers)!");
+                        return false;
+                    }
                 }
 
                 if (__instance.arcadeMode)
@@ -801,10 +811,23 @@ namespace NewSafetyHelp.CallerPatches
                         // Sanity check if we actually have a valid order provided.
                         if (customCallerCC.orderInCampaign < 0 || customCallerCC.orderInCampaign >= currentCustomCampaign.customCallersInCampaign.Count)
                         {
-                            MelonLogger.Error($"ERROR: Provided order is not valid! (Might be missing a caller(s) in between callers!) (Info: Provided Order: {customCallerCC.orderInCampaign}; CampaignSize: {currentCustomCampaign.customCallersInCampaign.Count})");
+                            MelonLogger.Error("ERROR: " +
+                                              "Provided order is not valid! (Might be missing a caller(s) in between callers!)" +
+                                              $" (Info: Provided Order: {customCallerCC.orderInCampaign}; " +
+                                              $"CampaignSize: {currentCustomCampaign.customCallersInCampaign.Count})");
                         }
                         else
                         {
+                            if (__instance.callers[customCallerCC.orderInCampaign] != null) // Adding to non-empty caller.
+                            {
+                                MelonLogger.Error("ERROR:" +
+                                                  $" Provided caller {newProfile.callerName}" +
+                                                  " has replaced a previous caller at " +
+                                                  $"position {customCallerCC.orderInCampaign}! Reducing array size by 1 to compensate. Things might break!");
+                                
+                                Array.Resize(ref __instance.callers, __instance.callers.Length - 1);
+                            }
+                            
                             __instance.callers[customCallerCC.orderInCampaign] = new Caller
                             {
                                 callerProfile = newProfile
@@ -1723,7 +1746,7 @@ namespace NewSafetyHelp.CallerPatches
                     __instance.closeButton.SetActive(true);
                 }
                 
-                yield break;
+                yield return null;
             }
         }
         

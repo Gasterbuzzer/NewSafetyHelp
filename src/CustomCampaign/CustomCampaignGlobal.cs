@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager;
 using UnityEngine;
 
