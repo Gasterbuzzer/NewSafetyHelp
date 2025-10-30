@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager;
 using Newtonsoft.Json.Linq;
@@ -43,6 +42,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
             bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0. (Also hides NEW tag from entry name)
 
             bool doShowNewTagForMainGameEntries = false; // If to show the NEW in entry names when the permission is set 0 for the first day.
+
+            bool skipCallersCorrectly = false; // If to always skip callers with the answer being marked as "correct".
 
             // Thresholds
             int gameOverThreshold = 60; // Threshold when to trigger game over.
@@ -387,6 +388,11 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
             {
                 customDesktopLogoTransparency = (float) customDesktopLogoTransparencyValue;
             }
+            
+            if (jObjectParsed.TryGetValue("skip_callers_correctly", out var skipCallersCorrectlyValue))
+            {
+                skipCallersCorrectly = (bool) skipCallersCorrectlyValue;
+            }
 
             if (jObjectParsed.TryGetValue("custom_desktop_logo_name", out var customDesktopLogoNameValue))
             {
@@ -416,6 +422,8 @@ namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
                 removeExistingEntries = removeAllExistingEntries,
                 resetDefaultEntriesPermission = resetDefaultEntriesPermission,
                 doShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
+                
+                skipCallersCorrectly = skipCallersCorrectly,
 
                 loadingTexts = loadingTexts,
 

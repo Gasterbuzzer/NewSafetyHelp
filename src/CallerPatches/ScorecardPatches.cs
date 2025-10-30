@@ -81,7 +81,7 @@ namespace NewSafetyHelp.CallerPatches
                         }
                         
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}.");
+                            MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}. (Info: {caller.answeredCorrectly})");
                         #endif
                         
                         if (customCallerFound.lastDayCaller)

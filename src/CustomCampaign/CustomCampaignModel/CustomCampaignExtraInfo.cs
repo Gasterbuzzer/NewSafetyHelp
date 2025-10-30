@@ -41,6 +41,8 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public int gameOverThreshold = 60;  // Game Over Threshold
         public int warningThreshold = 60;  // Warning Threshold
         public List<int> warningCallThresholdCallerAmounts  = new List<int>(); // Amount of calls per day until the warning is allowed to appear.
+
+        public bool skipCallersCorrectly = false; // If all the callers should be marked as correct and skipped.
         
         // Date and Username
         public string desktopUsernameText = "";

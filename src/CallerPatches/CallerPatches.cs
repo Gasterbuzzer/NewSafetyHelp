@@ -477,27 +477,50 @@ namespace NewSafetyHelp.CallerPatches
                     }
                     else // If wrong
                     {
-                        __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
-                        if (GlobalVariables.isXmasDLC) // If wrong and DLC
+                        if (CustomCampaignGlobal.inCustomCampaign)
                         {
-                            // Get TriggerXMAS Lights
-                            MethodInfo triggerXmasLight = callerController.GetMethod("TriggerXmasLight", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                            CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                             
-                            if (triggerXmasLight == null)
+                            if (customCampaign == null)
                             {
-                                MelonLogger.Error("ERROR: triggerXmasLight is null!");
-                                return true;
+                                MelonLogger.Error("ERROR: CustomCampaign is null! Unable of checking if to skip checking the caller answer.");
+                                __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
+                                return false;
                             }
-                            
-                            triggerXmasLight.Invoke(__instance, new object[] { });
 
-                            GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
+                            if (customCampaign.skipCallersCorrectly)
+                            {
+                                __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                            }
+                            else
+                            {
+                                __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
+                            }
                         }
-
-                        // Debug Info in case the replacement worked.
-                        if (found)
+                        else
                         {
-                            MelonLogger.Msg("INFO: Selected the wrong replaced entry.");
+                            __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
+                            if (GlobalVariables.isXmasDLC) // If wrong and DLC
+                            {
+                                // Get TriggerXMAS Lights
+                                MethodInfo triggerXmasLight = callerController.GetMethod("TriggerXmasLight", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                            
+                                if (triggerXmasLight == null)
+                                {
+                                    MelonLogger.Error("ERROR: triggerXmasLight is null!");
+                                    return true;
+                                }
+                            
+                                triggerXmasLight.Invoke(__instance, new object[] { });
+
+                                GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
+                            }
+
+                            // Debug Info in case the replacement worked.
+                            if (found)
+                            {
+                                MelonLogger.Msg("INFO: Selected the wrong replaced entry.");
+                            }
                         }
                     }
                 }
