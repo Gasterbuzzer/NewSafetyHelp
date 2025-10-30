@@ -672,7 +672,7 @@ namespace NewSafetyHelp.CallerPatches
                         
                         if (customCaller == null)
                         {
-                            MelonLogger.Error("ERROR: Custom campaign was null. Unable of checking for downed network parameter. Calling original function.");
+                            MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
                             return true;
                         }
 

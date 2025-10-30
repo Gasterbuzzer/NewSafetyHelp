@@ -446,7 +446,11 @@ namespace NewSafetyHelp.CallerPatches
                     if (!found) // We do not replace, so we default back to the current caller.
                     {
                         monsterToCheck = __instance.callers[__instance.currentCallerID].callerProfile.callerMonster;
-                        MelonLogger.Msg($"INFO: Current entry was not replaced. The actual caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}");
+                        MelonLogger.Msg($"INFO: The caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}.");
+
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: The previous caller was not replaced by any custom caller.");
+                        #endif
                     }
 
 
@@ -747,7 +751,7 @@ namespace NewSafetyHelp.CallerPatches
                         // Sprite
                         if (customCallerCC.callerImage == null)
                         {
-                            MelonLogger.Warning("WARNING: Custom Caller does not have any valid image / sprite. Using fallback for now.");
+                            MelonLogger.Warning($"WARNING: Custom Caller '{(customCallerCC.callerName != null ? $"{customCallerCC.callerName}" : "")}' does not have any valid image / sprite. Using fallback for now.");
                             
                             newProfile.callerPortrait = (Sprite) getRandomPicMethod.Invoke(__instance, new object[] { });
                         }
