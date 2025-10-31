@@ -5,6 +5,7 @@ using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.Audio;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager;

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager;
 using UnityEngine;
@@ -181,22 +180,22 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedDays", 1);
+                currentCampaign.campaignSaveCategory.CreateEntry("savedDays", 1);
             }
 
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCurrentCaller", 0);
+                currentCampaign.campaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
             }
 
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedEntryTier", 1);
+                currentCampaign.campaignSaveCategory.CreateEntry("savedEntryTier", 1);
             }
             
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCallerArrayLength", 0);
+                currentCampaign.campaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
             }
 
             #if DEBUG
@@ -206,18 +205,18 @@ namespace NewSafetyHelp.CustomCampaign
             {
                 if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
                 {
-                    currentCampaign.campaignSaveCategory.CreateEntry<bool>($"savedCallerCorrectAnswer{i}", false);
+                    currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
                 }
             }
 
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinished", 0);
+                currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinished", 0);
             }
 
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinishedDisplay", 0);
+                currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
             }
 
             
@@ -228,7 +227,7 @@ namespace NewSafetyHelp.CustomCampaign
             {
                 if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
-                    currentCampaign.campaignSaveCategory.CreateEntry<float>($"SavedDayScore{i}", 0.0f);
+                    currentCampaign.campaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
                 }
             }
             
@@ -265,7 +264,7 @@ namespace NewSafetyHelp.CustomCampaign
             // Create Campaign Days Save Value
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
             {
-                MelonPreferences_Entry<int> currentSavedDays = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedDays", 1);
+                MelonPreferences_Entry<int> currentSavedDays = currentCampaign.campaignSaveCategory.CreateEntry("savedDays", 1);
                 currentSavedDays.Value = currentCampaign.currentDay;
             }
             else
@@ -277,7 +276,7 @@ namespace NewSafetyHelp.CustomCampaign
             // Current Caller Index
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
             {
-                MelonPreferences_Entry<int> savedCurrentCaller = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCurrentCaller", 0);
+                MelonPreferences_Entry<int> savedCurrentCaller = currentCampaign.campaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
                 savedCurrentCaller.Value = currentCampaign.savedCurrentCaller;
             }
             else
@@ -288,7 +287,7 @@ namespace NewSafetyHelp.CustomCampaign
             // Current permission tier
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
             {
-                MelonPreferences_Entry<int> currentSavedTier = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedEntryTier", 1);
+                MelonPreferences_Entry<int> currentSavedTier = currentCampaign.campaignSaveCategory.CreateEntry("savedEntryTier", 1);
                 currentSavedTier.Value = currentCampaign.currentPermissionTier;
             }
             else
@@ -299,7 +298,7 @@ namespace NewSafetyHelp.CustomCampaign
             // Correct answers.
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
             {
-                MelonPreferences_Entry<int> savedCallerArrayLength = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedCallerArrayLength", 0);
+                MelonPreferences_Entry<int> savedCallerArrayLength = currentCampaign.campaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
                 savedCallerArrayLength.Value = currentCampaign.savedCallerArrayLength;
             }
             else
@@ -312,7 +311,7 @@ namespace NewSafetyHelp.CustomCampaign
             {
                 if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
                 {
-                    MelonPreferences_Entry<bool> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry<bool>($"savedCallerCorrectAnswer{i}", false);
+                    MelonPreferences_Entry<bool> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
 
                     if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be correct but who knows.
                     {
@@ -340,7 +339,7 @@ namespace NewSafetyHelp.CustomCampaign
             // Special Values
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
             {
-                MelonPreferences_Entry<int> savedGameFinished = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinished", 0);
+                MelonPreferences_Entry<int> savedGameFinished = currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinished", 0);
                 savedGameFinished.Value = currentCampaign.savedGameFinished;
             }
             else
@@ -350,7 +349,7 @@ namespace NewSafetyHelp.CustomCampaign
             
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
             {
-                MelonPreferences_Entry<int> savedGameFinishedDisplay = currentCampaign.campaignSaveCategory.CreateEntry<int>("savedGameFinishedDisplay", 0);
+                MelonPreferences_Entry<int> savedGameFinishedDisplay = currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
                 savedGameFinishedDisplay.Value = currentCampaign.savedGameFinishedDisplay;
             }
             else
@@ -363,7 +362,7 @@ namespace NewSafetyHelp.CustomCampaign
             {
                 if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
-                    MelonPreferences_Entry<float> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry<float>($"SavedDayScore{i}", 0.0f);
+                    MelonPreferences_Entry<float> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
 
                     if (currentCampaign.savedDayScores.Count > i) // If we have enough values for "i". It should be but who knows.
                     {
@@ -485,7 +484,7 @@ namespace NewSafetyHelp.CustomCampaign
                 if (entry == null)
                 {
                     // If entry does not exist, create it with default value false.
-                    entry = currentCampaign.campaignSaveCategory.CreateEntry<bool>($"savedCallerCorrectAnswer{index}", false);
+                    entry = currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{index}", false);
                 }
 
                 flagArray[index] = entry.Value;

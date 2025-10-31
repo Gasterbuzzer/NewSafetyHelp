@@ -120,13 +120,12 @@
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\Audio\UISoundPatch.cs" />
+    <Compile Include="src\CallerPatches\CallerModel\CustomCallerExtraInfo.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
-    <Compile Include="src\CallerPatches\CustomCallerExtraInfo.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\CloseButtonPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\StartPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\TypeTextPatches.cs" />
-    <Compile Include="src\CallerPatches\MainCanvasPatches.cs" />
-    <Compile Include="src\CallerPatches\ScorecardPatches.cs" />
+    <Compile Include="src\CallerPatches\UI\MainCanvasPatches.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignModel\CustomCampaignExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaign\Desktop\DesktopBackgroundPatches.cs" />
@@ -134,6 +133,7 @@
     <Compile Include="src\CustomCampaign\Saving\SavingManagerPatchesCC.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
+    <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs" />
     <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
     <Compile Include="src\CustomVideos\CustomVideoExtraInfo.cs" />
     <Compile Include="src\CustomVideos\VideoPatches.cs" />

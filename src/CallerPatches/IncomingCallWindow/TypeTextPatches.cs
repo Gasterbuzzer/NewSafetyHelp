@@ -2,7 +2,6 @@
 using System.Reflection;
 using MelonLoader;
 using UnityEngine;
-using Object = System.Object;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {

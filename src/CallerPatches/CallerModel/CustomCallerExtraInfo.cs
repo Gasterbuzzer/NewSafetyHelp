@@ -1,4 +1,4 @@
-﻿namespace NewSafetyHelp.CallerPatches
+﻿namespace NewSafetyHelp.CallerPatches.CallerModel
 {
     public class CustomCallerExtraInfo
     {

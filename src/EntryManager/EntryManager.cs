@@ -121,12 +121,11 @@ namespace NewSafetyHelp.EntryManager
             if (monsterProfiles == null) // Empty MonsterProfile array, we skip.
             {
                 MelonLogger.Warning("WARNING: Profile to be deleted was not found! Empty entry.");
-                return;
             }
             else
             {
                 // Check if it exists and find the index of that entry.
-                int monsterProfileIndex = -1;
+                int monsterProfileIndex;
                 
                 if (profileToDelete != null)
                 {
@@ -375,7 +374,7 @@ namespace NewSafetyHelp.EntryManager
     }
     
     // Patches the entry unlocker to accept all default entries in custom campaign if the option was provided.
-    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "CheckMonsterIsUnlocked", new Type[] { typeof(MonsterProfile) })]
+    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "CheckMonsterIsUnlocked", typeof(MonsterProfile))]
     public static class CheckMonsterIsUnlockedPatch
     {
         /// <summary>

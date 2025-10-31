@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using TMPro;
 using UnityEngine;
@@ -9,7 +10,7 @@ using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
 
-namespace NewSafetyHelp.CallerPatches
+namespace NewSafetyHelp.CustomDesktop.Programs
 {
     public static class ScorecardPatches
     {

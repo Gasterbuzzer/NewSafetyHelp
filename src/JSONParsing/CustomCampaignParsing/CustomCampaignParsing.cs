@@ -2,7 +2,6 @@
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
-using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;

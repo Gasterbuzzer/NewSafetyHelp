@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
@@ -12,7 +13,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
-namespace NewSafetyHelp.CallerPatches
+namespace NewSafetyHelp.CallerPatches.UI
 {
     public static class MainCanvasPatches
     {

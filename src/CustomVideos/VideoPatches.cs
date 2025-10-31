@@ -45,7 +45,7 @@ namespace NewSafetyHelp.CustomVideos
                         yield break;
                     }
 
-                    CustomVideoExtraInfo correctVideo = null;
+                    CustomVideoExtraInfo correctVideo;
                     
                     if (customCampaign.allDesktopVideos.Exists(video => video.desktopName + video.videoURL == __instance.gameObject.name))
                     {

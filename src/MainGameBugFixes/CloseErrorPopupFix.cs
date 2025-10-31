@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.MainGameBugFixes
 {

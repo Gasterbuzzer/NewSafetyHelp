@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 

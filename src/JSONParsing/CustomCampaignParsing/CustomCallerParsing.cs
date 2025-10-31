@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches;
-using NewSafetyHelp.EntryManager;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;

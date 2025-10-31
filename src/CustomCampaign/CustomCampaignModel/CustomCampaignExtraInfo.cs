@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
