@@ -1,15 +1,144 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using MelonLoader;
+using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
+namespace NewSafetyHelp.JSONParsing.CCParsing
 {
     public static class CustomCallerParsing
     {
+        /// <summary>
+        /// Creates a custom caller from a provided json file.
+        /// </summary>
+        /// <param name="jObjectParsed"></param>
+        /// <param name="usermodFolderPath"></param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
+        public static void CreateCustomCaller(JObject jObjectParsed, string usermodFolderPath = "",
+            string jsonFolderPath = "")
+        {
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
+            {
+                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom caller. Possible syntax mistake?");
+                return;
+            }
+            
+            // Actual logic
+            string customCampaignName = "NO_CUSTOM_CAMPAIGN";
+            bool inMainCampaign = false;
+            
+            // Campaign Values
+            int orderInCampaign = -1;
+            
+            // Entry / Monster
+            string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
+            
+            // Audio
+            string customCallerAudioPath = "";
+
+            // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
+            CustomCallerExtraInfo _customCaller = ParseCustomCaller(ref jObjectParsed, 
+                ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign, 
+                ref customCallerMonsterName, ref customCallerAudioPath,
+                ref orderInCampaign, ParseJSONFiles.mainCampaignCallAmount, ref ParseJSONFiles.customCallerMainGame);
+
+            if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
+            {
+                _customCaller.monsterNameAttached = customCallerMonsterName;
+            }
+
+            // Custom Caller Audio Path (Later gets added with coroutine)
+            if (jObjectParsed.ContainsKey("custom_caller_audio_clip_name"))
+            {
+                if (string.IsNullOrEmpty(customCallerAudioPath))
+                {
+                    MelonLogger.Warning(
+                        $"WARNING: No caller audio given for file in {jsonFolderPath}. No audio will be heard.");
+                }
+                // Check if location is valid now, since we are storing it now.
+                else if (!File.Exists(customCallerAudioPath)) 
+                {
+                    MelonLogger.Error(
+                        $"ERROR: Location {jsonFolderPath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
+                }
+                else // Valid location, so we load in the value.
+                {
+                    MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
+                        (
+                            (myReturnValue) =>
+                            {
+                                if (myReturnValue != null)
+                                {
+                                    // Add the audio
+                                    _customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    _customCaller.isCallerClipLoaded = true;
+
+                                    if (AudioImport.currentLoadingAudios.Count <= 0)
+                                    {
+                                        // We finished loading all audios. We call the start function again.
+                                        AudioImport.reCallCallerListStart();
+                                    }
+                                }
+                                else
+                                {
+                                    MelonLogger.Error(
+                                        $"ERROR: Failed to load audio clip {customCallerAudioPath} for custom caller.");
+                                }
+                            },
+                            customCallerAudioPath)
+                    );
+                }
+            }
+
+            // Now after parsing all values, we add the custom caller to our map
+
+            if (inMainCampaign)
+            {
+                MelonLogger.Msg("INFO: Found entry to add to the main game.");
+                ParseJSONFiles.customCallerMainGame.Add(orderInCampaign, _customCaller);
+            }
+            else
+            {
+                // Add to correct campaign.
+                CustomCampaignExtraInfo foundCustomCampaign =
+                    CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
+                        customCampaignSearch.campaignName == customCampaignName);
+
+                if (foundCustomCampaign != null)
+                {
+                    if (_customCaller.isGameOverCaller)
+                    {
+                        foundCustomCampaign.customGameOverCallersInCampaign.Add(_customCaller);
+                    }
+                    else if (_customCaller.isWarningCaller)
+                    {
+                        foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);
+                    }
+                    else
+                    {
+                        foundCustomCampaign.customCallersInCampaign.Add(_customCaller);
+                    }
+                }
+                else
+                {
+                    #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
+                    #endif
+
+                    ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Add(_customCaller);
+                }
+            }
+
+            #if DEBUG
+            MelonLogger.Msg($"DEBUG: Finished adding this custom caller.");
+            #endif
+        }
+
         public static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign, 
             ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,

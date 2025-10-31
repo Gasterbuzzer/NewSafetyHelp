@@ -1,12 +1,53 @@
 ﻿using System.IO;
 using MelonLoader;
+using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using Newtonsoft.Json.Linq;
 
-namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
+namespace NewSafetyHelp.JSONParsing.CCParsing
 {
     public static class VideoParsing
     {
+        /// <summary>
+        /// Creates a video program from a JSON file.
+        /// </summary>
+        /// <param name="jObjectParsed"> JObject parsed. </param>
+        /// <param name="usermodFolderPath">Path to JSON file.</param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
+        public static void CreateVideo(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
+        {
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
+            {
+                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a video. Possible syntax mistake?");
+                return;
+            }
+            
+            // Campaign Values
+            string customCampaignName = "";
+
+            CustomVideoExtraInfo _customVideo = ParseVideo(ref jObjectParsed, ref usermodFolderPath,
+                ref jsonFolderPath, ref customCampaignName);
+
+            // Add to correct campaign.
+            CustomCampaignExtraInfo foundCustomCampaign =
+                CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
+                    customCampaignSearch.campaignName == customCampaignName);
+
+            if (foundCustomCampaign != null)
+            {
+                foundCustomCampaign.allDesktopVideos.Add(_customVideo);
+            }
+            else
+            {
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Found Video before the custom campaign was found / does not exist.");
+                #endif
+
+                ParseJSONFiles.missingCustomCampaignVideo.Add(_customVideo);
+            }
+        }
+        
         public static CustomVideoExtraInfo ParseVideo(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {

@@ -1,15 +1,159 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using MelonLoader;
+using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomVideos;
+using NewSafetyHelp.Emails;
+using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
+namespace NewSafetyHelp.JSONParsing.CCParsing
 {
     public static class CustomCampaignParsing
     {
+        /// <summary>
+        /// Creates a custom campaign from a provided json file.
+        /// </summary>
+        /// <param name="jObjectParsed"></param>
+        /// <param name="usermodFolderPath"></param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
+        public static void CreateCustomCampaign(JObject jObjectParsed, string usermodFolderPath = "",
+            string jsonFolderPath = "")
+        {
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
+            {
+                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom campaign. Possible syntax mistake?");
+                return;
+            }
+            
+            string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
+            
+            CustomCampaignExtraInfo _customCampaign = parseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
+                    ref jsonFolderPath, ref customCampaignName);
+            
+            // Check if any callers have to be added to this campaign.
+            if (ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<CustomCallerExtraInfo> tempList =
+                    new List<CustomCallerExtraInfo>(ParseJSONFiles.missingCustomCallerCallersCustomCampaign);
+
+                foreach (CustomCallerExtraInfo customCallerCC in tempList)
+                {
+                    if (customCallerCC.belongsToCustomCampaign == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.callerName} to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        if (customCallerCC.isGameOverCaller)
+                        {
+                            _customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
+                        }
+                        else if (customCallerCC.isWarningCaller)
+                        {
+                            _customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
+                        }
+                        else
+                        {
+                            _customCampaign.customCallersInCampaign.Add(customCallerCC);
+                        }
+
+                        ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
+                    }
+                }
+            }
+
+            // Check if any entries have to be added to this campaign.
+            if (ParseJSONFiles.missingEntriesCustomCampaign.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(ParseJSONFiles.missingEntriesCustomCampaign);
+
+                foreach (EntryExtraInfo missingEntry in tempList)
+                {
+                    if (missingEntry.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing entry to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        _customCampaign.entriesOnlyInCampaign.Add(missingEntry);
+
+                        ParseJSONFiles.missingEntriesCustomCampaign.Remove(missingEntry);
+                    }
+                }
+            }
+
+            // Check if any entries have to be added to this campaign.
+            if (ParseJSONFiles.missingReplaceEntriesCustomCampaign.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(ParseJSONFiles.missingReplaceEntriesCustomCampaign);
+
+                foreach (EntryExtraInfo missingEntry in tempList)
+                {
+                    if (missingEntry.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding 'replace' missing entry to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        _customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
+                        ParseJSONFiles.missingReplaceEntriesCustomCampaign.Remove(missingEntry);
+                    }
+                }
+            }
+
+            // Check if any emails have to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignEmails.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<EmailExtraInfo> tempList = new List<EmailExtraInfo>(ParseJSONFiles.missingCustomCampaignEmails);
+
+                foreach (EmailExtraInfo missingEmail in tempList)
+                {
+                    if (missingEmail.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing email to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        _customCampaign.emails.Add(missingEmail);
+                        ParseJSONFiles.missingCustomCampaignEmails.Remove(missingEmail);
+                    }
+                }
+            }
+
+            // Check if any videos have to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignVideo.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<CustomVideoExtraInfo> tempList = new List<CustomVideoExtraInfo>(ParseJSONFiles.missingCustomCampaignVideo);
+
+                foreach (CustomVideoExtraInfo missingVideo in tempList)
+                {
+                    if (missingVideo.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing video to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        _customCampaign.allDesktopVideos.Add(missingVideo);
+                        ParseJSONFiles.missingCustomCampaignVideo.Remove(missingVideo);
+                    }
+                }
+            }
+
+
+            // We finished adding all missing values and now add the campaign as available.
+            CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
+        }
+        
         public static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath,
             ref string customCampaignName)

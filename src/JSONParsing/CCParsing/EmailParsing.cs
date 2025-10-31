@@ -1,14 +1,64 @@
 ﻿using System.IO;
 using MelonLoader;
+using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace NewSafetyHelp.JSONParsing.CustomCampaignParsing
+namespace NewSafetyHelp.JSONParsing.CCParsing
 {
     public static class EmailParsing
     {
+        /// <summary>
+        /// Creates an email from a JSON file.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Parsed</param>
+        /// <param name="usermodFolderPath">Filepath to JSON file.</param>
+        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
+        public static void CreateEmail(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
+        {
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
+            {
+                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a email. Possible syntax mistake?");
+                return;
+            }
+            
+            // Campaign Values
+            string customCampaignName = "";
+            bool inMainCampaign = false;
+
+            EmailExtraInfo _customEmail = ParseEmail(ref jObjectParsed, ref usermodFolderPath,
+                ref jsonFolderPath,
+                ref customCampaignName, ref inMainCampaign);
+
+            if (inMainCampaign)
+            {
+                ParseJSONFiles.mainCampaignEmails.Add(_customEmail);
+            }
+            else
+            {
+                // Add to correct campaign.
+                CustomCampaignExtraInfo foundCustomCampaign =
+                    CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
+                        customCampaignSearch.campaignName == customCampaignName);
+
+                if (foundCustomCampaign != null)
+                {
+                    foundCustomCampaign.emails.Add(_customEmail);
+                }
+                else
+                {
+                    #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
+                    #endif
+
+                    ParseJSONFiles.missingCustomCampaignEmails.Add(_customEmail);
+                }
+            }
+        }
+        
         public static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign)
         {

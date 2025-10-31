@@ -5,16 +5,14 @@ using System.IO;
 using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CallerPatches;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
-using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
-using NewSafetyHelp.JSONParsing.CustomCampaignParsing;
+using NewSafetyHelp.JSONParsing.CCParsing;
 using NewSafetyHelp.JSONParsing.EntryParsing;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
@@ -63,7 +61,7 @@ namespace NewSafetyHelp.JSONParsing
         public static int amountExtra = 100000;
         
         // Campaign Information
-        const int mainCampaignCallAmount = 116;
+        public const int mainCampaignCallAmount = 116;
         
         /// <summary>
         /// Goes through all directories in the mods userdata folder and tries adding parsing it, if it contains an entry or something to be added.
@@ -116,13 +114,13 @@ namespace NewSafetyHelp.JSONParsing
                     case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
                         MelonLogger.Msg(
                             $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
-                        CreateCustomCampaign(jObjectParse, modFolderPath, jsonFolderPath);
+                        CustomCampaignParsing.CreateCustomCampaign(jObjectParse, modFolderPath, jsonFolderPath);
                         break;
 
                     case JSONParseTypes.Call: // The provided JSON is a standalone call.
                         MelonLogger.Msg(
                             $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
-                        CreateCustomCaller(jObjectParse, modFolderPath, jsonFolderPath);
+                        CustomCallerParsing.CreateCustomCaller(jObjectParse, modFolderPath, jsonFolderPath);
                         break;
 
                     case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
@@ -135,13 +133,13 @@ namespace NewSafetyHelp.JSONParsing
                     case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
                         MelonLogger.Msg(
                             $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
-                        CreateEmail(jObjectParse, modFolderPath, jsonFolderPath);
+                        EmailParsing.CreateEmail(jObjectParse, modFolderPath, jsonFolderPath);
                         break;
 
                     case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
                         MelonLogger.Msg(
                             $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
-                        CreateVideo(jObjectParse, modFolderPath, jsonFolderPath);
+                        VideoParsing.CreateVideo(jObjectParse, modFolderPath, jsonFolderPath);
                         break;
 
                     case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -209,360 +207,7 @@ namespace NewSafetyHelp.JSONParsing
             // Unknown JSON type or failed parsing the file.
             return JSONParseTypes.Invalid;
         }
-
-        /// <summary>
-        /// Creates a custom campaign from a provided json file.
-        /// </summary>
-        /// <param name="jObjectParsed"></param>
-        /// <param name="usermodFolderPath"></param>
-        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateCustomCampaign(JObject jObjectParsed, string usermodFolderPath = "",
-            string jsonFolderPath = "")
-        {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
-            {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom campaign. Possible syntax mistake?");
-                return;
-            }
-            
-            string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
-            
-            CustomCampaignExtraInfo _customCampaign = 
-                CustomCampaignParsing.CustomCampaignParsing.parseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
-                    ref jsonFolderPath, ref customCampaignName);
-            
-            // Check if any callers have to be added to this campaign.
-            if (missingCustomCallerCallersCustomCampaign.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<CustomCallerExtraInfo> tempList =
-                    new List<CustomCallerExtraInfo>(missingCustomCallerCallersCustomCampaign);
-
-                foreach (CustomCallerExtraInfo customCallerCC in tempList)
-                {
-                    if (customCallerCC.belongsToCustomCampaign == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.callerName} to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        if (customCallerCC.isGameOverCaller)
-                        {
-                            _customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
-                        }
-                        else if (customCallerCC.isWarningCaller)
-                        {
-                            _customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
-                        }
-                        else
-                        {
-                            _customCampaign.customCallersInCampaign.Add(customCallerCC);
-                        }
-
-                        missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
-                    }
-                }
-            }
-
-            // Check if any entries have to be added to this campaign.
-            if (missingEntriesCustomCampaign.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(missingEntriesCustomCampaign);
-
-                foreach (EntryExtraInfo missingEntry in tempList)
-                {
-                    if (missingEntry.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing entry to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.entriesOnlyInCampaign.Add(missingEntry);
-
-                        missingEntriesCustomCampaign.Remove(missingEntry);
-                    }
-                }
-            }
-
-            // Check if any entries have to be added to this campaign.
-            if (missingReplaceEntriesCustomCampaign.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(missingReplaceEntriesCustomCampaign);
-
-                foreach (EntryExtraInfo missingEntry in tempList)
-                {
-                    if (missingEntry.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding 'replace' missing entry to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
-                        missingReplaceEntriesCustomCampaign.Remove(missingEntry);
-                    }
-                }
-            }
-
-            // Check if any emails have to be added to a custom campaign.
-            if (missingCustomCampaignEmails.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EmailExtraInfo> tempList = new List<EmailExtraInfo>(missingCustomCampaignEmails);
-
-                foreach (EmailExtraInfo missingEmail in tempList)
-                {
-                    if (missingEmail.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing email to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.emails.Add(missingEmail);
-                        missingCustomCampaignEmails.Remove(missingEmail);
-                    }
-                }
-            }
-
-            // Check if any videos have to be added to a custom campaign.
-            if (missingCustomCampaignVideo.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<CustomVideoExtraInfo> tempList = new List<CustomVideoExtraInfo>(missingCustomCampaignVideo);
-
-                foreach (CustomVideoExtraInfo missingVideo in tempList)
-                {
-                    if (missingVideo.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing video to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.allDesktopVideos.Add(missingVideo);
-                        missingCustomCampaignVideo.Remove(missingVideo);
-                    }
-                }
-            }
-
-
-            // We finished adding all missing values and now add the campaign as available.
-            CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
-        }
         
-        /// <summary>
-        /// Creates a video program from a JSON file.
-        /// </summary>
-        /// <param name="jObjectParsed"> JObject parsed. </param>
-        /// <param name="usermodFolderPath">Path to JSON file.</param>
-        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateVideo(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
-        {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
-            {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a video. Possible syntax mistake?");
-                return;
-            }
-            
-            // Campaign Values
-            string customCampaignName = "";
-
-            CustomVideoExtraInfo _customVideo = VideoParsing.ParseVideo(ref jObjectParsed, ref usermodFolderPath,
-                ref jsonFolderPath, ref customCampaignName);
-
-            // Add to correct campaign.
-            CustomCampaignExtraInfo foundCustomCampaign =
-                CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.campaignName == customCampaignName);
-
-            if (foundCustomCampaign != null)
-            {
-                foundCustomCampaign.allDesktopVideos.Add(_customVideo);
-            }
-            else
-            {
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found Video before the custom campaign was found / does not exist.");
-                #endif
-
-                missingCustomCampaignVideo.Add(_customVideo);
-            }
-        }
-
-        /// <summary>
-        /// Creates an email from a JSON file.
-        /// </summary>
-        /// <param name="jObjectParsed">JSON Parsed</param>
-        /// <param name="usermodFolderPath">Filepath to JSON file.</param>
-        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateEmail(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
-        {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
-            {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a email. Possible syntax mistake?");
-                return;
-            }
-            
-            // Campaign Values
-            string customCampaignName = "";
-            bool inMainCampaign = false;
-
-            EmailExtraInfo _customEmail = EmailParsing.ParseEmail(ref jObjectParsed, ref usermodFolderPath,
-                ref jsonFolderPath,
-                ref customCampaignName, ref inMainCampaign);
-
-            if (inMainCampaign)
-            {
-                mainCampaignEmails.Add(_customEmail);
-            }
-            else
-            {
-                // Add to correct campaign.
-                CustomCampaignExtraInfo foundCustomCampaign =
-                    CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                        customCampaignSearch.campaignName == customCampaignName);
-
-                if (foundCustomCampaign != null)
-                {
-                    foundCustomCampaign.emails.Add(_customEmail);
-                }
-                else
-                {
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
-                    #endif
-
-                    missingCustomCampaignEmails.Add(_customEmail);
-                }
-            }
-        }
-        
-        /// <summary>
-        /// Creates a custom caller from a provided json file.
-        /// </summary>
-        /// <param name="jObjectParsed"></param>
-        /// <param name="usermodFolderPath"></param>
-        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateCustomCaller(JObject jObjectParsed, string usermodFolderPath = "",
-            string jsonFolderPath = "")
-        {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
-            {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom caller. Possible syntax mistake?");
-                return;
-            }
-            
-            // Actual logic
-            string customCampaignName = "NO_CUSTOM_CAMPAIGN";
-            bool inMainCampaign = false;
-            
-            // Campaign Values
-            int orderInCampaign = -1;
-            
-            // Entry / Monster
-            string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
-            
-            // Audio
-            string customCallerAudioPath = "";
-
-            // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo _customCaller = CustomCallerParsing.ParseCustomCaller(ref jObjectParsed, 
-                ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign, 
-                ref customCallerMonsterName, ref customCallerAudioPath,
-                ref orderInCampaign, mainCampaignCallAmount, ref customCallerMainGame);
-
-            if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
-            {
-                _customCaller.monsterNameAttached = customCallerMonsterName;
-            }
-
-            // Custom Caller Audio Path (Later gets added with coroutine)
-            if (jObjectParsed.ContainsKey("custom_caller_audio_clip_name"))
-            {
-                if (string.IsNullOrEmpty(customCallerAudioPath))
-                {
-                    MelonLogger.Warning(
-                        $"WARNING: No caller audio given for file in {jsonFolderPath}. No audio will be heard.");
-                }
-                // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customCallerAudioPath)) 
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
-                }
-                else // Valid location, so we load in the value.
-                {
-                    MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    // Add the audio
-                                    _customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    _customCaller.isCallerClipLoaded = true;
-
-                                    if (AudioImport.currentLoadingAudios.Count <= 0)
-                                    {
-                                        // We finished loading all audios. We call the start function again.
-                                        AudioImport.reCallCallerListStart();
-                                    }
-                                }
-                                else
-                                {
-                                    MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customCallerAudioPath} for custom caller.");
-                                }
-                            },
-                            customCallerAudioPath)
-                    );
-                }
-            }
-
-            // Now after parsing all values, we add the custom caller to our map
-
-            if (inMainCampaign)
-            {
-                MelonLogger.Msg("INFO: Found entry to add to the main game.");
-                customCallerMainGame.Add(orderInCampaign, _customCaller);
-            }
-            else
-            {
-                // Add to correct campaign.
-                CustomCampaignExtraInfo foundCustomCampaign =
-                    CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                        customCampaignSearch.campaignName == customCampaignName);
-
-                if (foundCustomCampaign != null)
-                {
-                    if (_customCaller.isGameOverCaller)
-                    {
-                        foundCustomCampaign.customGameOverCallersInCampaign.Add(_customCaller);
-                    }
-                    else if (_customCaller.isWarningCaller)
-                    {
-                        foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);
-                    }
-                    else
-                    {
-                        foundCustomCampaign.customCallersInCampaign.Add(_customCaller);
-                    }
-                }
-                else
-                {
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
-                    #endif
-
-                    missingCustomCallerCallersCustomCampaign.Add(_customCaller);
-                }
-            }
-
-            #if DEBUG
-                MelonLogger.Msg($"DEBUG: Finished adding this custom caller.");
-            #endif
-        }
-
         /// <summary>
         /// Function for adding a single entry.
         /// </summary>
