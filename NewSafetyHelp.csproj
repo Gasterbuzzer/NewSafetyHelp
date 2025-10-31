@@ -119,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
+    <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />
     <Compile Include="src\Audio\UISoundPatch.cs" />
     <Compile Include="src\CallerPatches\CallerModel\CustomCallerExtraInfo.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
@@ -138,8 +139,10 @@
     <Compile Include="src\CustomVideos\CustomVideoExtraInfo.cs" />
     <Compile Include="src\CustomVideos\VideoPatches.cs" />
     <Compile Include="src\Emails\EmailExtraInfo.cs" />
-    <Compile Include="src\EntryManager\EntryExtraInfo.cs" />
+    <Compile Include="src\EntryManager\EntryData\EntryExtraInfo.cs" />
+    <Compile Include="src\EntryManager\EntryListing\EntryListingPatches.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
+    <Compile Include="src\EntryManager\EntryUnlocker\EntryUnlockerPatcher.cs" />
     <Compile Include="src\ErrorDebugging\UnityLogHook.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
     <Compile Include="src\ImportFiles\ImageImport.cs" />

@@ -12,6 +12,7 @@ using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
+using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.CustomCampaignParsing;
 using NewSafetyHelp.JSONParsing.EntryParsing;

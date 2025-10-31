@@ -3,6 +3,7 @@ using MelonLoader;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager;
+using NewSafetyHelp.EntryManager.EntryData;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign

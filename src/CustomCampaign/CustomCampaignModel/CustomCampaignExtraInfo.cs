@@ -4,6 +4,7 @@ using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
+using NewSafetyHelp.EntryManager.EntryData;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
