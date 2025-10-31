@@ -448,6 +448,18 @@ namespace NewSafetyHelp.EntryManager
                 {
                     if (MainClassForMonsterEntries.copyMonsterProfiles.Contains(__instance.myProfile)) // Contained in main campaign.
                     {
+                        FieldInfo hasClickedField = typeof(EntryListingBehavior).GetField("hasClicked", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                        if (hasClickedField == null)
+                        {
+                            MelonLogger.Error("ERROR: HasClicked Method is null! Unable of setting as viewed!");
+                        }
+                        else
+                        {
+                            hasClickedField.SetValue(__instance, true);
+                        }
+                        
+                        // Set name to normal.
                         __instance.myText.text = __instance.myProfile.monsterName;
                     }   
                 }
