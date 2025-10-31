@@ -3,10 +3,11 @@ using System.Reflection;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
-namespace NewSafetyHelp.CustomCampaign
+namespace NewSafetyHelp.CustomCampaign.Saving
 {
     public static class SavingManagerPatchesCC
     {

@@ -4,9 +4,10 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
+
 // ReSharper disable UnusedMember.Local
 
-namespace NewSafetyHelp.CustomCampaign
+namespace NewSafetyHelp.CustomCampaign.Desktop
 {
     public static class OnDayUnlockPatches
     {

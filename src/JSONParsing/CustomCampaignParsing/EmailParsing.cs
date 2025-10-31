@@ -2,6 +2,7 @@
 using MelonLoader;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager;
+using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 

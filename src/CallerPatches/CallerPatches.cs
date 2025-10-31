@@ -718,7 +718,7 @@ namespace NewSafetyHelp.CallerPatches
                             if (foundMonster == null)
                             {
                                 MelonLogger.Warning(
-                                    $"WARNING: Provided Monster Name for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
+                                    $"WARNING: Provided Monster name '{customCaller.Value.monsterNameAttached}' for custom caller {customCaller.Key} was not found! Thus will not have any monster entry.");
                                 callerProfile.callerMonster = null;
                             }
                             else
@@ -871,7 +871,7 @@ namespace NewSafetyHelp.CallerPatches
                             if (foundMonster == null)
                             {
                                 MelonLogger.Warning(
-                                    $"WARNING: Provided Monster Name for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
+                                    $"WARNING: Provided Monster name '{customCallerCC.monsterNameAttached}' for custom caller {customCallerCC.callerName} was not found! Thus will not have any monster entry.");
                                 newProfile.callerMonster = null;
                             }
                             else

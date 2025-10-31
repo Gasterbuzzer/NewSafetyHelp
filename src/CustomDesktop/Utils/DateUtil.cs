@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NewSafetyHelp.CustomDesktop
+namespace NewSafetyHelp.CustomDesktop.Utils
 {
     public static class DateUtil
     {

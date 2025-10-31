@@ -2,7 +2,7 @@
 using MelonLoader;
 using UnityEngine;
 
-namespace NewSafetyHelp.EntryManager
+namespace NewSafetyHelp.ImportFiles
 {
     public static class ImageImport
     {
