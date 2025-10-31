@@ -2,7 +2,6 @@
 using MelonLoader;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
-using NewSafetyHelp.EntryManager;
 using NewSafetyHelp.EntryManager.EntryData;
 using UnityEngine;
 
@@ -53,6 +52,16 @@ namespace NewSafetyHelp.CustomCampaign
         public static CustomCallerExtraInfo getCustomCallerFromActiveCampaign(int orderID)
         {
             return getActiveCustomCampaign().customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == orderID);
+        }
+        
+        /// <summary>
+        /// Gets the custom entry by its name.
+        /// </summary>
+        /// <param name="entryName"> Name of the entry to find. </param>
+        /// <returns>EntryExtraInfo Object with the returned object. If not found, default. </returns>
+        public static EntryExtraInfo getEntryFromActiveCampaign(string entryName)
+        {
+            return getActiveCustomCampaign().entriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
         }
 
         /// <summary>
