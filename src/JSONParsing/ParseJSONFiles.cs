@@ -329,11 +329,13 @@ namespace NewSafetyHelp.JSONParsing
                 ref _watchingPhobia, ref _watchingPhobiaIncluded, ref _tightSpacePhobia, ref _tightSpacePhobiaIncluded);
 
             // Parse Default Caller
-            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref _callerName, ref _callerTranscript,
-                ref _callerImageLocation, ref _callerReplaceChance, ref _callerRestartCallAgain, ref _callerPortrait);
+            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref _callerName, 
+                ref _callerTranscript, ref _callerImageLocation, ref _callerReplaceChance, ref _callerRestartCallAgain,
+                ref _callerPortrait);
 
-            CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref _consequenceCallerName,
-                ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation, ref _consequenceCallerPortrait);
+            CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath,  ref jsonFolderPath,
+                ref _consequenceCallerName, ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation,
+                ref _consequenceCallerPortrait);
 
             // Create new extra info.
             createNewExtra(ref newExtra, ref _monsterName, ref newID, ref replaceEntry, ref _callerName,

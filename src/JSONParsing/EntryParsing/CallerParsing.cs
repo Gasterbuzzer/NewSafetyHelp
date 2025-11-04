@@ -8,8 +8,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
     public static class CallerParsing
     {
         public static void parseCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
-            ref string _callerName, ref string _callerTranscript, ref string _callerImageLocation,
-            ref float _callerReplaceChance, ref bool _callerRestartCallAgain, ref Sprite _callerPortrait)
+            ref string jsonFolderPath, ref string _callerName, ref string _callerTranscript,
+            ref string _callerImageLocation, ref float _callerReplaceChance, ref bool _callerRestartCallAgain,
+            ref Sprite _callerPortrait)
         {
             // Caller Name
             if (jsonObjectParsed.TryGetValue("caller_name", out var callerNameValue))
@@ -36,7 +37,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 }
                 else
                 {
-                    _callerPortrait = ImageImport.LoadImage(jsonObjectParsed + "\\" + _callerImageLocation,
+                    _callerPortrait = ImageImport.LoadImage(jsonFolderPath + "\\" + _callerImageLocation,
                         usermodFolderPath + "\\" + _callerImageLocation);
                 }
             }
@@ -57,7 +58,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         }
 
         public static void parseConsequenceCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
-            ref string _consequenceCallerName, ref string _consequenceCallerTranscript,
+            ref string jsonFolderPath, ref string _consequenceCallerName, ref string _consequenceCallerTranscript,
             ref string _consequenceCallerImageLocation, ref Sprite _consequenceCallerPortrait)
         {
             /* 
@@ -89,7 +90,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 }
                 else
                 {
-                    _consequenceCallerPortrait = ImageImport.LoadImage(jsonObjectParsed + "\\" + _consequenceCallerImageLocation,
+                    _consequenceCallerPortrait = ImageImport.LoadImage(jsonFolderPath + "\\" + _consequenceCallerImageLocation,
                         usermodFolderPath + "\\" + _consequenceCallerImageLocation);
                 }
             }
