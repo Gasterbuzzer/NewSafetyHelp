@@ -19,12 +19,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
         public static void CreateEmail(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
         {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
+                string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
                 MelonLogger.Error("ERROR: Provided JSON could not be parsed as a email. Possible syntax mistake?");
                 return;
             }
-            
+
             // Campaign Values
             string customCampaignName = "";
             bool inMainCampaign = false;
@@ -58,7 +59,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
         }
-        
+
         public static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign)
         {
@@ -76,46 +77,46 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (jObjectParsed.TryGetValue("email_in_main_campaign", out var emailInMainCampaignValue))
             {
-                inMainCampaign = (bool) emailInMainCampaignValue;
+                inMainCampaign = (bool)emailInMainCampaignValue;
             }
 
             if (jObjectParsed.TryGetValue("email_custom_campaign_name", out var emailCustomCampaignNameValue))
             {
-                customCampaignName = (string) emailCustomCampaignNameValue;
+                customCampaignName = (string)emailCustomCampaignNameValue;
             }
 
             if (jObjectParsed.TryGetValue("email_subject", out var emailSubjectValue))
             {
-                emailSubject = (string) emailSubjectValue;
+                emailSubject = (string)emailSubjectValue;
             }
 
             if (jObjectParsed.TryGetValue("email_sender", out var emailSenderValue))
             {
-                emailSender = (string) emailSenderValue;
+                emailSender = (string)emailSenderValue;
             }
 
             if (jObjectParsed.TryGetValue("email_body", out var emailBodyValue))
             {
-                emailBody = (string) emailBodyValue;
+                emailBody = (string)emailBodyValue;
             }
 
             if (jObjectParsed.TryGetValue("email_unlock_day", out var emailUnlockDayValue))
             {
-                emailUnlockDay = (int) emailUnlockDayValue;
+                emailUnlockDay = (int)emailUnlockDayValue;
             }
 
             if (jObjectParsed.TryGetValue("email_unlock_threshold", out var emailUnlockThresholdValue))
             {
-                emailUnlockThreshold = (int) emailUnlockThresholdValue;
+                emailUnlockThreshold = (int)emailUnlockThresholdValue;
             }
 
             if (jObjectParsed.TryGetValue("email_image", out var emailImageValue))
             {
-                string emailImagePath = (string) emailImageValue;
+                string emailImagePath = (string)emailImageValue;
 
                 if (!string.IsNullOrEmpty(emailImagePath))
                 {
-                    if (File.Exists(jsonFolderPath + "\\" + emailImagePath) || 
+                    if (File.Exists(jsonFolderPath + "\\" + emailImagePath) ||
                         File.Exists(usermodFolderPath + "\\" + emailImagePath))
                     {
                         emailImage = ImageImport.LoadImage(jsonFolderPath + "\\" + emailImagePath,
@@ -133,7 +134,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         $"WARNING: Email at {jsonFolderPath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
                 }
             }
-            
+
             return new EmailExtraInfo
             {
                 inMainCampaign = inMainCampaign,

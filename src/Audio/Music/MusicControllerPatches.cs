@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
@@ -34,6 +37,7 @@ namespace NewSafetyHelp.Audio.Music
                 }
                 
                 int chosenMusicIndex = 0;
+                bool playCustomMusic = false;
                 
                 FieldInfo _previousHoldMusicIndex = typeof(MusicController).GetField("previousHoldMusicIndex", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
@@ -78,13 +82,52 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (customCampaign.alwaysRandomMusic)
                     {
-                        for (int musicChoosingAttempt = 0; chosenMusicIndex == (int) _previousHoldMusicIndex.GetValue(__instance) && musicChoosingAttempt < 3; ++musicChoosingAttempt)
+                        int amountOfClips = 0;
+                        
+                        int customMusicAmount = customCampaign.customMusic.Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList().Count;
+                        
+                        if (!customCampaign.removeDefaultMusic)
                         {
-                            chosenMusicIndex = Random.Range(0, __instance.onHoldMusicClips.Length);
+                            amountOfClips +=  __instance.onHoldMusicClips.Length;
+                        }
+                        
+                        if (customCampaign.customMusic.Count > 0) // We have custom music
+                        {
+                            amountOfClips += customMusicAmount;
+                        }
+                        
+                        chosenMusicIndex = Random.Range(0, amountOfClips); // Set it once.
+                        
+                        for (int musicChoosingAttempt = 0;
+                             chosenMusicIndex == (int) _previousHoldMusicIndex.GetValue(__instance) && musicChoosingAttempt < 3;
+                             ++musicChoosingAttempt)
+                        {
+                            chosenMusicIndex = Random.Range(0, amountOfClips);
+                        }
+
+                        if (!customCampaign.removeDefaultMusic)
+                        {
+                            if (chosenMusicIndex >= __instance.onHoldMusicClips.Length)
+                            {
+                                playCustomMusic = true;
+                                chosenMusicIndex -= __instance.onHoldMusicClips.Length;
+                            }
+                        }
+                        else if (customCampaign.removeDefaultMusic)
+                        {
+                            playCustomMusic = true;
                         }
                         
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Chose to play the music track: {chosenMusicIndex} with the previous being {(int) _previousHoldMusicIndex.GetValue(__instance)}");
+                            MelonLogger.Msg("DEBUG: " +
+                                            $"Chose to play the music track: {chosenMusicIndex} with the previous being {(int) _previousHoldMusicIndex.GetValue(__instance)}." +
+                                            $" (From custom music? {playCustomMusic})" +
+                                            $" (Amount of clips: {amountOfClips})");
+
+                            if (playCustomMusic)
+                            {
+                                MelonLogger.Msg($"DEBUG: Amount of custom music: {customMusicAmount}.");
+                            }
                         #endif
                     
                         _previousHoldMusicIndex.SetValue(__instance, chosenMusicIndex);
@@ -112,8 +155,39 @@ namespace NewSafetyHelp.Audio.Music
                         }
                     }
                 }
-                
-                __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+
+                if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                {
+                    __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+                }
+                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                {
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaign is null! Cannot play random music. Using default logic.");
+                        return true;
+                    }
+
+                    if (playCustomMusic)
+                    {
+                        List<MusicExtraInfo> customMusicList = customCampaign.customMusic.Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList();
+                        
+                        if (customMusicList.Count > 0 && customMusicList[chosenMusicIndex].musicClip != null)
+                        {
+                            __instance.StartMusic(customMusicList[chosenMusicIndex].musicClip);
+                        }
+                        else
+                        {
+                            MelonLogger.Warning("WARNING: Music clip is empty! Possibly failed loading?");
+                        }
+                    }
+                    else if (!customCampaign.removeDefaultMusic)
+                    {
+                        __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+                    }
+                }
                 
                 return false; // Skip function with false.
             }

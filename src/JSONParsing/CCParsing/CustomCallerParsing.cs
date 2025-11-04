@@ -22,28 +22,30 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         public static void CreateCustomCaller(JObject jObjectParsed, string usermodFolderPath = "",
             string jsonFolderPath = "")
         {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
+                string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom caller. Possible syntax mistake?");
+                MelonLogger.Error(
+                    "ERROR: Provided JSON could not be parsed as a custom caller. Possible syntax mistake?");
                 return;
             }
-            
+
             // Actual logic
             string customCampaignName = "NO_CUSTOM_CAMPAIGN";
             bool inMainCampaign = false;
-            
+
             // Campaign Values
             int orderInCampaign = -1;
-            
+
             // Entry / Monster
             string customCallerMonsterName = "NO_CUSTOM_CALLER_MONSTER_NAME";
-            
+
             // Audio
             string customCallerAudioPath = "";
 
             // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo _customCaller = ParseCustomCaller(ref jObjectParsed, 
-                ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign, 
+            CustomCallerExtraInfo _customCaller = ParseCustomCaller(ref jObjectParsed,
+                ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign,
                 ref customCallerMonsterName, ref customCallerAudioPath,
                 ref orderInCampaign, ParseJSONFiles.mainCampaignCallAmount, ref ParseJSONFiles.customCallerMainGame);
 
@@ -61,7 +63,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         $"WARNING: No caller audio given for file in {jsonFolderPath}. No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customCallerAudioPath)) 
+                else if (!File.Exists(customCallerAudioPath))
                 {
                     MelonLogger.Error(
                         $"ERROR: Location {jsonFolderPath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
@@ -140,11 +142,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         }
 
         public static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
-            ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign, 
+            ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign,
             ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,
             int mainCampaignCallAmount, ref Dictionary<int, CustomCallerExtraInfo> customCallerMainGame)
         {
-            
             // Caller Information
             string customCallerName = "NO_CUSTOM_CALLER_NAME";
             string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
@@ -158,8 +159,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 -1; // If this call is due to a consequence caller. You can provide it here.
 
             Sprite customCallerImage = null;
-            
-            int customCallerMonsterID = -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
+
+            int customCallerMonsterID =
+                -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
 
             // Warning Call
 
@@ -173,11 +175,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
-                customCampaignName = (string) customCampaignAttachedValue;
+                customCampaignName = (string)customCampaignAttachedValue;
             }
             else if (jObjectParsed.TryGetValue("include_in_main_campaign", out var includeInMainCampaignValue))
             {
-                inMainCampaign = (bool) includeInMainCampaignValue;
+                inMainCampaign = (bool)includeInMainCampaignValue;
             }
             else
             {
@@ -187,21 +189,22 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (jObjectParsed.TryGetValue("custom_caller_name", out var customCallerNameValue))
             {
-                customCallerName = (string) customCallerNameValue;
+                customCallerName = (string)customCallerNameValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_transcript", out var customCallerTranscriptValue))
             {
-                customCallerTranscript = (string) customCallerTranscriptValue;
+                customCallerTranscript = (string)customCallerTranscriptValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_image_name", out var customCallerImageNameValue))
             {
-                string customCallerImageLocation = (string) customCallerImageNameValue;
+                string customCallerImageLocation = (string)customCallerImageNameValue;
 
                 if (string.IsNullOrEmpty(customCallerImageLocation))
                 {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{usermodFolderPath}'. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
+                    MelonLogger.Error(
+                        $"ERROR: Invalid file name given for '{usermodFolderPath}'. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
                 }
                 else
                 {
@@ -217,27 +220,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (jObjectParsed.TryGetValue("order_in_campaign", out var orderInCampaignValue))
             {
-                orderInCampaign = (int) orderInCampaignValue;
+                orderInCampaign = (int)orderInCampaignValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_monster_name", out var customCallerMonsterNameValue))
             {
-                customCallerMonsterName = (string) customCallerMonsterNameValue;
+                customCallerMonsterName = (string)customCallerMonsterNameValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_monster_id", out var customCallerMonsterIDValue))
             {
-                customCallerMonsterID = (int) customCallerMonsterIDValue;
+                customCallerMonsterID = (int)customCallerMonsterIDValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_increases_tier", out var customCallerIncreaseTierValue))
             {
-                increasesTier = (bool) customCallerIncreaseTierValue;
+                increasesTier = (bool)customCallerIncreaseTierValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_last_caller_day", out var customCallerLastCallerDayValue))
             {
-                isLastCallerOfDay = (bool) customCallerLastCallerDayValue;
+                isLastCallerOfDay = (bool)customCallerLastCallerDayValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_audio_clip_name", out var customCallerAudioClipNameValue))
@@ -246,7 +249,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (!File.Exists(usermodFolderPath + "\\" + customCallerAudioClipNameValue))
                     {
-                        MelonLogger.Warning($"WARNING: Could not find provided audio file for custom caller at '{jsonFolderPath}' {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
+                        MelonLogger.Warning(
+                            $"WARNING: Could not find provided audio file for custom caller at '{jsonFolderPath}' {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
                     }
                     else
                     {
@@ -257,42 +261,41 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     customCallerAudioPath = jsonFolderPath + "\\" + customCallerAudioClipNameValue;
                 }
-                
-                
             }
 
-            if (jObjectParsed.TryGetValue("custom_caller_consequence_caller_id", out var customCallerConsequenceCallerIDValue))
+            if (jObjectParsed.TryGetValue("custom_caller_consequence_caller_id",
+                    out var customCallerConsequenceCallerIDValue))
             {
-                customCallerConsequenceCallerID = (int) customCallerConsequenceCallerIDValue;
+                customCallerConsequenceCallerID = (int)customCallerConsequenceCallerIDValue;
             }
 
             if (jObjectParsed.TryGetValue("custom_caller_downed_network", out var customCallerDownedNetworkValue))
             {
-                downedCall = (bool) customCallerDownedNetworkValue;
+                downedCall = (bool)customCallerDownedNetworkValue;
             }
 
             // Warning Caller Section
 
             if (jObjectParsed.TryGetValue("is_warning_caller", out var isWarningCallerValue))
             {
-                isWarningCaller = (bool) isWarningCallerValue;
+                isWarningCaller = (bool)isWarningCallerValue;
             }
 
             if (isWarningCaller && jObjectParsed.TryGetValue("warning_caller_day", out var warningCallerDayValue))
             {
-                warningCallDay = (int) warningCallerDayValue;
+                warningCallDay = (int)warningCallerDayValue;
             }
 
             // GameOver Caller Section
 
             if (jObjectParsed.TryGetValue("is_gameover_caller", out var isGameOverCallerValue))
             {
-                isGameOverCaller = (bool) isGameOverCallerValue;
+                isGameOverCaller = (bool)isGameOverCallerValue;
             }
 
             if (isGameOverCaller && jObjectParsed.TryGetValue("gameover_caller_day", out var gameOverCallerDayValue))
             {
-                gameOverCallDay = (int) gameOverCallerDayValue;
+                gameOverCallDay = (int)gameOverCallerDayValue;
             }
 
             // Check if order is valid and if not, we warn the user.
@@ -304,7 +307,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     $"{((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"(Caller Name: {customCallerName})" : "")}");
                 orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
             }
-            
+
             return new CustomCallerExtraInfo(orderInCampaign)
             {
                 callerName = customCallerName,

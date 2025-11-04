@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using MelonLoader;
+using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
@@ -148,8 +149,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     }
                 }
             }
+            
+            // Check if any music has to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignMusic.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<MusicExtraInfo> tempList = new List<MusicExtraInfo>(ParseJSONFiles.missingCustomCampaignMusic);
 
+                foreach (MusicExtraInfo missingMusic in tempList)
+                {
+                    if (missingMusic.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
+                        #endif
 
+                        _customCampaign.customMusic.Add(missingMusic);
+                        ParseJSONFiles.missingCustomCampaignMusic.Remove(missingMusic);
+                    }
+                }
+            }
+            
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
         }
@@ -201,6 +221,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             // Music
             bool useRandomMusic = true;
+            
+            bool removeDefaultMusic = false; // If to remove the default music from the game.
 
             // Enable Programs
             bool entryBrowserAlwaysActive = false;
@@ -426,6 +448,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 useRandomMusic = (bool) alwaysRandomizeMusicValue;
             }
+            
+            if (jObjectParsed.TryGetValue("remove_default_music", out JToken removeDefaultMusicValue))
+            {
+                removeDefaultMusic = (bool) removeDefaultMusicValue;
+            }
 
             if (jObjectParsed.TryGetValue("entry_browser_always_active", out var entryBrowserAlwaysActiveValue))
             {
@@ -585,6 +612,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 gameOverCutsceneVideoName = gameOverCutscenePath,
                 
                 alwaysRandomMusic = useRandomMusic,
+                removeDefaultMusic = removeDefaultMusic,
 
                 entryBrowserAlwaysActive = entryBrowserAlwaysActive,
                 scorecardAlwaysActive = scorecardAlwaysActive,

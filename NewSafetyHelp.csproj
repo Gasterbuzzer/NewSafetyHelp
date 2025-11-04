@@ -119,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
+    <Compile Include="src\Audio\Music\Data\MusicExtraInfo.cs" />
     <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />
     <Compile Include="src\Audio\UISoundPatch.cs" />
     <Compile Include="src\CallerPatches\CallerModel\CustomCallerExtraInfo.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\MonsterParsing.cs" />
