@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
@@ -18,11 +19,18 @@ namespace NewSafetyHelp
     {
         // Category for Entries (So that they can be saved upon quitting the game)
         public static MelonPreferences_Category persistantEntrySave;
+        
+        public static MelonPreferences_Category mainModSettings;
+        public static MelonPreferences_Entry<bool> skipComputerScene; // If to skip the initial computer scene.
 
         public override void OnInitializeMelon()
         {
             // Entries are created when needed.
             persistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
+            
+            // Settings
+            mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
+            skipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
             
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;
@@ -35,14 +43,12 @@ namespace NewSafetyHelp
         {
             #if DEBUG
                 SceneManager.LoadScene("MainMenuScene");
-
-                //SceneManager.LoadScene("MainScene");
-
-                //SceneManager.LoadScene("MainMenuSceneXmas");
-
-                //SceneManager.LoadScene("Computer3DSceneXmas");
-                
             #endif
+
+            if (skipComputerScene.Value)
+            {
+                SceneManager.LoadScene("MainMenuScene");
+            }
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)

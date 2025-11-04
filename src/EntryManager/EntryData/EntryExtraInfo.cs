@@ -1,4 +1,4 @@
-﻿namespace NewSafetyHelp.EntryManager
+﻿namespace NewSafetyHelp.EntryManager.EntryData
 {
     public class EntryExtraInfo
     {

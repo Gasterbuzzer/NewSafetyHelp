@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using Steamworks;
 using UnityEngine;
@@ -11,7 +13,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
-namespace NewSafetyHelp.CallerPatches
+namespace NewSafetyHelp.CallerPatches.UI
 {
     public static class MainCanvasPatches
     {
@@ -672,7 +674,7 @@ namespace NewSafetyHelp.CallerPatches
                         
                         if (customCaller == null)
                         {
-                            MelonLogger.Error("ERROR: Custom campaign was null. Unable of checking for downed network parameter. Calling original function.");
+                            MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
                             return true;
                         }
 

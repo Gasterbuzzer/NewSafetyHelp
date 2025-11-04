@@ -3,7 +3,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 
-namespace NewSafetyHelp.CallerPatches
+namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
     public static class CloseButtonPatches
     {
@@ -24,7 +24,6 @@ namespace NewSafetyHelp.CallerPatches
                 {
                     if (CustomCampaignGlobal.inCustomCampaign) // If we are not in the main campaign.
                     {
-                        
                         MelonLogger.Msg(ConsoleColor.Green, "INFO: Playing custom ending cutscene.");
                         
                         GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;

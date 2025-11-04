@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -44,7 +45,7 @@ namespace NewSafetyHelp.CustomVideos
                         yield break;
                     }
 
-                    CustomVideoExtraInfo correctVideo = null;
+                    CustomVideoExtraInfo correctVideo;
                     
                     if (customCampaign.allDesktopVideos.Exists(video => video.desktopName + video.videoURL == __instance.gameObject.name))
                     {

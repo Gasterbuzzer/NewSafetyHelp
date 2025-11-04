@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
+
 // ReSharper disable UnusedMember.Local
 
-namespace NewSafetyHelp.CallerPatches
+namespace NewSafetyHelp.CustomDesktop.Programs
 {
     public static class ScorecardPatches
     {
@@ -37,7 +40,7 @@ namespace NewSafetyHelp.CallerPatches
                 // Clear List
                 clearListMethod.Invoke(__instance, new object[] { });
                 
-                UnityEngine.Object.Instantiate(__instance.dayListing, __instance.contentHolder);
+                Object.Instantiate(__instance.dayListing, __instance.contentHolder);
                 
                 int dayAmount = 1;
                 
@@ -48,11 +51,11 @@ namespace NewSafetyHelp.CallerPatches
                         if (caller.callerProfile.increaseTier)
                         {
                             ++dayAmount;
-                            UnityEngine.Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();
+                            Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();
                         }
                         else if (caller.callerProfile.callerMonster !=null)
                         {
-                            GameObject gameObject = UnityEngine.Object.Instantiate(__instance.callerListing, __instance.contentHolder);
+                            GameObject gameObject = Object.Instantiate(__instance.callerListing, __instance.contentHolder);
                             gameObject.GetComponentInChildren<TextMeshProUGUI>().text = caller.callerProfile.callerName;
                             gameObject.GetComponentInChildren<Toggle>().isOn = caller.answeredCorrectly;
                         }
@@ -79,14 +82,14 @@ namespace NewSafetyHelp.CallerPatches
                         }
                         
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}.");
+                            MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}. (Info: {caller.answeredCorrectly})");
                         #endif
                         
                         if (customCallerFound.lastDayCaller)
                         {
                             if (caller.callerProfile.callerMonster !=  null) // Since custom callers could also be the last caller. We also create a profile for them.
                             {
-                                GameObject gameObject = UnityEngine.Object.Instantiate(__instance.callerListing, __instance.contentHolder);
+                                GameObject gameObject = Object.Instantiate(__instance.callerListing, __instance.contentHolder);
                                 gameObject.GetComponentInChildren<TextMeshProUGUI>().text = caller.callerProfile.callerName;
                                 gameObject.GetComponentInChildren<Toggle>().isOn = caller.answeredCorrectly;
                             }
@@ -95,7 +98,7 @@ namespace NewSafetyHelp.CallerPatches
 
                             if (currentCallerIndex + 1 != GlobalVariables.callerControllerScript.callers.Length) // We are not the last caller.
                             {
-                                UnityEngine.Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();  
+                                Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();  
                             }
                             
                             #if DEBUG
@@ -104,7 +107,7 @@ namespace NewSafetyHelp.CallerPatches
                         }
                         else if (caller.callerProfile.callerMonster !=  null)
                         {
-                            GameObject gameObject = UnityEngine.Object.Instantiate(__instance.callerListing, __instance.contentHolder);
+                            GameObject gameObject = Object.Instantiate(__instance.callerListing, __instance.contentHolder);
                             gameObject.GetComponentInChildren<TextMeshProUGUI>().text = caller.callerProfile.callerName;
                             gameObject.GetComponentInChildren<Toggle>().isOn = caller.answeredCorrectly;
                         }
@@ -144,6 +147,28 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 
                 return false; // Skip original function with false.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "OnEnable", new Type[] { })]
+        public static class OnEnablePatch
+        {
+            /// <summary>
+            /// Patches the scorecard close button to not exist duplicated by removing the first instance.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedParameter.Local
+            private static void Prefix(MethodBase __originalMethod, ScorecardBehavior __instance)
+            {
+                GameObject scorecardWindow = __instance.transform.gameObject;
+
+                GameObject closeButton = scorecardWindow.transform.Find("WindowsBar").Find("CloseButton").gameObject;
+
+                if (closeButton.GetComponents<Button>().Length >= 2)
+                {
+                    Object.Destroy(closeButton.GetComponent<Button>());
+                }
             }
         }
     }
