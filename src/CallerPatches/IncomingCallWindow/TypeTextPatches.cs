@@ -43,7 +43,16 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 
                 int characterCount = __instance.myTranscription.textInfo.characterCount;
                 int counter = 0;
-                float waitTime = profile.callerClip.clip.length / characterCount;
+                float waitTime = 0;
+                
+                if (profile.callerClip != null && profile.callerClip.clip != null) // If we have a valid clip.
+                {
+                    waitTime = profile.callerClip.clip.length / characterCount;
+                }
+                else // No caller clip so we skip.
+                {
+                    skip = true;
+                } 
                 
                 if (skip)
                 {
