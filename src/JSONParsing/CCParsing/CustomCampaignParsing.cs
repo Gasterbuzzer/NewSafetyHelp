@@ -5,6 +5,7 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Themes.Data;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -17,7 +18,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
     public static class CustomCampaignParsing
     {
         /// <summary>
-        /// Creates a custom campaign from a provided json file.
+        /// Creates a custom campaign from a provided JSON file.
         /// </summary>
         /// <param name="jObjectParsed"></param>
         /// <param name="usermodFolderPath"></param>
@@ -166,6 +167,26 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         _customCampaign.customMusic.Add(missingMusic);
                         ParseJSONFiles.missingCustomCampaignMusic.Remove(missingMusic);
+                    }
+                }
+            }
+            
+            // Check if any music has to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignThemes.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<ThemeExtraInfo> tempList = new List<ThemeExtraInfo>(ParseJSONFiles.missingCustomCampaignThemes);
+
+                foreach (ThemeExtraInfo missingTheme in tempList)
+                {
+                    if (missingTheme.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        _customCampaign.customThemes.Add(missingTheme);
+                        ParseJSONFiles.missingCustomCampaignThemes.Remove(missingTheme);
                     }
                 }
             }
@@ -326,9 +347,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 JArray _customCampaignDays = (JArray) customCampaignDaysNamesValue;
 
-                foreach (JToken arcadeCustomCall in _customCampaignDays)
+                foreach (JToken campaignDay in _customCampaignDays)
                 {
-                    customCampaignDaysNames.Add((string) arcadeCustomCall);
+                    customCampaignDaysNames.Add((string) campaignDay);
                 }
             }
 

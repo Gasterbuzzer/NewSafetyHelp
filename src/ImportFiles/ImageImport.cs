@@ -12,7 +12,6 @@ namespace NewSafetyHelp.ImportFiles
         /// <param name="imagePath"> Path to the image file. (Includes the image itself in the path) </param>
         public static Sprite LoadImage(string imagePath)
         {
-
             if (!File.Exists(imagePath))
             {
                 MelonLogger.Error($"ERROR: Image file not found at path: {imagePath}");

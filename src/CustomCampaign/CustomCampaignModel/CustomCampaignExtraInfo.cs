@@ -2,6 +2,7 @@
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CustomCampaign.Themes.Data;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -21,7 +22,9 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 
         public List<List<string>> loadingTexts = new List<List<string>>();
 
-        // In Game
+        /*
+         * In Game
+         */
 
         // Caller in the campaign
         public List<CustomCallerExtraInfo> customCallersInCampaign = new List<CustomCallerExtraInfo>();
@@ -76,6 +79,10 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public int savedCallerArrayLength = 0;
 
         public List<bool> savedCallersCorrectAnswer = new List<bool>();
+            
+        // Special Saves
+        public int savedGameFinished = 0;
+        public int savedGameFinishedDisplay = 0;
 
         // Video Cutscenes
         public string endCutsceneVideoName = ""; // Video shown at the end of the game.
@@ -88,17 +95,11 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 
         public List<MusicExtraInfo> customMusic = new List<MusicExtraInfo>(); // List of custom music.
 
-        // Special Saves
-        public int savedGameFinished = 0;
-        public int savedGameFinishedDisplay = 0;
-
         // Always enabled Programs on Desktop
         public bool entryBrowserAlwaysActive = false;
         public bool scorecardAlwaysActive = false;
         public bool artbookAlwaysActive = false;
         public bool arcadeAlwaysActive = false;
-
-        public bool disableAllDefaultVideos = true;
 
         // Program rename.
         public string renameMainGameDesktopIcon = null; // If not empty, it renames the main game desktop icon.
@@ -129,9 +130,14 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public bool disableGreenColorBackground = false;
 
         // Video Programs
+        public bool disableAllDefaultVideos = true;
+        
         public List<CustomVideoExtraInfo> allDesktopVideos = new List<CustomVideoExtraInfo>();
 
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
+        
+        // Themes
+        public List<ThemeExtraInfo> customThemes = new List<ThemeExtraInfo>(); // List of themes.
     }
 }

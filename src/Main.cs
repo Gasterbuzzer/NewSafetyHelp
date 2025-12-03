@@ -152,7 +152,7 @@ namespace NewSafetyHelp
                 // Replace all entries that need replacement.
                 CustomCampaignGlobal.replaceAllProvidedCampaignEntries(ref __instance.allEntries);
                 
-                // Read all json and add all monsters and campaigns (/Calls)
+                // Read all JSON and add all monsters and campaigns (/Calls)
                 CustomCampaignGlobal.addAllCustomCampaignEntriesToArray(ref __instance.allEntries);
 
                 addedEntriesToCustomCampaign = true;
