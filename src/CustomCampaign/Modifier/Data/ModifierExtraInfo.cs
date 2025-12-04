@@ -2,9 +2,9 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign.Themes.Data
+namespace NewSafetyHelp.CustomCampaign.Modifier.Data
 {
-    public class ThemeExtraInfo
+    public class ModifierExtraInfo
     {
         public string customCampaignName = null;
         
@@ -42,17 +42,6 @@ namespace NewSafetyHelp.CustomCampaign.Themes.Data
         //public bool scorecardAlwaysActive = false;
         //public bool artbookAlwaysActive = false;
         //public bool arcadeAlwaysActive = false;
-        
-        /*
-        * Theme Options (Special) 
-         */
-
-        // TODO: Comments are out of date, please update them once you understood what they do. 
-        
-        //public ColorPalette defaultPalette = null; // Color for the desktop taskbar. If null, it means not set.
-        //public ColorPalette windowsPalette = null; // Color for the desktop taskbar. If null, it means not set.
-        //public ColorPalette tirePalette = null; // Color for the desktop taskbar. If null, it means not set.
-        //public ColorPalette nightPalette = null; // Color for the desktop taskbar. If null, it means not set.
         
         /*
          * Special Desktop Options

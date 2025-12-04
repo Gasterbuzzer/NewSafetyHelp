@@ -5,6 +5,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
@@ -123,10 +124,28 @@ namespace NewSafetyHelp.CustomDesktop
                         MelonLogger.Error("ERROR: Custom Campaign is null! Unable of replacing username. Calling original function.");
                         return true;
                     }
-
-                    if (!string.IsNullOrEmpty(customCampaign.desktopUsernameText))
+                    
+                    ModifierExtraInfo currentModifier = CustomCampaignGlobal.getActiveModifier();
+                    
+                    // Setting username
+                    string username = null;
+                    
+                    if (!string.IsNullOrEmpty(customCampaign.desktopUsernameText)) // First we apply the campaign value.
                     {
-                        CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = customCampaign.desktopUsernameText;
+                        username = customCampaign.desktopUsernameText;
+                    }
+                    
+                    if (currentModifier != null) // Modifier is provided.
+                    {
+                        if (!string.IsNullOrEmpty(currentModifier.usernameText)) // Modifier value gets applied.
+                        {
+                            username = currentModifier.usernameText;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(username))
+                    {
+                        CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = username;
                     }
                     
                     // Add custom emails.

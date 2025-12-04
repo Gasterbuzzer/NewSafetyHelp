@@ -2,34 +2,34 @@
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaign.Themes.Data;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
 {
-    public static class ThemeParsing
+    public static class ModifierParsing
     {
         /// <summary>
-        /// Load a music from a JSON file.
+        /// Load a modifier from a JSON file.
         /// </summary>
         /// <param name="jObjectParsed"> JObject parsed. </param>
         /// <param name="usermodFolderPath">Path to JSON file.</param>
         /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateTheme(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
+        public static void CreateModifier(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as music. Possible syntax mistake?");
+                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a modifier. Possible syntax mistake?");
                 return;
             }
 
             // Campaign Values
             string customCampaignName = "";
 
-            ThemeExtraInfo customTheme = ParseTheme(ref jObjectParsed, ref usermodFolderPath,
+            ModifierExtraInfo customModifier = ParseModifier(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
@@ -39,23 +39,30 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (foundCustomCampaign != null)
             {
-                foundCustomCampaign.customThemes.Add(customTheme);
+                if (customModifier.unlockDays == null)
+                {
+                    foundCustomCampaign.customModifiersGeneral.Add(customModifier);
+                }
+                else
+                {
+                    foundCustomCampaign.customModifiersDays.Add(customModifier);
+                }
             }
             else
             {
                 #if DEBUG
-                MelonLogger.Msg("DEBUG: Found theme file before the custom campaign was found / does not exist.");
+                MelonLogger.Msg("DEBUG: Found modifier file before the custom campaign was found / does not exist.");
                 #endif
 
-                ParseJSONFiles.missingCustomCampaignThemes.Add(customTheme);
+                ParseJSONFiles.missingCustomCampaignModifier.Add(customModifier);
             }
         }
 
-        private static ThemeExtraInfo ParseTheme(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static ModifierExtraInfo ParseModifier(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
-            List<int>
-                unlockDays = null; // When the theme is unlocked. If not set, this theme will become the default theme.
+            // When the modifier is unlocked. If null, it is a general modifier.
+            List<int> unlockDays = null; 
 
             /*
              * Desktop Settings
@@ -78,7 +85,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
 
-            if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignNameValue))
+            if (jObjectParsed.TryGetValue("modifier_custom_campaign_attached", out var customCampaignNameValue))
             {
                 customCampaignName = (string)customCampaignNameValue;
             }
@@ -210,7 +217,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            return new ThemeExtraInfo
+            return new ModifierExtraInfo
             {
                 customCampaignName = customCampaignName,
 

@@ -2,7 +2,7 @@
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CustomCampaign.Themes.Data;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -62,6 +62,7 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 
         // Date and Username
         public string desktopUsernameText = "";
+        
         public int desktopDateStartYear = -1;
         public int desktopDateStartMonth = -1;
         public int desktopDateStartDay = -1;
@@ -137,7 +138,11 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
         
-        // Themes
-        public List<ThemeExtraInfo> customThemes = new List<ThemeExtraInfo>(); // List of themes.
+        // Modifiers:
+        
+        public ModifierExtraInfo activeModifier = null; // The current active modifier. If null none is set.
+        
+        public List<ModifierExtraInfo> customModifiersGeneral = new List<ModifierExtraInfo>(); // List of modifiers for general.
+        public List<ModifierExtraInfo> customModifiersDays = new List<ModifierExtraInfo>(); // List of (conditional) modifiers that apply for certain days.
     }
 }

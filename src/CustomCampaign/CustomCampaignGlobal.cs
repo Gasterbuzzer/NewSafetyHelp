@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.EntryManager.EntryData;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.CustomCampaign
 {
@@ -63,6 +66,106 @@ namespace NewSafetyHelp.CustomCampaign
         {
             return getActiveCustomCampaign().entriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
         }
+        
+        /// <summary>
+        /// Picks the correct modifier for the current day. Please be aware of pick choices:
+        ///
+        /// (0. Use the modifier by the campaign itself, though if the modifier provides it, it's always overriden)
+        /// 
+        /// 1. Pick a general modifier. If multiple present simply ignore them and only use the first.
+        ///
+        /// 2. Pick a conditional modifier based on the current day. If multiple present, simply pick the first found.
+        /// 
+        /// </summary>
+        /// <param name="currentDay"> Current day. </param>
+        /// <returns>ModifierExtraInfo Object that is the picked modifier. Will return null if none set. </returns>
+        [CanBeNull]
+        public static ModifierExtraInfo pickModifier(int currentDay)
+        {
+            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+
+            if (customCampaignExtraInfo == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of picking modifier!");
+                return null;
+            }
+
+            ModifierExtraInfo pickedModifier = null;
+            
+            if (customCampaignExtraInfo.customModifiersGeneral != null 
+                && customCampaignExtraInfo.customModifiersGeneral.Count >= 1)
+            {
+                pickedModifier = customCampaignExtraInfo.customModifiersGeneral[0]; // Pick the first.
+            }
+            
+            // Now we check if we have day modifiers. We collect them first.
+            
+            List<ModifierExtraInfo> availableModifiers = new List<ModifierExtraInfo>();
+            
+            if (customCampaignExtraInfo.customModifiersDays != null 
+                && customCampaignExtraInfo.customModifiersDays.Count >= 1)
+            {
+                foreach (ModifierExtraInfo dayModifier in customCampaignExtraInfo.customModifiersDays)
+                {
+                    if (dayModifier != null 
+                        && dayModifier.unlockDays != null 
+                        && dayModifier.unlockDays.Contains(currentDay))
+                    {
+                        availableModifiers.Add(dayModifier);
+                    }
+                }
+            }
+            
+            // Now if we have a modifier from days themes, we pick the first:
+            if (availableModifiers.Count > 0)
+            {
+                pickedModifier = availableModifiers[0];
+            }
+            
+            return pickedModifier;
+        }
+        
+        /// <summary>
+        /// Sets the custom campaign modifier.
+        /// (This is merely storing it as the current modifier,
+        /// it does not actually update the values of colors and such. They are merely read later.)
+        /// </summary>
+        /// <param name="modifier"> Modifier to set the active modifier as. </param>
+        public static void setModifier([CanBeNull] ModifierExtraInfo modifier)
+        {
+            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+
+            if (customCampaignExtraInfo == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting modifier!");
+                return;
+            }
+
+            if (modifier != null)
+            {
+                customCampaignExtraInfo.activeModifier = modifier;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the currently active modifier.
+        /// </summary>
+        /// <returns>Returns null if we no modifier is set. If set, it returns the active modifier.</returns>
+        public static ModifierExtraInfo getActiveModifier()
+        {
+            // This sets the current modifier to the correct one. This important for returning the correct one.
+            setModifier(pickModifier(GlobalVariables.currentDay));
+            
+            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+
+            if (customCampaignExtraInfo == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting modifier!");
+                return null;
+            }
+
+            return customCampaignExtraInfo.activeModifier;
+        }
 
         /// <summary>
         /// Adds all entries of a custom campaign to the array of entries.
@@ -70,7 +173,6 @@ namespace NewSafetyHelp.CustomCampaign
         /// <param name="_monsterProfileList">MonsterProfileList to add the entries to.</param>
         public static void addAllCustomCampaignEntriesToArray(ref MonsterProfileList _monsterProfileList)
         {
-            
             CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
 
             if (customCampaignExtraInfo == null)
@@ -325,7 +427,7 @@ namespace NewSafetyHelp.CustomCampaign
 
                     if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be correct but who knows.
                     {
-                        savedCallerCorrectAnswers.Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value we have at that index.
+                        savedCallerCorrectAnswers.Value = currentCampaign.savedCallersCorrectAnswer[i]; // Whatever value we have at that index.
                     }
                     else
                     {
@@ -336,7 +438,7 @@ namespace NewSafetyHelp.CustomCampaign
                 {
                     if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be but who knows.
                     {
-                        currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value where have at that index.
+                        currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value = currentCampaign.savedCallersCorrectAnswer[i]; // Whatever value where have at that index.
                     }
                     else
                     {
@@ -376,7 +478,7 @@ namespace NewSafetyHelp.CustomCampaign
 
                     if (currentCampaign.savedDayScores.Count > i) // If we have enough values for "i". It should be but who knows.
                     {
-                        savedCallerCorrectAnswers.Value = currentCampaign.savedDayScores[i]; // What ever value where have at that index.
+                        savedCallerCorrectAnswers.Value = currentCampaign.savedDayScores[i]; // Whatever value where have at that index.
                     }
                     else
                     {
@@ -387,7 +489,7 @@ namespace NewSafetyHelp.CustomCampaign
                 {
                     if (currentCampaign.savedDayScores.Count > i) // If we have enough values for "i". It should be but who knows.
                     {
-                        currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value = currentCampaign.savedDayScores[i]; // What ever value where have at that index.
+                        currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value = currentCampaign.savedDayScores[i]; // Whatever value where have at that index.
                     }
                     else
                     {

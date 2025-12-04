@@ -5,7 +5,7 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaign.Themes.Data;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -171,22 +171,30 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
-            // Check if any music has to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignThemes.Count > 0)
+            // Check if any modifier has to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignModifier.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<ThemeExtraInfo> tempList = new List<ThemeExtraInfo>(ParseJSONFiles.missingCustomCampaignThemes);
+                List<ModifierExtraInfo> tempList = new List<ModifierExtraInfo>(ParseJSONFiles.missingCustomCampaignModifier);
 
-                foreach (ThemeExtraInfo missingTheme in tempList)
+                foreach (ModifierExtraInfo missingModifier in tempList)
                 {
-                    if (missingTheme.customCampaignName == customCampaignName)
+                    if (missingModifier.customCampaignName == customCampaignName)
                     {
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
+                            MelonLogger.Msg($"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        _customCampaign.customThemes.Add(missingTheme);
-                        ParseJSONFiles.missingCustomCampaignThemes.Remove(missingTheme);
+                        if (missingModifier.unlockDays == null)
+                        {
+                            _customCampaign.customModifiersGeneral.Add(missingModifier);
+                        }
+                        else
+                        {
+                            _customCampaign.customModifiersDays.Add(missingModifier);
+                        }
+                        
+                        ParseJSONFiles.missingCustomCampaignModifier.Remove(missingModifier);
                     }
                 }
             }

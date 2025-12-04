@@ -9,7 +9,7 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaign.Themes.Data;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -34,6 +34,7 @@ namespace NewSafetyHelp.JSONParsing
             Email,
             Video,
             Music,
+            Modifier,
             Theme,
             Invalid
         }
@@ -61,8 +62,8 @@ namespace NewSafetyHelp.JSONParsing
         // List of music to be added in a custom campaign when the custom campaign is not parsed yet.
         public static List<MusicExtraInfo> missingCustomCampaignMusic = new List<MusicExtraInfo>();
 
-        // List of themes to be added in a custom campaign when the custom campaign is not parsed yet.
-        public static List<ThemeExtraInfo> missingCustomCampaignThemes = new List<ThemeExtraInfo>();
+        // List of modifiers to be added in a custom campaign when the custom campaign is not parsed yet.
+        public static List<ModifierExtraInfo> missingCustomCampaignModifier = new List<ModifierExtraInfo>();
 
         // List of videos to be added in a custom campaign when the custom campaign is not parsed yet.
         public static List<CustomVideoExtraInfo> missingCustomCampaignVideo = new List<CustomVideoExtraInfo>();
@@ -164,10 +165,10 @@ namespace NewSafetyHelp.JSONParsing
                             MusicParsing.CreateMusic(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
-                        case JSONParseTypes.Theme: // The provided JSON is a theme file (for custom campaigns).
+                        case JSONParseTypes.Modifier: // The provided JSON is a modifier file (for custom campaigns).
                             MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
-                            ThemeParsing.CreateTheme(jObjectParse, modFolderPath, jsonFolderPath);
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a modifier file.");
+                            ModifierParsing.CreateModifier(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -259,7 +260,7 @@ namespace NewSafetyHelp.JSONParsing
                 return JSONParseTypes.Music;
             }
 
-            // Theme was provided
+            // Modifier was provided
             if (!containsKeys(
                     new List<string>
                         { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
@@ -267,13 +268,12 @@ namespace NewSafetyHelp.JSONParsing
                 &&
                 containsKeys(new List<string>
                 {
-                    "desktop_backgrounds", "desktop_background_color", "campaign_day_names",
-                    "desktop_backgrounds", "unlock_day"
+                    "modifier_custom_campaign_attached"
                 }, json))
             {
-                return JSONParseTypes.Theme;
+                return JSONParseTypes.Modifier;
             }
-
+            
             // Unknown JSON type or failed parsing the file.
             return JSONParseTypes.Invalid;
         }
