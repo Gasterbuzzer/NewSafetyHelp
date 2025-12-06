@@ -85,41 +85,47 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
 
-            if (jObjectParsed.TryGetValue("modifier_custom_campaign_attached", out var customCampaignNameValue))
+            if (jObjectParsed.TryGetValue("modifier_custom_campaign_attached", out JToken customCampaignNameValue))
             {
-                customCampaignName = (string)customCampaignNameValue;
+                customCampaignName = customCampaignNameValue.Value<string>();
             }
 
-            if (jObjectParsed.TryGetValue("unlock_day", out var unlockDayValue))
+            if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
             {
                 if (unlockDayValue.Type == JTokenType.Integer)
                 {
-                    unlockDays = new List<int> { (int)unlockDayValue };
+                    unlockDays = new List<int> { unlockDayValue.Value<int>() };
                 }
                 else if (unlockDayValue.Type == JTokenType.Array)
                 {
-                    unlockDays = unlockDayValue.ToObject<List<int>>();
+                    unlockDays = new List<int>();
+
+                    foreach (JToken unlockDayToken in (JArray) unlockDayValue)
+                    {
+                        unlockDays.Add(unlockDayToken.Value<int>());
+                    }
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_username_text", out var desktopUsernameTextValue))
+            if (jObjectParsed.TryGetValue("desktop_username_text", out JToken desktopUsernameTextValue))
             {
-                username = (string)desktopUsernameTextValue;
+                username = desktopUsernameTextValue.Value<string>();
             }
 
-            if (jObjectParsed.TryGetValue("rename_main_game_desktop_icon", out var renameMainGameDesktopIconValue))
+            if (jObjectParsed.TryGetValue("rename_main_game_desktop_icon", out JToken renameMainGameDesktopIconValue))
             {
-                renameMainGameDesktopIcon = (string)renameMainGameDesktopIconValue;
+                renameMainGameDesktopIcon = renameMainGameDesktopIconValue.Value<string>();
             }
 
-            if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out var mainGameDesktopIconPathValue))
+            if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out JToken mainGameDesktopIconPathValue))
             {
-                string customMainGameDesktopIcon = (string)mainGameDesktopIconPathValue;
+                string customMainGameDesktopIcon = mainGameDesktopIconPathValue.Value<string>();
 
                 if (string.IsNullOrEmpty(customMainGameDesktopIcon))
                 {
                     MelonLogger.Error(
-                        $"ERROR: Invalid file name given in theme for '{customMainGameDesktopIcon}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
+                        $"ERROR: Invalid file name given in theme for '{customMainGameDesktopIcon}'." +
+                        $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
                 }
                 else
                 {
@@ -128,35 +134,42 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_backgrounds", out var customCampaignDesktopBackgrounds))
+            if (jObjectParsed.TryGetValue("desktop_backgrounds", out JToken customCampaignDesktopBackgrounds))
             {
                 JArray backgroundNames = (JArray)customCampaignDesktopBackgrounds;
 
-                foreach (string backgroundName in backgroundNames)
+                foreach (JToken backgroundName in backgroundNames)
                 {
-                    if (string.IsNullOrEmpty(backgroundName))
+                    if (string.IsNullOrEmpty(backgroundName.Value<string>()))
                     {
-                        MelonLogger.Error($"ERROR: Did not find '{backgroundName}'. Adding no background.");
+                        MelonLogger.Error($"ERROR: Did not find '{backgroundName.Value<string>()}'." +
+                                          " Adding no background.");
                         backgroundSprites.Add(null);
                     }
                     else
                     {
-                        backgroundSprites.Add(ImageImport.LoadImage(jsonFolderPath + "\\" + backgroundName,
-                            usermodFolderPath + "\\" + backgroundName));
+                        backgroundSprites.Add(
+                            ImageImport.LoadImage(jsonFolderPath + "\\" + backgroundName.Value<string>(),
+                            usermodFolderPath + "\\" + backgroundName.Value<string>()));
                     }
                 }
             }
 
-            if (jObjectParsed.TryGetValue("disable_green_color_on_desktop", out var disableGreenColorOnDesktopValue))
+            if (jObjectParsed.TryGetValue("disable_green_color_on_desktop", out JToken disableGreenColorOnDesktopValue))
             {
-                disableGreenColorBackground = (bool)disableGreenColorOnDesktopValue;
+                disableGreenColorBackground = disableGreenColorOnDesktopValue.Value<bool>();
             }
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
             {
                 if (_desktopBackgroundColor.Type == JTokenType.Array)
                 {
-                    List<float> desktopBackgroundColorList = _desktopBackgroundColor.ToObject<List<float>>();
+                    List<float> desktopBackgroundColorList = new List<float>();
+
+                    foreach (JToken desktopBackgroundColorToken in (JArray) _desktopBackgroundColor)
+                    {
+                        desktopBackgroundColorList.Add(desktopBackgroundColorToken.Value<float>());
+                    }
 
                     switch (desktopBackgroundColorList.Count)
                     {
@@ -180,9 +193,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_logo_image_name", out var customDesktopLogoNameValue))
+            if (jObjectParsed.TryGetValue("desktop_logo_image_name", out JToken customDesktopLogoNameValue))
             {
-                string customDesktopLogoPath = (string)customDesktopLogoNameValue;
+                string customDesktopLogoPath = customDesktopLogoNameValue.Value<string>();
 
                 if (string.IsNullOrEmpty(customDesktopLogoPath))
                 {
@@ -196,24 +209,24 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("disable_desktop_logo", out var disableDesktopLogoValue))
+            if (jObjectParsed.TryGetValue("disable_desktop_logo", out JToken disableDesktopLogoValue))
             {
-                disableBackgroundLogo = (bool)disableDesktopLogoValue;
+                disableBackgroundLogo = disableDesktopLogoValue.Value<bool>();
             }
 
             if (jObjectParsed.TryGetValue("desktop_logo_transparency",
-                    out var customDesktopLogoTransparencyValue))
+                    out JToken customDesktopLogoTransparencyValue))
             {
-                backgroundLogoTransparency = (float)customDesktopLogoTransparencyValue;
+                backgroundLogoTransparency = customDesktopLogoTransparencyValue.Value<float>();
             }
 
-            if (jObjectParsed.TryGetValue("campaign_day_names", out var customCampaignDaysNamesValue))
+            if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
                 JArray _customCampaignDays = (JArray)customCampaignDaysNamesValue;
 
                 foreach (JToken campaignDay in _customCampaignDays)
                 {
-                    dayTitleStrings.Add((string)campaignDay);
+                    dayTitleStrings.Add(campaignDay.Value<string>());
                 }
             }
 

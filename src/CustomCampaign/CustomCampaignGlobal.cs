@@ -6,7 +6,6 @@ using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.EntryManager.EntryData;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.CustomCampaign
 {

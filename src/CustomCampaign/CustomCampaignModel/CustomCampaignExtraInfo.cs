@@ -138,8 +138,7 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
         
-        // Modifiers:
-        
+        // Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day, for now it is a global option)
         public ModifierExtraInfo activeModifier = null; // The current active modifier. If null none is set.
         
         public List<ModifierExtraInfo> customModifiersGeneral = new List<ModifierExtraInfo>(); // List of modifiers for general.

@@ -41,7 +41,6 @@ namespace NewSafetyHelp.CustomDesktop
                 // If in custom campaign, we replace it with custom text.
                 if (CustomCampaignGlobal.inCustomCampaign)
                 {
-
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                     
                     if (customCampaign == null)
@@ -164,21 +163,61 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                     
                     // Hide Logo
+
+                    bool disableLogo = false;
+                    bool modifierPreventsDisablingOfLogo = false;
+                    Sprite desktopLogo = null;
+                    
                     if (customCampaign.disableDesktopLogo)
                     {
-                        CustomDesktopHelper.getLogo().SetActive(false);
+                        disableLogo = true;
                     }
                     else if (customCampaign.customDesktopLogo != null) // We have a desktop logo to show.
                     {
-                        CustomDesktopHelper.getLogo().GetComponent<Image>().sprite = customCampaign.customDesktopLogo;
+                        desktopLogo = customCampaign.customDesktopLogo;
+                    }
+
+                    if (currentModifier != null)
+                    {
+                        if (currentModifier.disableDesktopLogo)
+                        {
+                            disableLogo = true;
+                        }
+                        else
+                        {
+                            modifierPreventsDisablingOfLogo = true;
+                            desktopLogo = currentModifier.customBackgroundLogo;
+                        }
+                    }
+                    
+                    if (disableLogo && !modifierPreventsDisablingOfLogo)
+                    {
+                        CustomDesktopHelper.getLogo().SetActive(false);
+                    }
+                    else if (desktopLogo != null) // We have a desktop logo to show.
+                    {
+                        CustomDesktopHelper.getLogo().GetComponent<Image>().sprite = desktopLogo;
                     }
                     
                     // Adjust Logo
+
+                    float logoTransparency = 0.2627f;
+                    
                     if (!customCampaign.customDesktopLogoTransparency.Equals(0.2627f)) // If we have a Custom Transparency
                     {
-                        Color tempColorCopy = CustomDesktopHelper.getLogo().GetComponent<Image>().color;
-                        tempColorCopy.a = customCampaign.customDesktopLogoTransparency;
+                        logoTransparency = customCampaign.customDesktopLogoTransparency;
+                    }
 
+                    if (!currentModifier.backgroundLogoTransparency.Equals(0.2627f)) // Modifier
+                    {
+                        logoTransparency = currentModifier.backgroundLogoTransparency;
+                    }
+                    
+                    if (!logoTransparency.Equals(0.2627f))
+                    {
+                        Color tempColorCopy = CustomDesktopHelper.getLogo().GetComponent<Image>().color;
+                        tempColorCopy.a = logoTransparency;
+                        
                         CustomDesktopHelper.getLogo().GetComponent<Image>().color = tempColorCopy;
                     }
                     
