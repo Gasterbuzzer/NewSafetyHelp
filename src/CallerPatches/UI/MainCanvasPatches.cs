@@ -6,6 +6,7 @@ using MelonLoader;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomDesktop;
 using Steamworks;
 using UnityEngine;
@@ -71,22 +72,52 @@ namespace NewSafetyHelp.CallerPatches.UI
                     if (currentCustomCampaign != null)
                     {
                         
+                        ModifierExtraInfo currentModifier = CustomCampaignGlobal.getActiveModifier();
+
+                        string dayString;
+                        
                         if (currentCustomCampaign.campaignDayStrings.Count > 0)
                         {
-
-                            if (GlobalVariables.currentDay > currentCustomCampaign.campaignDayStrings.Count || currentCustomCampaign.campaignDays > currentCustomCampaign.campaignDayStrings.Count)
+                            if (GlobalVariables.currentDay > currentCustomCampaign.campaignDayStrings.Count 
+                                || currentCustomCampaign.campaignDays > currentCustomCampaign.campaignDayStrings.Count)
                             {
                                 MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
-                                __result = defaultDayNames[GlobalVariables.currentDay - 1];
+                                dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                             }
                             else
                             {
-                                __result = currentCustomCampaign.campaignDayStrings[GlobalVariables.currentDay - 1];
+                                dayString = currentCustomCampaign.campaignDayStrings[(GlobalVariables.currentDay - 1) % currentCustomCampaign.campaignDayStrings.Count];
                             }
                         }
                         else
                         {
-                            __result = defaultDayNames[GlobalVariables.currentDay - 1];
+                            dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                        }
+
+                        if (currentModifier != null)
+                        {
+                            if (currentModifier.dayTitleStrings.Count > 0)
+                            {
+                                if (GlobalVariables.currentDay > currentModifier.dayTitleStrings.Count 
+                                    && string.IsNullOrEmpty(dayString))
+                                {
+                                    MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
+                                    dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                                }
+                                else
+                                {
+                                    dayString = currentModifier.dayTitleStrings[(GlobalVariables.currentDay - 1) % currentModifier.dayTitleStrings.Count];
+                                }
+                            }
+                            else if (string.IsNullOrEmpty(dayString)) // Only replace the day string if the campaign provided none.
+                            {
+                                dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                            }
+                        }
+                        
+                        if (!string.IsNullOrEmpty(dayString))
+                        {
+                            __result = dayString;
                         }
                     }
                     else

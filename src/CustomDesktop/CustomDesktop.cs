@@ -208,7 +208,7 @@ namespace NewSafetyHelp.CustomDesktop
                         logoTransparency = customCampaign.customDesktopLogoTransparency;
                     }
 
-                    if (!currentModifier.backgroundLogoTransparency.Equals(0.2627f)) // Modifier
+                    if (currentModifier != null && !currentModifier.backgroundLogoTransparency.Equals(0.2627f)) // Modifier
                     {
                         logoTransparency = currentModifier.backgroundLogoTransparency;
                     }
@@ -222,15 +222,41 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                     
                     // Rename main program if wanted
+
+                    string renamedMainGameDesktopIcon = String.Empty;
+                    
                     if (!string.IsNullOrEmpty(customCampaign.renameMainGameDesktopIcon))
                     {
-                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = customCampaign.renameMainGameDesktopIcon;
+                        renamedMainGameDesktopIcon = customCampaign.renameMainGameDesktopIcon;
+                    }
+                    
+                    if (currentModifier != null && !string.IsNullOrEmpty(currentModifier.renameMainGameDesktopIcon))
+                    {
+                        renamedMainGameDesktopIcon = currentModifier.renameMainGameDesktopIcon;
+                    }
+                    
+                    if (!string.IsNullOrEmpty(renamedMainGameDesktopIcon))
+                    {
+                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
                     }
                     
                     // Change main program icon if wanted.
+
+                    Sprite mainProgramIcon = null;
+                    
                     if (customCampaign.changeMainGameDesktopIcon != null)
                     {
-                        CustomDesktopHelper.getMainGameProgram().GetComponent<Image>().sprite = customCampaign.changeMainGameDesktopIcon;
+                        mainProgramIcon = customCampaign.changeMainGameDesktopIcon;
+                    }
+                    
+                    if (currentModifier != null && currentModifier.mainGameDesktopIcon != null)
+                    {
+                        mainProgramIcon = currentModifier.mainGameDesktopIcon;
+                    }
+                    
+                    if (mainProgramIcon != null)
+                    {
+                        CustomDesktopHelper.getMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
                     }
                     
                     // Disable default videos.

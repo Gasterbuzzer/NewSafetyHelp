@@ -25,14 +25,14 @@ namespace NewSafetyHelp.CustomCampaign.Modifier.Data
         
         // If to disable the color the background green (or custom) the same as the main game does.
         public bool disableColorBackground = false;
+        
+        public Color? desktopBackgroundColor = null; // Color for background. If null, it means not set.
 
         // Disables the desktop logo "Home Safety Hotline" from the background (Also disables custom ones)
         public bool disableDesktopLogo = false;
         
         public Sprite customBackgroundLogo = null; // Logo to show in desktop (if not disabled)
         public float backgroundLogoTransparency = 0.2627f;
-
-        public Color? desktopBackgroundColor = null; // Color for background. If null, it means not set.
         
         /*
          * Enable Scorecard and such.

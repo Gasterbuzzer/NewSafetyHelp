@@ -150,6 +150,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// Gets the currently active modifier.
         /// </summary>
         /// <returns>Returns null if we no modifier is set. If set, it returns the active modifier.</returns>
+        [CanBeNull]
         public static ModifierExtraInfo getActiveModifier()
         {
             // This sets the current modifier to the correct one. This important for returning the correct one.
