@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches.CallerModel;
@@ -151,6 +152,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>Returns null if we no modifier is set. If set, it returns the active modifier.</returns>
         [CanBeNull]
+        [Obsolete("Please use getActiveModifierValue instead.", true)]
         public static ModifierExtraInfo getActiveModifier()
         {
             // This sets the current modifier to the correct one. This important for returning the correct one.
@@ -165,6 +167,74 @@ namespace NewSafetyHelp.CustomCampaign
             }
 
             return customCampaignExtraInfo.activeModifier;
+        }
+        
+        /// <summary>
+        /// From the provided selected value it returns the value that fits all the criteria.
+        /// </summary>
+        /// <returns>Returns default value if we no value is set. If set, it returns the requested value.</returns>
+        [CanBeNull]
+        public static TValue getActiveModifierValue<TValue>(Func<ModifierExtraInfo, TValue> selector, ref bool foundModifier, Func<TValue, bool> predicate = null)
+        {
+            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+
+            if (customCampaignExtraInfo == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting modifier!");
+                return default;
+            }
+
+            if (predicate == null)
+            {
+                predicate = _ => true;
+            }
+
+            TValue selectedValue = default(TValue);
+            foundModifier = false;
+
+            // For each general modifier, we check if it contains the value and add these to the "valid modifier general list".
+            // We then pick the first in the list.
+            // Note: General modifiers do not require to check for days, since they are always "valid", only the predicate.
+            
+            foreach (ModifierExtraInfo modifierGeneral in customCampaignExtraInfo.customModifiersGeneral)
+            {
+
+                if (modifierGeneral == null)
+                {
+                    continue;
+                }
+
+                TValue value = selector(modifierGeneral);
+
+                if (predicate(value))
+                {
+                    foundModifier = true;
+                    selectedValue = value;
+                    break;
+                }
+            }
+            
+            // Now we check for conditional modifiers. Same work as with the general modifiers.
+            // We only need to check if valid for the current day.
+            
+            foreach (ModifierExtraInfo modifierDay in customCampaignExtraInfo.customModifiersDays)
+            {
+                if (modifierDay == null)
+                {
+                    continue;
+                }
+
+                TValue value = selector(modifierDay);
+
+                if (predicate(value) && modifierDay.unlockDays != null
+                                     && modifierDay.unlockDays.Contains(GlobalVariables.currentDay))
+                {
+                    foundModifier = true;
+                    return value;
+                }
+            }
+
+            return selectedValue;
         }
 
         /// <summary>
