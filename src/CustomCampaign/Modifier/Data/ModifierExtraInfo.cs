@@ -23,6 +23,8 @@ namespace NewSafetyHelp.CustomCampaign.Modifier.Data
         
         public List<Sprite> desktopBackgrounds = new List<Sprite>(); // Desktop Backgrounds
         
+        public Sprite gameFinishedBackground = null; // Desktop Background (Finished the game)
+        
         // If to disable the color the background green (or custom) the same as the main game does.
         public bool disableColorBackground = false;
         

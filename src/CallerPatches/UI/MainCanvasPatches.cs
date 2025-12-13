@@ -198,7 +198,6 @@ namespace NewSafetyHelp.CallerPatches.UI
 
             private static IEnumerator StartSoftwareRoutine(MainCanvasBehavior __instance)
             {
-                
                 // Get Private Methods
                 Type mainCanvasBehaviorType = typeof(MainCanvasBehavior);
                 

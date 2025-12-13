@@ -75,6 +75,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Backgrounds
             List<Sprite> backgroundSprites = new List<Sprite>();
+            Sprite gameFinishedBackgroundSprite = null;
             bool disableGreenColorBackground = false;
             Color? desktopBackgroundColor = null;
 
@@ -152,6 +153,22 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             ImageImport.LoadImage(jsonFolderPath + "\\" + backgroundName.Value<string>(),
                             usermodFolderPath + "\\" + backgroundName.Value<string>()));
                     }
+                }
+            }
+            
+            if (jObjectParsed.TryGetValue("game_finished_desktop_background", out JToken gameFinishedDesktopBackground))
+            {
+                string gameFinishedBackgroundPath = (string) gameFinishedDesktopBackground;
+
+                if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
+                {
+                    MelonLogger.Error(
+                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating modifier for campaign: {(!string.IsNullOrEmpty(customCampaignName) ? $"{customCampaignName}." : ".")}");
+                }
+                else
+                {
+                    gameFinishedBackgroundSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + gameFinishedBackgroundPath,
+                        usermodFolderPath + "\\" + gameFinishedBackgroundPath);
                 }
             }
 
@@ -242,6 +259,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 mainGameDesktopIcon = mainGameDesktopIconSprite,
 
                 desktopBackgrounds = backgroundSprites,
+                gameFinishedBackground = gameFinishedBackgroundSprite,
                 disableColorBackground = disableGreenColorBackground,
                 desktopBackgroundColor = desktopBackgroundColor,
 

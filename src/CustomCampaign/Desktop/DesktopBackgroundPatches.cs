@@ -112,6 +112,12 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         ref desktopBackgroundsFound,
                         v => v != null && v.Count > 0);
                     
+                    bool gameFinishedBackgroundFound = false;
+                    Sprite gameFinishedBackground = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.gameFinishedBackground,
+                        ref gameFinishedBackgroundFound,
+                        v => v != null);
+                    
                     bool unlockDaysFound = false;
                     List<int> unlockDays = CustomCampaignGlobal.getActiveModifierValue(
                         c => c.unlockDays,
@@ -121,8 +127,27 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     // Modifier
                     if (desktopBackgroundsFound && desktopBackgrounds != null && desktopBackgrounds.Count > 0) // Valid backgrounds given.
                     {
-                        if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay != 1 
-                            || customCampaign.savedGameFinishedDisplay != 1) // Not final day. 
+                        // Game Finished
+                        if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 
+                            || customCampaign.savedGameFinishedDisplay == 1)
+                        {
+                            if (gameFinishedBackgroundFound && gameFinishedBackground != null)
+                            {
+                                // Check if we are allowed to change it.
+                                if (!unlockDaysFound || unlockDays == null || unlockDays.Count <= 0) // General Case. Always allowed.
+                                {
+                                    setBackgroundSprite = gameFinishedBackground;
+                                }
+                                else // Conditional (Days) Case:
+                                {
+                                    if (unlockDays.Contains(GlobalVariables.currentDay))
+                                    {
+                                        setBackgroundSprite = gameFinishedBackground;
+                                    }
+                                }
+                            }
+                        }
+                        else // Not final day. 
                         {
                             // General Case:
                             if (!unlockDaysFound || unlockDays == null)
