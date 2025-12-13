@@ -32,9 +32,43 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
                     
                     // If to disable the green color overlay.
+
+                    bool disableGreenColorBackground = false;
+                    Color? desktopBackgroundColor = null;
+                    
                     if (customCampaign.disableGreenColorBackground)
                     {
+                        disableGreenColorBackground = true;
+                    }
+                    
+                    bool disableColorBackgroundFound = false;
+                    bool disableColorBackground = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.disableColorBackground,
+                        ref disableColorBackgroundFound);
+                    
+                    bool desktopBackgroundColorFound = false;
+                    Color? modifierDesktopBackgroundColor = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.desktopBackgroundColor,
+                        ref desktopBackgroundColorFound,
+                        v => v != null);
+
+                    if (disableColorBackgroundFound && disableColorBackground)
+                    {
+                        disableGreenColorBackground = true;
+                    }
+
+                    if (desktopBackgroundColorFound && modifierDesktopBackgroundColor != null)
+                    {
+                        desktopBackgroundColor = modifierDesktopBackgroundColor;
+                    }
+                    
+                    if (disableGreenColorBackground)
+                    {
                         __instance.myImage.color = Color.white;
+                    }
+                    else if (desktopBackgroundColor != null)
+                    {
+                        __instance.myImage.color = (Color) desktopBackgroundColor;
                     }
 
                     if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.savedGameFinishedDisplay == 1) // If we finished the campaign.
