@@ -174,7 +174,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>Returns default value if we no value is set. If set, it returns the requested value.</returns>
         [CanBeNull]
-        public static TValue getActiveModifierValue<TValue>(Func<ModifierExtraInfo, TValue> selector, ref bool foundModifier, Func<TValue, bool> predicate = null)
+        public static TValue getActiveModifierValue<TValue>(Func<ModifierExtraInfo, TValue> selector,
+            ref bool foundModifier, Func<TValue, bool> predicate = null,
+            Func<ModifierExtraInfo, bool> specialPredicate = null)
         {
             CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
 
@@ -187,6 +189,11 @@ namespace NewSafetyHelp.CustomCampaign
             if (predicate == null)
             {
                 predicate = _ => true;
+            }
+            
+            if (specialPredicate == null)
+            {
+                specialPredicate = _ => true;
             }
 
             TValue selectedValue = default(TValue);
@@ -206,7 +213,7 @@ namespace NewSafetyHelp.CustomCampaign
 
                 TValue value = selector(modifierGeneral);
 
-                if (predicate(value))
+                if (predicate(value) && specialPredicate(modifierGeneral))
                 {
                     foundModifier = true;
                     selectedValue = value;
@@ -227,7 +234,8 @@ namespace NewSafetyHelp.CustomCampaign
                 TValue value = selector(modifierDay);
 
                 if (predicate(value) && modifierDay.unlockDays != null
-                                     && modifierDay.unlockDays.Contains(GlobalVariables.currentDay))
+                                     && modifierDay.unlockDays.Contains(GlobalVariables.currentDay)
+                                     && specialPredicate(modifierDay))
                 {
                     foundModifier = true;
                     return value;

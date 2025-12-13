@@ -155,16 +155,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             
             bool enableEntryBrowser = false;
             
-            bool entryBrowserChangedFound = false;
-            bool entryBrowserChanged = CustomCampaignGlobal.getActiveModifierValue(
-                c => c.entryBrowserChanged,
-                ref entryBrowserChangedFound,
-                v => v);
-            
             bool entryBrowserFound = false;
             bool entryBrowser = CustomCampaignGlobal.getActiveModifierValue(
                 c => c.entryBrowserActive,
-                ref entryBrowserFound);
+                ref entryBrowserFound,
+                specialPredicate: m => m.entryBrowserChanged);
             
             // If always on. We just leave them on.
             if (currentCampaign.entryBrowserAlwaysActive)
@@ -176,12 +171,9 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 enableEntryBrowser = true;
             }
 
-            if (entryBrowserChangedFound && entryBrowserChanged)
+            if (entryBrowserFound)
             {
-                if (entryBrowserFound)
-                {
-                    enableEntryBrowser = entryBrowser;
-                }
+                enableEntryBrowser = entryBrowser;
             }
 
             if (__instance.gameObject.name == "EntryBrowser-Executable")
@@ -202,15 +194,31 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 return false;
             }
             
+            bool enableScorecard = false;
+            
+            bool scorecardFound = false;
+            bool scorecard = CustomCampaignGlobal.getActiveModifierValue(
+                c => c.scorecardActive,
+                ref scorecardFound,
+                specialPredicate: m => m.scorecardChanged);
+            
             // If always on. We just leave them on.
-            if (currentCampaign.scorecardAlwaysActive && __instance.gameObject.name == "Scorecard")
+            if (currentCampaign.scorecardAlwaysActive)
             {
-                                
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Scorecard is always enabled.");
                 #endif
-                                
-                return true;
+                enableScorecard = true;
+            }
+            
+            if (scorecardFound)
+            {
+                enableScorecard = scorecard;
+            }
+
+            if (__instance.gameObject.name == "Scorecard")
+            {
+                return enableScorecard;
             }
 
             return false; // If not set to unlock.
