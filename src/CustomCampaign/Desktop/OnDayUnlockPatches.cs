@@ -145,7 +145,6 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
 
         public static bool handleEntryBrowserUnlocker(ref OnDayUnlock __instance)
         {
-            
             CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
             if (currentCampaign == null)
@@ -154,17 +153,42 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 return false;
             }
             
+            bool enableEntryBrowser = false;
+            
+            bool entryBrowserChangedFound = false;
+            bool entryBrowserChanged = CustomCampaignGlobal.getActiveModifierValue(
+                c => c.entryBrowserChanged,
+                ref entryBrowserChangedFound,
+                v => v);
+            
+            bool entryBrowserFound = false;
+            bool entryBrowser = CustomCampaignGlobal.getActiveModifierValue(
+                c => c.entryBrowserActive,
+                ref entryBrowserFound);
+            
             // If always on. We just leave them on.
-            if (currentCampaign.entryBrowserAlwaysActive && __instance.gameObject.name == "EntryBrowser-Executable")
+            if (currentCampaign.entryBrowserAlwaysActive)
             {
-                                
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Entry Browser Executable is always enabled.");
                 #endif
                                 
-                return true;
+                enableEntryBrowser = true;
             }
 
+            if (entryBrowserChangedFound && entryBrowserChanged)
+            {
+                if (entryBrowserFound)
+                {
+                    enableEntryBrowser = entryBrowser;
+                }
+            }
+
+            if (__instance.gameObject.name == "EntryBrowser-Executable")
+            {
+                return enableEntryBrowser;
+            }
+            
             return false; // If not set to unlock.
         }
         

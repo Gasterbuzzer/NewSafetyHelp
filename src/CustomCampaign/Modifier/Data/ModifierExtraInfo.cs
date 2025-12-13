@@ -40,10 +40,19 @@ namespace NewSafetyHelp.CustomCampaign.Modifier.Data
          * Enable Scorecard and such.
          */
         
-        //public bool entryBrowserAlwaysActive = false;
-        //public bool scorecardAlwaysActive = false;
-        //public bool artbookAlwaysActive = false;
-        //public bool arcadeAlwaysActive = false;
+        public bool entryBrowserActive = false;
+        // If this setting was changed at all. Is used when checking.
+        // If this is true and the "active" is false, it will disable the entry browser for example.
+        public bool entryBrowserChanged = false; 
+        
+        public bool scorecardActive = false;
+        public bool scorecardChanged = false; // See entryBrowserChanged for explanation.
+        
+        public bool artbookActive = false;
+        public bool artbookChanged = false; // See entryBrowserChanged for explanation.
+        
+        public bool arcadeActive = false;
+        public bool arcadeChanged = false; // See entryBrowserChanged for explanation.
         
         /*
          * Special Desktop Options

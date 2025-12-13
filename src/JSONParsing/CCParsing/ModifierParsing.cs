@@ -82,6 +82,21 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite backgroundLogo = null;
             bool disableBackgroundLogo = false;
             float backgroundLogoTransparency = 0.2627f;
+            
+            // Desktop settings
+            bool entryBrowserActive = false;
+            // If this setting was changed at all. Is used when checking.
+            // If this is true and the "active" is false, it will disable the entry browser for example.
+            bool entryBrowserChanged = false; 
+        
+            bool scorecardActive = false;
+            bool scorecardChanged = false; // See entryBrowserChanged for explanation.
+        
+            bool artbookActive = false;
+            bool artbookChanged = false; // See entryBrowserChanged for explanation.
+        
+            bool arcadeActive = false;
+            bool arcadeChanged = false; // See entryBrowserChanged for explanation.
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
@@ -246,6 +261,30 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     dayTitleStrings.Add(campaignDay.Value<string>());
                 }
             }
+            
+            if (jObjectParsed.TryGetValue("entry_browser_state", out var entryBrowserAlwaysActiveValue))
+            {
+                entryBrowserActive = (bool) entryBrowserAlwaysActiveValue;
+                entryBrowserChanged = true;
+            }
+
+            if (jObjectParsed.TryGetValue("scorecard_state", out var scorecardAlwaysActiveValue))
+            {
+                scorecardActive = (bool) scorecardAlwaysActiveValue;
+                scorecardChanged = true;
+            }
+
+            if (jObjectParsed.TryGetValue("artbook_state", out var artbookAlwaysActiveValue))
+            {
+                artbookActive = (bool) artbookAlwaysActiveValue;
+                artbookChanged = true;
+            }
+
+            if (jObjectParsed.TryGetValue("arcade_state", out var arcadeAlwaysActiveValue))
+            {
+                arcadeActive = (bool) arcadeAlwaysActiveValue;
+                arcadeChanged = true;
+            }
 
             return new ModifierExtraInfo
             {
@@ -267,7 +306,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 disableDesktopLogo = disableBackgroundLogo,
                 backgroundLogoTransparency = backgroundLogoTransparency,
 
-                dayTitleStrings = dayTitleStrings
+                dayTitleStrings = dayTitleStrings,
+                
+                entryBrowserActive = entryBrowserActive,
+                entryBrowserChanged = entryBrowserChanged,
+                
+                scorecardActive = scorecardActive,
+                scorecardChanged = scorecardChanged,
+                
+                artbookActive = artbookActive,
+                artbookChanged = artbookChanged,
+                
+                arcadeActive = arcadeActive,
+                arcadeChanged = arcadeChanged
             };
         }
     }
