@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
@@ -71,34 +72,89 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         __instance.myImage.color = (Color) desktopBackgroundColor;
                     }
 
+
+                    Sprite setBackgroundSprite;
+                    
                     if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.savedGameFinishedDisplay == 1) // If we finished the campaign.
                     {
                         if (customCampaign.gameFinishedBackground != null)
                         {
-                            __instance.myImage.sprite = customCampaign.gameFinishedBackground;
+                            setBackgroundSprite = customCampaign.gameFinishedBackground;
                         }
                         else
                         {
-                            __instance.myImage.sprite = __instance.gameFinishedSprite;
+                            setBackgroundSprite = __instance.gameFinishedSprite;
                         }
                     }
                     else // Current Day Background instead.
                     {
-                        if (customCampaign.backgroundSprites.Count > 0 && (GlobalVariables.currentDay <= customCampaign.backgroundSprites.Count)) // We have backgrounds to replace.
+                        if (customCampaign.backgroundSprites.Count > 0 
+                            && GlobalVariables.currentDay <= customCampaign.backgroundSprites.Count) // We have backgrounds to replace.
                         {
-                            __instance.myImage.sprite = customCampaign.backgroundSprites[GlobalVariables.currentDay - 1];
+                            setBackgroundSprite = customCampaign.backgroundSprites[GlobalVariables.currentDay - 1];
                         }
                         else
                         {
                             if (GlobalVariables.currentDay > __instance.spritesPerDay.Length) // Too many days for default image, we show first image.
                             {
-                                __instance.myImage.sprite = __instance.spritesPerDay[0];
+                                setBackgroundSprite = __instance.spritesPerDay[0];
                             }
                             else
                             {
-                                __instance.myImage.sprite = __instance.spritesPerDay[GlobalVariables.currentDay - 1];
+                                setBackgroundSprite = __instance.spritesPerDay[GlobalVariables.currentDay - 1];
                             }
                         }
+                    }
+
+                    bool desktopBackgroundsFound = false;
+                    List<Sprite> desktopBackgrounds = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.desktopBackgrounds,
+                        ref desktopBackgroundsFound,
+                        v => v != null && v.Count > 0);
+                    
+                    bool unlockDaysFound = false;
+                    List<int> unlockDays = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.unlockDays,
+                        ref unlockDaysFound,
+                        v => v != null && v.Count > 0);
+                    
+                    // Modifier
+                    if (desktopBackgroundsFound && desktopBackgrounds != null && desktopBackgrounds.Count > 0) // Valid backgrounds given.
+                    {
+                        if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay != 1 
+                            || customCampaign.savedGameFinishedDisplay != 1) // Not final day. 
+                        {
+                            // General Case:
+                            if (!unlockDaysFound || unlockDays == null)
+                            {
+                                if (desktopBackgrounds.Count > 0 
+                                    && GlobalVariables.currentDay <= desktopBackgrounds.Count) // Valid amount of backgrounds.
+                                {
+                                    setBackgroundSprite = desktopBackgrounds[(GlobalVariables.currentDay - 1) % desktopBackgrounds.Count];
+                                }
+                                // The else statement is handled already above,
+                                // so we don't need to override it accidentally.
+                            }
+                            else if (unlockDays.Count > 0) // Conditional (Days) Case:
+                            {
+                                for (int i = 0; i < unlockDays.Count; i++)
+                                {
+                                    if (GlobalVariables.currentDay == unlockDays[i])
+                                    {
+                                        setBackgroundSprite = desktopBackgrounds[i % desktopBackgrounds.Count];
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (setBackgroundSprite != null)
+                    {
+                        __instance.myImage.sprite = setBackgroundSprite;
+                    }
+                    else // Fallback
+                    {
+                        __instance.myImage.sprite = __instance.spritesPerDay[0];
                     }
                 }
                 else // Main Game
