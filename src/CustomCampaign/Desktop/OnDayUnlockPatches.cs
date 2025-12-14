@@ -294,23 +294,38 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         
         public static bool handleArcadeUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            if (__instance.gameObject.name == "Arcade-Executable")
+            {
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
-            if (currentCampaign == null)
-            {
-                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
-                return false;
-            }
+                if (currentCampaign == null)
+                {
+                    MelonLogger.Error(
+                        "ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    return false;
+                }
+
+                bool arcadeEnabled = false;
             
-            // If always on. We just leave them on.
-            if (currentCampaign.arcadeAlwaysActive && __instance.gameObject.name == "Arcade-Executable")
-            {
-                                
-                #if DEBUG
-                MelonLogger.Msg($"DEBUG: Arcade is always enabled.");
-                #endif
-                                
-                return true;
+                bool arcadeFound = false;
+                bool arcade = CustomCampaignGlobal.getActiveModifierValue(
+                    c => c.arcadeActive,
+                    ref arcadeFound,
+                    specialPredicate: m => m.arcadeChanged);
+                
+                // If always on. We just leave them on.
+                if (currentCampaign.artbookAlwaysActive)
+                {
+                    arcadeEnabled = true;
+                }
+                
+                if (arcadeFound)
+                {
+                    modifierApplied = true;
+                    arcadeEnabled = arcade;
+                }
+
+                return arcadeEnabled;
             }
 
             return false; // If not set to unlock.
