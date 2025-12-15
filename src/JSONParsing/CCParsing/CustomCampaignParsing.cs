@@ -203,7 +203,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
         }
         
-        public static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath,
             ref string customCampaignName)
         {

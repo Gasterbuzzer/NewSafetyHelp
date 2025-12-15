@@ -20,7 +20,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Finds the main menu canvas.
         /// </summary>
         /// <returns>GameObject for the main menu canvas. </returns>
-        public static GameObject getMainMenuCanvas()
+        private static GameObject getMainMenuCanvas()
         {
             GameObject foundMainMenuCanvas = GameObject.Find("MainMenuCanvas");
 
@@ -39,7 +39,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the desktop GameObject from the main menu canvas.
         /// </summary>
         /// <returns>Desktop GameObject</returns>
-        public static GameObject getDesktop()
+        private static GameObject getDesktop()
         {
             GameObject foundDesktop = getMainMenuCanvas().transform.Find("Desktop").gameObject;
 
@@ -77,7 +77,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the desktop GameObject which contains all emails.
         /// </summary>
         /// <returns>Email List GameObject</returns>
-        public static GameObject getEmailList()
+        private static GameObject getEmailList()
         {
             GameObject foundEmailList = getMainMenuCanvas().transform.Find("EmailPopup").Find("EmailsScrollview").Find("Viewport").Find("Content").gameObject;
 
@@ -221,7 +221,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the windows bar GameObject from the desktop.
         /// </summary>
         /// <returns>Window Bar GameObject</returns>
-        public static GameObject getWindowsBar()
+        private static GameObject getWindowsBar()
         {
             GameObject foundWindowBar = getDesktop().transform.Find("WindowsBar (1)").gameObject;
 
@@ -285,7 +285,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the Program icons on the left side on the Desktop.
         /// </summary>
         /// <returns> GameObject for the programs on the left. </returns>
-        public static GameObject getLeftPrograms()
+        private static GameObject getLeftPrograms()
         {
             GameObject foundLeftSidePrograms = getDesktop().transform.Find("Programs").gameObject;
 
@@ -304,7 +304,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the Program icons on the right side on the Desktop.
         /// </summary>
         /// <returns> GameObject for the programs on the right. </returns>
-        public static GameObject getRightPrograms()
+        private static GameObject getRightPrograms()
         {
             GameObject foundRightSidePrograms = getDesktop().transform.Find("RightHandPrograms").gameObject;
 
@@ -323,7 +323,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the Winter DLC program. Used for creating copies to modify.
         /// </summary>
         /// <returns> GameObject for the winter dlc program on the left. </returns>
-        public static GameObject getWinterDLCProgram()
+        private static GameObject getWinterDLCProgram()
         {
             GameObject winterDLCProgram = getLeftPrograms().transform.Find("DLC-Executable").gameObject;
 
@@ -462,7 +462,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the NSE Discord program. Used for creating copies to modify.
         /// </summary>
         /// <returns> GameObject for the NSE Discord program on the right. </returns>
-        public static GameObject getNSEDiscordProgram()
+        private static GameObject getNSEDiscordProgram()
         {
             GameObject discordProgram = getRightPrograms().transform.Find("Discord-Executable").gameObject;
 
