@@ -137,6 +137,7 @@
     <Compile Include="src\CustomCampaign\Modifier\Data\ModifierExtraInfo.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
+    <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs" />
     <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs" />
     <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
     <Compile Include="src\CustomVideos\CustomVideoExtraInfo.cs" />

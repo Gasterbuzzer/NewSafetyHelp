@@ -2,6 +2,7 @@
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomDesktop.CustomDoubleClickButton;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using Steamworks;
@@ -500,9 +501,11 @@ namespace NewSafetyHelp.CustomDesktop
             // Button Changes.
             Button customProgramButton = customProgramIcon.GetComponent<Button>();
             
+            DoubleClickButton doubleClickButton = customProgramIcon.AddComponent<DoubleClickButton>();
+            
             customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
             
-            customProgramButton.onClick.AddListener(() => changeToCustomCampaignSettings(customCampaignName));
+            customProgramButton.onClick.AddListener(() => doubleClickButton.doubleClickCustomCampaign(customCampaignName));
             
             // Rename CustomProgramIcon
             customProgramIcon.name = customProgramName;
@@ -528,15 +531,15 @@ namespace NewSafetyHelp.CustomDesktop
             // Button Changes.
             Button customProgramButton = backToMainMenuGameButton.GetComponent<Button>();
             
+            DoubleClickButton doubleClickButton = backToMainMenuGameButton.AddComponent<DoubleClickButton>();
+            
             customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
             
-            customProgramButton.onClick.AddListener(backToMainGameAlsoLoad);
-            
+            customProgramButton.onClick.AddListener(() => doubleClickButton.doubleClickBackToMainGameAlsoLoad());
             
             // Rename Program Object Name
             backToMainMenuGameButton.name = "BackToMainGameButton";
         }
-
 
         public static void changeToCustomCampaignSettings(string customCampaignName)
         {
@@ -570,11 +573,6 @@ namespace NewSafetyHelp.CustomDesktop
             {
                 SceneManager.LoadScene("MainMenuScene");
             }
-        }
-
-        public static void backToMainGameAlsoLoad()
-        {
-            backToMainGame();
         }
     }
 }

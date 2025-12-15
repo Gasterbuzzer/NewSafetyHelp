@@ -148,28 +148,6 @@ namespace NewSafetyHelp.CustomCampaign
         }
         
         /// <summary>
-        /// Gets the currently active modifier.
-        /// </summary>
-        /// <returns>Returns null if we no modifier is set. If set, it returns the active modifier.</returns>
-        [CanBeNull]
-        [Obsolete("Please use getActiveModifierValue instead.", true)]
-        public static ModifierExtraInfo getActiveModifier()
-        {
-            // This sets the current modifier to the correct one. This important for returning the correct one.
-            setModifier(pickModifier(GlobalVariables.currentDay));
-            
-            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
-
-            if (customCampaignExtraInfo == null)
-            {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting modifier!");
-                return null;
-            }
-
-            return customCampaignExtraInfo.activeModifier;
-        }
-        
-        /// <summary>
         /// From the provided selected value it returns the value that fits all the criteria.
         /// </summary>
         /// <returns>Returns default value if we no value is set. If set, it returns the requested value.</returns>

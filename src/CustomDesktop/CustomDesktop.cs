@@ -25,7 +25,6 @@ namespace NewSafetyHelp.CustomDesktop
         [HarmonyLib.HarmonyPatch(typeof(MainMenuCanvasBehavior), "Start", new Type[] { })]
         public static class StartPatch
         {
-
             /// <summary>
             /// Hooks into the Main Menu Canvas Start function to add our own logic after wards.
             /// </summary>
