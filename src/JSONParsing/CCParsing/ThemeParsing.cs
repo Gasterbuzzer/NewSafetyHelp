@@ -60,7 +60,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         private static ThemesExtraInfo ParseTheme(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
+            bool inMainCampaign = false; // If available in main campaign.
+            
             string themeName = "NO THEME NAME SET";
+            
+            string attachedToTheme = null; // If a conditional theme, what theme is it attached to?
             
             // If theme is a conditional theme (Not null). If general (equal to null)
             List<int> unlockDays = null;
@@ -68,14 +72,23 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Theme Colors
             Color? desktopBackgroundColor = null;
 
+            if (jObjectParsed.TryGetValue("theme_custom_campaign_attached", out JToken customCampaignNameValue))
+            {
+                customCampaignName = customCampaignNameValue.Value<string>();
+            }
+            else if (jObjectParsed.TryGetValue("theme_in_main_campaign", out JToken themeInMainCampaignValue))
+            {
+                inMainCampaign = themeInMainCampaignValue.Value<bool>();
+            }
+            
             if (jObjectParsed.TryGetValue("theme_name", out JToken themeNameValue))
             {
                 themeName = themeNameValue.Value<string>();
             }
             
-            if (jObjectParsed.TryGetValue("theme_custom_campaign_attached", out JToken customCampaignNameValue))
+            if (jObjectParsed.TryGetValue("attached_to_theme", out JToken attachedToThemeValue))
             {
-                customCampaignName = customCampaignNameValue.Value<string>();
+                attachedToTheme = attachedToThemeValue.Value<string>();
             }
 
             if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
@@ -130,8 +143,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             return new ThemesExtraInfo()
             {
+                inMainCampaign = inMainCampaign,
+                
                 themeName = themeName,
                 customCampaignName = customCampaignName,
+                
+                attachedToTheme = attachedToTheme,
                 
                 unlockDays = unlockDays,
             };
