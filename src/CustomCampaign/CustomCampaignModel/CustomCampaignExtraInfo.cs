@@ -3,6 +3,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
+using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -138,8 +139,14 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
         
-        // Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day, for now it is a global option)
-        public ModifierExtraInfo activeModifier = null; // The current active modifier. If null none is set.
+        // Themes
+        public int activeTheme = 0; // 0 is default theme. (0-3 are reserved for the default themes)
+        public int conditionalThemeActive = -1; // If we have a conditional theme active over the current one, this is set to >= 0. -1 => No conditional theme active.
+        
+        public List<ThemesExtraInfo> customThemesGeneral = new List<ThemesExtraInfo>(); // List of themes for general.
+        public List<ThemesExtraInfo> customThemesDays = new List<ThemesExtraInfo>(); // List of (conditional) themes that apply for certain days and apply to a certain theme only.
+        
+        // Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
         
         public List<ModifierExtraInfo> customModifiersGeneral = new List<ModifierExtraInfo>(); // List of modifiers for general.
         public List<ModifierExtraInfo> customModifiersDays = new List<ModifierExtraInfo>(); // List of (conditional) modifiers that apply for certain days.

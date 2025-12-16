@@ -6,6 +6,7 @@ using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
+using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -195,6 +196,34 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         }
                         
                         ParseJSONFiles.missingCustomCampaignModifier.Remove(missingModifier);
+                    }
+                }
+            }
+            
+            // Check if any theme has to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignTheme.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<ThemesExtraInfo> tempList = new List<ThemesExtraInfo>(ParseJSONFiles.missingCustomCampaignTheme);
+
+                foreach (ThemesExtraInfo missingTheme in tempList)
+                {
+                    if (missingTheme.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        if (missingTheme.unlockDays == null)
+                        {
+                            _customCampaign.customThemesGeneral.Add(missingTheme);
+                        }
+                        else
+                        {
+                            _customCampaign.customThemesDays.Add(missingTheme);
+                        }
+                        
+                        ParseJSONFiles.missingCustomCampaignTheme.Remove(missingTheme);
                     }
                 }
             }

@@ -10,6 +10,7 @@ using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
+using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -64,6 +65,9 @@ namespace NewSafetyHelp.JSONParsing
 
         // List of modifiers to be added in a custom campaign when the custom campaign is not parsed yet.
         public static List<ModifierExtraInfo> missingCustomCampaignModifier = new List<ModifierExtraInfo>();
+        
+        // List of themes to be added in a custom campaign when the custom campaign is not parsed yet.
+        public static List<ThemesExtraInfo> missingCustomCampaignTheme = new List<ThemesExtraInfo>();
 
         // List of videos to be added in a custom campaign when the custom campaign is not parsed yet.
         public static List<CustomVideoExtraInfo> missingCustomCampaignVideo = new List<CustomVideoExtraInfo>();
@@ -170,6 +174,12 @@ namespace NewSafetyHelp.JSONParsing
                                 $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a modifier file.");
                             ModifierParsing.CreateModifier(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
+                        
+                        case JSONParseTypes.Theme: // The provided JSON is a theme file (for custom campaigns).
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
+                            ThemeParsing.CreateTheme(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
                             MelonLogger.Error(
@@ -272,6 +282,20 @@ namespace NewSafetyHelp.JSONParsing
                 }, json))
             {
                 return JSONParseTypes.Modifier;
+            }
+            
+            // Theme was provided
+            if (!containsKeys(
+                    new List<string>
+                    { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
+                        "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
+                &&
+                containsKeys(new List<string>
+                {
+                    "theme_custom_campaign_attached", "theme_name"
+                }, json))
+            {
+                return JSONParseTypes.Theme;
             }
             
             // Unknown JSON type or failed parsing the file.
