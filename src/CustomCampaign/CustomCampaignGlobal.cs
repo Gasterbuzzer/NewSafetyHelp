@@ -196,7 +196,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>Returns the actual active theme. Null if we failed or the theme is a default theme from the game.</returns>
         [CanBeNull]
-        public static ThemesExtraInfo getActiveTheme(ref bool isNotCustomTheme)
+        public static ThemesExtraInfo getActiveTheme(ref bool isCustomTheme)
         {
             CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
 
@@ -207,10 +207,11 @@ namespace NewSafetyHelp.CustomCampaign
             }
 
             List<int> defaultGameThemes = new List<int> { 0, 1, 2, 3 };
+            
+            isCustomTheme = false;
 
             if (defaultGameThemes.Contains(customCampaign.activeTheme)) // Default Theme
             {
-                isNotCustomTheme = false;
                 return null;
             }
 
@@ -219,6 +220,7 @@ namespace NewSafetyHelp.CustomCampaign
             if (indexAsGeneral >= 0 &&
                 indexAsGeneral < customCampaign.customThemesGeneral.Count) // We have a general theme.
             {
+                isCustomTheme = true;
                 return customCampaign.customThemesGeneral[indexAsGeneral];
             }
 
@@ -227,6 +229,7 @@ namespace NewSafetyHelp.CustomCampaign
             if (indexAsDays >= 0
                 && indexAsDays < customCampaign.customThemesDays.Count) // We have a (conditional) days theme.
             {
+                isCustomTheme = true;
                 return customCampaign.customThemesDays[indexAsDays];
             }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HarmonyLib;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
@@ -70,7 +71,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             List<int> unlockDays = null;
             
             // Theme Colors
-            Color? desktopBackgroundColor = null;
+            ColorPalette themeColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
+            themeColorPalette.colorSwatch = new Color[4];
+
+            for (int i = 0; i < themeColorPalette.colorSwatch.Length; i++)
+            {
+                themeColorPalette.colorSwatch[i] = new Color(1, 0.2178f, 0.2745f, 1);
+            }
 
             if (jObjectParsed.TryGetValue("theme_custom_campaign_attached", out JToken customCampaignNameValue))
             {
@@ -108,37 +115,24 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
+            if (jObjectParsed.TryGetValue("title_bar_color", out JToken titleBarColorValue))
             {
-                if (_desktopBackgroundColor.Type == JTokenType.Array)
-                {
-                    List<float> desktopBackgroundColorList = new List<float>();
-
-                    foreach (JToken desktopBackgroundColorToken in (JArray) _desktopBackgroundColor)
-                    {
-                        desktopBackgroundColorList.Add(desktopBackgroundColorToken.Value<float>());
-                    }
-
-                    switch (desktopBackgroundColorList.Count)
-                    {
-                        case 3:
-                            desktopBackgroundColor = new Color(desktopBackgroundColorList[0],
-                                desktopBackgroundColorList[1], desktopBackgroundColorList[2]);
-                            break;
-
-                        case 4:
-                            desktopBackgroundColor = new Color(desktopBackgroundColorList[0],
-                                desktopBackgroundColorList[1], desktopBackgroundColorList[2], 
-                                desktopBackgroundColorList[3]);
-                            break;
-
-                        default:
-                            MelonLogger.Error("ERROR: " +
-                                              "Provided color for desktop background is invalid! " +
-                                              "Make sure its 3 or 4 values.");
-                            break;
-                    }
-                }
+                setColor(ref titleBarColorValue, ref themeColorPalette, 0);
+            }
+            
+            if (jObjectParsed.TryGetValue("menu_color", out JToken menuColorValue))
+            {
+                setColor(ref menuColorValue, ref themeColorPalette, 1);
+            }
+            
+            if (jObjectParsed.TryGetValue("third_color", out JToken thirdColorValue))
+            {
+                setColor(ref thirdColorValue, ref themeColorPalette, 2);
+            }
+            
+            if (jObjectParsed.TryGetValue("main_window_color", out JToken mainWindowColorValue))
+            {
+                setColor(ref mainWindowColorValue, ref themeColorPalette, 3);
             }
             
             return new ThemesExtraInfo()
@@ -151,7 +145,45 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 attachedToTheme = attachedToTheme,
                 
                 unlockDays = unlockDays,
+                
+                customThemePalette = themeColorPalette
             };
+        }
+
+        private static void setColor(ref JToken jsonValue, ref ColorPalette themeColorPalette, int colorIndex)
+        {
+            if (jsonValue.Type == JTokenType.Array)
+            {
+                // We first create a list and all floats.
+                // If we have 3 colors, we simply add these, if we have four,
+                // we interpret the 4th value as the alpha value.
+                List<float> desktopBackgroundColorList = new List<float>();
+
+                foreach (JToken desktopBackgroundColorToken in (JArray) jsonValue)
+                {
+                    desktopBackgroundColorList.Add(desktopBackgroundColorToken.Value<float>());
+                }
+
+                switch (desktopBackgroundColorList.Count)
+                {
+                    case 3:
+                        themeColorPalette.colorSwatch[colorIndex] = new Color(desktopBackgroundColorList[0],
+                            desktopBackgroundColorList[1], desktopBackgroundColorList[2]);
+                        break;
+
+                    case 4:
+                        themeColorPalette.colorSwatch[colorIndex] = new Color(desktopBackgroundColorList[0],
+                            desktopBackgroundColorList[1], desktopBackgroundColorList[2], 
+                            desktopBackgroundColorList[3]);
+                        break;
+
+                    default:
+                        MelonLogger.Error("ERROR: " +
+                                          "Provided color for setting color is invalid! " +
+                                          "Make sure its 3 or 4 values.");
+                        break;
+                }
+            }
         }
     }
 }
