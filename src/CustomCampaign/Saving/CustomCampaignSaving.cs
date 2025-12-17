@@ -491,6 +491,10 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
             currentCampaign.savedGameFinishedDisplay = 0;
+            
+            // Options
+            currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value = 0;
+            currentCampaign.activeTheme = 0;
 
             MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.campaignName}.");
         }

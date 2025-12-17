@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
@@ -13,7 +12,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnEnable", new Type[] { })]
         public static class OptionsAddCustomSettings
         {
-            public static bool addedThemeOptions = false;
+            private static bool addedThemeOptions;
             
             /// <summary>
             /// Patches the options menu to add our own options.
