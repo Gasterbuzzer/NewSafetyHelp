@@ -21,7 +21,6 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, DayNumSpriteSwapper __instance)
             {
-
                 if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
                 {
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();

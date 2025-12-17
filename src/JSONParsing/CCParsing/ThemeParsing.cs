@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using HarmonyLib;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
@@ -74,6 +73,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ColorPalette themeColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
             themeColorPalette.colorSwatch = new Color[4];
 
+            // Default Colors (Red => Error / Not Provided)
             for (int i = 0; i < themeColorPalette.colorSwatch.Length; i++)
             {
                 themeColorPalette.colorSwatch[i] = new Color(1, 0.2178f, 0.2745f, 1);

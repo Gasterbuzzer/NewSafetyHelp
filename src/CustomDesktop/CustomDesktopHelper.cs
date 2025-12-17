@@ -2,6 +2,7 @@
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.Saving;
 using NewSafetyHelp.CustomDesktop.CustomDoubleClickButton;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
@@ -549,7 +550,7 @@ namespace NewSafetyHelp.CustomDesktop
             CustomCampaignGlobal.activateCustomCampaign(customCampaignName);
             
             // Load Custom Campaign values
-            CustomCampaignGlobal.loadFromFileCustomCampaignInfo();
+            CustomCampaignSaving.loadFromFileCustomCampaignInfo();
             
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
             SceneManager.LoadScene("MainMenuScene");
@@ -557,10 +558,10 @@ namespace NewSafetyHelp.CustomDesktop
 
         public static void backToMainGame(bool alsoLoadMainMenu = true)
         {
-            MelonLogger.Msg(ConsoleColor.Green, $"INFO: Going back to the main game.");
+            MelonLogger.Msg(ConsoleColor.Green, "INFO: Going back to the main game.");
             
             // Save values
-            CustomCampaignGlobal.saveCustomCampaignInfo();
+            CustomCampaignSaving.saveCustomCampaignInfo();
             
             // Reset back.
             CustomCampaignGlobal.deactivateCustomCampaign();

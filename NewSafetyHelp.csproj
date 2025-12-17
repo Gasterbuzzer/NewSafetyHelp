@@ -132,6 +132,7 @@
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaign\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaign\Desktop\OnDayUnlockPatches.cs" />
+    <Compile Include="src\CustomCampaign\Saving\CustomCampaignSaving.cs" />
     <Compile Include="src\CustomCampaign\Themes\ThemePatches.cs" />
     <Compile Include="src\CustomCampaign\Themes\ThemesExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\Saving\SavingManagerPatchesCC.cs" />

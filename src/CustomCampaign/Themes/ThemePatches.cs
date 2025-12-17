@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
@@ -9,27 +10,29 @@ namespace NewSafetyHelp.CustomCampaign.Themes
 {
     public static class ThemePatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "Start", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnEnable", new Type[] { })]
         public static class OptionsAddCustomSettings
         {
+            public static bool addedThemeOptions = false;
+            
             /// <summary>
             /// Patches the options menu to add our own options.
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static void Postfix(MethodBase __originalMethod, OptionsMenuBehavior __instance)
+            private static void Prefix(MethodBase __originalMethod, OptionsMenuBehavior __instance)
             {
                 if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
                 {
                     // TODO: Add main campaign theme.
                 }
-                else
+                else if (!addedThemeOptions)
                 {
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null in options postfix. Unable of adding options in custom campaign.");
+                        MelonLogger.Error("ERROR: Custom Campaign null in options prefix. Unable of adding options in custom campaign.");
                         return;
                     }
 
@@ -37,6 +40,8 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     {
                         __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
                     }
+
+                    addedThemeOptions = true;
                 }
                 
                 __instance.colorDropdown.RefreshShownValue();
