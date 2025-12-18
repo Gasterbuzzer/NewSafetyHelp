@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
@@ -12,8 +13,6 @@ namespace NewSafetyHelp.CustomCampaign.Themes
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnEnable", new Type[] { })]
         public static class OptionsAddCustomSettings
         {
-            private static bool addedThemeOptions;
-            
             /// <summary>
             /// Patches the options menu to add our own options.
             /// </summary>
@@ -25,7 +24,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 {
                     // TODO: Add main campaign theme.
                 }
-                else if (!addedThemeOptions)
+                else
                 {
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
@@ -37,10 +36,17 @@ namespace NewSafetyHelp.CustomCampaign.Themes
 
                     foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
                     {
-                        __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
+                        if (theme != null)
+                        {
+                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.themeName);
+                        
+                            if (!alreadyPresent)
+                            {
+                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
+                            }
+                        }
                     }
-
-                    addedThemeOptions = true;
+                    
                 }
                 
                 __instance.colorDropdown.RefreshShownValue();
@@ -96,28 +102,49 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     }
                     else
                     {
-                        bool isCustomTheme = false;
-                        ThemesExtraInfo theme = CustomCampaignGlobal.getActiveTheme(ref isCustomTheme);
+                        int conditionalTheme = CustomCampaignGlobal.checkIfConditionalTheme();
                         
-                        #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Is the theme custom? '{isCustomTheme}'. " +
-                                        $"Was theme invalid? '{theme != null}'. ");
-                        
-                        MelonLogger.Msg($"DEBUG: How many general themes? '{customCampaign.customThemesGeneral.Count}'. " +
-                                        $"How many conditional themes? '{customCampaign.customThemesDays.Count}'.");
-                        #endif
-
-                        if (isCustomTheme 
-                            && theme != null
-                            && theme.customThemePalette != null
-                            && theme.customThemePalette.colorSwatch != null
-                            && theme.customThemePalette.colorSwatch.Length > 0)
+                        if (conditionalTheme != -1) // We have a conditional theme that we need to apply.
                         {
-                            __instance.colorPalette = theme.customThemePalette;
+                            ThemesExtraInfo theme = CustomCampaignGlobal.getThemeFromID(conditionalTheme);
+                            
+                            if (theme != null
+                                && theme.customThemePalette != null
+                                && theme.customThemePalette.colorSwatch != null
+                                && theme.customThemePalette.colorSwatch.Length > 0)
+                            {
+                                __instance.colorPalette = theme.customThemePalette;
+                            }
+                            else
+                            {
+                                normalPaletteUpdate(__instance);
+                            }
                         }
-                        else
+                        else // We don't have a conditional theme to apply.
                         {
-                            normalPaletteUpdate(__instance);
+                            bool isCustomTheme = false;
+                            ThemesExtraInfo theme = CustomCampaignGlobal.getActiveTheme(ref isCustomTheme);
+                        
+                            #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Is the theme custom? '{isCustomTheme}'. " +
+                                            $"Was theme invalid? '{theme != null}'. ");
+                        
+                            MelonLogger.Msg($"DEBUG: How many general themes? '{customCampaign.customThemesGeneral.Count}'. " +
+                                            $"How many conditional themes? '{customCampaign.customThemesDays.Count}'.");
+                            #endif
+
+                            if (isCustomTheme 
+                                && theme != null
+                                && theme.customThemePalette != null
+                                && theme.customThemePalette.colorSwatch != null
+                                && theme.customThemePalette.colorSwatch.Length > 0)
+                            {
+                                __instance.colorPalette = theme.customThemePalette;
+                            }
+                            else
+                            {
+                                normalPaletteUpdate(__instance);
+                            }
                         }
                     }
                 }

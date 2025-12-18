@@ -111,6 +111,58 @@ namespace NewSafetyHelp.CustomCampaign
         }
         
         /// <summary>
+        /// Gets the custom theme of a given custom theme ID.
+        /// </summary>
+        /// <returns>(Int) null = No valid theme found for the given ID; Otherwise: Theme with the given ID.</returns>
+        [CanBeNull]
+        public static ThemesExtraInfo getThemeFromID(int themeID)
+        {
+            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                return null;
+            }
+
+            // Default them, just return null.
+            if (themeID <= 3)
+            {
+                return null;
+            }
+
+            int currentThemeID = 3;
+
+            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            {
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                {
+                    currentThemeID++;
+
+                    if (theme != null && currentThemeID == themeID)
+                    {
+                        return theme;
+                    }
+                }
+            }
+
+            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            {
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                {
+                    currentThemeID++;
+
+                    if (theme != null && currentThemeID == themeID)
+                    {
+                        return theme;
+                    }
+                }
+            }
+
+            return null;
+        }
+        
+        /// <summary>
         /// Gets the theme's ID from the theme's name.
         /// </summary>
         /// <returns>(Int) -1 = No theme found; Otherwise: ID of Theme.</returns>
@@ -128,11 +180,11 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
             {
-                foreach (ThemesExtraInfo themes in customCampaign.customThemesGeneral)
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
                 {
                     currentThemeID++;
 
-                    if (themes != null && themes.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
                     {
                         return currentThemeID;
                     }
@@ -141,11 +193,11 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
             {
-                foreach (ThemesExtraInfo themes in customCampaign.customThemesDays)
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
                 {
                     currentThemeID++;
 
-                    if (themes != null && themes.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
                     {
                         return currentThemeID;
                     }
@@ -213,12 +265,10 @@ namespace NewSafetyHelp.CustomCampaign
                 MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting the active theme!");
                 return null;
             }
-
-            List<int> defaultGameThemes = new List<int> { 0, 1, 2, 3 };
             
             isCustomTheme = false;
 
-            if (defaultGameThemes.Contains(customCampaign.activeTheme)) // Default Theme
+            if (customCampaign.activeTheme <= 3) // Default Theme
             {
                 return null;
             }

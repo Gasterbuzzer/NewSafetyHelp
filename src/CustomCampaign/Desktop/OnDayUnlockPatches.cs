@@ -314,7 +314,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     specialPredicate: m => m.arcadeChanged);
                 
                 // If always on. We just leave them on.
-                if (currentCampaign.artbookAlwaysActive)
+                if (currentCampaign.arcadeAlwaysActive)
                 {
                     arcadeEnabled = true;
                 }

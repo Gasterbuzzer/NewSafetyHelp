@@ -145,7 +145,6 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public string defaultTheme = null; // Default theme to be loaded when doing the campaign for the first time.
         
         public int activeTheme = 0; // 0 is default theme. (0-3 are reserved for the default themes)
-        public int conditionalThemeActive = -1; // If we have a conditional theme active over the current one, this is set to >= 0. -1 => No conditional theme active.
         
         public List<ThemesExtraInfo> customThemesGeneral = new List<ThemesExtraInfo>(); // List of themes for general.
         public List<ThemesExtraInfo> customThemesDays = new List<ThemesExtraInfo>(); // List of (conditional) themes that apply for certain days and apply to a certain theme only.
