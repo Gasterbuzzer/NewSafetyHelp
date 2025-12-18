@@ -70,56 +70,6 @@ namespace NewSafetyHelp.CustomCampaign
         }
 
         /// <summary>
-        /// Sets the theme for the custom campaign. Please note, this does not actually update the theme.
-        /// You would need to call an update function from the game for it to reflect first.
-        /// </summary>
-        /// <param name="themeIndex"> ID of the theme. (0-3) are reserved by the game.
-        /// Any after that are the general themes. Any after that are the conditional themes.</param>
-        /// <returns> (Bool) True: Theme setting was successfully set; False: Theme setting failed.</returns>
-        public static bool setThemeIndex(int themeIndex)
-        {
-            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
-
-            if (customCampaign == null)
-            {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting theme by ID!");
-                return false;
-            }
-
-            customCampaign.activeTheme = themeIndex;
-
-            return true;
-        }
-        
-        /// <summary>
-        /// Sets the theme for the custom campaign. Please note, this does not actually update the theme.
-        /// You would need to call an update function from the game for it to reflect first.
-        /// </summary>
-        /// <returns> (Bool) True: Theme setting was successfully set; False: Theme setting failed.</returns>
-        public static bool setConditionalTheme()
-        {
-            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
-
-            if (customCampaign == null)
-            {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting theme by ID!");
-                return false;
-            }
-
-            int conditionalTheme = checkIfConditionalTheme();
-            if (conditionalTheme != -1)
-            {
-                customCampaign.conditionalThemeActive = conditionalTheme;
-            }
-            else
-            {
-                customCampaign.conditionalThemeActive = -1;
-            }
-            
-            return true;
-        }
-
-        /// <summary>
         /// Finds the ID for a given custom theme.
         /// </summary>
         /// <param name="theme">Theme to get the ID from.</param>
@@ -134,16 +84,72 @@ namespace NewSafetyHelp.CustomCampaign
                 return -1;
             }
 
-            int generalIDSearch = customCampaign.customThemesGeneral.IndexOf(theme);
-            if (generalIDSearch != -1)
+            if (customCampaign.customThemesGeneral != null)
             {
-                return generalIDSearch + 4;
+                int generalIDSearch = customCampaign.customThemesGeneral.IndexOf(theme);
+                if (generalIDSearch != -1)
+                {
+                    return generalIDSearch + 4;
+                }
             }
-            
-            int conditionalIDSearch = customCampaign.customThemesGeneral.IndexOf(theme);
-            if (conditionalIDSearch != -1)
+
+            if (customCampaign.customThemesDays != null)
             {
-                return conditionalIDSearch + 4 + customCampaign.customThemesGeneral.Count;
+                int conditionalIDSearch = customCampaign.customThemesDays.IndexOf(theme);
+                if (conditionalIDSearch != -1)
+                {
+                    if (customCampaign.customThemesGeneral != null)
+                    {
+                        conditionalIDSearch += customCampaign.customThemesGeneral.Count;
+                    }
+                    
+                    return conditionalIDSearch + 4;
+                }
+            }
+
+            return -1;
+        }
+        
+        /// <summary>
+        /// Gets the theme's ID from the theme's name.
+        /// </summary>
+        /// <returns>(Int) -1 = No theme found; Otherwise: ID of Theme.</returns>
+        public static int getThemeIDFromName(string themeName)
+        {
+            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                return -1;
+            }
+
+            int currentThemeID = 3;
+
+            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            {
+                foreach (ThemesExtraInfo themes in customCampaign.customThemesGeneral)
+                {
+                    currentThemeID++;
+
+                    if (themes != null && themes.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return currentThemeID;
+                    }
+                }
+            }
+
+            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            {
+                foreach (ThemesExtraInfo themes in customCampaign.customThemesDays)
+                {
+                    currentThemeID++;
+
+                    if (themes != null && themes.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return currentThemeID;
+                    }
+                }
             }
 
             return -1;
@@ -171,22 +177,25 @@ namespace NewSafetyHelp.CustomCampaign
                 return -1;
             }
 
-            foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
             {
-                if (theme != null && theme.attachedToTheme.Equals(currentTheme.themeName))
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
                 {
-                    if (theme.unlockDays.Contains(GlobalVariables.currentDay))
+                    if (theme != null && theme.attachedToTheme.Equals(currentTheme.themeName))
                     {
-                        int foundThemeID = getThemeID(theme);
-
-                        if (foundThemeID >= 0)
+                        if (theme.unlockDays.Contains(GlobalVariables.currentDay))
                         {
-                            return foundThemeID;
+                            int foundThemeID = getThemeID(theme);
+
+                            if (foundThemeID >= 0)
+                            {
+                                return foundThemeID;
+                            }
                         }
                     }
                 }
             }
-
+            
             return -1;
         }
 
@@ -216,16 +225,23 @@ namespace NewSafetyHelp.CustomCampaign
 
             int indexAsGeneral = customCampaign.activeTheme - 4;
 
-            if (indexAsGeneral >= 0 &&
-                indexAsGeneral < customCampaign.customThemesGeneral.Count) // We have a general theme.
+            if (indexAsGeneral >= 0 
+                && customCampaign.customThemesGeneral != null
+                && indexAsGeneral < customCampaign.customThemesGeneral.Count) // We have a general theme.
             {
                 isCustomTheme = true;
                 return customCampaign.customThemesGeneral[indexAsGeneral];
             }
 
-            int indexAsDays = customCampaign.activeTheme - 4 - customCampaign.customThemesGeneral.Count;
+            int indexAsDays = customCampaign.activeTheme - 4;
+
+            if (customCampaign.customThemesGeneral != null)
+            {
+                indexAsDays -= customCampaign.customThemesGeneral.Count;
+            }
 
             if (indexAsDays >= 0
+                && customCampaign.customThemesDays != null
                 && indexAsDays < customCampaign.customThemesDays.Count) // We have a (conditional) days theme.
             {
                 isCustomTheme = true;
@@ -269,44 +285,50 @@ namespace NewSafetyHelp.CustomCampaign
             // We then pick the first in the list.
             // Note: General modifiers do not require to check for days, since they are always "valid", only the predicate.
 
-            foreach (ModifierExtraInfo modifierGeneral in customCampaignExtraInfo.customModifiersGeneral)
+            if (customCampaignExtraInfo.customModifiersGeneral != null)
             {
-                if (modifierGeneral == null)
+                foreach (ModifierExtraInfo modifierGeneral in customCampaignExtraInfo.customModifiersGeneral)
                 {
-                    continue;
-                }
+                    if (modifierGeneral == null)
+                    {
+                        continue;
+                    }
 
-                TValue value = selector(modifierGeneral);
+                    TValue value = selector(modifierGeneral);
 
-                if (predicate(value) && specialPredicate(modifierGeneral))
-                {
-                    foundModifier = true;
-                    selectedValue = value;
-                    break;
+                    if (predicate(value) && specialPredicate(modifierGeneral))
+                    {
+                        foundModifier = true;
+                        selectedValue = value;
+                        break;
+                    }
                 }
             }
 
             // Now we check for conditional modifiers. Same work as with the general modifiers.
             // We only need to check if valid for the current day.
 
-            foreach (ModifierExtraInfo modifierDay in customCampaignExtraInfo.customModifiersDays)
+            if (customCampaignExtraInfo.customModifiersDays != null)
             {
-                if (modifierDay == null)
+                foreach (ModifierExtraInfo modifierDay in customCampaignExtraInfo.customModifiersDays)
                 {
-                    continue;
-                }
+                    if (modifierDay == null)
+                    {
+                        continue;
+                    }
 
-                TValue value = selector(modifierDay);
+                    TValue value = selector(modifierDay);
 
-                if (predicate(value) && modifierDay.unlockDays != null
-                                     && modifierDay.unlockDays.Contains(GlobalVariables.currentDay)
-                                     && specialPredicate(modifierDay))
-                {
-                    foundModifier = true;
-                    return value;
+                    if (predicate(value) && modifierDay.unlockDays != null
+                                         && modifierDay.unlockDays.Contains(GlobalVariables.currentDay)
+                                         && specialPredicate(modifierDay))
+                    {
+                        foundModifier = true;
+                        return value;
+                    }
                 }
             }
-
+            
             return selectedValue;
         }
 

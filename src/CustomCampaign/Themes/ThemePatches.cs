@@ -76,6 +76,19 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     MelonLogger.Msg($"DEBUG: Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
                                     $"and custom campaign activeTheme: {customCampaign.activeTheme}.");
                     #endif
+                    
+                    // Now if we have not loaded in the default theme ever, we do it now.
+                    if (!string.IsNullOrEmpty(customCampaign.defaultTheme) 
+                        && !customCampaign.defaultThemeAppliedOnce)
+                    {
+                        int themeID = CustomCampaignGlobal.getThemeIDFromName(customCampaign.defaultTheme);
+
+                        if (themeID > 0)
+                        {
+                            customCampaign.defaultThemeAppliedOnce = true;
+                            customCampaign.activeTheme = themeID;
+                        }
+                    }
 
                     if (customCampaign.activeTheme <= 3)
                     {

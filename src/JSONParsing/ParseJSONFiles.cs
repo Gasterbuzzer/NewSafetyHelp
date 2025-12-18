@@ -292,7 +292,7 @@ namespace NewSafetyHelp.JSONParsing
                 &&
                 containsKeys(new List<string>
                 {
-                    "theme_custom_campaign_attached", "theme_name"
+                    "theme_custom_campaign_attached", "theme_name", "title_bar_color", "theme_in_main_campaign"
                 }, json))
             {
                 return JSONParseTypes.Theme;

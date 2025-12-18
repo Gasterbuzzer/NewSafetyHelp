@@ -309,6 +309,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite customDesktopLogo = null;
             float customDesktopLogoTransparency = 0.2627f;
             
+            // Themes
+
+            string defaultTheme = null;
+            
             if (jObjectParsed.TryGetValue("custom_campaign_name", out var customCampaignNameValue))
             {
                 customCampaignName = (string) customCampaignNameValue;
@@ -638,6 +642,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
+            if (jObjectParsed.TryGetValue("defaultTheme", out JToken defaultThemeValue))
+            {
+                defaultTheme = defaultThemeValue.Value<string>();
+            }
             
             // Create
             return new CustomCampaignExtraInfo
@@ -693,7 +701,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 customDesktopLogo = customDesktopLogo,
                 customDesktopLogoTransparency = customDesktopLogoTransparency,
 
-                disableGreenColorBackground = disableGreenColorBackground
+                disableGreenColorBackground = disableGreenColorBackground,
+                
+                defaultTheme = defaultTheme
             };
         }
     }

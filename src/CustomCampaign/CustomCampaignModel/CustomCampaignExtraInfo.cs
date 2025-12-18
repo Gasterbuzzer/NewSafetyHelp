@@ -140,6 +140,10 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public List<float> savedDayScores = new List<float>();
         
         // Themes
+        public bool defaultThemeAppliedOnce = false; // If a default theme is given, it will only be applied once, if overwritten. Too bad, we allow our users more freedom.
+        
+        public string defaultTheme = null; // Default theme to be loaded when doing the campaign for the first time.
+        
         public int activeTheme = 0; // 0 is default theme. (0-3 are reserved for the default themes)
         public int conditionalThemeActive = -1; // If we have a conditional theme active over the current one, this is set to >= 0. -1 => No conditional theme active.
         

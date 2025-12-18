@@ -495,6 +495,10 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Options
             currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value = 0;
             currentCampaign.activeTheme = 0;
+            
+            // Theme
+            currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = false;
+            currentCampaign.defaultThemeAppliedOnce = false;
 
             MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.campaignName}.");
         }
@@ -521,6 +525,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
             {
                 currentCampaign.campaignSaveCategory.CreateEntry("savedColorTheme", 0);
+            }
+            
+            if (currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce") == null)
+            {
+                currentCampaign.campaignSaveCategory.CreateEntry("themeShownOnce", false);
             }
 
             MelonPreferences.Save();
@@ -575,6 +584,18 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value = currentCampaign.activeTheme;
             }
             
+            if (currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce") == null)
+            {
+                MelonPreferences_Entry<bool> themeShownOnce = currentCampaign.campaignSaveCategory.CreateEntry(
+                    "themeShownOnce", false);
+                
+                themeShownOnce.Value = currentCampaign.defaultThemeAppliedOnce;
+            }
+            else
+            {
+                currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = currentCampaign.defaultThemeAppliedOnce;
+            }
+            
             MelonPreferences.Save();
 
             MelonLogger.Msg($"INFO: Finished saving (Options) for the custom campaign {currentCampaign.campaignName}.");
@@ -611,14 +632,15 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
-
             
             #if DEBUG
-            MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
+                MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
             #endif
             // Load all values first into the currentCampaign Object.
             currentCampaign.activeTheme = currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value;
             
+            // If we have applied the default theme at least once.
+            currentCampaign.defaultThemeAppliedOnce = currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce").Value;
             
             /*
              * Load the values into actual game values now.
