@@ -42,6 +42,9 @@ namespace NewSafetyHelp.JSONParsing
 
         // "Global" Variables for handling extra information such as caller audio. Gets stored as its ID and with its Name.
         public static List<EntryExtraInfo> entriesExtraInfo = new List<EntryExtraInfo>();
+        
+        // Main Game Themes
+        public static List<ThemesExtraInfo> mainGameThemes = new List<ThemesExtraInfo>();
 
         // Map for custom callers to replaced in the main game. (ID of the call to replace, Caller for that ID)
         public static Dictionary<int, CustomCallerExtraInfo> customCallerMainGame =

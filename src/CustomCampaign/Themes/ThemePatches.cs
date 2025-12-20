@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.JSONParsing;
 using TMPro;
 using Object = UnityEngine.Object;
 
@@ -22,7 +23,18 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             {
                 if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
                 {
-                    // TODO: Add main campaign theme.
+                    foreach (ThemesExtraInfo theme in ParseJSONFiles.mainGameThemes)
+                    {
+                        if (theme != null)
+                        {
+                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.themeName);
+                        
+                            if (!alreadyPresent)
+                            {
+                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -65,7 +77,25 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             {
                 if (!CustomCampaignGlobal.inCustomCampaign)
                 {
-                    normalPaletteUpdate(__instance);
+                    if (GlobalVariables.saveManagerScript.savedColorTheme <= 3)
+                    {
+                        normalPaletteUpdate(__instance);
+                    }
+                    else // themeID >= 4
+                    {
+                        for (int i = 0; i < ParseJSONFiles.mainGameThemes.Count; i++)
+                        {
+                            if (GlobalVariables.saveManagerScript.savedColorTheme == i + 4)
+                            {
+                                if (ParseJSONFiles.mainGameThemes[i] != null
+                                    && ParseJSONFiles.mainGameThemes[i].customThemePalette != null
+                                    && ParseJSONFiles.mainGameThemes[i].customThemePalette.colorSwatch != null)
+                                {
+                                    __instance.colorPalette = ParseJSONFiles.mainGameThemes[i].customThemePalette;
+                                }
+                            }
+                        }
+                    }
                 }
                 else
                 {

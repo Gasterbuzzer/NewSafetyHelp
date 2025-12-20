@@ -35,25 +35,32 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCampaignExtraInfo foundCustomCampaign =
                 CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.campaignName == customCampaignName);
-
-            if (foundCustomCampaign != null)
+            
+            if (customTheme.inMainCampaign)
             {
-                if (customTheme.unlockDays == null)
-                {
-                    foundCustomCampaign.customThemesGeneral.Add(customTheme);
-                }
-                else
-                {
-                    foundCustomCampaign.customThemesDays.Add(customTheme);
-                }
+                ParseJSONFiles.mainGameThemes.Add(customTheme);
             }
             else
             {
-                #if DEBUG
-                MelonLogger.Msg("DEBUG: Found theme file before the custom campaign was found / does not exist.");
-                #endif
+                if (foundCustomCampaign != null)
+                {
+                    if (customTheme.unlockDays == null)
+                    {
+                        foundCustomCampaign.customThemesGeneral.Add(customTheme);
+                    }
+                    else
+                    {
+                        foundCustomCampaign.customThemesDays.Add(customTheme);
+                    }
+                }
+                else
+                {
+                    #if DEBUG
+                    MelonLogger.Msg("DEBUG: Found theme file before the custom campaign was found / does not exist.");
+                    #endif
 
-                ParseJSONFiles.missingCustomCampaignTheme.Add(customTheme);
+                    ParseJSONFiles.missingCustomCampaignTheme.Add(customTheme);
+                }
             }
         }
 
