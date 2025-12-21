@@ -305,7 +305,7 @@ namespace NewSafetyHelp.JSONParsing
             return JSONParseTypes.Invalid;
         }
 
-        /// <summary>p
+        /// <summary>
         /// Function for adding a single entry.
         /// </summary>
         /// <param name="jObjectParsed"> JSON Data for reading. </param>
