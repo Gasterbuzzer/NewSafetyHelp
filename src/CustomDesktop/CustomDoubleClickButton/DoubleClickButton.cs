@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
 {
     public class DoubleClickButton : MonoBehaviour
     {
-        private float lastClickTime = 0f;
+        private float lastClickTime;
         private readonly float doubleClickThreshold = 0.3f;
         
         public void doubleClickCustomCampaign(string customCampaignName)
