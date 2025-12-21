@@ -76,6 +76,11 @@ namespace NewSafetyHelp.CustomDesktop
                             loginText02.textFrames[i] = customCampaign.loadingTexts[1][i];
                         }
                     }
+
+                    if (customCampaign.disablePickingThemeOption)
+                    {
+                        CustomDesktopHelper.disableThemeDropdown();
+                    }
                 }
 
                 // Plays beginning segment to desktop.

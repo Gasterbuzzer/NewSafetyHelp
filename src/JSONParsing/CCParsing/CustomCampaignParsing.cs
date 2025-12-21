@@ -310,8 +310,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             float customDesktopLogoTransparency = 0.2627f;
             
             // Themes
+            
+            bool disablePickingThemeOption = false; // If true, it will hide the option to set the theme.
 
             string defaultTheme = null;
+            
+            /*
+             * Parsing the JSON File
+             */
             
             if (jObjectParsed.TryGetValue("custom_campaign_name", out var customCampaignNameValue))
             {
@@ -647,6 +653,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 defaultTheme = defaultThemeValue.Value<string>();
             }
             
+            if (jObjectParsed.TryGetValue("disable_theme_dropdown", out var disableThemeDropdownValue))
+            {
+                disablePickingThemeOption = (bool) disableThemeDropdownValue;
+            }
+            
             // Create
             return new CustomCampaignExtraInfo
             {
@@ -703,7 +714,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 disableGreenColorBackground = disableGreenColorBackground,
                 
-                defaultTheme = defaultTheme
+                defaultTheme = defaultTheme,
+                disablePickingThemeOption = disablePickingThemeOption
             };
         }
     }

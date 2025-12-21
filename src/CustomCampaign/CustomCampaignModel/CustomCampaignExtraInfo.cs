@@ -140,6 +140,9 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public List<float> savedDayScores = new List<float>();
         
         // Themes
+
+        public bool disablePickingThemeOption = false; // If true, it will hide the option to set the theme.
+        
         public bool defaultThemeAppliedOnce = false; // If a default theme is given, it will only be applied once, if overwritten. Too bad, we allow our users more freedom.
         
         public string defaultTheme = null; // Default theme to be loaded when doing the campaign for the first time.
