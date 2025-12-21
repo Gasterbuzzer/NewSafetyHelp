@@ -1,21 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
+using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.EntryManager.EntryData;
-using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign
 {
     public static class CustomCampaignGlobal
     {
         public static List<CustomCampaignExtraInfo> customCampaignsAvailable = new List<CustomCampaignExtraInfo>();
-        
+
         // ReSharper disable once RedundantDefaultMemberInitializer
         public static bool inCustomCampaign = false;
 
         public static string currentCustomCampaignName = "";
-        
+
         /// <summary>
         /// Activates the custom campaign values.
         /// </summary>
@@ -41,7 +44,8 @@ namespace NewSafetyHelp.CustomCampaign
         /// <returns>CustomCampaignExtraInfo Object of the current activate custom campaign.</returns>
         public static CustomCampaignExtraInfo getActiveCustomCampaign()
         {
-            return customCampaignsAvailable.Find(scannedCampaign => scannedCampaign.campaignName == currentCustomCampaignName);
+            return customCampaignsAvailable.Find(scannedCampaign =>
+                scannedCampaign.campaignName == currentCustomCampaignName);
         }
 
         /// <summary>
@@ -51,9 +55,10 @@ namespace NewSafetyHelp.CustomCampaign
         /// <returns>CustomCallerExtraInfo Object with the returned object. If not found, default. </returns>
         public static CustomCallerExtraInfo getCustomCallerFromActiveCampaign(int orderID)
         {
-            return getActiveCustomCampaign().customCallersInCampaign.Find(customCaller => customCaller.orderInCampaign == orderID);
+            return getActiveCustomCampaign().customCallersInCampaign
+                .Find(customCaller => customCaller.orderInCampaign == orderID);
         }
-        
+
         /// <summary>
         /// Gets the custom entry by its name.
         /// </summary>
@@ -65,37 +70,351 @@ namespace NewSafetyHelp.CustomCampaign
         }
 
         /// <summary>
+        /// Finds the ID for a given custom theme.
+        /// </summary>
+        /// <param name="theme">Theme to get the ID from.</param>
+        /// <returns>ID of the theme if found. -1 if not found or if something went wrong.</returns>
+        private static int getThemeID(ThemesExtraInfo theme)
+        {
+            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting theme ID!");
+                return -1;
+            }
+
+            if (customCampaign.customThemesGeneral != null)
+            {
+                int generalIDSearch = customCampaign.customThemesGeneral.IndexOf(theme);
+                if (generalIDSearch != -1)
+                {
+                    return generalIDSearch + 4;
+                }
+            }
+
+            if (customCampaign.customThemesDays != null)
+            {
+                int conditionalIDSearch = customCampaign.customThemesDays.IndexOf(theme);
+                if (conditionalIDSearch != -1)
+                {
+                    if (customCampaign.customThemesGeneral != null)
+                    {
+                        conditionalIDSearch += customCampaign.customThemesGeneral.Count;
+                    }
+                    
+                    return conditionalIDSearch + 4;
+                }
+            }
+
+            return -1;
+        }
+        
+        /// <summary>
+        /// Gets the custom theme of a given custom theme ID.
+        /// </summary>
+        /// <returns>(Int) null = No valid theme found for the given ID; Otherwise: Theme with the given ID.</returns>
+        [CanBeNull]
+        public static ThemesExtraInfo getThemeFromID(int themeID)
+        {
+            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                return null;
+            }
+
+            // Default them, just return null.
+            if (themeID <= 3)
+            {
+                return null;
+            }
+
+            int currentThemeID = 3;
+
+            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            {
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                {
+                    currentThemeID++;
+
+                    if (theme != null && currentThemeID == themeID)
+                    {
+                        return theme;
+                    }
+                }
+            }
+
+            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            {
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                {
+                    currentThemeID++;
+
+                    if (theme != null && currentThemeID == themeID)
+                    {
+                        return theme;
+                    }
+                }
+            }
+
+            return null;
+        }
+        
+        /// <summary>
+        /// Gets the theme's ID from the theme's name.
+        /// </summary>
+        /// <returns>(Int) -1 = No theme found; Otherwise: ID of Theme.</returns>
+        public static int getThemeIDFromName(string themeName)
+        {
+            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                return -1;
+            }
+
+            int currentThemeID = 3;
+
+            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            {
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                {
+                    currentThemeID++;
+
+                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return currentThemeID;
+                    }
+                }
+            }
+
+            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            {
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                {
+                    currentThemeID++;
+
+                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return currentThemeID;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Checks if for the current day there is supposed to be a conditional theme active.
+        /// </summary>
+        /// <returns>(Int) -1 = No theme to be activated; Otherwise: ID of Theme to be activated.</returns>
+        public static int checkIfConditionalTheme()
+        {
+            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                return -1;
+            }
+
+            bool themeFound = false;
+            ThemesExtraInfo currentTheme = getActiveTheme(ref themeFound);
+
+            if (currentTheme == null) // Theme is default or not set. No conditional theme can be applied.
+            {
+                return -1;
+            }
+
+            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            {
+                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                {
+                    if (theme != null && theme.attachedToTheme.Equals(currentTheme.themeName))
+                    {
+                        if (theme.unlockDays.Contains(GlobalVariables.currentDay))
+                        {
+                            int foundThemeID = getThemeID(theme);
+
+                            if (foundThemeID >= 0)
+                            {
+                                return foundThemeID;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return -1;
+        }
+
+        /// <summary>
+        /// Gets the Theme that is current active.
+        /// </summary>
+        /// <returns>Returns the actual active theme. Null if we failed or the theme is a default theme from the game.</returns>
+        [CanBeNull]
+        public static ThemesExtraInfo getActiveTheme(ref bool isCustomTheme)
+        {
+            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting the active theme!");
+                return null;
+            }
+            
+            isCustomTheme = false;
+
+            if (customCampaign.activeTheme <= 3) // Default Theme
+            {
+                return null;
+            }
+
+            int indexAsGeneral = customCampaign.activeTheme - 4;
+
+            if (indexAsGeneral >= 0 
+                && customCampaign.customThemesGeneral != null
+                && indexAsGeneral < customCampaign.customThemesGeneral.Count) // We have a general theme.
+            {
+                isCustomTheme = true;
+                return customCampaign.customThemesGeneral[indexAsGeneral];
+            }
+
+            int indexAsDays = customCampaign.activeTheme - 4;
+
+            if (customCampaign.customThemesGeneral != null)
+            {
+                indexAsDays -= customCampaign.customThemesGeneral.Count;
+            }
+
+            if (indexAsDays >= 0
+                && customCampaign.customThemesDays != null
+                && indexAsDays < customCampaign.customThemesDays.Count) // We have a (conditional) days theme.
+            {
+                isCustomTheme = true;
+                return customCampaign.customThemesDays[indexAsDays];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// From the provided selected value it returns the value that fits all the criteria.
+        /// </summary>
+        /// <returns>Returns default value if we no value is set. If set, it returns the requested value.</returns>
+        [CanBeNull]
+        public static TValue getActiveModifierValue<TValue>(Func<ModifierExtraInfo, TValue> selector,
+            ref bool foundModifier, Func<TValue, bool> predicate = null,
+            Func<ModifierExtraInfo, bool> specialPredicate = null)
+        {
+            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+
+            if (customCampaignExtraInfo == null)
+            {
+                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting modifier!");
+                return default;
+            }
+
+            if (predicate == null)
+            {
+                predicate = _ => true;
+            }
+
+            if (specialPredicate == null)
+            {
+                specialPredicate = _ => true;
+            }
+
+            TValue selectedValue = default(TValue);
+            foundModifier = false;
+
+            // For each general modifier, we check if it contains the value and add these to the "valid modifier general list".
+            // We then pick the first in the list.
+            // Note: General modifiers do not require to check for days, since they are always "valid", only the predicate.
+
+            if (customCampaignExtraInfo.customModifiersGeneral != null)
+            {
+                foreach (ModifierExtraInfo modifierGeneral in customCampaignExtraInfo.customModifiersGeneral)
+                {
+                    if (modifierGeneral == null)
+                    {
+                        continue;
+                    }
+
+                    TValue value = selector(modifierGeneral);
+
+                    if (predicate(value) && specialPredicate(modifierGeneral))
+                    {
+                        foundModifier = true;
+                        selectedValue = value;
+                        break;
+                    }
+                }
+            }
+
+            // Now we check for conditional modifiers. Same work as with the general modifiers.
+            // We only need to check if valid for the current day.
+
+            if (customCampaignExtraInfo.customModifiersDays != null)
+            {
+                foreach (ModifierExtraInfo modifierDay in customCampaignExtraInfo.customModifiersDays)
+                {
+                    if (modifierDay == null)
+                    {
+                        continue;
+                    }
+
+                    TValue value = selector(modifierDay);
+
+                    if (predicate(value) && modifierDay.unlockDays != null
+                                         && modifierDay.unlockDays.Contains(GlobalVariables.currentDay)
+                                         && specialPredicate(modifierDay))
+                    {
+                        foundModifier = true;
+                        return value;
+                    }
+                }
+            }
+            
+            return selectedValue;
+        }
+
+        /// <summary>
         /// Adds all entries of a custom campaign to the array of entries.
         /// </summary>
         /// <param name="_monsterProfileList">MonsterProfileList to add the entries to.</param>
         public static void addAllCustomCampaignEntriesToArray(ref MonsterProfileList _monsterProfileList)
         {
-            
             CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
 
             if (customCampaignExtraInfo == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                MelonLogger.Error(
+                    "ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
                 return;
             }
-            
+
             #if DEBUG
-                MelonLogger.Msg($"DEBUG: Now adding all {customCampaignExtraInfo.entriesOnlyInCampaign.Count} entries to the custom campaign.");
+            MelonLogger.Msg(
+                $"DEBUG: Now adding all {customCampaignExtraInfo.entriesOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
-            
+
             // Add all entries.
             foreach (EntryExtraInfo entryInCustomCampaign in customCampaignExtraInfo.entriesOnlyInCampaign)
             {
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
+                MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
                 #endif
-                
-                EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry, ref _monsterProfileList.monsterProfiles, "allEntries");
+
+                EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry,
+                    ref _monsterProfileList.monsterProfiles, "allEntries");
             }
-            
+
             // Sort afterward
             EntryManager.EntryManager.SortMonsterProfiles(ref _monsterProfileList.monsterProfiles);
-            
         }
 
         public static void replaceAllProvidedCampaignEntries(ref MonsterProfileList _monsterProfileList)
@@ -104,22 +423,24 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaignExtraInfo == null || !inCustomCampaign)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                MelonLogger.Error(
+                    "ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
                 return;
             }
 
             #if DEBUG
-                MelonLogger.Msg($"DEBUG: Now replacing all {customCampaignExtraInfo.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
+            MelonLogger.Msg(
+                $"DEBUG: Now replacing all {customCampaignExtraInfo.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
 
             if (_monsterProfileList.monsterProfiles.Length <= 0)
             {
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Monster Profile ");
+                MelonLogger.Msg($"DEBUG: Monster Profile ");
                 #endif
                 return;
             }
-            
+
             for (int i = 0; i < _monsterProfileList.monsterProfiles.Length; i++)
             {
                 MonsterProfile realEntry = _monsterProfileList.monsterProfiles[i];
@@ -131,10 +452,10 @@ namespace NewSafetyHelp.CustomCampaign
                 }
 
                 // Find matching entry to replace
-                EntryExtraInfo entryFound = customCampaignExtraInfo.entryReplaceOnlyInCampaign.Find(
-                    replaceEntry => replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
+                EntryExtraInfo entryFound = customCampaignExtraInfo.entryReplaceOnlyInCampaign.Find(replaceEntry =>
+                    replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
                 );
-                
+
                 // If we delete the entry or replace it.
                 if (entryFound != null && entryFound.deleteEntry) // Delete
                 {
@@ -143,12 +464,13 @@ namespace NewSafetyHelp.CustomCampaign
                         MelonLogger.Warning("WARNING: Monster entry was not found. Is is the correct name?");
                         continue;
                     }
-                    
+
                     // Delete by name.
-                    EntryManager.EntryManager.DeleteMonsterProfile(ref _monsterProfileList.monsterProfiles, null, entryFound.Name);
-                    
+                    EntryManager.EntryManager.DeleteMonsterProfile(ref _monsterProfileList.monsterProfiles, null,
+                        entryFound.Name);
+
                     #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Deleting entry '{entryFound.Name}' in custom campaign.");
+                    MelonLogger.Msg($"DEBUG: Deleting entry '{entryFound.Name}' in custom campaign.");
                     #endif
                 }
                 else if (entryFound != null) // It exists, so replace it.
@@ -156,476 +478,18 @@ namespace NewSafetyHelp.CustomCampaign
                     if (entryFound.referenceCopyEntry == null)
                     {
                         // I am too lazy to implement this. But if ever returns errors or problems, I will implement it this way.
-                        MelonLogger.Warning("WARNING: referenceCopyEntry of EntryFound is null. Was the entry initialized?");
+                        MelonLogger.Warning(
+                            "WARNING: referenceCopyEntry of EntryFound is null. Was the entry initialized?");
                         continue;
                     }
-                    
+
                     _monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
-                    
+
                     #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Replacing entry {entryFound.Name} with custom entry in custom campaign.");
+                    MelonLogger.Msg($"DEBUG: Replacing entry {entryFound.Name} with custom entry in custom campaign.");
                     #endif
                 }
             }
-            
-        }
-
-        /// <summary>
-        /// Calls this if your values aren't loaded in yet.
-        /// </summary>
-        public static void initializeCustomCampaignOnce()
-        {
-            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
-
-            if (currentCampaign == null)
-            {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of saving.");
-                return;
-            }
-            
-            if (currentCampaign.campaignSaveCategory == null)
-            {
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName + currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
-            }
-
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
-            {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedDays", 1);
-            }
-
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
-            {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
-            }
-
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
-            {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedEntryTier", 1);
-            }
-            
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
-            {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
-            }
-
-            #if DEBUG
-            MelonLogger.Msg($"DEBUG: Amount of saved caller array length: { currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value}");
-            #endif
-            for (int i = 0; i < currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value; i++)
-            {
-                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
-                {
-                    currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
-                }
-            }
-
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
-            {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinished", 0);
-            }
-
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
-            {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
-            }
-
-            
-            #if DEBUG
-                MelonLogger.Msg($"DEBUG: Amount of campaign days: {currentCampaign.campaignDays}");
-            #endif
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
-            {
-                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
-                {
-                    currentCampaign.campaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
-                }
-            }
-            
-            MelonPreferences.Save();
-        }
-
-        /// <summary>
-        /// Saves the information on the current custom campaign to MelonLoader preferences.
-        /// Note: Saving is destructive if not called at the correct time. It's best to call it only after it has been loaded at least once.
-        /// </summary>
-        public static void saveCustomCampaignInfo()
-        {
-            if (!inCustomCampaign)
-            {
-                MelonLogger.Warning("WARNING: Called save custom campaign but there is no campaign active.");
-                return;
-            }
-            
-            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
-
-            if (currentCampaign == null)
-            {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of saving.");
-                return;
-            }
-            
-            // Custom Campaigns
-            // We use this painful category name to avoid any conflicts.
-            if (currentCampaign.campaignSaveCategory == null)
-            {
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName + currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
-            }
-            
-            // Create Campaign Days Save Value
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
-            {
-                MelonPreferences_Entry<int> currentSavedDays = currentCampaign.campaignSaveCategory.CreateEntry("savedDays", 1);
-                currentSavedDays.Value = currentCampaign.currentDay;
-            }
-            else
-            {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value = currentCampaign.currentDay;
-            }
-            
-            
-            // Current Caller Index
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
-            {
-                MelonPreferences_Entry<int> savedCurrentCaller = currentCampaign.campaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
-                savedCurrentCaller.Value = currentCampaign.savedCurrentCaller;
-            }
-            else
-            {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value = currentCampaign.savedCurrentCaller;
-            }
-            
-            // Current permission tier
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
-            {
-                MelonPreferences_Entry<int> currentSavedTier = currentCampaign.campaignSaveCategory.CreateEntry("savedEntryTier", 1);
-                currentSavedTier.Value = currentCampaign.currentPermissionTier;
-            }
-            else
-            {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value = currentCampaign.currentPermissionTier;
-            }
-            
-            // Correct answers.
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
-            {
-                MelonPreferences_Entry<int> savedCallerArrayLength = currentCampaign.campaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
-                savedCallerArrayLength.Value = currentCampaign.savedCallerArrayLength;
-            }
-            else
-            {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value = currentCampaign.savedCallerArrayLength;
-            }
-            
-            // For each correct answer create the correct entry.
-            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
-            {
-                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
-                {
-                    MelonPreferences_Entry<bool> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
-
-                    if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be correct but who knows.
-                    {
-                        savedCallerCorrectAnswers.Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value we have at that index.
-                    }
-                    else
-                    {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (savedCallerCorrectAnswer doesn't exist)");
-                    }
-                }
-                else
-                {
-                    if (currentCampaign.savedCallersCorrectAnswer.Count > i) // If we have enough values for "i". It should be but who knows.
-                    {
-                        currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value = currentCampaign.savedCallersCorrectAnswer[i]; // What ever value where have at that index.
-                    }
-                    else
-                    {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (savedCallerCorrectAnswer exists)");
-                    }
-                }
-                
-            }
-            
-            // Special Values
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
-            {
-                MelonPreferences_Entry<int> savedGameFinished = currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinished", 0);
-                savedGameFinished.Value = currentCampaign.savedGameFinished;
-            }
-            else
-            {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value = currentCampaign.savedGameFinished;
-            }
-            
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
-            {
-                MelonPreferences_Entry<int> savedGameFinishedDisplay = currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
-                savedGameFinishedDisplay.Value = currentCampaign.savedGameFinishedDisplay;
-            }
-            else
-            {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = currentCampaign.savedGameFinishedDisplay;
-            }
-            
-            // Day score
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
-            {
-                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
-                {
-                    MelonPreferences_Entry<float> savedCallerCorrectAnswers = currentCampaign.campaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
-
-                    if (currentCampaign.savedDayScores.Count > i) // If we have enough values for "i". It should be but who knows.
-                    {
-                        savedCallerCorrectAnswers.Value = currentCampaign.savedDayScores[i]; // What ever value where have at that index.
-                    }
-                    else
-                    {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (SavedDayScore doesn't exist)");
-                    }
-                }
-                else
-                {
-                    if (currentCampaign.savedDayScores.Count > i) // If we have enough values for "i". It should be but who knows.
-                    {
-                        currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value = currentCampaign.savedDayScores[i]; // What ever value where have at that index.
-                    }
-                    else
-                    {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (SavedDayScore exists)");
-                    }
-                }
-                
-            }
-            
-            // We finished storing all important values. Now we save.
-            MelonPreferences.Save();
-            
-            MelonLogger.Msg($"INFO: Finished saving custom campaign {currentCampaign.campaignName}.");
-        }
-        
-        /// <summary>
-        /// Loads the information on the current custom campaign to all possible values. Should realistically only be called once on custom campaign switch.
-        /// </summary>
-        public static void loadFromFileCustomCampaignInfo()
-        {
-            if (!inCustomCampaign)
-            {
-                MelonLogger.Warning("WARNING: Called load custom campaign but there is no campaign active.");
-                return;
-            }
-            
-            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
-
-            if (currentCampaign == null)
-            {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of loading.");
-                return;
-            }
-            
-            // Custom Campaigns
-            // We use this painful category name to avoid any conflicts.
-            if (currentCampaign.campaignSaveCategory == null)
-            {
-                // We get the category if not set yet.
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName + currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
-            }
-            
-            // Check if it was ever saved before. If yes, load and if not then we call save once.
-            initializeCustomCampaignOnce();
-            
-            // Load all values first into the currentCampaign Object.
-            currentCampaign.currentDay = currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value;
-            currentCampaign.currentPermissionTier = currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value;
-            currentCampaign.savedCallerArrayLength = currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value;
-            currentCampaign.savedCurrentCaller = currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value;
-            
-            // Special Values
-            currentCampaign.savedGameFinished = currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value;
-            currentCampaign.savedGameFinishedDisplay = currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value;
-            
-            // Add all correct answers.
-            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
-            {
-                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") != null)
-                {
-                    currentCampaign.savedCallersCorrectAnswer.Add(currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value);
-                }
-                else
-                {
-                    MelonLogger.Warning($"WARNING: While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist! Setting to 0.0 for {i}.");
-                    currentCampaign.savedCallersCorrectAnswer.Add(false);
-                }
-            }
-            
-            // Saved Day Scores
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
-            {
-                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") != null)
-                {
-                    currentCampaign.savedDayScores.Add(currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value);
-                }
-                else
-                {
-                    MelonLogger.Warning($"WARNING: While loading all saved caller answers, 'SavedDayScore{i}' does not exist! Setting to false for {i}.");
-                    currentCampaign.savedDayScores.Add(0.0f);
-                }
-            }
-            
-            /*
-             * Load the values into actual game values now.
-             */
-            
-            GlobalVariables.saveManagerScript.savedDay =  currentCampaign.currentDay;
-            GlobalVariables.currentDay = currentCampaign.currentDay;
-            
-            GlobalVariables.saveManagerScript.savedCurrentCaller = currentCampaign.savedCurrentCaller;
-            
-            GlobalVariables.saveManagerScript.savedEntryTier = currentCampaign.currentPermissionTier;
-            
-            GlobalVariables.saveManagerScript.savedCallerArrayLength = currentCampaign.savedCallerArrayLength;
-            
-            // Add all saved answers.
-            bool[] flagArray = new bool[currentCampaign.savedCallerArrayLength];
-
-            for (int index = 0; index < currentCampaign.savedCallerArrayLength; ++index)
-            {
-                MelonPreferences_Entry<bool> entry = currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{index}");
-
-                if (entry == null)
-                {
-                    // If entry does not exist, create it with default value false.
-                    entry = currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{index}", false);
-                }
-
-                flagArray[index] = entry.Value;
-            }
-            GlobalVariables.saveManagerScript.savedCallerCorrectAnswers = flagArray;
-            
-            // Special Values
-            GlobalVariables.saveManagerScript.savedGameFinished = currentCampaign.savedGameFinished;
-            GlobalVariables.saveManagerScript.savedGameFinishedDisplay = currentCampaign.savedGameFinishedDisplay;
-            
-            for (int i = 0; i < Mathf.Min(7, currentCampaign.campaignDays); ++i)
-            {
-                switch (i)
-                {
-                    case 0:
-                        GlobalVariables.saveManagerScript.savedDayScore1 = currentCampaign.savedDayScores[i];
-                        break;
-                    
-                    case 1:
-                        GlobalVariables.saveManagerScript.savedDayScore2 = currentCampaign.savedDayScores[i];
-                        break;
-                    
-                    case 2:
-                        GlobalVariables.saveManagerScript.savedDayScore3 = currentCampaign.savedDayScores[i];
-                        break;
-                    
-                    case 3:
-                        GlobalVariables.saveManagerScript.savedDayScore4 = currentCampaign.savedDayScores[i];
-                        break;
-                    
-                    case 4:
-                        GlobalVariables.saveManagerScript.savedDayScore5 = currentCampaign.savedDayScores[i];
-                        break;
-                    
-                    case 5:
-                        GlobalVariables.saveManagerScript.savedDayScore6 = currentCampaign.savedDayScores[i];
-                        break;
-                    
-                    case 6:
-                        GlobalVariables.saveManagerScript.savedDayScore7 = currentCampaign.savedDayScores[i];
-                        break;
-                    
-                    default:
-                        // No saved day available in the campaign save manager. Thus, we just ignore it.
-                        continue;
-                }
-            }
-            
-            // Finished loading.
-            MelonLogger.Msg("INFO: Finished loading all custom campaign values.");
-        }
-
-        public static void resetCustomCampaignFile()
-        {
-
-            MelonLogger.Msg("INFO: Resetting custom campaign file.");
-            
-            if (!inCustomCampaign)
-            {
-                MelonLogger.Warning("WARNING: Called reset custom campaign but there is no campaign active.");
-                return;
-            }
-            
-            CustomCampaignExtraInfo currentCampaign = getActiveCustomCampaign();
-
-            if (currentCampaign == null)
-            {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of resetting.");
-                return;
-            }
-            
-            // Custom Campaigns
-
-            if (currentCampaign.campaignSaveCategory == null) // We haven't loaded it in?
-            {
-                loadFromFileCustomCampaignInfo();
-            }
-            
-            if (currentCampaign.campaignSaveCategory == null)
-            {
-                MelonLogger.Error("ERROR: Tried resetting but save is still null!");
-                return;
-            }
-
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
-            {
-                // If null, we cancel our operation since there is no save.
-                MelonLogger.Error("ERROR: Tried resetting when no save is available!");
-                return;
-            }
-            
-            // We previously deleted the category, but it doesn't really help as much, so we leave it be.
-            // MelonPreferences.RemoveCategoryFromFile("",currentCampaign.campaignName + currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
-            
-            // We have a save file, so we reset the values.
-            currentCampaign.currentDay = 1;
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value = 1;
-            
-            currentCampaign.currentPermissionTier = 1;
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value = 1;
-            
-            currentCampaign.savedCurrentCaller = 0;
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value = 0;
-            
-            currentCampaign.savedCallersCorrectAnswer = new List<bool>();
-            
-            // Now we reset the saved callers answers.
-            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
-            {
-                currentCampaign.campaignSaveCategory.DeleteEntry($"savedCallerCorrectAnswer{i}");
-            }
-            
-            // Reset daily score
-            currentCampaign.savedDayScores = new List<float>();
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
-            {
-                currentCampaign.campaignSaveCategory.DeleteEntry($"SavedDayScore{i}");
-            }
-            
-            // We reset our caller array length
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value = 0;
-            currentCampaign.savedCallerArrayLength = 0;
-            
-            // Special Values
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
-            currentCampaign.savedGameFinished = 0;
-            
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
-            currentCampaign.savedGameFinishedDisplay = 0;
-            
-            MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.campaignName}.");
         }
     }
 }

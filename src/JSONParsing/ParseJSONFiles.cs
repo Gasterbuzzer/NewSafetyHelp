@@ -9,6 +9,8 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
+using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -33,11 +35,16 @@ namespace NewSafetyHelp.JSONParsing
             Email,
             Video,
             Music,
+            Modifier,
+            Theme,
             Invalid
         }
 
         // "Global" Variables for handling extra information such as caller audio. Gets stored as its ID and with its Name.
         public static List<EntryExtraInfo> entriesExtraInfo = new List<EntryExtraInfo>();
+        
+        // Main Game Themes
+        public static List<ThemesExtraInfo> mainGameThemes = new List<ThemesExtraInfo>();
 
         // Map for custom callers to replaced in the main game. (ID of the call to replace, Caller for that ID)
         public static Dictionary<int, CustomCallerExtraInfo> customCallerMainGame =
@@ -58,6 +65,12 @@ namespace NewSafetyHelp.JSONParsing
 
         // List of music to be added in a custom campaign when the custom campaign is not parsed yet.
         public static List<MusicExtraInfo> missingCustomCampaignMusic = new List<MusicExtraInfo>();
+
+        // List of modifiers to be added in a custom campaign when the custom campaign is not parsed yet.
+        public static List<ModifierExtraInfo> missingCustomCampaignModifier = new List<ModifierExtraInfo>();
+        
+        // List of themes to be added in a custom campaign when the custom campaign is not parsed yet.
+        public static List<ThemesExtraInfo> missingCustomCampaignTheme = new List<ThemesExtraInfo>();
 
         // List of videos to be added in a custom campaign when the custom campaign is not parsed yet.
         public static List<CustomVideoExtraInfo> missingCustomCampaignVideo = new List<CustomVideoExtraInfo>();
@@ -107,76 +120,99 @@ namespace NewSafetyHelp.JSONParsing
 
             foreach (string jsonPathFile in filesDataPath)
             {
-                MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
-
-                string jsonString = File.ReadAllText(jsonPathFile);
-
-                string jsonFolderPath = Path.GetDirectoryName(jsonPathFile);
-
-                JObject jObjectParse = JObject.Parse(jsonString);
-
-                JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, modFolderPath);
-
-                switch (jsonType)
+                try
                 {
-                    case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
-                        CustomCampaignParsing.CreateCustomCampaign(jObjectParse, modFolderPath, jsonFolderPath);
-                        break;
+                    MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
 
-                    case JSONParseTypes.Call: // The provided JSON is a standalone call.
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
-                        CustomCallerParsing.CreateCustomCaller(jObjectParse, modFolderPath, jsonFolderPath);
-                        break;
+                    string jsonString = File.ReadAllText(jsonPathFile);
 
-                    case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
-                        CreateMonsterFromJSON(jObjectParse, usermodFolderPath: modFolderPath,
-                            jsonFolderPath: jsonFolderPath, entryUnlockerInstance: __instance);
-                        break;
+                    string jsonFolderPath = Path.GetDirectoryName(jsonPathFile);
 
-                    case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
-                        EmailParsing.CreateEmail(jObjectParse, modFolderPath, jsonFolderPath);
-                        break;
+                    JObject jObjectParse = JObject.Parse(jsonString);
 
-                    case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
-                        VideoParsing.CreateVideo(jObjectParse, modFolderPath, jsonFolderPath);
-                        break;
+                    JSONParseTypes jsonType = GetJSONParsingType(jObjectParse, modFolderPath);
 
-                    case JSONParseTypes.Music: // The provided JSON is a music file (for custom campaigns).
-                        MelonLogger.Msg(
-                            $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a music file.");
-                        MusicParsing.CreateMusic(jObjectParse, modFolderPath, jsonFolderPath);
-                        break;
+                    switch (jsonType)
+                    {
+                        case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
+                            CustomCampaignParsing.CreateCustomCampaign(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
 
-                    case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
-                        MelonLogger.Error(
-                            "ERROR: Provided JSON file parsing failed or is not any known provided format. Skipped.");
-                        break;
+                        case JSONParseTypes.Call: // The provided JSON is a standalone call.
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
+                            CustomCallerParsing.CreateCustomCaller(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
 
-                    default: // Unknown Error
-                        MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
-                        break;
+                        case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
+                            MelonLogger.Msg(
+                                "INFO: " +
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
+                            CreateMonsterFromJSON(jObjectParse, usermodFolderPath: modFolderPath,
+                                jsonFolderPath: jsonFolderPath, entryUnlockerInstance: __instance);
+                            break;
+
+                        case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
+                            EmailParsing.CreateEmail(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+
+                        case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
+                            VideoParsing.CreateVideo(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+
+                        case JSONParseTypes.Music: // The provided JSON is a music file (for custom campaigns).
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a music file.");
+                            MusicParsing.CreateMusic(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+
+                        case JSONParseTypes.Modifier: // The provided JSON is a modifier file (for custom campaigns).
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a modifier file.");
+                            ModifierParsing.CreateModifier(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+                        
+                        case JSONParseTypes.Theme: // The provided JSON is a theme file (for custom campaigns).
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
+                            ThemeParsing.CreateTheme(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+
+                        case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
+                            MelonLogger.Error(
+                                "ERROR: Provided JSON file parsing failed or is not any known provided format." +
+                                "\n(If this intended, you can ignore this, if not, check if you have written your JSON correctly)." +
+                                "\nSkipping trying to read this file.");
+                            break;
+
+                        default: // Unknown Error
+                            MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    MelonLogger.Error($"ERROR: Failed in reading file '{jsonPathFile}'. " +
+                                      $"Error message: '{e.Message};{e.StackTrace}'.");
                 }
             }
         }
 
         /// <summary>
-        /// Checks if the json object contains any of the keys.
+        /// Checks if the JSON object contains any of the keys.
         /// </summary>
         /// <param name="keys">List of keys to check </param>
         /// <param name="json">JObject with the keys</param>
         /// <returns></returns>
         public static bool containsKeys(List<string> keys, JObject json)
         {
-            return keys.Any(json.ContainsKey); // Checks if any of the keys is in the json via the flag ContainsKey
+            return keys.Any(json.ContainsKey); // Checks if any of the keys is in the JSON via the flag ContainsKey
         }
 
         /// <summary>
@@ -188,47 +224,83 @@ namespace NewSafetyHelp.JSONParsing
         public static JSONParseTypes GetJSONParsingType(JObject json, string filePath = "")
         {
             // Invalid JSON.
-            if (json is null || json.Type != JTokenType.Object || string.IsNullOrEmpty(filePath)) 
+            if (json is null || json.Type != JTokenType.Object || string.IsNullOrEmpty(filePath))
             {
                 return JSONParseTypes.Invalid;
             }
 
             // Added Campaign Settings
-            if (containsKeys(new List<string> { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name" }, json)) 
+            if (containsKeys(
+                    new List<string>
+                        { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name" }, json))
             {
                 return JSONParseTypes.Campaign;
             }
 
             // Custom Call added either to main campaign or custom campaign.
-            if (containsKeys(new List<string> { "custom_caller_transcript", "custom_caller_name", "order_in_campaign", "custom_caller_audio_clip_name" }, json)) 
+            if (containsKeys(
+                    new List<string>
+                    {
+                        "custom_caller_transcript", "custom_caller_name", "order_in_campaign",
+                        "custom_caller_audio_clip_name"
+                    }, json))
             {
                 return JSONParseTypes.Call;
             }
 
             // Entry was provided.
-            if (containsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json)) 
+            if (containsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json))
             {
                 return JSONParseTypes.Entry;
             }
 
             // Email was provided. 
-            if (containsKeys(new List<string> { "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)) 
+            if (containsKeys(
+                    new List<string> { "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json))
             {
                 return JSONParseTypes.Email;
             }
 
             // Video was provided (Desktop Video!)
-            if (containsKeys(new List<string> { "video_desktop_name", "video_file_name", "video_unlock_day" }, json)) 
+            if (containsKeys(new List<string> { "video_desktop_name", "video_file_name", "video_unlock_day" }, json))
             {
                 return JSONParseTypes.Video;
             }
 
             // Music was provided
-            if (containsKeys(new List<string> { "music_audio_clip_name" }, json)) 
+            if (containsKeys(new List<string> { "music_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Music;
             }
 
+            // Modifier was provided
+            if (!containsKeys(
+                    new List<string>
+                        { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
+                            "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
+                &&
+                containsKeys(new List<string>
+                {
+                    "modifier_custom_campaign_attached"
+                }, json))
+            {
+                return JSONParseTypes.Modifier;
+            }
+            
+            // Theme was provided
+            if (!containsKeys(
+                    new List<string>
+                    { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
+                        "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
+                &&
+                containsKeys(new List<string>
+                {
+                    "theme_custom_campaign_attached", "theme_name", "title_bar_color", "theme_in_main_campaign"
+                }, json))
+            {
+                return JSONParseTypes.Theme;
+            }
+            
             // Unknown JSON type or failed parsing the file.
             return JSONParseTypes.Invalid;
         }
@@ -329,11 +401,11 @@ namespace NewSafetyHelp.JSONParsing
                 ref _watchingPhobia, ref _watchingPhobiaIncluded, ref _tightSpacePhobia, ref _tightSpacePhobiaIncluded);
 
             // Parse Default Caller
-            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref _callerName, 
+            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref _callerName,
                 ref _callerTranscript, ref _callerImageLocation, ref _callerReplaceChance, ref _callerRestartCallAgain,
                 ref _callerPortrait);
 
-            CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath,  ref jsonFolderPath,
+            CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath,
                 ref _consequenceCallerName, ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation,
                 ref _consequenceCallerPortrait);
 

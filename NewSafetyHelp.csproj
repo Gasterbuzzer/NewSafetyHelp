@@ -132,9 +132,14 @@
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaign\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaign\Desktop\OnDayUnlockPatches.cs" />
+    <Compile Include="src\CustomCampaign\Saving\CustomCampaignSaving.cs" />
+    <Compile Include="src\CustomCampaign\Themes\ThemePatches.cs" />
+    <Compile Include="src\CustomCampaign\Themes\ThemesExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\Saving\SavingManagerPatchesCC.cs" />
+    <Compile Include="src\CustomCampaign\Modifier\Data\ModifierExtraInfo.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
+    <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs" />
     <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs" />
     <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
     <Compile Include="src\CustomVideos\CustomVideoExtraInfo.cs" />
@@ -152,6 +157,8 @@
     <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\MonsterParsing.cs" />
@@ -171,6 +178,9 @@
   <ItemGroup>
     <None Include="build_after.bat" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\CustomThemes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

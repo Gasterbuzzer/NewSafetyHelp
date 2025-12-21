@@ -17,6 +17,10 @@ namespace NewSafetyHelp.CallerPatches.UI
 {
     public static class MainCanvasPatches
     {
+        // Cached animator lookups.
+        private static readonly int Glitch = Animator.StringToHash("glitch");
+        private static readonly int Shake = Animator.StringToHash("shake");
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "WriteDayString", new Type[] { })]
         public static class ScorecardPatch
         {
@@ -70,23 +74,90 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (currentCustomCampaign != null)
                     {
+                        string dayString;
                         
+                        // Campaign find campaign.
                         if (currentCustomCampaign.campaignDayStrings.Count > 0)
                         {
-
-                            if (GlobalVariables.currentDay > currentCustomCampaign.campaignDayStrings.Count || currentCustomCampaign.campaignDays > currentCustomCampaign.campaignDayStrings.Count)
+                            if (GlobalVariables.currentDay > currentCustomCampaign.campaignDayStrings.Count 
+                                || currentCustomCampaign.campaignDays > currentCustomCampaign.campaignDayStrings.Count)
                             {
                                 MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
-                                __result = defaultDayNames[GlobalVariables.currentDay - 1];
+                                dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                             }
                             else
                             {
-                                __result = currentCustomCampaign.campaignDayStrings[GlobalVariables.currentDay - 1];
+                                dayString = currentCustomCampaign.campaignDayStrings[(GlobalVariables.currentDay - 1) % currentCustomCampaign.campaignDayStrings.Count];
                             }
                         }
                         else
                         {
-                            __result = defaultDayNames[GlobalVariables.currentDay - 1];
+                            dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                        }
+                        
+                        bool foundDayStrings = false;
+                        List<string> daysStrings = CustomCampaignGlobal.getActiveModifierValue(
+                            c => c.dayTitleStrings, ref foundDayStrings,
+                            v => v != null && v.Count > 0);
+                        
+                        bool foundUnlockDays = false;
+                        List<int> unlockDays = CustomCampaignGlobal.getActiveModifierValue(
+                            c => c.unlockDays, ref foundUnlockDays,
+                            v => v != null && v.Count > 0);
+                        
+                        // Modifier
+                        if (foundDayStrings && daysStrings != null)
+                        {
+                            if (daysStrings.Count > 0)
+                            {
+                                if (unlockDays != null                              // If conditional days, but we don't have enough day strings for amount of unlocked days. (And only if the campaign didn't provide one)
+                                    && daysStrings.Count != unlockDays.Count 
+                                    && string.IsNullOrEmpty(dayString))
+                                {
+                                    MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
+                                    dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                                }
+                                else
+                                {
+                                    if (unlockDays == null) // General Days, we simply display what we can.
+                                    {
+                                        if (currentCustomCampaign.campaignDays > daysStrings.Count)
+                                        {
+                                            MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using modulated values. ");
+                                        }
+                                        
+                                        dayString = daysStrings[(GlobalVariables.currentDay - 1) % daysStrings.Count]; // We simply pick what best fits.
+                                    }
+                                    else // Not General (Conditional Modifier)
+                                    {
+                                        if (daysStrings.Count != unlockDays.Count) // If we don't have enough to show.
+                                        {
+                                            MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using modulated values. ");
+                                            dayString = daysStrings[(GlobalVariables.currentDay - 1) % daysStrings.Count];
+                                        }
+                                        else // We do have enough days.
+                                        {
+                                            int indexUnlockDay = unlockDays.IndexOf(GlobalVariables.currentDay);
+                                        
+                                            if (indexUnlockDay != -1)
+                                            {
+                                                dayString = daysStrings[indexUnlockDay];
+                                            }
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (string.IsNullOrEmpty(dayString)) // If empty, we provide a default one.
+                        {
+                            dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                        }
+                        
+                        if (!string.IsNullOrEmpty(dayString)) // Update if not empty. It should if nothing went wrong always work.
+                        {
+                            __result = dayString;
                         }
                     }
                     else
@@ -125,10 +196,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                 return false; // Skip function with false.
             }
 
-
-            public static IEnumerator StartSoftwareRoutine(MainCanvasBehavior __instance)
+            private static IEnumerator StartSoftwareRoutine(MainCanvasBehavior __instance)
             {
-                
                 // Get Private Methods
                 Type mainCanvasBehaviorType = typeof(MainCanvasBehavior);
                 
@@ -200,7 +269,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                   
                   if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign)
                   {
-                    mainCanvasBehavior.cameraAnimator.SetTrigger("glitch");
+                    mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
                     GlobalVariables.fade.FadeIn();
                     
                     yield return new WaitForSeconds(0.2f);
@@ -240,7 +309,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 {
                   yield return new WaitForSeconds(0.4f);
                   
-                  mainCanvasBehavior.cameraAnimator.SetTrigger("glitch");
+                  mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
                   GlobalVariables.fade.FadeIn();
                   
                   yield return new WaitForSeconds(0.2f);
@@ -305,7 +374,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 return false; // Skip function with false.
             }
             
-            public static IEnumerator endDayRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator endDayRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 mainCanvasBehavior.clockedOut = false;
@@ -458,7 +527,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 return false; // Skip function with false.
             }
             
-            public static IEnumerator endingCutsceneRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator endingCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
 
@@ -468,7 +537,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     yield break;
                 }
                 
-                if (mainCanvasBehavior.videoPlayer.isPlaying || Camera.main.gameObject.GetComponent<Animator>().GetBool("shake"))
+                if (mainCanvasBehavior.videoPlayer.isPlaying || Camera.main.gameObject.GetComponent<Animator>().GetBool(Shake))
                 {
                     MelonLogger.Msg("INFO: Ending cutscene is already playing. Not calling again.");
                     yield break;
@@ -477,7 +546,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 if (!GlobalVariables.isXmasDLC)
                 {
                     
-                    Camera.main.gameObject.GetComponent<Animator>().SetBool("shake", true);
+                    Camera.main.gameObject.GetComponent<Animator>().SetBool(Shake, true);
                     mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.screenShakeLoop, GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
                     
                     yield return new WaitForSeconds(6f);
@@ -709,7 +778,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 return false; // Skip function with false.
             }
 
-            public static IEnumerator gameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator gameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 

@@ -34,11 +34,46 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     // Special cases / exceptions:
                     if (CustomCampaignGlobal.inCustomCampaign)
                     {
-                        if (handleEntryBrowserUnlocker(ref __instance) || handleScorecardUnlocker(ref __instance) || handleArtbookUnlocker(ref __instance) || handleArcadeUnlocker(ref __instance) ||
-                            handleCustomCampaignIconsTooEarly(ref __instance))
+                        string gameObjectName = __instance.gameObject.name;
+
+                        bool modifierApplied = false;
+                        bool switchOutcome = false;
+
+                        switch (gameObjectName)
+                        {
+                            case "EntryBrowser-Executable":
+                                switchOutcome = handleEntryBrowserUnlocker(ref __instance, ref modifierApplied);
+                                break;
+                            
+                            case "Scorecard":
+                                switchOutcome = handleScorecardUnlocker(ref __instance, ref modifierApplied);
+                                break;
+                            
+                            case "Artbook-Executable":
+                                switchOutcome = handleArtbookUnlocker(ref __instance, ref modifierApplied);
+                                break;
+                            
+                            case "Arcade-Executable":
+                                switchOutcome = handleArcadeUnlocker(ref __instance, ref modifierApplied);
+                                break;
+                            
+                            case "DLC-Executable(Clone)":
+                                switchOutcome = handleCustomCampaignIconsTooEarly(ref __instance);
+                                break;
+                            
+                        }
+                        
+                        if (switchOutcome)
                         {
                             return false;
                         }
+                        
+                        if (modifierApplied) // Modifier is applied and switchOutcome was false.
+                        {
+                            __instance.gameObject.SetActive(false);
+                            return false;
+                        }
+                        
                     }
                     else if (handleCustomCampaignIconsTooEarly(ref __instance))
                     {
@@ -143,98 +178,154 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             }
         }
 
-        public static bool handleEntryBrowserUnlocker(ref OnDayUnlock __instance)
+        public static bool handleEntryBrowserUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
-            
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
-
-            if (currentCampaign == null)
+            if (__instance.gameObject.name == "EntryBrowser-Executable")
             {
-                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
-                return false;
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+
+                if (currentCampaign == null)
+                {
+                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    return false;
+                }
+                
+                bool enableEntryBrowser = false;
+            
+                bool entryBrowserFound = false;
+                bool entryBrowser = CustomCampaignGlobal.getActiveModifierValue(
+                    c => c.entryBrowserActive,
+                    ref entryBrowserFound,
+                    specialPredicate: m => m.entryBrowserChanged);
+            
+                // If always on. We just leave them on.
+                if (currentCampaign.entryBrowserAlwaysActive)
+                {
+                    enableEntryBrowser = true;
+                }
+
+                if (entryBrowserFound)
+                {
+                    modifierApplied = true;
+                    enableEntryBrowser = entryBrowser;
+                }
+
+                return enableEntryBrowser;
             }
             
-            // If always on. We just leave them on.
-            if (currentCampaign.entryBrowserAlwaysActive && __instance.gameObject.name == "EntryBrowser-Executable")
+            return false; // If not set to unlock.
+        }
+        
+        public static bool handleScorecardUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
+        {
+            if (__instance.gameObject.name == "Scorecard")
             {
-                                
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Entry Browser Executable is always enabled.");
-                #endif
-                                
-                return true;
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+
+                if (currentCampaign == null)
+                {
+                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    return false;
+                }
+                
+                bool enableScorecard = false;
+            
+                bool scorecardFound = false;
+                bool scorecard = CustomCampaignGlobal.getActiveModifierValue(
+                    c => c.scorecardActive,
+                    ref scorecardFound,
+                    specialPredicate: m => m.scorecardChanged);
+                
+                // If always on. We just leave them on.
+                if (currentCampaign.scorecardAlwaysActive)
+                {
+                    enableScorecard = true;
+                }
+            
+                if (scorecardFound)
+                {
+                    modifierApplied = true;
+                    enableScorecard = scorecard;
+                }
+
+                return enableScorecard;
             }
 
             return false; // If not set to unlock.
         }
         
-        public static bool handleScorecardUnlocker(ref OnDayUnlock __instance)
+        public static bool handleArtbookUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            if (__instance.gameObject.name == "Artbook-Executable")
+            {
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
-            if (currentCampaign == null)
-            {
-                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
-                return false;
-            }
+                if (currentCampaign == null)
+                {
+                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    return false;
+                }
+                
+                bool artBookEnabled = false;
             
-            // If always on. We just leave them on.
-            if (currentCampaign.scorecardAlwaysActive && __instance.gameObject.name == "Scorecard")
-            {
-                                
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Scorecard is always enabled.");
-                #endif
-                                
-                return true;
+                bool artbookFound = false;
+                bool artbook = CustomCampaignGlobal.getActiveModifierValue(
+                    c => c.artbookActive,
+                    ref artbookFound,
+                    specialPredicate: m => m.artbookChanged);
+                
+                // If always on. We just leave them on.
+                if (currentCampaign.artbookAlwaysActive)
+                {
+                    artBookEnabled = true;
+                }
+                
+                if (artbookFound)
+                {
+                    modifierApplied = true;
+                    artBookEnabled = artbook;
+                }
+
+                return artBookEnabled;
             }
 
             return false; // If not set to unlock.
         }
         
-        public static bool handleArtbookUnlocker(ref OnDayUnlock __instance)
+        public static bool handleArcadeUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
-
-            if (currentCampaign == null)
+            if (__instance.gameObject.name == "Arcade-Executable")
             {
-                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
-                return false;
-            }
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+
+                if (currentCampaign == null)
+                {
+                    MelonLogger.Error(
+                        "ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    return false;
+                }
+
+                bool arcadeEnabled = false;
             
-            // If always on. We just leave them on.
-            if (currentCampaign.artbookAlwaysActive && __instance.gameObject.name == "Artbook-Executable")
-            {
-                                
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Artbook is always enabled.");
-                #endif
-                                
-                return true;
-            }
+                bool arcadeFound = false;
+                bool arcade = CustomCampaignGlobal.getActiveModifierValue(
+                    c => c.arcadeActive,
+                    ref arcadeFound,
+                    specialPredicate: m => m.arcadeChanged);
+                
+                // If always on. We just leave them on.
+                if (currentCampaign.arcadeAlwaysActive)
+                {
+                    arcadeEnabled = true;
+                }
+                
+                if (arcadeFound)
+                {
+                    modifierApplied = true;
+                    arcadeEnabled = arcade;
+                }
 
-            return false; // If not set to unlock.
-        }
-        
-        public static bool handleArcadeUnlocker(ref OnDayUnlock __instance)
-        {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
-
-            if (currentCampaign == null)
-            {
-                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
-                return false;
-            }
-            
-            // If always on. We just leave them on.
-            if (currentCampaign.arcadeAlwaysActive && __instance.gameObject.name == "Arcade-Executable")
-            {
-                                
-                #if DEBUG
-                MelonLogger.Msg($"DEBUG: Arcade is always enabled.");
-                #endif
-                                
-                return true;
+                return arcadeEnabled;
             }
 
             return false; // If not set to unlock.

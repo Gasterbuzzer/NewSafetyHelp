@@ -25,7 +25,6 @@ namespace NewSafetyHelp.CustomDesktop
         [HarmonyLib.HarmonyPatch(typeof(MainMenuCanvasBehavior), "Start", new Type[] { })]
         public static class StartPatch
         {
-
             /// <summary>
             /// Hooks into the Main Menu Canvas Start function to add our own logic after wards.
             /// </summary>
@@ -40,7 +39,6 @@ namespace NewSafetyHelp.CustomDesktop
                 // If in custom campaign, we replace it with custom text.
                 if (CustomCampaignGlobal.inCustomCampaign)
                 {
-
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
                     
                     if (customCampaign == null)
@@ -77,6 +75,11 @@ namespace NewSafetyHelp.CustomDesktop
                         {
                             loginText02.textFrames[i] = customCampaign.loadingTexts[1][i];
                         }
+                    }
+
+                    if (customCampaign.disablePickingThemeOption)
+                    {
+                        CustomDesktopHelper.disableThemeDropdown();
                     }
                 }
 
@@ -123,10 +126,28 @@ namespace NewSafetyHelp.CustomDesktop
                         MelonLogger.Error("ERROR: Custom Campaign is null! Unable of replacing username. Calling original function.");
                         return true;
                     }
-
-                    if (!string.IsNullOrEmpty(customCampaign.desktopUsernameText))
+                    
+                    // Setting username
+                    string username = null;
+                    
+                    if (!string.IsNullOrEmpty(customCampaign.desktopUsernameText)) // First we apply the campaign value.
                     {
-                        CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = customCampaign.desktopUsernameText;
+                        username = customCampaign.desktopUsernameText;
+                    }
+
+                    bool usernameTextProvided = false;
+                    string usernameText = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.usernameText, ref usernameTextProvided,
+                        v => !string.IsNullOrEmpty(v));
+                    
+                    if (!string.IsNullOrEmpty(usernameText)) // Modifier username is provided.
+                    {
+                        username = usernameText;
+                    }
+
+                    if (usernameTextProvided && !string.IsNullOrEmpty(username))
+                    {
+                        CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = username;
                     }
                     
                     // Add custom emails.
@@ -145,34 +166,121 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                     
                     // Hide Logo
+
+                    bool disableLogo = false;
+                    bool modifierPreventsDisablingOfLogo = false;
+                    Sprite desktopLogo = null;
+                    
                     if (customCampaign.disableDesktopLogo)
                     {
-                        CustomDesktopHelper.getLogo().SetActive(false);
+                        disableLogo = true;
                     }
                     else if (customCampaign.customDesktopLogo != null) // We have a desktop logo to show.
                     {
-                        CustomDesktopHelper.getLogo().GetComponent<Image>().sprite = customCampaign.customDesktopLogo;
+                        desktopLogo = customCampaign.customDesktopLogo;
+                    }
+
+                    bool disableDesktopLogoFound = false;
+                    bool disableDesktopLogo = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.disableDesktopLogo, ref disableDesktopLogoFound);
+
+                    bool customBackgroundLogoFound = false;
+                    Sprite customBackgroundLogo = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.customBackgroundLogo, ref customBackgroundLogoFound,
+                        v => v != null);
+
+                    if (disableDesktopLogoFound && disableDesktopLogo)
+                    {
+                        disableLogo = disableDesktopLogo;
+                    }
+                    else if (customBackgroundLogoFound && customBackgroundLogo != null)
+                    {
+                        modifierPreventsDisablingOfLogo = true;
+                        desktopLogo = customBackgroundLogo;
+                    }
+                    
+                    if (disableLogo && !modifierPreventsDisablingOfLogo)
+                    {
+                        CustomDesktopHelper.getLogo().SetActive(false);
+                    }
+                    else if (desktopLogo != null) // We have a desktop logo to show.
+                    {
+                        CustomDesktopHelper.getLogo().GetComponent<Image>().sprite = desktopLogo;
                     }
                     
                     // Adjust Logo
+
+                    float logoTransparency = 0.2627f;
+                    
                     if (!customCampaign.customDesktopLogoTransparency.Equals(0.2627f)) // If we have a Custom Transparency
                     {
-                        Color tempColorCopy = CustomDesktopHelper.getLogo().GetComponent<Image>().color;
-                        tempColorCopy.a = customCampaign.customDesktopLogoTransparency;
+                        logoTransparency = customCampaign.customDesktopLogoTransparency;
+                    }
 
+                    bool backgroundLogoTransparencyFound = false;
+                    float backgroundLogoTransparency = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.backgroundLogoTransparency, ref backgroundLogoTransparencyFound,
+                        v => !v.Equals(0.2627f));
+
+                    if (backgroundLogoTransparencyFound) // Modifier
+                    {
+                        logoTransparency = backgroundLogoTransparency;
+                    }
+                    
+                    if (!logoTransparency.Equals(0.2627f))
+                    {
+                        Color tempColorCopy = CustomDesktopHelper.getLogo().GetComponent<Image>().color;
+                        tempColorCopy.a = logoTransparency;
+                        
                         CustomDesktopHelper.getLogo().GetComponent<Image>().color = tempColorCopy;
                     }
                     
                     // Rename main program if wanted
+
+                    string renamedMainGameDesktopIcon = String.Empty;
+                    
                     if (!string.IsNullOrEmpty(customCampaign.renameMainGameDesktopIcon))
                     {
-                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = customCampaign.renameMainGameDesktopIcon;
+                        renamedMainGameDesktopIcon = customCampaign.renameMainGameDesktopIcon;
+                    }
+                    
+                    bool renameMainGameDesktopIconFound = false;
+                    string renameMainGameDesktopIcon = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.renameMainGameDesktopIcon, ref renameMainGameDesktopIconFound,
+                        v => !string.IsNullOrEmpty(v));
+                    
+                    if (renameMainGameDesktopIconFound)
+                    {
+                        renamedMainGameDesktopIcon = renameMainGameDesktopIcon;
+                    }
+                    
+                    if (!string.IsNullOrEmpty(renamedMainGameDesktopIcon))
+                    {
+                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
                     }
                     
                     // Change main program icon if wanted.
+
+                    Sprite mainProgramIcon = null;
+                    
                     if (customCampaign.changeMainGameDesktopIcon != null)
                     {
-                        CustomDesktopHelper.getMainGameProgram().GetComponent<Image>().sprite = customCampaign.changeMainGameDesktopIcon;
+                        mainProgramIcon = customCampaign.changeMainGameDesktopIcon;
+                    }
+                    
+                    bool mainGameDesktopIconFound = false;
+                    Sprite mainGameDesktopIcon = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.mainGameDesktopIcon, ref mainGameDesktopIconFound,
+                        v => v != null);
+                    
+                    if (mainGameDesktopIconFound)
+                    {
+                        mainProgramIcon = mainGameDesktopIcon;
+                    }
+                    
+                    if (mainProgramIcon != null)
+                    {
+                        CustomDesktopHelper.getMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
                     }
                     
                     // Disable default videos.
@@ -200,8 +308,10 @@ namespace NewSafetyHelp.CustomDesktop
             }
 
 
-            public static IEnumerator StartupRoutine(MainMenuCanvasBehavior __instance)
+            private static IEnumerator StartupRoutine(MainMenuCanvasBehavior __instance)
             {
+                // We check if null AND if destroyed. Since we might not be initialized.
+                // Later the reference might be destroyed, as such we also need to check if destroyed.
                 while (GlobalVariables.UISoundControllerScript ==null)
                 {
                     yield return null;

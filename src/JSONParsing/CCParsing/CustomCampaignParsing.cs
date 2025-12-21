@@ -5,6 +5,8 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Modifier.Data;
+using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -17,7 +19,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
     public static class CustomCampaignParsing
     {
         /// <summary>
-        /// Creates a custom campaign from a provided json file.
+        /// Creates a custom campaign from a provided JSON file.
         /// </summary>
         /// <param name="jObjectParsed"></param>
         /// <param name="usermodFolderPath"></param>
@@ -170,11 +172,67 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
+            // Check if any modifier has to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignModifier.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<ModifierExtraInfo> tempList = new List<ModifierExtraInfo>(ParseJSONFiles.missingCustomCampaignModifier);
+
+                foreach (ModifierExtraInfo missingModifier in tempList)
+                {
+                    if (missingModifier.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        if (missingModifier.unlockDays == null)
+                        {
+                            _customCampaign.customModifiersGeneral.Add(missingModifier);
+                        }
+                        else
+                        {
+                            _customCampaign.customModifiersDays.Add(missingModifier);
+                        }
+                        
+                        ParseJSONFiles.missingCustomCampaignModifier.Remove(missingModifier);
+                    }
+                }
+            }
+            
+            // Check if any theme has to be added to a custom campaign.
+            if (ParseJSONFiles.missingCustomCampaignTheme.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<ThemesExtraInfo> tempList = new List<ThemesExtraInfo>(ParseJSONFiles.missingCustomCampaignTheme);
+
+                foreach (ThemesExtraInfo missingTheme in tempList)
+                {
+                    if (missingTheme.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        if (missingTheme.unlockDays == null)
+                        {
+                            _customCampaign.customThemesGeneral.Add(missingTheme);
+                        }
+                        else
+                        {
+                            _customCampaign.customThemesDays.Add(missingTheme);
+                        }
+                        
+                        ParseJSONFiles.missingCustomCampaignTheme.Remove(missingTheme);
+                    }
+                }
+            }
+            
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
         }
         
-        public static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath,
             ref string customCampaignName)
         {
@@ -251,6 +309,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite customDesktopLogo = null;
             float customDesktopLogoTransparency = 0.2627f;
             
+            // Themes
+            
+            bool disablePickingThemeOption = false; // If true, it will hide the option to set the theme.
+
+            string defaultTheme = null;
+            
+            /*
+             * Parsing the JSON File
+             */
+            
             if (jObjectParsed.TryGetValue("custom_campaign_name", out var customCampaignNameValue))
             {
                 customCampaignName = (string) customCampaignNameValue;
@@ -326,9 +394,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 JArray _customCampaignDays = (JArray) customCampaignDaysNamesValue;
 
-                foreach (JToken arcadeCustomCall in _customCampaignDays)
+                foreach (JToken campaignDay in _customCampaignDays)
                 {
-                    customCampaignDaysNames.Add((string) arcadeCustomCall);
+                    customCampaignDaysNames.Add((string) campaignDay);
                 }
             }
 
@@ -580,6 +648,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
+            if (jObjectParsed.TryGetValue("defaultTheme", out JToken defaultThemeValue))
+            {
+                defaultTheme = defaultThemeValue.Value<string>();
+            }
+            
+            if (jObjectParsed.TryGetValue("disable_theme_dropdown", out var disableThemeDropdownValue))
+            {
+                disablePickingThemeOption = (bool) disableThemeDropdownValue;
+            }
             
             // Create
             return new CustomCampaignExtraInfo
@@ -635,7 +712,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 customDesktopLogo = customDesktopLogo,
                 customDesktopLogoTransparency = customDesktopLogoTransparency,
 
-                disableGreenColorBackground = disableGreenColorBackground
+                disableGreenColorBackground = disableGreenColorBackground,
+                
+                defaultTheme = defaultTheme,
+                disablePickingThemeOption = disablePickingThemeOption
             };
         }
     }
