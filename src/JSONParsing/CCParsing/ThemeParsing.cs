@@ -5,6 +5,7 @@ using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Themes;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using static NewSafetyHelp.CustomThemes.ColorHelper;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
 {
@@ -137,6 +138,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 setColor(ref thirdColorValue, ref themeColorPalette, 2);
             }
             
+            if (jObjectParsed.TryGetValue("entry_font_color", out JToken entryFontColorValue))
+            {
+                setColor(ref entryFontColorValue, ref themeColorPalette, 2);
+            }
+            
             if (jObjectParsed.TryGetValue("main_window_color", out JToken mainWindowColorValue))
             {
                 setColor(ref mainWindowColorValue, ref themeColorPalette, 3);
@@ -174,14 +180,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 switch (desktopBackgroundColorList.Count)
                 {
                     case 3:
-                        themeColorPalette.colorSwatch[colorIndex] = new Color(desktopBackgroundColorList[0],
-                            desktopBackgroundColorList[1], desktopBackgroundColorList[2]);
+                        themeColorPalette.colorSwatch[colorIndex] = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
+                            GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]));
                         break;
 
                     case 4:
-                        themeColorPalette.colorSwatch[colorIndex] = new Color(desktopBackgroundColorList[0],
-                            desktopBackgroundColorList[1], desktopBackgroundColorList[2], 
-                            desktopBackgroundColorList[3]);
+                        themeColorPalette.colorSwatch[colorIndex] = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
+                            GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]), 
+                            GetConvertedColorFloat(desktopBackgroundColorList[3]));
                         break;
 
                     default:

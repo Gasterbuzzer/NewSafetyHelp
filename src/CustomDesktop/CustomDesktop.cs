@@ -79,7 +79,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (customCampaign.disablePickingThemeOption)
                     {
-                        CustomDesktopHelper.disableThemeDropdown();
+                        CustomDesktopHelper.disableThemeDropdownDesktop();
                     }
                 }
 

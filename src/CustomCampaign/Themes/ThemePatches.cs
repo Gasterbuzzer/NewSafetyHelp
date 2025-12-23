@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.JSONParsing;
 using TMPro;
 using Object = UnityEngine.Object;
@@ -36,7 +37,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         }
                     }
                 }
-                else
+                else // Custom Campaign
                 {
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
 
@@ -59,6 +60,10 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         }
                     }
                     
+                    if (customCampaign.disablePickingThemeOption)
+                    {
+                        CustomDesktopHelper.disableThemeDropdownInGame();
+                    }
                 }
                 
                 __instance.colorDropdown.RefreshShownValue();

@@ -6,6 +6,7 @@ using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using static NewSafetyHelp.CustomThemes.ColorHelper;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
 {
@@ -206,14 +207,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     switch (desktopBackgroundColorList.Count)
                     {
                         case 3:
-                            desktopBackgroundColor = new Color(desktopBackgroundColorList[0],
-                                desktopBackgroundColorList[1], desktopBackgroundColorList[2]);
+                            desktopBackgroundColor = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
+                                GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]));
                             break;
 
                         case 4:
-                            desktopBackgroundColor = new Color(desktopBackgroundColorList[0],
-                                desktopBackgroundColorList[1], desktopBackgroundColorList[2], 
-                                desktopBackgroundColorList[3]);
+                            desktopBackgroundColor = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
+                                GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]), 
+                                GetConvertedColorFloat(desktopBackgroundColorList[3]));
                             break;
 
                         default:
