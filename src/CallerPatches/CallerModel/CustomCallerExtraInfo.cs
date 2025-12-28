@@ -25,7 +25,7 @@
         public int monsterIDAttached = -1; // Similar to name but allows also ID to work.
         
         // Call Order
-        public int orderInCampaign; // Order in campaign, used when creating the call list array. If two entries have the same order, the last one will replace it.
+        public readonly int orderInCampaign; // Order in campaign, used when creating the call list array. If two entries have the same order, the last one will replace it.
         
         // Custom Campaign Settings
         public bool inCustomCampaign = false;

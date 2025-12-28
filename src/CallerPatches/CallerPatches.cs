@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CallerPatches.IncomingCallWindow;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -992,6 +994,19 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__result"> Result of original function. </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref bool __result)
             {
+                
+                // Skip 1 frame:
+                // 0 = this method (PrintCaller)
+                // 1 = the direct caller
+                StackTrace stackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: false);
+                StackFrame frame = stackTrace.GetFrame(1);
+
+                MethodBase method = frame.GetMethod();
+
+                MelonLogger.Error(
+                    $"Called from {method.DeclaringType?.FullName}.{method.Name}"
+                );
+                
                 Type callerController = typeof(CallerController);
                 FieldInfo lastDayNumField = callerController.GetField("lastDayNum",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -1044,7 +1059,8 @@ namespace NewSafetyHelp.CallerPatches
 
                     #if DEBUG
                     MelonLogger.Msg(
-                        $"DEBUG: Last caller of day: {__result} for caller {customCallerFound.callerName}.");
+                        $"DEBUG: Last caller of day: '{__result}'. Caller name: '{customCallerFound.callerName}'.");
+
                     #endif
                 }
 
@@ -1371,7 +1387,7 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
                 #if DEBUG
-                MelonLogger.Msg($"DEBUG: Called Answer Caller Method.");
+                MelonLogger.Msg($"DEBUG: Called 'AnswerCaller' method.");
                 #endif
 
                 FieldInfo _givenWarning = typeof(CallerController).GetField("givenWarning",
@@ -1464,10 +1480,10 @@ namespace NewSafetyHelp.CallerPatches
                         normalCallerAfterCheck = true;
                     }
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign)
+                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
                 {
                     #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
+                        MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
                     #endif
 
                     CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
@@ -1477,7 +1493,7 @@ namespace NewSafetyHelp.CallerPatches
                         MelonLogger.Error("ERROR: customCampaign is null. Calling original function.");
                         return true;
                     }
-
+                    
                     int[] callersTodayMainCampaign = new int[] { 3, 2, 3, 4, 5, 7 };
 
                     // Not Arcade Mode, is last call of day?, not DLC, threshold correct, current day is after day 1 and no save immunity.
@@ -1491,7 +1507,7 @@ namespace NewSafetyHelp.CallerPatches
                              !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
                         #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Warning caller checks started.");
+                            MelonLogger.Msg($"DEBUG: Caller (Warning) checks started.");
                         #endif
 
                         int callersTodayRequiredWarning;
@@ -1517,7 +1533,8 @@ namespace NewSafetyHelp.CallerPatches
 
                         #if DEBUG
                         MelonLogger.Msg(
-                            $"DEBUG: Warning caller check for callers today required: {callersTodayRequiredWarning}. Current amount of callers: {__instance.callersToday}.");
+                            $"DEBUG: Warning caller check for callers today required: {callersTodayRequiredWarning}." +
+                            $" Current amount of callers: {__instance.callersToday}.");
                         #endif
 
                         if (__instance.callersToday ==
@@ -1664,7 +1681,7 @@ namespace NewSafetyHelp.CallerPatches
                         normalCallerAfterCheck = true;
                     }
                 }
-
+                
                 if (normalCallerAfterCheck) // Since we have duplicated copies of this, we just have a flag called if that section is called.
                 {
                     if (!(bool)_firstCaller.GetValue(__instance) && !__instance.arcadeMode) // !__instance.firstCaller
@@ -1678,13 +1695,32 @@ namespace NewSafetyHelp.CallerPatches
                     }
 
                     __instance.UpdateCallerInfo();
-
-                    if (!GlobalVariables.arcadeMode &&
-                        __instance.callers[__instance.currentCallerID].callerProfile.consequenceCallerProfile != null &&
-                        !__instance.CanReceiveConsequenceCall(__instance.callers[__instance.currentCallerID]
-                            .callerProfile.consequenceCallerProfile))
+                    
+                    if (!GlobalVariables.arcadeMode 
+                        && __instance.callers[__instance.currentCallerID].callerProfile.consequenceCallerProfile != null 
+                        && !__instance.CanReceiveConsequenceCall(__instance.callers[__instance.currentCallerID].callerProfile.consequenceCallerProfile))
                     {
+
+                        #if DEBUG
+                            MelonLogger.Msg(ConsoleColor.DarkMagenta, "DEBUG: Caller is dynamic caller. " +
+                                                                      "Marking as correct. " +
+                                                                      "Next caller!");
+                        #endif
+                        
+                        // This will skip the caller if the current caller is a consequence caller, and we don't need to show this caller.
+                        // It will call itself and in the UpdateCallerInfo update the caller to the next caller.
+                        
                         __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                        
+                        // Here we insert a small check to see if this caller wants to end the day.
+                        if (__instance.IsLastCallOfDay())
+                        {
+                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            GlobalVariables.mainCanvasScript.NoCallerWindow();
+                            return false; // Skip original function.
+                        }
+                        
+                        // Next caller.
                         __instance.AnswerCaller();
                     }
                     else
@@ -1899,6 +1935,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="maxTime"> Maximum time to wait. </param>
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+                // ReSharper disable once RedundantAssignment
                 ref IEnumerator __result, ref float minTime, ref float maxTime)
             {
                 __result = newCallRoutine(__instance, minTime, maxTime);
@@ -1928,6 +1965,7 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__result"> Result of the function. </param>
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+                // ReSharper disable once RedundantAssignment
                 ref RichAudioClip __result)
             {
                 if (__instance.randomCallerClips.Length <= 0)
@@ -1965,6 +2003,57 @@ namespace NewSafetyHelp.CallerPatches
 
                 int num = Random.Range(0, __instance.randomCallerPics.Length);
                 __result = __instance.randomCallerPics[num];
+
+                return false; // Skip the original function
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "NextCallButton")]
+        public static class NextCallButtonPatch
+        {
+            /// <summary>
+            /// The original function picks a random caller picture. Since missing callers may cause issues or errors. We now inform the user and prevent the issue.
+            /// </summary>
+            /// <param name="__originalMethod"> Method which was called. </param>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance)
+            {
+                // Check for next caller that will be skipped.
+                if (CustomCampaignGlobal.inCustomCampaign)
+                {
+                    // If the next caller is the last, and we skip it (Consequence caller that we got right).
+                    if (CloseButtonPatches.isNextCallerTheLastDayCaller(GlobalVariables.callerControllerScript))
+                    {
+                        if (GlobalVariables.callerControllerScript.currentCallerID + 1 < GlobalVariables.callerControllerScript.callers.Length)
+                        {
+                            #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Profile not null '{GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile != null}'." +
+                                              $" Can receive consequence: '{!GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile)}'.");
+                            #endif
+                            
+                            if (!GlobalVariables.arcadeMode 
+                                && GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile != null 
+                                && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile))
+                            {
+                                GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
+                                GlobalVariables.mainCanvasScript.NoCallerWindow();
+                                return false; // Skip original function.
+                            }
+                        }
+                    }
+                }
+                
+                if (GlobalVariables.callerControllerScript.IsLastCallOfDay() && !GlobalVariables.arcadeMode)
+                {
+                    GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
+                    GlobalVariables.mainCanvasScript.NoCallerWindow();
+                }
+                else
+                {
+                    GlobalVariables.callerControllerScript.StopAllRoutines();
+                    __instance.callWindow.SetActive(true);
+                }
 
                 return false; // Skip the original function
             }
