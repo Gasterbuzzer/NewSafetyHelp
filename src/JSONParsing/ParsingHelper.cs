@@ -11,7 +11,7 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="entryUnlocker"> Instance of the EntryUnlockerController </param>
         /// <param name="type"> Type of entry type. (0 = monsterProfiles default, 1 = allXmasEntries DLC) </param>
-        public static int GetNewEntryID(EntryUnlockController entryUnlocker, int type = 0)
+        private static int GetNewEntryID(EntryUnlockController entryUnlocker, int type = 0)
         {
             switch (type)
             {

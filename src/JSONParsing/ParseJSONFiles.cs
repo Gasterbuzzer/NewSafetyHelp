@@ -1087,11 +1087,6 @@ namespace NewSafetyHelp.JSONParsing
                 EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster,
                     ref entryUnlockerInstance.allXmasEntries.monsterProfiles, "allXmasEntries");
             }
-            else if (includeMainCampaign) // Only base game.
-            {
-                EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster,
-                    ref entryUnlockerInstance.allEntries.monsterProfiles, "allEntries");
-            }
             else if (inCustomCampaign) // Custom Campaign
             {
                 // Please note that the entry never gets added to the main monster profile array.
@@ -1140,6 +1135,13 @@ namespace NewSafetyHelp.JSONParsing
                             "(Error Type: 2) ");
                     }
                 }
+            }
+            else // Only base game. (OLD: // Only base game.)
+            {
+                // This will add the entry to the base game, regardless of what was chosen. This is to avoid any issues.
+                // I don't see any reason to why one should not always add it to the base game if nothing was given.
+                EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster,
+                    ref entryUnlockerInstance.allEntries.monsterProfiles, "allEntries");
             }
 
             /*

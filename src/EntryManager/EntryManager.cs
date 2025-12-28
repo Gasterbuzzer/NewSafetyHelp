@@ -71,7 +71,7 @@ namespace NewSafetyHelp.EntryManager
 
                 // Add the new profile
                 newArray[newArray.Length - 1] = newProfile;
-
+                
                 // Replace the old array
                 monsterProfiles = newArray;
 
