@@ -142,6 +142,7 @@
     <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs" />
     <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs" />
     <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
+    <Compile Include="src\CustomThemes\ColorHelper.cs" />
     <Compile Include="src\CustomVideos\CustomVideoExtraInfo.cs" />
     <Compile Include="src\CustomVideos\VideoPatches.cs" />
     <Compile Include="src\Emails\EmailExtraInfo.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\MonsterParsing.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelper.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\MainGameBugFixes\CloseErrorPopupFix.cs" />
@@ -178,9 +180,6 @@
   <ItemGroup>
     <None Include="build_after.bat" />
     <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\CustomThemes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

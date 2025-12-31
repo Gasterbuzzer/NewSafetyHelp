@@ -597,9 +597,34 @@ namespace NewSafetyHelp.CustomDesktop
             }
         }
 
-        public static void disableThemeDropdown()
+        public static void disableThemeDropdownDesktop()
         {
             GameObject videoOptions = GameObject.Find("MainMenuCanvas").transform.Find("OptionsPopup").transform
+                .Find("OptionsScrollRect").transform.Find("Viewport").transform.Find("Content").transform
+                .Find("VideoOptions").gameObject;
+
+            if (videoOptions == null)
+            {
+                return;
+            }
+
+            GameObject colorPaletteHeader = videoOptions.transform.Find("ColorPaletteHeader").gameObject;
+            GameObject colorDropdown = videoOptions.transform.Find("ColorDropdown").gameObject;
+
+            if (colorPaletteHeader != null)
+            {
+                colorPaletteHeader.SetActive(false);
+            }
+            
+            if (colorDropdown != null)
+            {
+                colorDropdown.SetActive(false);
+            }
+        }
+        
+        public static void disableThemeDropdownInGame()
+        {
+            GameObject videoOptions = GameObject.Find("MainCanvas").transform.Find("OptionsPopup").transform
                 .Find("OptionsScrollRect").transform.Find("Viewport").transform.Find("Content").transform
                 .Find("VideoOptions").gameObject;
 

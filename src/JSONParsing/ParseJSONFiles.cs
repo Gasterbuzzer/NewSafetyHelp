@@ -525,7 +525,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Generate new ID if not provided.
-            generateNewID(ref newExtra, ref newID, ref replaceEntry, ref jsonFolderPath,
+            ParsingHelper.generateNewID(ref newExtra, ref newID, ref replaceEntry, ref jsonFolderPath,
                 ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref _inCustomCampaign);
 
             if (replaceEntry) // We replace an Entry
@@ -701,49 +701,6 @@ namespace NewSafetyHelp.JSONParsing
                         $"WARNING: Provided entry '{_monsterName}' cannot be deleted as it is not replacing an entry.");
                 }
             }
-        }
-
-        public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry,
-            ref string jsonFolderPath, ref bool onlyDLC, ref bool includeDLC,
-            ref EntryUnlockController entryUnlockerInstance, ref bool inCustomCampaign)
-        {
-            // Update ID if not given.
-            if (newID == -1 && !replaceEntry && !inCustomCampaign)
-            {
-                // Get the max Monster ID.
-                int maxEntryIDMainCampaign = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance);
-                int maxEntryIDMainDLC = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance, 1);
-
-                if (onlyDLC) // Only DLC
-                {
-                    newID = maxEntryIDMainDLC;
-                }
-                else if (includeDLC) // Also allow in DLC (We pick the largest from both)
-                {
-                    newID = (maxEntryIDMainCampaign < maxEntryIDMainDLC) ? maxEntryIDMainDLC : maxEntryIDMainCampaign;
-                }
-                else // Only base game.
-                {
-                    newID = maxEntryIDMainCampaign;
-                }
-            }
-
-            // In custom campaign we first get our main game IDs and then add the offset by the size of the custom campaign sizes.
-            if (newID == -1 && !replaceEntry && inCustomCampaign)
-            {
-                int tempID = EntryManager.EntryManager.GetNewEntryID(entryUnlockerInstance);
-
-                // We add our amountExtra and increment it for the next extra.
-                tempID += amountExtra;
-                amountExtra++;
-
-                newID = tempID;
-            }
-
-            newExtra.ID = newID;
-
-            MelonLogger.Msg($"INFO: Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
-            MelonLogger.Msg("(This intended and recommended way of providing the ID.)");
         }
 
         public static void replaceEntryFunction(ref EntryUnlockController entryUnlockerInstance,
@@ -1130,11 +1087,6 @@ namespace NewSafetyHelp.JSONParsing
                 EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster,
                     ref entryUnlockerInstance.allXmasEntries.monsterProfiles, "allXmasEntries");
             }
-            else if (includeMainCampaign) // Only base game.
-            {
-                EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster,
-                    ref entryUnlockerInstance.allEntries.monsterProfiles, "allEntries");
-            }
             else if (inCustomCampaign) // Custom Campaign
             {
                 // Please note that the entry never gets added to the main monster profile array.
@@ -1183,6 +1135,13 @@ namespace NewSafetyHelp.JSONParsing
                             "(Error Type: 2) ");
                     }
                 }
+            }
+            else // Only base game. (OLD: // Only base game.)
+            {
+                // This will add the entry to the base game, regardless of what was chosen. This is to avoid any issues.
+                // I don't see any reason to why one should not always add it to the base game if nothing was given.
+                EntryManager.EntryManager.AddMonsterToTheProfile(_newMonster,
+                    ref entryUnlockerInstance.allEntries.monsterProfiles, "allEntries");
             }
 
             /*

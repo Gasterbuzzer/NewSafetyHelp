@@ -71,7 +71,7 @@ namespace NewSafetyHelp.EntryManager
 
                 // Add the new profile
                 newArray[newArray.Length - 1] = newProfile;
-
+                
                 // Replace the old array
                 monsterProfiles = newArray;
 
@@ -261,26 +261,6 @@ namespace NewSafetyHelp.EntryManager
                 {
                     monsterProfiles[i] = replaceProfile;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Returns a new ID that should be +1 from the largest.
-        /// </summary>
-        /// <param name="entryUnlocker"> Instance of the EntryUnlockerController </param>
-        /// <param name="type"> Type of entry type. (0 = monsterProfiles default, 1 = allXmasEntries DLC) </param>
-        public static int GetNewEntryID(EntryUnlockController entryUnlocker, int type = 0)
-        {
-            switch (type)
-            {
-                case 0:
-                    return entryUnlocker.allEntries.monsterProfiles.Length;
-
-                case 1:
-                    return entryUnlocker.allXmasEntries.monsterProfiles.Length;
-
-                default: 
-                    return entryUnlocker.allEntries.monsterProfiles.Length;
             }
         }
 
