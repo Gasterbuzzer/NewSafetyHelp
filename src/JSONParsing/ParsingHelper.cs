@@ -70,7 +70,7 @@ namespace NewSafetyHelp.JSONParsing
             newExtra.ID = newID;
 
             MelonLogger.Msg($"INFO: Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
-            MelonLogger.Msg("(This intended and recommended way of providing the ID.)");
+            MelonLogger.Msg("(This is the intended and recommended way of providing the ID.)");
         }
     }
 }

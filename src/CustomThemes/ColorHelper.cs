@@ -8,7 +8,7 @@ namespace NewSafetyHelp.CustomThemes
         /// Converts the given float into the correct format.
         /// A possible format is, if the color is given in 0-255 format. This will get converted into a float (0-1).
         /// </summary>
-        /// <param name="currentColorValue"></param>
+        /// <param name="currentColorValue">The color component value to normalize, expressed either in the 0–1 or 0–255 range.</param>
         /// <returns> Converted to a float if in wrong format or simply returned if no change is needed. </returns>
         public static float GetConvertedColorFloat(float currentColorValue)
         {

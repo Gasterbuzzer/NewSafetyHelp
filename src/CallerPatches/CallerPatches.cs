@@ -994,19 +994,6 @@ namespace NewSafetyHelp.CallerPatches
             /// <param name="__result"> Result of original function. </param>
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref bool __result)
             {
-                
-                // Skip 1 frame:
-                // 0 = this method (PrintCaller)
-                // 1 = the direct caller
-                StackTrace stackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: false);
-                StackFrame frame = stackTrace.GetFrame(1);
-
-                MethodBase method = frame.GetMethod();
-
-                MelonLogger.Error(
-                    $"Called from {method.DeclaringType?.FullName}.{method.Name}"
-                );
-                
                 Type callerController = typeof(CallerController);
                 FieldInfo lastDayNumField = callerController.GetField("lastDayNum",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -2012,7 +1999,11 @@ namespace NewSafetyHelp.CallerPatches
         public static class NextCallButtonPatch
         {
             /// <summary>
-            /// The original function picks a random caller picture. Since missing callers may cause issues or errors. We now inform the user and prevent the issue.
+            /// Patches the NextCallButton logic to handle custom campaign behavior and end-of-day conditions.
+            /// When in a custom campaign, it checks if the next caller to be skipped is the last caller of the day
+            /// and, if so, informs the player instead of silently skipping. It also prevents advancing when the
+            /// day is ending (showing a message and closing the caller window), or otherwise stops current routines
+            /// and opens the call window for the next caller, skipping the original method implementation.
             /// </summary>
             /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
