@@ -925,8 +925,6 @@ namespace NewSafetyHelp.CallerPatches
                 // ReSharper disable once RedundantAssignment
                 ref IEnumerator __result, ref float minTime, ref float maxTime)
             {
-                DebugHelper.CallerOfFunction();
-
                 __result = newCallRoutine(__instance, minTime, maxTime);
 
                 return false; // Skip the original function
