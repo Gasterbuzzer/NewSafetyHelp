@@ -7,7 +7,6 @@ using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
-using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
 using Random = UnityEngine.Random;
