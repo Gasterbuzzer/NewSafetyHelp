@@ -247,7 +247,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 bool replaceTrue = false;
 
-                if (!__instance.arcadeMode)
+                if (!CustomCampaignGlobal.inCustomCampaign && !__instance.arcadeMode)
                 {
                     foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
                     {
@@ -358,95 +358,97 @@ namespace NewSafetyHelp.CallerPatches
                     }
                 }
 
-                if (profile != null && !__instance.arcadeMode &&
-                    profile.consequenceCallerProfile !=
-                    null) // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
+                if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign. This makes odd problems in custom campaigns.
                 {
-                    MelonLogger.Msg($"INFO: Current caller is Consequence Caller.");
-                    Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
-
-                    if (callers != null) // Caller is valid.
+                    if (profile != null && !__instance.arcadeMode &&
+                        profile.consequenceCallerProfile !=
+                        null) // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
                     {
-                        MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
+                        MelonLogger.Msg($"INFO: Current caller is Consequence Caller.");
+                        Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
 
-                        if (ParseJSONFiles.entriesExtraInfo.Exists(item =>
-                                item.referenceProfileNameInternal ==
-                                callers.callerProfile.consequenceCallerProfile
-                                    .name)) // IF the consequence caller has been replaced once.
+                        if (callers != null) // Caller is valid.
                         {
-                            MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
-                            EntryExtraInfo foundExtraInfo = ParseJSONFiles.entriesExtraInfo.Find(item =>
-                                item.referenceProfileNameInternal ==
-                                callers.callerProfile.consequenceCallerProfile.name);
+                            MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
 
-                            if (foundExtraInfo == null)
+                            if (ParseJSONFiles.entriesExtraInfo.Exists(item =>
+                                    item.referenceProfileNameInternal ==
+                                    callers.callerProfile.consequenceCallerProfile
+                                        .name)) // IF the consequence caller has been replaced once.
                             {
-                                MelonLogger.Error($"INFO: Did not find replacement caller.");
-                                return true;
+                                MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
+                                EntryExtraInfo foundExtraInfo = ParseJSONFiles.entriesExtraInfo.Find(item =>
+                                    item.referenceProfileNameInternal ==
+                                    callers.callerProfile.consequenceCallerProfile.name);
+
+                                if (foundExtraInfo == null)
+                                {
+                                    MelonLogger.Error($"INFO: Did not find replacement caller.");
+                                    return true;
+                                }
+
+                                // It was replaced once, so we also change the consequence caller info.
+                                profile.callTranscription = foundExtraInfo.consequenceTranscript;
+                                profile.callerName = foundExtraInfo.consequenceName;
+                                profile.callerPortrait = foundExtraInfo.consequenceCallerImage;
+                                profile.callerClip = foundExtraInfo.consequenceCallerClip;
+
+                                MelonLogger.Msg(
+                                    $"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
+                            }
+                        }
+                        else
+                        {
+                            MelonLogger.Error($"INFO: Did not find initial caller.");
+                        }
+                    }
+                    // Replace information about the caller with a random entry
+                    else if (replaceTrue && profile != null && profile.callerMonster != null &&
+                             !__instance.arcadeMode &&
+                             profile.consequenceCallerProfile ==
+                             null) // If any entry won the chance to replace this call, replace it.
+                    {
+                        if (entries.Count > 0) // We actually found at least one.
+                        {
+                            // We are not a consequence caller.
+                            // Select one randomly.
+                            int entrySelected = Random.Range(0, entries.Count - 1);
+
+                            // Audio check
+                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                                .currentlySelected = true;
+
+                            // Get a "copy"
+                            EntryExtraInfo selected = entries[entrySelected];
+
+                            // Replace caller with custom caller
+                            profile.callerName = selected.callerName;
+
+                            if (selected.callerImage != null) // If Image provided
+                            {
+                                profile.callerPortrait = selected.callerImage;
                             }
 
-                            // It was replaced once, so we also change the consequence caller info.
-                            profile.callTranscription = foundExtraInfo.consequenceTranscript;
-                            profile.callerName = foundExtraInfo.consequenceName;
-                            profile.callerPortrait = foundExtraInfo.consequenceCallerImage;
-                            profile.callerClip = foundExtraInfo.consequenceCallerClip;
+                            profile.callTranscription = selected.callTranscript;
 
-                            MelonLogger.Msg(
-                                $"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
+                            if (profile != null && profile.callerMonster != null)
+                            {
+                                MelonLogger.Msg(
+                                    $"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                            }
+
+                            // We store a reference to the caller for finding later if the consequence caller calls.
+                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                                .referenceProfileNameInternal = profile.name;
                         }
                     }
-                    else
-                    {
-                        MelonLogger.Error($"INFO: Did not find initial caller.");
-                    }
+                    #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Finished handling the caller replacement.");
+                    #endif
                 }
-                // Replace information about the caller with a random entry
-                else if (replaceTrue && profile != null && profile.callerMonster != null && !__instance.arcadeMode &&
-                         profile.consequenceCallerProfile ==
-                         null) // If any entry won the chance to replace this call, replace it.
-                {
-                    if (entries.Count > 0) // We actually found at least one.
-                    {
-                        // We are not a consequence caller.
-                        // Select one randomly.
-                        int entrySelected = Random.Range(0, entries.Count - 1);
-
-                        // Audio check
-                        ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
-                            .currentlySelected = true;
-
-                        // Get a "copy"
-                        EntryExtraInfo selected = entries[entrySelected];
-
-                        // Replace caller with custom caller
-                        profile.callerName = selected.callerName;
-
-                        if (selected.callerImage != null) // If Image provided
-                        {
-                            profile.callerPortrait = selected.callerImage;
-                        }
-
-                        profile.callTranscription = selected.callTranscript;
-
-                        if (profile != null && profile.callerMonster != null)
-                        {
-                            MelonLogger.Msg(
-                                $"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
-                        }
-
-                        // We store a reference to the caller for finding later if the consequence caller calls.
-                        ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
-                            .referenceProfileNameInternal = profile.name;
-                    }
-                }
-
-                #if DEBUG
-                MelonLogger.Msg($"DEBUG: Finished handling the caller replacement.");
-                #endif
 
                 __instance.currentCallerProfile = profile;
                 GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
-
 
                 return false; // Skip the original function
             }
