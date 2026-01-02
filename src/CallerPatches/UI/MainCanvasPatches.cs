@@ -355,6 +355,8 @@ namespace NewSafetyHelp.CallerPatches.UI
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndDayRoutine", new Type[] { })]
         public static class EndDayRoutinePatch
         {
+            // To avoid duplicate day ending.
+            private static bool isDayEnding;
 
             /// <summary>
             /// Patches the EndDayRoutine coroutine to work better with custom campaigns.
@@ -376,6 +378,13 @@ namespace NewSafetyHelp.CallerPatches.UI
             
             private static IEnumerator endDayRoutineChanged(MainCanvasBehavior __instance)
             {
+                if (isDayEnding)
+                {
+                    yield break;
+                }
+
+                isDayEnding = true;
+                
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 mainCanvasBehavior.clockedOut = false;
                 
@@ -501,6 +510,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                 GlobalVariables.saveManagerScript.SaveGameProgress();
                 
                 yield return null;
+
+                isDayEnding = false;
                 
                 mainCanvasBehavior.ExitToMenu();
                 
