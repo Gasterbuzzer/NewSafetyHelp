@@ -376,37 +376,14 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                     // Checks if we need to end the day, in case the next caller gets skipped.
                     if (CustomCampaignGlobal.inCustomCampaign
-                        && CloseButtonPatches.isNextCallerTheLastDayCaller(GlobalVariables.callerControllerScript))
+                        && CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript)
+                        && !GlobalVariables.arcadeMode)
                     {
-                        // Next caller is not beyond our are caller list.
-                        if (GlobalVariables.callerControllerScript.currentCallerID + 1 <
-                            GlobalVariables.callerControllerScript.callers.Length)
-                        {
-                            #if DEBUG
-                            MelonLogger.Msg(
-                                "DEBUG: Profile not null" +
-                                $" '{GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile != null}'." +
-                                " Can receive consequence:" +
-                                $" '{!GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile)}'.");
-                            #endif
-
-                            //  If we are not in arcade mode, we are also a consequence caller, and we are supposed to skip this current caller.
-                            if (!GlobalVariables.arcadeMode
-                                && GlobalVariables.callerControllerScript
-                                    .callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile
-                                    .consequenceCallerProfile != null
-                                && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables
-                                    .callerControllerScript
-                                    .callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile
-                                    .consequenceCallerProfile))
-                            {
-                                // Start the end day routine and stop any caller. And we end the day.
-                                GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
-                                    .EndDayRoutine());
-                                GlobalVariables.mainCanvasScript.NoCallerWindow();
-                                return false; // Skip original function.
-                            }
-                        }
+                        // Start the end day routine and stop any caller. And we end the day.
+                        GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
+                            .EndDayRoutine());
+                        GlobalVariables.mainCanvasScript.NoCallerWindow();
+                        return false; // Skip original function.
                     }
 
                     if (__instance.currentCallerID + 1 < __instance.callers.Length)

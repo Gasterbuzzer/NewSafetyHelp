@@ -356,7 +356,7 @@ namespace NewSafetyHelp.CallerPatches.UI
         public static class EndDayRoutinePatch
         {
             // To avoid duplicate day ending.
-            private static bool isDayEnding;
+            public static bool isDayEnding;
 
             /// <summary>
             /// Patches the EndDayRoutine coroutine to work better with custom campaigns.
@@ -522,7 +522,6 @@ namespace NewSafetyHelp.CallerPatches.UI
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine", new Type[] { })]
         public static class EndingCutsceneRoutinePatch
         {
-
             /// <summary>
             /// Patches the EndingCutsceneRoutine coroutine to work better with custom campaigns.
             /// </summary>
@@ -532,7 +531,6 @@ namespace NewSafetyHelp.CallerPatches.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-
                 __result = endingCutsceneRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
@@ -783,7 +781,6 @@ namespace NewSafetyHelp.CallerPatches.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-
                 __result = gameOverCutsceneRoutineChanged(__instance);
                 
                 return false; // Skip function with false.

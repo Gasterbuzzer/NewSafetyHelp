@@ -21,27 +21,14 @@ namespace NewSafetyHelp.CallerPatches.UI
             private static bool Prefix(MainCanvasBehavior __instance)
             {
                 // Check for next caller that will be skipped.
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.arcadeMode)
                 {
                     // If the next caller is the last, and we skip it (Consequence caller that we got right).
-                    if (CloseButtonPatches.isNextCallerTheLastDayCaller(GlobalVariables.callerControllerScript))
+                    if (CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript))
                     {
-                        if (GlobalVariables.callerControllerScript.currentCallerID + 1 < GlobalVariables.callerControllerScript.callers.Length)
-                        {
-                            #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Profile not null '{GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile != null}'." +
-                                              $" Can receive consequence: '{!GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile)}'.");
-                            #endif
-                            
-                            if (!GlobalVariables.arcadeMode 
-                                && GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile != null 
-                                && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile))
-                            {
-                                GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
-                                GlobalVariables.mainCanvasScript.NoCallerWindow();
-                                return false; // Skip original function.
-                            }
-                        }
+                        GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
+                        GlobalVariables.mainCanvasScript.NoCallerWindow();
+                        return false; // Skip original function.
                     }
                 }
                 

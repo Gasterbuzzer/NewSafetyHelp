@@ -5,6 +5,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CallerPatches.UI;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.JSONParsing;
@@ -931,6 +932,12 @@ namespace NewSafetyHelp.CallerPatches
 
             private static IEnumerator newCallRoutine(CallerController __instance, float minTime, float maxTime)
             {
+                // Day is ending, we should not do anything.
+                if (MainCanvasPatches.EndDayRoutinePatch.isDayEnding)
+                {
+                    yield break;
+                }
+                
                 yield return new WaitForSeconds(Random.Range(minTime, maxTime));
 
                 if (GlobalVariables.mainCanvasScript != null && GlobalVariables.mainCanvasScript.callWindow != null)

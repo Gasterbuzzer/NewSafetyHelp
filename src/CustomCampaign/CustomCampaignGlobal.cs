@@ -53,6 +53,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <param name="orderID">Order number in the current custom campaign.</param>
         /// <returns>CustomCallerExtraInfo Object with the returned object. If not found, default. </returns>
+        [CanBeNull]
         public static CustomCallerExtraInfo getCustomCallerFromActiveCampaign(int orderID)
         {
             return getActiveCustomCampaign().customCallersInCampaign

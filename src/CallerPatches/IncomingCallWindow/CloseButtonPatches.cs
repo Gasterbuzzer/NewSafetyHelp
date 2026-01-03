@@ -11,7 +11,6 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "CloseCallButton", new Type[] { })]
         public static class ScorecardPatch
         {
-
             /// <summary>
             /// Patches the close call button to play cutscenes only when in main campaign.
             /// </summary>
@@ -21,20 +20,23 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance)
             {
-                if (GlobalVariables.callerControllerScript.currentCallerID == GlobalVariables.callerControllerScript.callers.Length - 1)
+                if (GlobalVariables.callerControllerScript.currentCallerID ==
+                    GlobalVariables.callerControllerScript.callers.Length - 1)
                 {
                     if (CustomCampaignGlobal.inCustomCampaign) // If we are not in the main campaign.
                     {
                         MelonLogger.Msg(ConsoleColor.Green, "INFO: Playing custom ending cutscene.");
-                        
-                        GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
-                        
+
+                        GlobalVariables.callerControllerScript
+                            .callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
+
                         GlobalVariables.mainCanvasScript.PlayEndingCutscene();
                     }
                     else // Main Campaign
                     {
-                        GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
-                        
+                        GlobalVariables.callerControllerScript
+                            .callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
+
                         if (!GlobalVariables.isXmasDLC)
                         {
                             __instance.faeCarolRoot.SetActive(true);
@@ -44,7 +46,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                             GlobalVariables.callerControllerScript.StopLargeWindowRoutine();
                             GlobalVariables.UISoundControllerScript.PlayUISound(__instance.faeCarolClip);
                         }
-                        
+
                         GlobalVariables.mainCanvasScript.PlayEndingCutscene();
                     }
                 }
@@ -53,56 +55,81 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     GlobalVariables.callerControllerScript.SubmitAnswer();
                     GlobalVariables.UISoundControllerScript.StopUISoundLooping();
                     __instance.CloseButton(false, false);
-                    GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
+                    GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
+                        .disconnect);
 
-                    if (CustomCampaignGlobal.inCustomCampaign)
+                    if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.arcadeMode)
                     {
                         // If the next caller is the last, and we skip it (Consequence caller that we got right).
-                        if (isNextCallerTheLastDayCaller(GlobalVariables.callerControllerScript))
+                        if (checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript))
                         {
-                            if (GlobalVariables.callerControllerScript.currentCallerID + 1 < GlobalVariables.callerControllerScript.callers.Length)
-                            {
-                                #if DEBUG
-                                    MelonLogger.Msg($"DEBUG: Profile not null '{GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile != null}'." +
-                                                  $" Can receive consequence: '{!GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile)}'.");
-                                #endif
-                                
-                                if (!GlobalVariables.arcadeMode 
-                                    && GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile != null 
-                                    && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[GlobalVariables.callerControllerScript.currentCallerID + 1].callerProfile.consequenceCallerProfile))
-                                {
-                                    GlobalVariables.callerControllerScript.StopAllRoutines();
-                                    GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
-                                    GlobalVariables.mainCanvasScript.NoCallerWindow();
-                                    return false; // Skip original function.
-                                }
-                            }
+                            GlobalVariables.callerControllerScript.StopAllRoutines();
+                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            GlobalVariables.mainCanvasScript.NoCallerWindow();
+                            return false; // Skip original function.
                         }
                     }
                 }
-                
+
                 return false; // Skip function with false.
             }
         }
-        
-        public static bool isNextCallerTheLastDayCaller(CallerController __instance)
-        {
-            CustomCallerExtraInfo customCallerFound =
-                CustomCampaignGlobal.getCustomCallerFromActiveCampaign(__instance.currentCallerID+1);
 
-            if (customCallerFound == null) // There might be no next caller or any errors. We simply ignore it then.
+        /// <summary>
+        /// Checks if for the next 'n' callers there is any caller that is valid and should be shown and if any of these should end the day.
+        /// </summary>
+        /// <param name="__instance">CallerController Instance</param>
+        /// <returns> If we wound any caller that fits the above criteria. </returns>
+        public static bool checkIfAnyValidCallerLeft(CallerController __instance)
+        {
+            for (int i = __instance.currentCallerID + 1; i < __instance.callers.Length; i++)
             {
-                return false;
+                if (i < __instance.callers.Length) // Valid caller.
+                {
+                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(i);
+
+                    // If the next caller does not exist or was not found, we simply say false.
+                    // There might be valid callers after that one, but we are in an invalid state.
+                    if (customCallerFound == null)
+                    {
+                        return false;
+                    }
+
+                    #if DEBUG
+                    MelonLogger.Msg(
+                        $"DEBUG: Last caller of day (Caller ID: {i}): '{customCallerFound.lastDayCaller}'." +
+                        $" Next caller name (Caller ID: {i}): '{customCallerFound.callerName}'.");
+                    #endif
+
+                    #if DEBUG
+                    MelonLogger.Msg(
+                        "DEBUG: Is ConsequenceProfile null? (Meaning it's this current caller is a consequence caller):" +
+                        $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
+                        ".\n" +
+                        " Is this caller allowed to be called? (Meaning we got the answer wrong from the previous caller): " +
+                        $"'{!GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
+                        ".\n " +
+                        $"Is this caller the last one of the day? '{customCallerFound.lastDayCaller}'.");
+                    #endif
+
+                    // Not a consequence caller. We can simply return false, since we have a valid caller.
+                    if (GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile ==
+                        null)
+                    {
+                        return false;
+                    }
+
+                    // If that caller ends the day.
+                    if (customCallerFound.lastDayCaller
+                        && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile))
+                    {
+                        return true;
+                    }
+                }
             }
 
-            #if DEBUG
-            MelonLogger.Msg(
-                $"DEBUG: Last caller of day (next): '{customCallerFound.lastDayCaller}'." +
-                $" Next caller name: '{customCallerFound.callerName}'.");
-            #endif
-                
-            // If the last caller of the day, this will result in true.
-            return customCallerFound.lastDayCaller;
+            // Nothing found.
+            return false;
         }
     }
 }

@@ -370,8 +370,8 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                     }
                 }
 
-                if (!CustomCampaignGlobal
-                        .inCustomCampaign) // Not in custom campaign. This makes odd problems in custom campaigns.
+                // Not in custom campaign. This makes odd problems in custom campaigns.
+                if (!CustomCampaignGlobal.inCustomCampaign) 
                 {
                     if (profile != null && !__instance.arcadeMode &&
                         profile.consequenceCallerProfile !=
@@ -447,7 +447,8 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             if (profile != null && profile.callerMonster != null)
                             {
                                 MelonLogger.Msg(
-                                    $"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller: {selected.Name} with ID: {selected.ID}.");
+                                    $"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller:" +
+                                    $" {selected.Name} with ID: {selected.ID}.");
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
