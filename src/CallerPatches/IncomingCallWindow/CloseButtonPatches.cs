@@ -61,9 +61,10 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.arcadeMode)
                     {
                         // If the next caller is the last, and we skip it (Consequence caller that we got right).
-                        if (checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript))
+                        int checkResult = checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                        if (checkResult > 0)
                         {
-                            GlobalVariables.callerControllerScript.StopAllRoutines();
+                            GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false; // Skip original function.
@@ -80,8 +81,10 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
         /// </summary>
         /// <param name="__instance">CallerController Instance</param>
         /// <returns> If we wound any caller that fits the above criteria. </returns>
-        public static bool checkIfAnyValidCallerLeft(CallerController __instance)
+        public static int checkIfAnyValidCallerLeft(CallerController __instance)
         {
+            int callersSkipped = 0;
+            
             for (int i = __instance.currentCallerID + 1; i < __instance.callers.Length; i++)
             {
                 if (i < __instance.callers.Length) // Valid caller.
@@ -92,7 +95,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     // There might be valid callers after that one, but we are in an invalid state.
                     if (customCallerFound == null)
                     {
-                        return false;
+                        return -1;
                     }
 
                     #if DEBUG
@@ -107,7 +110,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
                         ".\n" +
                         " Is this caller allowed to be called? (Meaning we got the answer wrong from the previous caller): " +
-                        $"'{!GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
+                        $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
                         ".\n " +
                         $"Is this caller the last one of the day? '{customCallerFound.lastDayCaller}'.");
                     #endif
@@ -116,20 +119,22 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     if (GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile ==
                         null)
                     {
-                        return false;
+                        return -1;
                     }
+
+                    callersSkipped++;
 
                     // If that caller ends the day.
                     if (customCallerFound.lastDayCaller
                         && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile))
                     {
-                        return true;
+                        return callersSkipped;
                     }
                 }
             }
 
             // Nothing found.
-            return false;
+            return -1;
         }
     }
 }

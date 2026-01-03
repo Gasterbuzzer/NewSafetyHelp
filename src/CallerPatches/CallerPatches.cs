@@ -862,7 +862,6 @@ namespace NewSafetyHelp.CallerPatches
                         // Here we insert a small check to see if this caller wants to end the day.
                         if (__instance.IsLastCallOfDay())
                         {
-                            GlobalVariables.callerControllerScript.StopAllRoutines();
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
                                 .EndDayRoutine());
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
@@ -932,12 +931,6 @@ namespace NewSafetyHelp.CallerPatches
 
             private static IEnumerator newCallRoutine(CallerController __instance, float minTime, float maxTime)
             {
-                // Day is ending, we should not do anything.
-                if (MainCanvasPatches.EndDayRoutinePatch.isDayEnding)
-                {
-                    yield break;
-                }
-                
                 yield return new WaitForSeconds(Random.Range(minTime, maxTime));
 
                 if (GlobalVariables.mainCanvasScript != null && GlobalVariables.mainCanvasScript.callWindow != null)

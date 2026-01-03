@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using NewSafetyHelp.CallerPatches.IncomingCallWindow;
+﻿using NewSafetyHelp.CallerPatches.IncomingCallWindow;
 using NewSafetyHelp.CustomCampaign;
 
 namespace NewSafetyHelp.CallerPatches.UI
@@ -24,7 +23,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.arcadeMode)
                 {
                     // If the next caller is the last, and we skip it (Consequence caller that we got right).
-                    if (CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript))
+                    if (CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript) > 0)
                     {
                         GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
                         GlobalVariables.mainCanvasScript.NoCallerWindow();

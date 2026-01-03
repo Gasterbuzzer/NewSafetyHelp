@@ -368,7 +368,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Calling EndDayRoutine.");
+                    MelonLogger.Msg("DEBUG: Calling EndDayRoutine.");
                 #endif
                 
                 __result = endDayRoutineChanged(__instance);
@@ -380,6 +380,10 @@ namespace NewSafetyHelp.CallerPatches.UI
             {
                 if (isDayEnding)
                 {
+                    #if DEBUG
+                        MelonLogger.Msg("DEBUG: Skipping EndDayRoutine.");
+                    #endif
+                    
                     yield break;
                 }
 
@@ -399,6 +403,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 mainCanvasBehavior.clockOutButton.SetActive(true);
                 mainCanvasBehavior.clockInElements.SetActive(false);
                 
+                isDayEnding = false;
                 while (!mainCanvasBehavior.clockedOut)
                 {
                     yield return null;
@@ -408,7 +413,6 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 if (!GlobalVariables.isXmasDLC)
                 {
-                    
                     MethodInfo _unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod("UnlockDailySteamAchievement", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                     if (_unlockDailySteamAchievement == null)
@@ -510,8 +514,10 @@ namespace NewSafetyHelp.CallerPatches.UI
                 GlobalVariables.saveManagerScript.SaveGameProgress();
                 
                 yield return null;
-
-                isDayEnding = false;
+                
+                #if DEBUG
+                    MelonLogger.Msg("DEBUG: Ending the EndDayRoutine.");
+                #endif
                 
                 mainCanvasBehavior.ExitToMenu();
                 

@@ -374,11 +374,15 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         }
                     }
 
+                    int checkResult = CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                    MelonLogger.Error($"InCustomCampaign: {CustomCampaignGlobal.inCustomCampaign}. Check: {checkResult}. Not in arcade mode: {!GlobalVariables.arcadeMode}.");
                     // Checks if we need to end the day, in case the next caller gets skipped.
                     if (CustomCampaignGlobal.inCustomCampaign
-                        && CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript)
+                        && checkResult > 0
                         && !GlobalVariables.arcadeMode)
                     {
+                        GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
+                        
                         // Start the end day routine and stop any caller. And we end the day.
                         GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
                             .EndDayRoutine());

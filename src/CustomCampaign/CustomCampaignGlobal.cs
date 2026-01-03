@@ -12,7 +12,7 @@ namespace NewSafetyHelp.CustomCampaign
 {
     public static class CustomCampaignGlobal
     {
-        public static List<CustomCampaignExtraInfo> customCampaignsAvailable = new List<CustomCampaignExtraInfo>();
+        public static readonly List<CustomCampaignExtraInfo> customCampaignsAvailable = new List<CustomCampaignExtraInfo>();
 
         // ReSharper disable once RedundantDefaultMemberInitializer
         public static bool inCustomCampaign = false;
