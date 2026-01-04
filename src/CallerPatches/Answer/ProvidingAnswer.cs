@@ -373,21 +373,22 @@ namespace NewSafetyHelp.CallerPatches.Answer
                             return false;
                         }
                     }
-
-                    int checkResult = CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
-                    MelonLogger.Error($"InCustomCampaign: {CustomCampaignGlobal.inCustomCampaign}. Check: {checkResult}. Not in arcade mode: {!GlobalVariables.arcadeMode}.");
+                    
                     // Checks if we need to end the day, in case the next caller gets skipped.
                     if (CustomCampaignGlobal.inCustomCampaign
-                        && checkResult > 0
                         && !GlobalVariables.arcadeMode)
                     {
-                        GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
+                        int checkResult = CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                        if (checkResult > 0)
+                        {
+                            GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
                         
-                        // Start the end day routine and stop any caller. And we end the day.
-                        GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
-                            .EndDayRoutine());
-                        GlobalVariables.mainCanvasScript.NoCallerWindow();
-                        return false; // Skip original function.
+                            // Start the end day routine and stop any caller. And we end the day.
+                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
+                                .EndDayRoutine());
+                            GlobalVariables.mainCanvasScript.NoCallerWindow();
+                            return false; // Skip original function.
+                        }
                     }
 
                     if (__instance.currentCallerID + 1 < __instance.callers.Length)

@@ -446,7 +446,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 if (GlobalVariables.isXmasDLC)
                 {
                     MethodInfo saveXmasOptions = typeof(SaveManagerBehavior).GetMethod("SaveXmasOptions",
-                        BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
                     if (saveXmasOptions == null)
                     {
