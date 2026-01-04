@@ -259,6 +259,19 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
                     }
                     
+                    // Credits
+                    
+                    bool desktopCreditsFound = false;
+                    string desktopCredits = CustomCampaignGlobal.getActiveModifierValue(
+                        c => c.desktopCredits, ref desktopCreditsFound,
+                        v => !string.IsNullOrEmpty(v));
+
+                    if (desktopCreditsFound 
+                        && !string.IsNullOrEmpty(desktopCredits))
+                    {
+                        CustomDesktopHelper.getCreditsGameObject().GetComponent<TextFileExecutable>().myContent = desktopCredits;
+                    }
+                    
                     // Change main program icon if wanted.
 
                     Sprite mainProgramIcon = null;
@@ -346,7 +359,6 @@ namespace NewSafetyHelp.CustomDesktop
         [HarmonyLib.HarmonyPatch(typeof(DateTextController), "Start", new Type[] { })]
         public static class StartDateTextPatch
         {
-
             /// <summary>
             /// Hooks into the Start function of the date function to allow for more robust days in custom campaigns.
             /// </summary>
@@ -354,7 +366,6 @@ namespace NewSafetyHelp.CustomDesktop
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, DateTextController __instance)
             {
-                
                 #if DEBUG
                     MelonLogger.Msg("DEBUG: Handling day format.");
                 #endif

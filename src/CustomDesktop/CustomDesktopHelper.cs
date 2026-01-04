@@ -253,6 +253,26 @@ namespace NewSafetyHelp.CustomDesktop
         }
 
         /// <summary>
+        /// Gets the credits GameObject from the programs list.
+        /// </summary>
+        /// <returns>Credits GameObject</returns>
+        public static GameObject getCreditsGameObject()
+        {
+            GameObject foundCredits = getLeftPrograms().transform.Find("Readme").gameObject;
+
+            if (foundCredits != null)
+            {
+                return foundCredits;
+            }
+            else
+            {
+                MelonLogger.Error(
+                    "ERROR: Failed to find credits from the program list. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
         /// Gets the username GameObject from the windows bar.
         /// </summary>
         /// <returns>Username GameObject</returns>

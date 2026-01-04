@@ -84,6 +84,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool disableBackgroundLogo = false;
             float backgroundLogoTransparency = 0.2627f;
             
+            // Credits
+            string desktopCredits = null;
+            
             // Desktop settings
             bool entryBrowserActive = false;
             // If this setting was changed at all. Is used when checking.
@@ -252,6 +255,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 backgroundLogoTransparency = customDesktopLogoTransparencyValue.Value<float>();
             }
+            
+            if (jObjectParsed.TryGetValue("desktop_credits",
+                    out JToken desktopCreditsValue))
+            {
+                desktopCredits = desktopCreditsValue.Value<string>();
+            }
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
@@ -306,6 +315,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 customBackgroundLogo = backgroundLogo,
                 disableDesktopLogo = disableBackgroundLogo,
                 backgroundLogoTransparency = backgroundLogoTransparency,
+                
+                desktopCredits = desktopCredits,
 
                 dayTitleStrings = dayTitleStrings,
                 

@@ -36,6 +36,9 @@ namespace NewSafetyHelp.CustomCampaign.Modifier.Data
         public Sprite customBackgroundLogo = null; // Logo to show in desktop (if not disabled)
         public float backgroundLogoTransparency = 0.2627f;
         
+        // Credits
+        [CanBeNull] public string desktopCredits = null;
+        
         /*
          * Enable Scorecard and such.
          */
