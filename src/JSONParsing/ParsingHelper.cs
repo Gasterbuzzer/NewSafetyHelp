@@ -1,5 +1,9 @@
-﻿using MelonLoader;
+﻿using System;
+using System.Collections;
+using MelonLoader;
+using NewSafetyHelp.Audio;
 using NewSafetyHelp.EntryManager.EntryData;
+using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing
 {
@@ -71,6 +75,33 @@ namespace NewSafetyHelp.JSONParsing
 
             MelonLogger.Msg($"INFO: Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
             MelonLogger.Msg("(This is the intended and recommended way of providing the ID.)");
+        }
+        
+        /// <summary>
+        /// Helper coroutine for updating the audio correctly for a monster clip.
+        /// </summary>
+        /// <param name="callback"> Callback function for returning values and doing stuff with it that require the coroutine to finish first. </param>
+        /// <param name="audioPath"> Path to the audio file. </param>
+        /// <param name="_audioType"> Audio type to parse. </param>
+        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath,
+            AudioType _audioType = AudioType.WAV)
+        {
+            AudioClip monsterSoundClip = null;
+
+            // Attempt to get the type
+            if (_audioType != AudioType.UNKNOWN)
+            {
+                _audioType = AudioImport.GetAudioType(audioPath);
+
+                yield return MelonCoroutines.Start(
+                    AudioImport.LoadAudio
+                    (
+                        (myReturnValue) => { monsterSoundClip = myReturnValue; },
+                        audioPath, _audioType)
+                );
+            }
+
+            callback(monsterSoundClip);
         }
     }
 }

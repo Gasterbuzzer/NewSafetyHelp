@@ -8,8 +8,6 @@
         
         public RichAudioClip musicClip = null;
 
-        public bool isAudioClipLoaded = false;
-
         public int unlockDay = 0;
     }
 }

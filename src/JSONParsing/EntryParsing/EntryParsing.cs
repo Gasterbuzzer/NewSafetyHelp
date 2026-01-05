@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.EntryParsing
 {
-    public static class MonsterParsing
+    public static class EntryParsing
     {
         public static void parseEntry(ref JObject jsonObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry,

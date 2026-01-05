@@ -70,7 +70,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
                 else // Valid location, so we load in the value.
                 {
-                    MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
+                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {

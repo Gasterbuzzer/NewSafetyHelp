@@ -135,6 +135,7 @@
     <Compile Include="src\CallerPatches\UI\UIFallbacks.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignModel\CustomCampaignExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
+    <Compile Include="src\CustomCampaign\CustomRingtone\RingtoneExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaign\Desktop\OnDayUnlockPatches.cs" />
     <Compile Include="src\CustomCampaign\Saving\CustomCampaignSaving.cs" />
@@ -168,7 +169,7 @@
     <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
-    <Compile Include="src\JSONParsing\EntryParsing\MonsterParsing.cs" />
+    <Compile Include="src\JSONParsing\EntryParsing\EntryParsing.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\JSONParsing\ParsingHelper.cs" />
     <Compile Include="src\Main.cs" />

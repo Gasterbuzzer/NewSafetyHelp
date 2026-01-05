@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -388,14 +387,14 @@ namespace NewSafetyHelp.JSONParsing
 
             // We extract the info and save it (if the file is valid)
             // Parse Entry
-            MonsterParsing.parseEntry(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref accessLevel,
+            EntryParsing.EntryParsing.parseEntry(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref accessLevel,
                 ref accessLevelAdded, ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign,
                 ref _monsterName, ref _monsterDescription, ref _arcadeCalls, ref _monsterPortrait,
                 ref _monsterPortraitLocation, ref _monsterAudioClipLocation, ref deleteReplaceEntry,
                 ref _inCustomCampaign, ref _customCampaignName);
 
             // Parse Phobias
-            MonsterParsing.parsePhobias(ref jObjectParsed, ref _spiderPhobia, ref _spiderPhobiaIncluded,
+            EntryParsing.EntryParsing.parsePhobias(ref jObjectParsed, ref _spiderPhobia, ref _spiderPhobiaIncluded,
                 ref _darknessPhobia, ref _darknessPhobiaIncluded, ref _dogPhobia, ref _dogPhobiaIncluded,
                 ref _holesPhobia, ref _holesPhobiaIncluded, ref _insectPhobia, ref _insectPhobiaIncluded,
                 ref _watchingPhobia, ref _watchingPhobiaIncluded, ref _tightSpacePhobia, ref _tightSpacePhobiaIncluded);
@@ -445,7 +444,7 @@ namespace NewSafetyHelp.JSONParsing
                         audioLocation = usermodFolderPath + "\\" + _callerAudioClipLocation;
                     }
 
-                    MelonCoroutines.Start(UpdateAudioClip
+                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
@@ -496,7 +495,7 @@ namespace NewSafetyHelp.JSONParsing
                         audioLocation = usermodFolderPath + "\\" + _consequenceCallerAudioClipLocation;
                     }
 
-                    MelonCoroutines.Start(UpdateAudioClip
+                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
@@ -555,7 +554,7 @@ namespace NewSafetyHelp.JSONParsing
                         audioLocation = usermodFolderPath + "\\" + _monsterAudioClipLocation;
                     }
 
-                    MelonCoroutines.Start(UpdateAudioClip
+                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
@@ -597,7 +596,7 @@ namespace NewSafetyHelp.JSONParsing
                         audioLocation = usermodFolderPath + "\\" + _monsterAudioClipLocation;
                     }
 
-                    MelonCoroutines.Start(UpdateAudioClip
+                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
@@ -620,33 +619,6 @@ namespace NewSafetyHelp.JSONParsing
             // Sort the Entries in alphabetical order
             EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allEntries.monsterProfiles);
             EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
-        }
-
-        /// <summary>
-        /// Helper coroutine for updating the audio correctly for a monster clip.
-        /// </summary>
-        /// <param name="callback"> Callback function for returning values and doing stuff with it that require the coroutine to finish first. </param>
-        /// <param name="audioPath"> Path to the audio file. </param>
-        /// <param name="_audioType"> Audio type to parse. </param>
-        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath,
-            AudioType _audioType = AudioType.WAV)
-        {
-            AudioClip monsterSoundClip = null;
-
-            // Attempt to get the type
-            if (_audioType != AudioType.UNKNOWN)
-            {
-                _audioType = AudioImport.GetAudioType(audioPath);
-
-                yield return MelonCoroutines.Start(
-                    AudioImport.LoadAudio
-                    (
-                        (myReturnValue) => { monsterSoundClip = myReturnValue; },
-                        audioPath, _audioType)
-                );
-            }
-
-            callback(monsterSoundClip);
         }
 
         public static void createNewExtra(ref EntryExtraInfo newExtra, ref string _monsterName, ref int newID,
