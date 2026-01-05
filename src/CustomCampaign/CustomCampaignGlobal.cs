@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -52,9 +50,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// Gets the custom caller by its order id provided. 
         /// </summary>
         /// <param name="orderID">Order number in the current custom campaign.</param>
-        /// <returns>CustomCallerExtraInfo Object with the returned object. If not found, default. </returns>
+        /// <returns>CustomCaller Object with the returned object. If not found, default. </returns>
         [CanBeNull]
-        public static CustomCallerExtraInfo GetCustomCallerFromActiveCampaign(int orderID)
+        public static CallerPatches.CallerModel.CustomCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
             return GetActiveCustomCampaign().customCallersInCampaign
                 .Find(customCaller => customCaller.orderInCampaign == orderID);
@@ -64,8 +62,8 @@ namespace NewSafetyHelp.CustomCampaign
         /// Gets the custom entry by its name.
         /// </summary>
         /// <param name="entryName"> Name of the entry to find. </param>
-        /// <returns>EntryExtraInfo Object with the returned object. If not found, default. </returns>
-        public static EntryExtraInfo GetEntryFromActiveCampaign(string entryName)
+        /// <returns>EntryMetadata Object with the returned object. If not found, default. </returns>
+        public static EntryMetadata GetEntryFromActiveCampaign(string entryName)
         {
             return GetActiveCustomCampaign().entriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
         }
@@ -75,7 +73,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <param name="theme">Theme to get the ID from.</param>
         /// <returns>ID of the theme if found. -1 if not found or if something went wrong.</returns>
-        private static int GetThemeID(ThemesExtraInfo theme)
+        private static int GetThemeID(CustomTheme theme)
         {
             CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -116,7 +114,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>(Int) null = No valid theme found for the given ID; Otherwise: Theme with the given ID.</returns>
         [CanBeNull]
-        public static ThemesExtraInfo GetThemeFromID(int themeID)
+        public static CustomTheme GetThemeFromID(int themeID)
         {
             CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -136,7 +134,7 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                foreach (CustomTheme theme in customCampaign.customThemesGeneral)
                 {
                     currentThemeID++;
 
@@ -149,7 +147,7 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.customThemesDays)
                 {
                     currentThemeID++;
 
@@ -181,7 +179,7 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                foreach (CustomTheme theme in customCampaign.customThemesGeneral)
                 {
                     currentThemeID++;
 
@@ -194,7 +192,7 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.customThemesDays)
                 {
                     currentThemeID++;
 
@@ -223,7 +221,7 @@ namespace NewSafetyHelp.CustomCampaign
             }
 
             bool themeFound = false;
-            ThemesExtraInfo currentTheme = GetActiveTheme(ref themeFound);
+            CustomTheme currentTheme = GetActiveTheme(ref themeFound);
 
             if (currentTheme == null) // Theme is default or not set. No conditional theme can be applied.
             {
@@ -232,7 +230,7 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.customThemesDays)
                 {
                     if (theme != null && theme.attachedToTheme.Equals(currentTheme.themeName))
                     {
@@ -257,7 +255,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>Returns the actual active theme. Null if we failed or the theme is a default theme from the game.</returns>
         [CanBeNull]
-        public static ThemesExtraInfo GetActiveTheme(ref bool isCustomTheme)
+        public static CustomTheme GetActiveTheme(ref bool isCustomTheme)
         {
             CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -307,9 +305,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>Returns default value if we no value is set. If set, it returns the requested value.</returns>
         [CanBeNull]
-        public static TValue GetActiveModifierValue<TValue>(Func<ModifierExtraInfo, TValue> selector,
+        public static TValue GetActiveModifierValue<TValue>(Func<CustomModifier, TValue> selector,
             ref bool foundModifier, Func<TValue, bool> predicate = null,
-            Func<ModifierExtraInfo, bool> specialPredicate = null)
+            Func<CustomModifier, bool> specialPredicate = null)
         {
             CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -338,7 +336,7 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customModifiersGeneral != null)
             {
-                foreach (ModifierExtraInfo modifierGeneral in customCampaign.customModifiersGeneral)
+                foreach (CustomModifier modifierGeneral in customCampaign.customModifiersGeneral)
                 {
                     if (modifierGeneral == null)
                     {
@@ -361,7 +359,7 @@ namespace NewSafetyHelp.CustomCampaign
 
             if (customCampaign.customModifiersDays != null)
             {
-                foreach (ModifierExtraInfo modifierDay in customCampaign.customModifiersDays)
+                foreach (CustomModifier modifierDay in customCampaign.customModifiersDays)
                 {
                     if (modifierDay == null)
                     {
@@ -404,7 +402,7 @@ namespace NewSafetyHelp.CustomCampaign
             #endif
 
             // Add all entries.
-            foreach (EntryExtraInfo entryInCustomCampaign in customCampaign.entriesOnlyInCampaign)
+            foreach (EntryMetadata entryInCustomCampaign in customCampaign.entriesOnlyInCampaign)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
@@ -453,7 +451,7 @@ namespace NewSafetyHelp.CustomCampaign
                 }
 
                 // Find matching entry to replace
-                EntryExtraInfo entryFound = customCampaign.entryReplaceOnlyInCampaign.Find(replaceEntry =>
+                EntryMetadata entryFound = customCampaign.entryReplaceOnlyInCampaign.Find(replaceEntry =>
                     replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
                 );
 

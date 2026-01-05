@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -36,11 +35,11 @@ namespace NewSafetyHelp.Audio.AudioPatches
                     if (customCampaign.customRingtones != null 
                         && customCampaign.customRingtones.Count > 0)
                     {
-                        List<RingtoneExtraInfo> validRingtonesNormal = new List<RingtoneExtraInfo>();
-                        List<RingtoneExtraInfo> validRingtonesGlitched = new List<RingtoneExtraInfo>();
+                        List<CustomRingtone> validRingtonesNormal = new List<CustomRingtone>();
+                        List<CustomRingtone> validRingtonesGlitched = new List<CustomRingtone>();
 
                         // For each ringtone that is valid for this current day, attempt to find all valid.
-                        foreach (RingtoneExtraInfo customRingtone in customCampaign.customRingtones.Where(c => c.unlockDay <= GlobalVariables.currentDay))
+                        foreach (CustomRingtone customRingtone in customCampaign.customRingtones.Where(c => c.unlockDay <= GlobalVariables.currentDay))
                         {
                             // If we are only allowed to play on the unlock day.
                             // Then the unlock day must be equal to the current day.
@@ -70,7 +69,7 @@ namespace NewSafetyHelp.Audio.AudioPatches
                 }
             }
 
-            private static void ReplacePhoneCallIfValid(ref RichAudioClip clipToReplace, ref List<RingtoneExtraInfo> validRingtones, bool removeDefaultRingtone)
+            private static void ReplacePhoneCallIfValid(ref RichAudioClip clipToReplace, ref List<CustomRingtone> validRingtones, bool removeDefaultRingtone)
             {
                 if (validRingtones.Count > 0)
                 {

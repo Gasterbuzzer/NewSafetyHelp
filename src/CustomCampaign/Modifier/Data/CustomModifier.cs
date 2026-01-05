@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.Modifier.Data
 {
-    public class ModifierExtraInfo
+    public class CustomModifier
     {
         public string customCampaignName = null;
         

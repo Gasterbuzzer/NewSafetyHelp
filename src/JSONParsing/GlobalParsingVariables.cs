@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
@@ -13,23 +12,23 @@ namespace NewSafetyHelp.JSONParsing
     public static class GlobalParsingVariables
     {
         // "Global" Variables for handling extra information such as caller audio. Gets stored as its ID and with its Name.
-        public static List<EntryExtraInfo> EntriesMetadata = new List<EntryExtraInfo>();
+        public static List<EntryMetadata> EntriesMetadata = new List<EntryMetadata>();
         
         // Main Game (Main Campaign) Lists
-        public static List<ThemesExtraInfo> MainGameThemes = new List<ThemesExtraInfo>();
-        public static List<EmailExtraInfo> MainCampaignEmails = new List<EmailExtraInfo>();
-        public static Dictionary<int, CustomCallerExtraInfo> CustomCallersMainGame = new Dictionary<int, CustomCallerExtraInfo>();
+        public static List<CustomTheme> MainGameThemes = new List<CustomTheme>();
+        public static List<CustomEmail> MainCampaignEmails = new List<CustomEmail>();
+        public static Dictionary<int, CallerPatches.CallerModel.CustomCaller> CustomCallersMainGame = new Dictionary<int, CallerPatches.CallerModel.CustomCaller>();
 
         // Custom Campaign Pending Content (Content to be added later because the custom campaign has not been parsed yet)
-        public static List<CustomCallerExtraInfo> PendingCustomCampaignCustomCallers = new List<CustomCallerExtraInfo>();
-        public static List<EntryExtraInfo> PendingCustomCampaignEntries = new List<EntryExtraInfo>();
-        public static List<EntryExtraInfo> PendingCustomCampaignReplaceEntries = new List<EntryExtraInfo>();
-        public static List<EmailExtraInfo> PendingCustomCampaignEmails = new List<EmailExtraInfo>();
-        public static List<MusicExtraInfo> PendingCustomCampaignMusic = new List<MusicExtraInfo>();
-        public static List<ModifierExtraInfo> PendingCustomCampaignModifiers = new List<ModifierExtraInfo>();
-        public static List<ThemesExtraInfo> PendingCustomCampaignThemes = new List<ThemesExtraInfo>();
-        public static List<CustomVideoExtraInfo> PendingCustomCampaignVideos = new List<CustomVideoExtraInfo>();
-        public static List<RingtoneExtraInfo> PendingCustomCampaignRingtones = new List<RingtoneExtraInfo>();
+        public static List<CallerPatches.CallerModel.CustomCaller> PendingCustomCampaignCustomCallers = new List<CallerPatches.CallerModel.CustomCaller>();
+        public static List<EntryMetadata> PendingCustomCampaignEntries = new List<EntryMetadata>();
+        public static List<EntryMetadata> PendingCustomCampaignReplaceEntries = new List<EntryMetadata>();
+        public static List<CustomEmail> PendingCustomCampaignEmails = new List<CustomEmail>();
+        public static List<CustomMusic> PendingCustomCampaignMusic = new List<CustomMusic>();
+        public static List<CustomModifier> PendingCustomCampaignModifiers = new List<CustomModifier>();
+        public static List<CustomTheme> PendingCustomCampaignThemes = new List<CustomTheme>();
+        public static List<CustomVideo> PendingCustomCampaignVideos = new List<CustomVideo>();
+        public static List<CustomRingtone> PendingCustomCampaignRingtones = new List<CustomRingtone>();
         
         // Configuration
         // ID Offset for Entries in the custom campaign.

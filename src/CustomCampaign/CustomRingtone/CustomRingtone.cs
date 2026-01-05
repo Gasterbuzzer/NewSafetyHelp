@@ -1,6 +1,6 @@
 ﻿namespace NewSafetyHelp.CustomCampaign.CustomRingtone
 {
-    public class RingtoneExtraInfo
+    public class CustomRingtone
     {
         public string customCampaignName = null; // If in a custom campaign, this is the name of custom campaign.
         

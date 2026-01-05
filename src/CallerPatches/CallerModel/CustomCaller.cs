@@ -1,6 +1,6 @@
 ﻿namespace NewSafetyHelp.CallerPatches.CallerModel
 {
-    public class CustomCallerExtraInfo
+    public class CustomCaller
     {
         // Base Values
         public RichAudioClip callerClip = null; // Caller Clip
@@ -42,6 +42,6 @@
         public int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
         
         // Constructor
-        public CustomCallerExtraInfo(int _orderInCampaign) { orderInCampaign = _orderInCampaign;}
+        public CustomCaller(int _orderInCampaign) { orderInCampaign = _orderInCampaign;}
     }
 }

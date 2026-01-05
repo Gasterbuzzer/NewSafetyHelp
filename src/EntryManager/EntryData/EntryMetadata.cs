@@ -1,6 +1,6 @@
 ﻿namespace NewSafetyHelp.EntryManager.EntryData
 {
-    public class EntryExtraInfo
+    public class EntryMetadata
     {
         public int? ID;
         public string Name { get; }
@@ -47,7 +47,7 @@
         public bool deleteEntry = false; // If to delete the entry (Only works in replacing mode)
 
         // Constructor
-        public EntryExtraInfo(string _name, int _id) { Name = _name; ID = _id; }
+        public EntryMetadata(string _name, int _id) { Name = _name; ID = _id; }
 
         /// <summary>
         /// Overloaded equals function for comparing this object to another.
@@ -55,7 +55,7 @@
         /// <param name="obj"> Object to compare to. </param>
         public override bool Equals(object obj)
         {
-            if (obj is EntryExtraInfo other)
+            if (obj is EntryMetadata other)
             {
                 return ID == other.ID && Name == other.Name;
             }

@@ -2,7 +2,7 @@
 
 namespace NewSafetyHelp.Emails
 {
-    public class EmailExtraInfo
+    public class CustomEmail
     {
         public string emailSubject = "";
 

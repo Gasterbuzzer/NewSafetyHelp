@@ -24,7 +24,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
-                    CustomCampaignSaving.saveCustomCampaignInfo();
+                    CustomCampaignSaving.SaveCustomCampaignInfo();
                 }
                 else if (GlobalVariables.isXmasDLC)
                 {
@@ -65,7 +65,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
-                    CustomCampaignSaving.saveCustomCampaignInfo();
+                    CustomCampaignSaving.SaveCustomCampaignInfo();
                 }
                 else if (GlobalVariables.isXmasDLC)
                 {
@@ -106,7 +106,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     __instance.hasLoaded = false;
 
                     // Load custom campaign values.
-                    CustomCampaignSaving.loadFromFileCustomCampaignInfo();
+                    CustomCampaignSaving.LoadFromFileCustomCampaignInfo();
                     
                 }
                 else if (GlobalVariables.isXmasDLC)
@@ -321,7 +321,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignSaving.loadCustomCampaignOptions();
+                    CustomCampaignSaving.LoadCustomCampaignOptions();
                     
                     __instance.hasLoaded = true;
 
@@ -370,7 +370,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
-                    CustomCampaignSaving.resetCustomCampaignFile();
+                    CustomCampaignSaving.ResetCustomCampaignFile();
                     SceneManager.LoadScene("MainMenuScene"); // Reload Scene
                 }
                 else if (GlobalVariables.isXmasDLC)
@@ -493,7 +493,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignSaving.saveCustomCampaignOptions();
+                    CustomCampaignSaving.SaveCustomCampaignOptions();
                 }
 
                 PlayerPrefs.Save();

@@ -44,7 +44,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(CallerController __instance)
             {
-                foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
+                foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                 {
                     if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name ||
                         __instance.currentCustomCaller.callerMonster.monsterID ==
@@ -80,7 +80,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, CallerProfile profile, ref IEnumerator __result)
             {
-                __result = originalCaller(__instance, profile);
+                __result = OriginalCaller(__instance, profile);
                 return false; // Skip the original coroutine
             }
 
@@ -89,7 +89,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name= "profile"> Profile Parameter. </param>
-            private static IEnumerator originalCaller(CallerController __instance,
+            private static IEnumerator OriginalCaller(CallerController __instance,
                 CallerProfile profile)
             {
                 if (profile == null && !__instance.arcadeMode)
@@ -134,7 +134,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                     profile != null && profile.callerMonster != null &&
                     !__instance.arcadeMode)
                 {
-                    foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
+                    foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                     {
                         if (item.currentlySelected) // We found an entry to replace the audio for.
                         {
@@ -255,13 +255,13 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                     profile = __instance.currentCustomCaller;
                 }
 
-                List<EntryExtraInfo> entries = new List<EntryExtraInfo>();
+                List<EntryMetadata> entries = new List<EntryMetadata>();
 
                 bool replaceTrue = false;
 
                 if (!CustomCampaignGlobal.InCustomCampaign && !__instance.arcadeMode)
                 {
-                    foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
+                    foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                     {
                         if (item.inMainCampaign && !item.alreadyCalledOnce &&
                             !item.currentlySelected) // Find a valid entry.
@@ -390,21 +390,21 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                         .name)) // IF the consequence caller has been replaced once.
                             {
                                 MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
-                                EntryExtraInfo foundExtraInfo = GlobalParsingVariables.EntriesMetadata.Find(item =>
+                                EntryMetadata foundMetadata = GlobalParsingVariables.EntriesMetadata.Find(item =>
                                     item.referenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile.name);
 
-                                if (foundExtraInfo == null)
+                                if (foundMetadata == null)
                                 {
                                     MelonLogger.Error($"INFO: Did not find replacement caller.");
                                     return true;
                                 }
 
                                 // It was replaced once, so we also change the consequence caller info.
-                                profile.callTranscription = foundExtraInfo.consequenceTranscript;
-                                profile.callerName = foundExtraInfo.consequenceName;
-                                profile.callerPortrait = foundExtraInfo.consequenceCallerImage;
-                                profile.callerClip = foundExtraInfo.consequenceCallerClip;
+                                profile.callTranscription = foundMetadata.consequenceTranscript;
+                                profile.callerName = foundMetadata.consequenceName;
+                                profile.callerPortrait = foundMetadata.consequenceCallerImage;
+                                profile.callerClip = foundMetadata.consequenceCallerClip;
 
                                 MelonLogger.Msg(
                                     $"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
@@ -432,7 +432,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                 .currentlySelected = true;
 
                             // Get a "copy"
-                            EntryExtraInfo selected = entries[entrySelected];
+                            EntryMetadata selected = entries[entrySelected];
 
                             // Replace caller with custom caller
                             profile.callerName = selected.callerName;

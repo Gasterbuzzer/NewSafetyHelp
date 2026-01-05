@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -30,7 +29,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            ModifierExtraInfo customModifier = ParseModifier(ref jObjectParsed, ref usermodFolderPath,
+            CustomModifier customModifier = ParseModifier(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
@@ -59,7 +58,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
-        private static ModifierExtraInfo ParseModifier(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomModifier ParseModifier(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             // When the modifier is unlocked. If null, it is a general modifier.
@@ -296,7 +295,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 arcadeChanged = true;
             }
 
-            return new ModifierExtraInfo
+            return new CustomModifier
             {
                 customCampaignName = customCampaignName,
 

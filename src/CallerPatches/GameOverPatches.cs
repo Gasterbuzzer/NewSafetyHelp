@@ -50,7 +50,7 @@ namespace NewSafetyHelp.CallerPatches
 
                     if (customCampaign.customGameOverCallersInCampaign.Count > 0)
                     {
-                        CustomCallerExtraInfo customCallerGameOverChosen = null;
+                        CallerModel.CustomCaller customCallerGameOverChosen = null;
 
                         if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller =>
                                 customCaller.gameOverCallDay <= -1))
@@ -117,7 +117,7 @@ namespace NewSafetyHelp.CallerPatches
                             }
                             else
                             {
-                                if (AudioImport.currentLoadingAudios.Count > 0)
+                                if (AudioImport.CurrentLoadingAudios.Count > 0)
                                 {
                                     MelonLogger.Warning(
                                         "WARNING: GameOver-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");

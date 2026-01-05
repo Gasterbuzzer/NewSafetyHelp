@@ -1,6 +1,6 @@
 ﻿namespace NewSafetyHelp.Audio.Music.Data
 {
-    public class MusicExtraInfo
+    public class CustomMusic
     {
         public string customCampaignName = null;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using TMPro;
 using UnityEngine;
@@ -14,17 +13,16 @@ namespace NewSafetyHelp.CustomDesktop.Programs
 {
     public static class ScorecardPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "PopulateList", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "PopulateList")]
         public static class ScorecardPatch
         {
 
             /// <summary>
             /// Patches the scorecard function to respect custom callers correctly.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedParameter.Local
-            private static bool Prefix(MethodBase __originalMethod, ScorecardBehavior __instance)
+            private static bool Prefix(ScorecardBehavior __instance)
             {
         
                 Type scorecardBehavior = typeof(ScorecardBehavior);
@@ -73,7 +71,7 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                             continue;
                         }
                         
-                        CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(currentCallerIndex);
+                        CallerPatches.CallerModel.CustomCaller customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(currentCallerIndex);
 
                         if (customCallerFound == null)
                         {
@@ -121,17 +119,15 @@ namespace NewSafetyHelp.CustomDesktop.Programs
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "LoadCallerAnswers", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "LoadCallerAnswers")]
         public static class LoadCallerAnswersPatch
         {
 
             /// <summary>
             /// Patches the scorecard load caller answers to gracefully handle null callers. (Broken caller list)
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
-            /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedParameter.Local
-            private static bool Prefix(MethodBase __originalMethod, ScorecardBehavior __instance)
+            private static bool Prefix()
             {
                 if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length != GlobalVariables.callerControllerScript.callers.Length)
                 {
@@ -150,16 +146,15 @@ namespace NewSafetyHelp.CustomDesktop.Programs
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "OnEnable", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "OnEnable")]
         public static class OnEnablePatch
         {
             /// <summary>
             /// Patches the scorecard close button to not exist duplicated by removing the first instance.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called (Used to get class type.) </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedParameter.Local
-            private static void Prefix(MethodBase __originalMethod, ScorecardBehavior __instance)
+            private static void Prefix(ScorecardBehavior __instance)
             {
                 GameObject scorecardWindow = __instance.transform.gameObject;
 

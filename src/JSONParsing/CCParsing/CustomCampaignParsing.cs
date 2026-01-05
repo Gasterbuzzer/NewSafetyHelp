@@ -2,9 +2,7 @@
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
@@ -43,10 +41,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignCustomCallers.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<CustomCallerExtraInfo> tempList =
-                    new List<CustomCallerExtraInfo>(GlobalParsingVariables.PendingCustomCampaignCustomCallers);
+                List<CallerPatches.CallerModel.CustomCaller> tempList =
+                    new List<CallerPatches.CallerModel.CustomCaller>(GlobalParsingVariables.PendingCustomCampaignCustomCallers);
 
-                foreach (CustomCallerExtraInfo customCallerCC in tempList)
+                foreach (CallerPatches.CallerModel.CustomCaller customCallerCC in tempList)
                 {
                     if (customCallerCC.belongsToCustomCampaign == customCampaignName)
                     {
@@ -76,9 +74,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignEntries.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(GlobalParsingVariables.PendingCustomCampaignEntries);
+                List<EntryMetadata> tempList = new List<EntryMetadata>(GlobalParsingVariables.PendingCustomCampaignEntries);
 
-                foreach (EntryExtraInfo missingEntry in tempList)
+                foreach (EntryMetadata missingEntry in tempList)
                 {
                     if (missingEntry.customCampaignName == customCampaignName)
                     {
@@ -97,9 +95,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(GlobalParsingVariables.PendingCustomCampaignReplaceEntries);
+                List<EntryMetadata> tempList = new List<EntryMetadata>(GlobalParsingVariables.PendingCustomCampaignReplaceEntries);
 
-                foreach (EntryExtraInfo missingEntry in tempList)
+                foreach (EntryMetadata missingEntry in tempList)
                 {
                     if (missingEntry.customCampaignName == customCampaignName)
                     {
@@ -117,9 +115,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignEmails.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<EmailExtraInfo> tempList = new List<EmailExtraInfo>(GlobalParsingVariables.PendingCustomCampaignEmails);
+                List<CustomEmail> tempList = new List<CustomEmail>(GlobalParsingVariables.PendingCustomCampaignEmails);
 
-                foreach (EmailExtraInfo missingEmail in tempList)
+                foreach (CustomEmail missingEmail in tempList)
                 {
                     if (missingEmail.customCampaignName == customCampaignName)
                     {
@@ -137,9 +135,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignVideos.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<CustomVideoExtraInfo> tempList = new List<CustomVideoExtraInfo>(GlobalParsingVariables.PendingCustomCampaignVideos);
+                List<CustomVideo> tempList = new List<CustomVideo>(GlobalParsingVariables.PendingCustomCampaignVideos);
 
-                foreach (CustomVideoExtraInfo missingVideo in tempList)
+                foreach (CustomVideo missingVideo in tempList)
                 {
                     if (missingVideo.customCampaignName == customCampaignName)
                     {
@@ -157,9 +155,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignMusic.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<MusicExtraInfo> tempList = new List<MusicExtraInfo>(GlobalParsingVariables.PendingCustomCampaignMusic);
+                List<CustomMusic> tempList = new List<CustomMusic>(GlobalParsingVariables.PendingCustomCampaignMusic);
 
-                foreach (MusicExtraInfo missingMusic in tempList)
+                foreach (CustomMusic missingMusic in tempList)
                 {
                     if (missingMusic.customCampaignName == customCampaignName)
                     {
@@ -177,9 +175,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignModifiers.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<ModifierExtraInfo> tempList = new List<ModifierExtraInfo>(GlobalParsingVariables.PendingCustomCampaignModifiers);
+                List<CustomModifier> tempList = new List<CustomModifier>(GlobalParsingVariables.PendingCustomCampaignModifiers);
 
-                foreach (ModifierExtraInfo missingModifier in tempList)
+                foreach (CustomModifier missingModifier in tempList)
                 {
                     if (missingModifier.customCampaignName == customCampaignName)
                     {
@@ -205,9 +203,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignThemes.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<ThemesExtraInfo> tempList = new List<ThemesExtraInfo>(GlobalParsingVariables.PendingCustomCampaignThemes);
+                List<CustomTheme> tempList = new List<CustomTheme>(GlobalParsingVariables.PendingCustomCampaignThemes);
 
-                foreach (ThemesExtraInfo missingTheme in tempList)
+                foreach (CustomTheme missingTheme in tempList)
                 {
                     if (missingTheme.customCampaignName == customCampaignName)
                     {
@@ -233,9 +231,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignRingtones.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<RingtoneExtraInfo> tempList = new List<RingtoneExtraInfo>(GlobalParsingVariables.PendingCustomCampaignRingtones);
+                List<CustomRingtone> tempList = new List<CustomRingtone>(GlobalParsingVariables.PendingCustomCampaignRingtones);
 
-                foreach (RingtoneExtraInfo missingRingtone in tempList)
+                foreach (CustomRingtone missingRingtone in tempList)
                 {
                     if (missingRingtone.customCampaignName == customCampaignName)
                     {

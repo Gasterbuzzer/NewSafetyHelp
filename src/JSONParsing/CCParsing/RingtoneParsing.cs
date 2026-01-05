@@ -2,7 +2,6 @@
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using Newtonsoft.Json.Linq;
 
@@ -28,22 +27,22 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            RingtoneExtraInfo customRingtone = ParseRingtone(ref jObjectParsed, ref usermodFolderPath,
+            CustomRingtone customCustomRingtone = ParseRingtone(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add ringtone clip
             if (jObjectParsed.ContainsKey("ringtone_audio_clip_name"))
             {
-                if (string.IsNullOrEmpty(customRingtone.ringtoneClipPath))
+                if (string.IsNullOrEmpty(customCustomRingtone.ringtoneClipPath))
                 {
                     MelonLogger.Warning(
                         $"WARNING: No valid ringtone file given for file in {jsonFolderPath}.");
                 }
                 // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customRingtone.ringtoneClipPath))
+                else if (!File.Exists(customCustomRingtone.ringtoneClipPath))
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customRingtone.ringtoneClipPath}'." +
+                        $"ERROR: Location {jsonFolderPath} does not contain '{customCustomRingtone.ringtoneClipPath}'." +
                         " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
@@ -55,16 +54,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    customRingtone.ringtoneClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    customCustomRingtone.ringtoneClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else
                                 {
                                     MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customRingtone.ringtoneClipPath}" +
+                                        $"ERROR: Failed to load audio clip {customCustomRingtone.ringtoneClipPath}" +
                                         " for custom caller.");
                                 }
                             },
-                            customRingtone.ringtoneClipPath)
+                            customCustomRingtone.ringtoneClipPath)
                     );
                 }
             }
@@ -76,7 +75,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (foundCustomCampaign != null)
             {
-                foundCustomCampaign.customRingtones.Add(customRingtone);
+                foundCustomCampaign.customRingtones.Add(customCustomRingtone);
             }
             else
             {
@@ -84,11 +83,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Msg("DEBUG: Found ringtone file before the custom campaign was found / does not exist.");
                 #endif
 
-                GlobalParsingVariables.PendingCustomCampaignRingtones.Add(customRingtone);
+                GlobalParsingVariables.PendingCustomCampaignRingtones.Add(customCustomRingtone);
             }
         }
 
-        private static RingtoneExtraInfo ParseRingtone(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomRingtone ParseRingtone(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             int unlockDay = 0; // When the ringtone is unlocked.
@@ -139,7 +138,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 isGlitchedVersion = isGlitchedVersionValue.Value<bool>();
             }
 
-            return new RingtoneExtraInfo()
+            return new CustomRingtone()
             {
                 customCampaignName = customCampaignName,
 

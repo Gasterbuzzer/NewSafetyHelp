@@ -4,7 +4,6 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches.IncomingCallWindow;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
@@ -43,7 +42,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     // Get replaced monster if valid
                     bool found = false;
                     MonsterProfile monsterToCheck = null;
-                    foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
+                    foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                     {
                         if (item.currentlySelected) // We found an entry to replace the audio for.
                         {

@@ -2,9 +2,7 @@
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -43,8 +41,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Audio
             string customCallerAudioPath = "";
 
-            // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo customCaller = ParseCustomCaller(ref jObjectParsed,
+            // First create a CustomCaller to assign audio later for it later automatically.
+            CallerPatches.CallerModel.CustomCaller customCaller = ParseCustomCaller(ref jObjectParsed,
                 ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign,
                 ref customCallerMonsterName, ref customCallerAudioPath,
                 ref orderInCampaign, GlobalParsingVariables.MainCampaignCallAmount,
@@ -81,10 +79,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                     customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                     customCaller.isCallerClipLoaded = true;
 
-                                    if (AudioImport.currentLoadingAudios.Count <= 0)
+                                    if (AudioImport.CurrentLoadingAudios.Count <= 0)
                                     {
                                         // We finished loading all audios. We call the start function again.
-                                        AudioImport.reCallCallerListStart();
+                                        AudioImport.ReCallCallerListStart();
                                     }
                                 }
                                 else
@@ -142,10 +140,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             #endif
         }
 
-        private static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CallerPatches.CallerModel.CustomCaller ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign,
             ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,
-            int mainCampaignCallAmount, ref Dictionary<int, CustomCallerExtraInfo> customCallerMainGame)
+            int mainCampaignCallAmount, ref Dictionary<int, CallerPatches.CallerModel.CustomCaller> customCallerMainGame)
         {
             // Caller Information
             string customCallerName = "NO_CUSTOM_CALLER_NAME";
@@ -309,7 +307,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
             }
 
-            return new CustomCallerExtraInfo(orderInCampaign)
+            return new CallerPatches.CallerModel.CustomCaller(orderInCampaign)
             {
                 callerName = customCallerName,
                 callerImage = customCallerImage,

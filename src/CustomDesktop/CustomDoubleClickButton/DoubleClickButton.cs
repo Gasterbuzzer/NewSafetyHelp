@@ -5,13 +5,13 @@ namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
     public class DoubleClickButton : MonoBehaviour
     {
         private float lastClickTime;
-        private readonly float doubleClickThreshold = 0.3f;
-        
-        public void doubleClickCustomCampaign(string customCampaignName)
+        private const float DoubleClickThreshold = 0.3f;
+
+        public void DoubleClickCustomCampaign(string customCampaignName)
         {
             float timeSinceLastClick = Time.time - lastClickTime;
 
-            if (timeSinceLastClick <= doubleClickThreshold)
+            if (timeSinceLastClick <= DoubleClickThreshold)
             {
                 CustomDesktopHelper.changeToCustomCampaignSettings(customCampaignName);
             }
@@ -19,11 +19,11 @@ namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
             lastClickTime = Time.time;
         }
         
-        public void doubleClickBackToMainGameAlsoLoad()
+        public void DoubleClickBackToMainGameAlsoLoad()
         {
             float timeSinceLastClick = Time.time - lastClickTime;
 
-            if (timeSinceLastClick <= doubleClickThreshold)
+            if (timeSinceLastClick <= DoubleClickThreshold)
             {
                 CustomDesktopHelper.backToMainGame();
             }

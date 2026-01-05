@@ -46,7 +46,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // If no audio is loading, we can reset the game back. If not, we let the audios do so.
-            if (AudioImport.currentLoadingAudios.Count <= 0)
+            if (AudioImport.CurrentLoadingAudios.Count <= 0)
             {
                 Time.timeScale = 1.0f;
             }

@@ -1,6 +1,6 @@
 ﻿namespace NewSafetyHelp.CustomVideos
 {
-    public class CustomVideoExtraInfo
+    public class CustomVideo
     {
         public string desktopName = "NO_DESKTOP_NAME";
 

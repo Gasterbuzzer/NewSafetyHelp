@@ -15,6 +15,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param>
             // ReSharper disable once RedundantAssignment
+            // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance,
                 // ReSharper disable once RedundantAssignment
                 ref RichAudioClip __result)
@@ -42,6 +43,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param>
             // ReSharper disable once RedundantAssignment
+            // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref Sprite __result)
             {
                 if (__instance.randomCallerPics.Length <= 0)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.JSONParsing;
 using TMPro;
@@ -23,7 +22,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             {
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
-                    foreach (ThemesExtraInfo theme in GlobalParsingVariables.MainGameThemes)
+                    foreach (CustomTheme theme in GlobalParsingVariables.MainGameThemes)
                     {
                         if (theme != null)
                         {
@@ -46,7 +45,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         return;
                     }
 
-                    foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                    foreach (CustomTheme theme in customCampaign.customThemesGeneral)
                     {
                         if (theme != null)
                         {
@@ -140,7 +139,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         
                         if (conditionalTheme != -1) // We have a conditional theme that we need to apply.
                         {
-                            ThemesExtraInfo theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme);
+                            CustomTheme theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme);
                             
                             if (theme != null
                                 && theme.customThemePalette != null
@@ -157,7 +156,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         else // We don't have a conditional theme to apply.
                         {
                             bool isCustomTheme = false;
-                            ThemesExtraInfo theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme);
+                            CustomTheme theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme);
                         
                             #if DEBUG
                             MelonLogger.Msg($"DEBUG: Is the theme custom? '{isCustomTheme}'. " +

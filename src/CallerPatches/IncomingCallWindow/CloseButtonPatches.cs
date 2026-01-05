@@ -89,7 +89,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             {
                 if (i < __instance.callers.Length) // Valid caller.
                 {
-                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
+                    CallerModel.CustomCaller customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
 
                     // If the next caller does not exist or was not found, we simply say false.
                     // There might be valid callers after that one, but we are in an invalid state.

@@ -3,7 +3,6 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
@@ -28,7 +27,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            MusicExtraInfo customMusic = ParseMusic(ref jObjectParsed, ref usermodFolderPath,
+            CustomMusic customMusic = ParseMusic(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add music clip
@@ -87,7 +86,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
-        private static MusicExtraInfo ParseMusic(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomMusic ParseMusic(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             int unlockDay = 0; // When the music is unlocked. Mostly used for default game logic.
@@ -124,7 +123,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 unlockDay = (int)unlockDayValue;
             }
 
-            return new MusicExtraInfo
+            return new CustomMusic
             {
                 customCampaignName = customCampaignName,
 

@@ -5,7 +5,6 @@ using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 
 namespace NewSafetyHelp.EntryManager.EntryListing
@@ -18,11 +17,10 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             /// <summary>
             /// Postfixes the show entry info to not show "NEW" on main campaign entries if in a custom campaign.
             /// </summary>
-            /// <param name="__originalMethod"> Method Caller </param>
             /// <param name="__instance"> Caller of function instance </param>
             // ReSharper disable once UnusedParameter.Local
             // ReSharper disable once UnusedMember.Local
-            private static void Postfix(MethodBase __originalMethod, EntryListingBehavior __instance)
+            private static void Postfix(EntryListingBehavior __instance)
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -66,10 +64,9 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             /// <summary>
             /// Changes the DelayedStart function to consider custom campaign entries.
             /// </summary>
-            /// <param name="__originalMethod"> Method Caller </param>
             /// <param name="__instance"> Caller of function instance </param>
             /// <param name="__result"> Caller of function instance </param>
-            private static bool Prefix(MethodBase __originalMethod, EntryListingBehavior __instance,
+            private static bool Prefix(EntryListingBehavior __instance,
                 [UsedImplicitly] ref IEnumerator __result)
             {
                 __result = DelayedStartCoroutine(__instance);
@@ -110,7 +107,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                         yield break;
                     }
 
-                    EntryExtraInfo entryFound = CustomCampaignGlobal.GetEntryFromActiveCampaign(__instance.myProfile.monsterName);
+                    EntryMetadata entryFound = CustomCampaignGlobal.GetEntryFromActiveCampaign(__instance.myProfile.monsterName);
 
                     if (entryFound != null)
                     {

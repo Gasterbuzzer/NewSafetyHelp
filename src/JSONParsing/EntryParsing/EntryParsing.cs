@@ -3,7 +3,6 @@ using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -225,14 +224,14 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         // ----------------------------------------------------------------------------------------------------------
         
         // ReSharper disable once RedundantAssignment
-        private static void CreateNewExtra(ref EntryExtraInfo newExtra, ref string _monsterName, ref int newID,
+        private static void CreateNewExtra(ref EntryMetadata newExtra, ref string _monsterName, ref int newID,
             ref bool replaceEntry, ref string _callerName, ref string _callerTranscript, ref Sprite _callerPortrait,
             ref float _callerReplaceChance, ref bool _callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC,
             ref bool includeDLC, ref bool includeMainCampaign, ref string _consequenceCallerName,
             ref string _consequenceCallerTranscript, ref Sprite _consequenceCallerPortrait,
             ref bool deleteReplaceEntry, ref bool _inCustomCampaign, ref string _customCampaignName)
         {
-            newExtra = new EntryExtraInfo(_monsterName, newID)
+            newExtra = new EntryMetadata(_monsterName, newID)
             {
                 replace = replaceEntry,
                 callerName = _callerName,
@@ -358,7 +357,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             bool _tightSpacePhobiaIncluded = false;
 
             // Persistent information for caller.
-            EntryExtraInfo newExtra = null;
+            EntryMetadata newExtra = null;
 
             // We extract the info and save it (if the file is valid)
             // Parse Entry
@@ -907,7 +906,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 {
                     string monsterNameCopy = foundMonster.monsterName;
 
-                    EntryExtraInfo extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item => item.Name == monsterNameCopy);
+                    EntryMetadata extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item => item.Name == monsterNameCopy);
                     if (extraEntryInfo != null) // Only if it exists.
                     {
                         extraEntryInfo.referenceCopyEntry = foundMonster;
@@ -960,7 +959,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             MonsterProfile _newMonsterCopy = _newMonster;
 
             // Include a copy of the monster in the extra info
-            EntryExtraInfo extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item =>
+            EntryMetadata extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item =>
                 item.Name == _newMonsterCopy.monsterName || item.ID == _newMonsterCopy.monsterID);
             if (extraEntryInfo != null) // Only if it exists.
             {

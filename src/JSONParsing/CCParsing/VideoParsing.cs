@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using Newtonsoft.Json.Linq;
 
@@ -27,7 +26,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            CustomVideoExtraInfo _customVideo = ParseVideo(ref jObjectParsed, ref usermodFolderPath,
+            CustomVideo _customVideo = ParseVideo(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
@@ -49,7 +48,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
-        private static CustomVideoExtraInfo ParseVideo(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomVideo ParseVideo(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             // Main
@@ -97,7 +96,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            return new CustomVideoExtraInfo
+            return new CustomVideo
             {
                 desktopName = videoName,
                 customCampaignName = customCampaignName,

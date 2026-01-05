@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -30,7 +29,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string customCampaignName = "";
             bool inMainCampaign = false;
 
-            EmailExtraInfo customEmail = ParseEmail(ref jObjectParsed, ref usermodFolderPath,
+            CustomEmail customEmail = ParseEmail(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath,
                 ref customCampaignName, ref inMainCampaign);
 
@@ -60,7 +59,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
-        private static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomEmail ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign)
         {
             // Main
@@ -135,7 +134,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            return new EmailExtraInfo
+            return new CustomEmail
             {
                 inMainCampaign = inMainCampaign,
                 customCampaignName = customCampaignName,

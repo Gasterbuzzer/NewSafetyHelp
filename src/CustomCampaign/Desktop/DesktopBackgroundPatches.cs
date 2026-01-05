@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.Desktop

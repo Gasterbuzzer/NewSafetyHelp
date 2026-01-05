@@ -79,27 +79,27 @@ namespace NewSafetyHelp.EntryManager
                 switch (profileName)
                 {
                     case "firstTierUnlocks":
-                        EntryUnlockerPatcher.FixPermissionOverride.entriesReaddTierOne.Add(newProfile);
+                        EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierOne.Add(newProfile);
                         break;
 
                     case "secondTierUnlocks":
-                        EntryUnlockerPatcher.FixPermissionOverride.entriesReaddTierTwo.Add(newProfile);
+                        EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierTwo.Add(newProfile);
                         break;
 
                     case "thirdTierUnlocks":
-                        EntryUnlockerPatcher.FixPermissionOverride.entriesReaddTierThree.Add(newProfile);
+                        EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierThree.Add(newProfile);
                         break;
 
                     case "fourthTierUnlocks":
-                        EntryUnlockerPatcher.FixPermissionOverride.entriesReaddTierFour.Add(newProfile);
+                        EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierFour.Add(newProfile);
                         break;
 
                     case "fifthTierUnlocks":
-                        EntryUnlockerPatcher.FixPermissionOverride.entriesReaddTierFive.Add(newProfile);
+                        EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierFive.Add(newProfile);
                         break;
 
                     case "sixthTierUnlocks":
-                        EntryUnlockerPatcher.FixPermissionOverride.entriesReaddTierSix.Add(newProfile);
+                        EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierSix.Add(newProfile);
                         break;
                 }
                 

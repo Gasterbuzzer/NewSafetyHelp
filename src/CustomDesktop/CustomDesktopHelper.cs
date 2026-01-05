@@ -125,7 +125,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Creates an email and returns a reference.
         /// </summary>
         /// <returns>New Email reference.</returns>
-        public static GameObject createEmail(EmailExtraInfo emailToCreate)
+        public static GameObject createEmail(CustomEmail emailToCreate)
         {
             GameObject originalEmail = getEmailList().transform.Find("EmailListing (14)").gameObject;
 
@@ -390,7 +390,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <summary>
         /// Disables all default video programs on the desktop.
         /// </summary>
-        public static GameObject createCustomVideoFileProgram(CustomVideoExtraInfo customVideo)
+        public static GameObject createCustomVideoFileProgram(CustomVideo customVideo)
         {
             GameObject trailerFileOriginal = getLeftPrograms().transform.Find("TrailerFile").gameObject;
 
@@ -545,7 +545,7 @@ namespace NewSafetyHelp.CustomDesktop
             customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
 
             customProgramButton.onClick.AddListener(() =>
-                doubleClickButton.doubleClickCustomCampaign(customCampaignName));
+                doubleClickButton.DoubleClickCustomCampaign(customCampaignName));
 
             // Rename CustomProgramIcon
             customProgramIcon.name = customProgramName;
@@ -577,7 +577,7 @@ namespace NewSafetyHelp.CustomDesktop
 
             customProgramButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
 
-            customProgramButton.onClick.AddListener(() => doubleClickButton.doubleClickBackToMainGameAlsoLoad());
+            customProgramButton.onClick.AddListener(() => doubleClickButton.DoubleClickBackToMainGameAlsoLoad());
 
             // Rename Program Object Name
             backToMainMenuGameButton.name = "BackToMainGameButton";
@@ -591,7 +591,7 @@ namespace NewSafetyHelp.CustomDesktop
             CustomCampaignGlobal.ActivateCustomCampaign(customCampaignName);
 
             // Load Custom Campaign values
-            CustomCampaignSaving.loadFromFileCustomCampaignInfo();
+            CustomCampaignSaving.LoadFromFileCustomCampaignInfo();
 
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
             SceneManager.LoadScene("MainMenuScene");
@@ -602,7 +602,7 @@ namespace NewSafetyHelp.CustomDesktop
             MelonLogger.Msg(ConsoleColor.Green, "INFO: Going back to the main game.");
 
             // Save values
-            CustomCampaignSaving.saveCustomCampaignInfo();
+            CustomCampaignSaving.SaveCustomCampaignInfo();
 
             // Reset back.
             CustomCampaignGlobal.DeactivateCustomCampaign();

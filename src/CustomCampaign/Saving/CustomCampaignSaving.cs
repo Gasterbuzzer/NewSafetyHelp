@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.Saving
@@ -79,7 +78,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// Saves the information on the current custom campaign to MelonLoader preferences.
         /// Note: Saving is destructive if not called at the correct time. It's best to call it only after it has been loaded at least once.
         /// </summary>
-        public static void saveCustomCampaignInfo()
+        public static void SaveCustomCampaignInfo()
         {
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
@@ -259,7 +258,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// <summary>
         /// Loads the information on the current custom campaign to all possible values. Should realistically only be called once on custom campaign switch.
         /// </summary>
-        public static void loadFromFileCustomCampaignInfo()
+        public static void LoadFromFileCustomCampaignInfo()
         {
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
@@ -415,7 +414,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// <summary>
         /// Resets the stored custom campaign values to default values.
         /// </summary>
-        public static void resetCustomCampaignFile()
+        public static void ResetCustomCampaignFile()
         {
             MelonLogger.Msg("INFO: Resetting custom campaign file.");
 
@@ -437,7 +436,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             if (currentCampaign.campaignSaveCategory == null) // We haven't loaded it in?
             {
-                loadFromFileCustomCampaignInfo();
+                LoadFromFileCustomCampaignInfo();
             }
 
             if (currentCampaign.campaignSaveCategory == null)
@@ -538,7 +537,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// <summary>
         /// Saves the campaign options that matter for the custom campaign.
         /// </summary>
-        public static void saveCustomCampaignOptions()
+        public static void SaveCustomCampaignOptions()
         {
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
@@ -604,7 +603,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// <summary>
         /// Loads the options for the current custom campaign.
         /// </summary>
-        public static void loadCustomCampaignOptions()
+        public static void LoadCustomCampaignOptions()
         {
             MelonLogger.Msg("INFO: Starting to load all custom campaign settings/options.");
             if (!CustomCampaignGlobal.InCustomCampaign)

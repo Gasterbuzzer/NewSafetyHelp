@@ -2,7 +2,7 @@
 
 namespace NewSafetyHelp.CustomCampaign.Themes
 {
-    public class ThemesExtraInfo
+    public class CustomTheme
     {
         public string themeName = "NO THEME NAME SET"; // Name of which this theme is displayed.
         

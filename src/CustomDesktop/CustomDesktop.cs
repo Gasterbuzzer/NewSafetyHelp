@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
@@ -95,7 +94,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (GlobalParsingVariables.MainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
                     {
-                        foreach (EmailExtraInfo emailExtra in GlobalParsingVariables.MainCampaignEmails)
+                        foreach (CustomEmail emailExtra in GlobalParsingVariables.MainCampaignEmails)
                         {
                             if (emailExtra.inMainCampaign)
                             {
@@ -153,7 +152,7 @@ namespace NewSafetyHelp.CustomDesktop
                     // Add custom emails.
                     if (customCampaign.emails.Count > 0) // If we have custom emails.
                     {
-                        foreach (EmailExtraInfo emailExtra in customCampaign.emails)
+                        foreach (CustomEmail emailExtra in customCampaign.emails)
                         {
                             CustomDesktopHelper.createEmail(emailExtra);
                         }
@@ -304,7 +303,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (customCampaign.allDesktopVideos.Count > 0)
                     {
-                        foreach (CustomVideoExtraInfo customVideo in customCampaign.allDesktopVideos)
+                        foreach (CustomVideo customVideo in customCampaign.allDesktopVideos)
                         {
                             CustomDesktopHelper.createCustomVideoFileProgram(customVideo);
                         }
@@ -476,7 +475,7 @@ namespace NewSafetyHelp.CustomDesktop
                         MelonLogger.Msg($"DEBUG: Current day format: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
                     #endif
                     
-                    dateList = DateUtil.fixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
+                    dateList = DateUtil.FixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
                     
                     #if DEBUG
                         MelonLogger.Msg($"DEBUG: Day format after fix: {dateList[0]} / {dateList[1]} / {dateList[2]}.");

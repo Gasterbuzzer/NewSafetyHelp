@@ -5,7 +5,6 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,17 +12,16 @@ namespace NewSafetyHelp.Audio.Music
 {
     public static class MusicControllerPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartRandomMusic", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartRandomMusic")]
         public static class StartRandomMusicPatch
         {
             /// <summary>
             /// Patches the play random music to not play day 7 music in custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedParameter.Local
             // ReSharper disable once UnusedMember.Local
-            private static bool Prefix(MethodBase __originalMethod, MusicController __instance)
+            private static bool Prefix(MusicController __instance)
             {
                 // If in the main game and the current day is the 7th day.
                 if (!CustomCampaignGlobal.InCustomCampaign)
@@ -239,7 +237,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (playCustomMusic)
                     {
-                        List<MusicExtraInfo> customMusicList = customCampaign.customMusic
+                        List<CustomMusic> customMusicList = customCampaign.customMusic
                             .Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList();
 
                         if (customMusicList.Count > 0 && customMusicList[chosenMusicIndex].musicClip != null)

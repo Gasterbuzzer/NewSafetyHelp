@@ -43,7 +43,7 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="includeDlc">If to also consider the DLC included.</param>
         /// <param name="entryUnlockerInstance">Instance of the entry unlocker. (Used to get new ID)</param>
         /// <param name="inCustomCampaign">If this is in a custom campaign.</param>
-        public static void GenerateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry,
+        public static void GenerateNewID(ref EntryMetadata newExtra, ref int newID, ref bool replaceEntry,
             ref string jsonFolderPath, ref bool onlyDlc, ref bool includeDlc,
             ref EntryUnlockController entryUnlockerInstance, ref bool inCustomCampaign)
         {

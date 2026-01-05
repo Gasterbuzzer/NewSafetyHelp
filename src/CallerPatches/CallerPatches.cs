@@ -91,7 +91,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
-                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in GlobalParsingVariables.CustomCallersMainGame)
+                    foreach (KeyValuePair<int, CallerModel.CustomCaller> customCaller in GlobalParsingVariables.CustomCallersMainGame)
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {
@@ -233,7 +233,7 @@ namespace NewSafetyHelp.CallerPatches
                     Dictionary<int, int> listOfConsequenceCallers = new Dictionary<int, int>();
 
                     // Add all customCallers in Callers list.
-                    foreach (CustomCallerExtraInfo customCallerCC in currentCustomCampaign.customCallersInCampaign)
+                    foreach (CallerModel.CustomCaller customCallerCC in currentCustomCampaign.customCallersInCampaign)
                     {
                         CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
@@ -243,7 +243,7 @@ namespace NewSafetyHelp.CallerPatches
                         // Clip
                         if (customCallerCC.callerClip == null)
                         {
-                            if (AudioImport.currentLoadingAudios.Count > 0)
+                            if (AudioImport.CurrentLoadingAudios.Count > 0)
                             {
                                 MelonLogger.Msg(
                                     $"INFO : Custom Caller '{customCallerCC.callerName}' is still loading its audio. Using fallback for now.");
@@ -434,7 +434,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CustomCallerExtraInfo customCallerFound =
+                    CallerModel.CustomCaller customCallerFound =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
 
                     if (customCallerFound == null)
@@ -442,7 +442,7 @@ namespace NewSafetyHelp.CallerPatches
                         MelonLogger.Error(
                             $"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
 
-                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
+                        foreach (CallerModel.CustomCaller customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
                                      .customCallersInCampaign)
                         {
                             MelonLogger.Error($"{customCallerE.callerName} : {customCallerE.orderInCampaign}");
@@ -685,7 +685,7 @@ namespace NewSafetyHelp.CallerPatches
                         if (__instance.callersToday ==
                             callersTodayRequiredWarning) // Now the warning call should appear.
                         {
-                            CustomCallerExtraInfo warningCallerToday = null;
+                            CallerModel.CustomCaller warningCallerToday = null;
 
                             // Try finding a warning caller.
                             if (customCampaign.customWarningCallersInCampaign.Count >
@@ -695,7 +695,7 @@ namespace NewSafetyHelp.CallerPatches
                                         warningCaller.warningCallDay <=
                                         -1)) // If we have warning caller without a day attached we use this one before trying to find a more fitting one.
                                 {
-                                    List<CustomCallerExtraInfo> allWarningCallsWithoutDay =
+                                    List<CallerModel.CustomCaller> allWarningCallsWithoutDay =
                                         customCampaign.customWarningCallersInCampaign.FindAll(warningCaller =>
                                             warningCaller.warningCallDay <= -1);
 
@@ -708,7 +708,7 @@ namespace NewSafetyHelp.CallerPatches
                                 }
 
                                 // Try finding a warning call that is set for the current day.
-                                List<CustomCallerExtraInfo> allWarningCallsForToday =
+                                List<CallerModel.CustomCaller> allWarningCallsForToday =
                                     customCampaign.customWarningCallersInCampaign.FindAll(warningCaller =>
                                         warningCaller.warningCallDay == GlobalVariables.currentDay);
                                 if (allWarningCallsForToday.Count > 0)
@@ -764,7 +764,7 @@ namespace NewSafetyHelp.CallerPatches
                                 }
                                 else
                                 {
-                                    if (AudioImport.currentLoadingAudios.Count > 0)
+                                    if (AudioImport.CurrentLoadingAudios.Count > 0)
                                     {
                                         MelonLogger.Warning(
                                             "WARNING: Warning-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");

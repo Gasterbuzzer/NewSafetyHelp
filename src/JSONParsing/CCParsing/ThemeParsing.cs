@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Themes;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -29,7 +28,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            ThemesExtraInfo customTheme = ParseTheme(ref jObjectParsed, ref usermodFolderPath,
+            CustomTheme customTheme = ParseTheme(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
@@ -65,7 +64,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
-        private static ThemesExtraInfo ParseTheme(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomTheme ParseTheme(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             bool inMainCampaign = false; // If available in main campaign.
@@ -148,7 +147,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 setColor(ref mainWindowColorValue, ref themeColorPalette, 3);
             }
             
-            return new ThemesExtraInfo()
+            return new CustomTheme()
             {
                 inMainCampaign = inMainCampaign,
                 

@@ -1,8 +1,5 @@
-﻿using System.Reflection;
-using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
+﻿using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
@@ -14,12 +11,11 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             /// <summary>
             /// Patches the OnEnable to consider custom Campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
             // ReSharper disable once UnusedParameter.Local
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance)
+            private static bool Prefix(CallWindowBehavior __instance)
             {
                 __instance.answerButton.SetActive(true);
                 __instance.loadingText.SetActive(false);
@@ -75,7 +71,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
+                        CallerModel.CustomCaller customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
                         
                         if (customCaller == null)
                         {

@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using Steamworks;
 using UnityEngine;
@@ -21,18 +19,17 @@ namespace NewSafetyHelp.CallerPatches.UI
         private static readonly int Glitch = Animator.StringToHash("glitch");
         private static readonly int Shake = Animator.StringToHash("shake");
 
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "WriteDayString", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "WriteDayString")]
         public static class ScorecardPatch
         {
 
             /// <summary>
             /// Patches the main canvas day string function to use custom day strings.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param> 
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref string __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref string __result)
             {
                 
                 List<string> defaultDayNames = new List<string>() {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
@@ -178,18 +175,17 @@ namespace NewSafetyHelp.CallerPatches.UI
         }
         
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "StartSoftwareRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "StartSoftwareRoutine")]
         public static class SoftwareRoutinePatches
         {
 
             /// <summary>
             /// Patches start software routine to work better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine of function to be called after wards </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 __result = StartSoftwareRoutine(__instance);
                 
@@ -352,31 +348,30 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndDayRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndDayRoutine")]
         public static class EndDayRoutinePatch
         {
             // To avoid duplicate day ending.
-            public static bool isDayEnding;
+            private static bool isDayEnding;
 
             /// <summary>
             /// Patches the EndDayRoutine coroutine to work better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to be called after wards. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 #if DEBUG
                     MelonLogger.Msg("DEBUG: Calling EndDayRoutine.");
                 #endif
                 
-                __result = endDayRoutineChanged(__instance);
+                __result = EndDayRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
             }
             
-            private static IEnumerator endDayRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator EndDayRoutineChanged(MainCanvasBehavior __instance)
             {
                 if (isDayEnding)
                 {
@@ -525,17 +520,16 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine")]
         public static class EndingCutsceneRoutinePatch
         {
             /// <summary>
             /// Patches the EndingCutsceneRoutine coroutine to work better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to be called after wards. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 __result = endingCutsceneRoutineChanged(__instance);
                 
@@ -718,17 +712,16 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "IsNetworkDown", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "IsNetworkDown")]
         public static class IsNetworkDownPatch
         {
             /// <summary>
             /// Patches the network down patch to also check for custom callers.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> If to down the network. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref bool __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref bool __result)
             {
 
                 if (GlobalVariables.arcadeMode)
@@ -754,7 +747,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                     else // Custom Campaign
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                        CallerModel.CustomCaller customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         
                         if (customCaller == null)
                         {
@@ -775,24 +768,23 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine")]
         public static class GameOverCutsceneRoutinePatch
         {
             /// <summary>
             /// Patches the game over cutscene coroutine to also be able to play custom game over cutscenes.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to run. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-                __result = gameOverCutsceneRoutineChanged(__instance);
+                __result = GameOverCutsceneRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
             }
 
-            private static IEnumerator gameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator GameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 
@@ -904,16 +896,15 @@ namespace NewSafetyHelp.CallerPatches.UI
         }
         
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "LoadCallerAnswers", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "LoadCallerAnswers")]
         public static class LoadCallerAnswersPatch
         {
             /// <summary>
             /// Patches the load caller answers to gracefully accept null values.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance)
+            private static bool Prefix(MainCanvasBehavior __instance)
             {
                 if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length != GlobalVariables.callerControllerScript.callers.Length)
                 {

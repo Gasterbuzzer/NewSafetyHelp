@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -29,19 +27,19 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
          */
 
         // Caller in the campaign
-        public List<CustomCallerExtraInfo> customCallersInCampaign = new List<CustomCallerExtraInfo>();
+        public List<CallerPatches.CallerModel.CustomCaller> customCallersInCampaign = new List<CallerPatches.CallerModel.CustomCaller>();
 
         // Warning Callers in the campaign
-        public List<CustomCallerExtraInfo> customWarningCallersInCampaign = new List<CustomCallerExtraInfo>();
+        public List<CallerPatches.CallerModel.CustomCaller> customWarningCallersInCampaign = new List<CallerPatches.CallerModel.CustomCaller>();
 
         // Game Over Callers in the campaign
-        public List<CustomCallerExtraInfo> customGameOverCallersInCampaign = new List<CustomCallerExtraInfo>();
+        public List<CallerPatches.CallerModel.CustomCaller> customGameOverCallersInCampaign = new List<CallerPatches.CallerModel.CustomCaller>();
 
         // Entries that exist only in this campaign.  
-        public List<EntryExtraInfo> entriesOnlyInCampaign = new List<EntryExtraInfo>();
+        public List<EntryMetadata> entriesOnlyInCampaign = new List<EntryMetadata>();
 
         // Entries that should only replace in custom campaign.
-        public List<EntryExtraInfo> entryReplaceOnlyInCampaign = new List<EntryExtraInfo>();
+        public List<EntryMetadata> entryReplaceOnlyInCampaign = new List<EntryMetadata>();
 
         public List<string> campaignDayStrings = new List<string>();
 
@@ -96,7 +94,7 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 
         public bool removeDefaultMusic = false; // If to remove the default music from the game.
 
-        public List<MusicExtraInfo> customMusic = new List<MusicExtraInfo>(); // List of custom music.
+        public List<CustomMusic> customMusic = new List<CustomMusic>(); // List of custom music.
 
         // Always enabled Programs on Desktop
         public bool entryBrowserAlwaysActive = false;
@@ -117,7 +115,7 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 
         // Email
         public bool removeDefaultEmails = true;
-        public List<EmailExtraInfo> emails = new List<EmailExtraInfo>(); // List of custom emails.
+        public List<CustomEmail> emails = new List<CustomEmail>(); // List of custom emails.
 
         // Backgrounds
         public List<Sprite> backgroundSprites = new List<Sprite>();
@@ -135,7 +133,7 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         // Video Programs
         public bool disableAllDefaultVideos = true;
         
-        public List<CustomVideoExtraInfo> allDesktopVideos = new List<CustomVideoExtraInfo>();
+        public List<CustomVideo> allDesktopVideos = new List<CustomVideo>();
 
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> savedDayScores = new List<float>();
@@ -150,16 +148,16 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         
         public int activeTheme = 0; // 0 is default theme. (0-3 are reserved for the default themes)
         
-        public List<ThemesExtraInfo> customThemesGeneral = new List<ThemesExtraInfo>(); // List of themes for general.
-        public List<ThemesExtraInfo> customThemesDays = new List<ThemesExtraInfo>(); // List of (conditional) themes that apply for certain days and apply to a certain theme only.
+        public List<CustomTheme> customThemesGeneral = new List<CustomTheme>(); // List of themes for general.
+        public List<CustomTheme> customThemesDays = new List<CustomTheme>(); // List of (conditional) themes that apply for certain days and apply to a certain theme only.
         
         // Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
         
-        public List<ModifierExtraInfo> customModifiersGeneral = new List<ModifierExtraInfo>(); // List of modifiers for general.
-        public List<ModifierExtraInfo> customModifiersDays = new List<ModifierExtraInfo>(); // List of (conditional) modifiers that apply for certain days.
+        public List<CustomModifier> customModifiersGeneral = new List<CustomModifier>(); // List of modifiers for general.
+        public List<CustomModifier> customModifiersDays = new List<CustomModifier>(); // List of (conditional) modifiers that apply for certain days.
         
         // Ringtones
         public bool removeDefaultRingtone = true;
-        public List<RingtoneExtraInfo> customRingtones = new List<RingtoneExtraInfo>(); // List of custom ringtones.
+        public List<CustomRingtone.CustomRingtone> customRingtones = new List<CustomRingtone.CustomRingtone>(); // List of custom ringtones.
     }
 }
