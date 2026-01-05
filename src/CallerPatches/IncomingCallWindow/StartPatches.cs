@@ -24,7 +24,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 __instance.answerButton.SetActive(true);
                 __instance.loadingText.SetActive(false);
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
@@ -63,9 +63,9 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                             .xmasPhoneCall);
                     }
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -75,7 +75,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
+                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
                         
                         if (customCaller == null)
                         {

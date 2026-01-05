@@ -21,7 +21,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             // ReSharper disable once UnusedMember.Local
             private static void Prefix(OptionsMenuBehavior __instance)
             {
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
                     foreach (ThemesExtraInfo theme in GlobalParsingVariables.MainGameThemes)
                     {
@@ -38,7 +38,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -79,7 +79,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ColorPaletteController __instance)
             {
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.saveManagerScript.savedColorTheme <= 3)
                     {
@@ -103,7 +103,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -121,7 +121,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     if (!string.IsNullOrEmpty(customCampaign.defaultTheme) 
                         && !customCampaign.defaultThemeAppliedOnce)
                     {
-                        int themeID = CustomCampaignGlobal.getThemeIDFromName(customCampaign.defaultTheme);
+                        int themeID = CustomCampaignGlobal.GetThemeIDFromName(customCampaign.defaultTheme);
 
                         if (themeID > 0)
                         {
@@ -136,11 +136,11 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     }
                     else
                     {
-                        int conditionalTheme = CustomCampaignGlobal.checkIfConditionalTheme();
+                        int conditionalTheme = CustomCampaignGlobal.CheckIfConditionalTheme();
                         
                         if (conditionalTheme != -1) // We have a conditional theme that we need to apply.
                         {
-                            ThemesExtraInfo theme = CustomCampaignGlobal.getThemeFromID(conditionalTheme);
+                            ThemesExtraInfo theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme);
                             
                             if (theme != null
                                 && theme.customThemePalette != null
@@ -157,7 +157,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         else // We don't have a conditional theme to apply.
                         {
                             bool isCustomTheme = false;
-                            ThemesExtraInfo theme = CustomCampaignGlobal.getActiveTheme(ref isCustomTheme);
+                            ThemesExtraInfo theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme);
                         
                             #if DEBUG
                             MelonLogger.Msg($"DEBUG: Is the theme custom? '{isCustomTheme}'. " +
@@ -230,13 +230,13 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(OptionsMenuBehavior __instance)
             {
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     GlobalVariables.saveManagerScript.savedColorTheme = __instance.colorDropdown.value;
                 }
                 else
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

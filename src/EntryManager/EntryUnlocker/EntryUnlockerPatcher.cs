@@ -101,7 +101,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
             
             // Custom Campaign to reset default entry permission.
-            if (CustomCampaignGlobal.inCustomCampaign)
+            if (CustomCampaignGlobal.InCustomCampaign)
             {
                 if (profileToCheck == null)
                 {
@@ -109,7 +109,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     return;
                 }
                 
-                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                 
                 if (customCampaign == null)
                 {

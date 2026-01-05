@@ -83,9 +83,9 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     }
                     else // If wrong
                     {
-                        if (CustomCampaignGlobal.inCustomCampaign)
+                        if (CustomCampaignGlobal.InCustomCampaign)
                         {
-                            CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                            CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                             if (customCampaign == null)
                             {
@@ -375,7 +375,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     }
                     
                     // Checks if we need to end the day, in case the next caller gets skipped.
-                    if (CustomCampaignGlobal.inCustomCampaign
+                    if (CustomCampaignGlobal.InCustomCampaign
                         && !GlobalVariables.arcadeMode)
                     {
                         int checkResult = CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);

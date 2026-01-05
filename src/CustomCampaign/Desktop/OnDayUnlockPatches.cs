@@ -32,7 +32,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 {
                     
                     // Special cases / exceptions:
-                    if (CustomCampaignGlobal.inCustomCampaign)
+                    if (CustomCampaignGlobal.InCustomCampaign)
                     {
                         string gameObjectName = __instance.gameObject.name;
 
@@ -90,7 +90,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
                     else
                     {
-                        if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                        if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                         {
                             if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1).ToString()))
                             {
@@ -107,7 +107,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         }
                         else // Custom Campaign
                         {
-                            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                             if (currentCampaign == null)
                             {
@@ -182,7 +182,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "EntryBrowser-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -193,7 +193,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 bool enableEntryBrowser = false;
             
                 bool entryBrowserFound = false;
-                bool entryBrowser = CustomCampaignGlobal.getActiveModifierValue(
+                bool entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.entryBrowserActive,
                     ref entryBrowserFound,
                     specialPredicate: m => m.entryBrowserChanged);
@@ -220,7 +220,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Scorecard")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -231,7 +231,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 bool enableScorecard = false;
             
                 bool scorecardFound = false;
-                bool scorecard = CustomCampaignGlobal.getActiveModifierValue(
+                bool scorecard = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.scorecardActive,
                     ref scorecardFound,
                     specialPredicate: m => m.scorecardChanged);
@@ -258,7 +258,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Artbook-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -269,7 +269,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 bool artBookEnabled = false;
             
                 bool artbookFound = false;
-                bool artbook = CustomCampaignGlobal.getActiveModifierValue(
+                bool artbook = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.artbookActive,
                     ref artbookFound,
                     specialPredicate: m => m.artbookChanged);
@@ -296,7 +296,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Arcade-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -308,7 +308,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 bool arcadeEnabled = false;
             
                 bool arcadeFound = false;
-                bool arcade = CustomCampaignGlobal.getActiveModifierValue(
+                bool arcade = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.arcadeActive,
                     ref arcadeFound,
                     specialPredicate: m => m.arcadeChanged);

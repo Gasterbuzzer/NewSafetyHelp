@@ -24,9 +24,9 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(MethodBase __originalMethod, EntryListingBehavior __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -90,7 +90,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                     yield break;
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
                     if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile) 
                         && GlobalVariables.currentDay >= GlobalVariables.entryUnlockScript.currentTier + 1)
@@ -100,9 +100,9 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                 
                     determineLocked.Invoke(__instance, null); // __instance.DetermineLocked();
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -110,7 +110,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                         yield break;
                     }
 
-                    EntryExtraInfo entryFound = CustomCampaignGlobal.getEntryFromActiveCampaign(__instance.myProfile.monsterName);
+                    EntryExtraInfo entryFound = CustomCampaignGlobal.GetEntryFromActiveCampaign(__instance.myProfile.monsterName);
 
                     if (entryFound != null)
                     {

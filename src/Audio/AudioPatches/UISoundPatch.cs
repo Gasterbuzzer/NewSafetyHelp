@@ -22,9 +22,9 @@ namespace NewSafetyHelp.Audio.AudioPatches
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(UISoundController __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -115,7 +115,7 @@ namespace NewSafetyHelp.Audio.AudioPatches
                     __instance.myGlitchLoopingSource.Stop();
                 }
                 
-                if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign) // Don't play scary sound in custom campaign.
+                if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign) // Don't play scary sound in custom campaign.
                 {
                     __instance.myGlitchLoopingSource.clip = __instance.scaryGlitch.clip;
                     __instance.myGlitchLoopingSource.volume = __instance.scaryGlitch.volume;
@@ -154,7 +154,7 @@ namespace NewSafetyHelp.Audio.AudioPatches
                 
                 if (!uiSoundController.myGlitchLoopingSource.isPlaying)
                 {
-                    if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign) // Don't play glitch looping source if in custom campaign.
+                    if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign) // Don't play glitch looping source if in custom campaign.
                     {
                         uiSoundController.myGlitchLoopingSource.clip = uiSoundController.scaryGlitch.clip;
                         uiSoundController.myGlitchLoopingSource.volume = uiSoundController.scaryGlitch.volume;

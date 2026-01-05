@@ -588,7 +588,7 @@ namespace NewSafetyHelp.CustomDesktop
             MelonLogger.Msg(ConsoleColor.Green, $"INFO: Changing to custom campaign: {customCampaignName}.");
 
             // Activate the Custom Campaign
-            CustomCampaignGlobal.activateCustomCampaign(customCampaignName);
+            CustomCampaignGlobal.ActivateCustomCampaign(customCampaignName);
 
             // Load Custom Campaign values
             CustomCampaignSaving.loadFromFileCustomCampaignInfo();
@@ -605,7 +605,7 @@ namespace NewSafetyHelp.CustomDesktop
             CustomCampaignSaving.saveCustomCampaignInfo();
 
             // Reset back.
-            CustomCampaignGlobal.deactivateCustomCampaign();
+            CustomCampaignGlobal.DeactivateCustomCampaign();
 
             // Load old values.
             GlobalVariables.saveManagerScript.Load();

@@ -21,9 +21,9 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, DayNumSpriteSwapper __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -42,12 +42,12 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
                     
                     bool disableColorBackgroundFound = false;
-                    bool disableColorBackground = CustomCampaignGlobal.getActiveModifierValue(
+                    bool disableColorBackground = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.disableColorBackground,
                         ref disableColorBackgroundFound);
                     
                     bool desktopBackgroundColorFound = false;
-                    Color? modifierDesktopBackgroundColor = CustomCampaignGlobal.getActiveModifierValue(
+                    Color? modifierDesktopBackgroundColor = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.desktopBackgroundColor,
                         ref desktopBackgroundColorFound,
                         v => v != null);
@@ -105,19 +105,19 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
 
                     bool desktopBackgroundsFound = false;
-                    List<Sprite> desktopBackgrounds = CustomCampaignGlobal.getActiveModifierValue(
+                    List<Sprite> desktopBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.desktopBackgrounds,
                         ref desktopBackgroundsFound,
                         v => v != null && v.Count > 0);
                     
                     bool gameFinishedBackgroundFound = false;
-                    Sprite gameFinishedBackground = CustomCampaignGlobal.getActiveModifierValue(
+                    Sprite gameFinishedBackground = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.gameFinishedBackground,
                         ref gameFinishedBackgroundFound,
                         v => v != null);
                     
                     bool unlockDaysFound = false;
-                    List<int> unlockDays = CustomCampaignGlobal.getActiveModifierValue(
+                    List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.unlockDays,
                         ref unlockDaysFound,
                         v => v != null && v.Count > 0);

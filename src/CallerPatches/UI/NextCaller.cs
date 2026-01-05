@@ -20,7 +20,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             private static bool Prefix(MainCanvasBehavior __instance)
             {
                 // Check for next caller that will be skipped.
-                if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.arcadeMode)
+                if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.arcadeMode)
                 {
                     // If the next caller is the last, and we skip it (Consequence caller that we got right).
                     if (CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript) > 0)

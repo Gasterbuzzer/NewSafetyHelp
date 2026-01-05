@@ -48,13 +48,13 @@ namespace NewSafetyHelp.CallerPatches
                     return true;
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     _lastDayNum.SetValue(__instance, __instance.mainGameLastDay);
                 }
                 else
                 {
-                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.getActiveCustomCampaign().campaignDays);
+                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.GetActiveCustomCampaign().campaignDays);
                 }
 
 
@@ -89,7 +89,7 @@ namespace NewSafetyHelp.CallerPatches
                  * Add Custom Callers / Campaign Callers.
                  */
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
+                if (!CustomCampaignGlobal.InCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
                     foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in GlobalParsingVariables.CustomCallersMainGame)
                     {
@@ -204,21 +204,21 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    if (string.IsNullOrEmpty(CustomCampaignGlobal.currentCustomCampaignName)) // Invalid Custom Campaign
+                    if (string.IsNullOrEmpty(CustomCampaignGlobal.CurrentCustomCampaignName)) // Invalid Custom Campaign
                     {
                         MelonLogger.Error("ERROR: Custom Campaign is set to be true but no custom campaign is active!");
                         return true;
                     }
-                    else if (!CustomCampaignGlobal.customCampaignsAvailable.Exists(scannedCampaign =>
+                    else if (!CustomCampaignGlobal.CustomCampaignsAvailable.Exists(scannedCampaign =>
                                  scannedCampaign.campaignName ==
-                                 CustomCampaignGlobal.currentCustomCampaignName)) // Custom Campaign is not registered.
+                                 CustomCampaignGlobal.CurrentCustomCampaignName)) // Custom Campaign is not registered.
                     {
                         MelonLogger.Error(
                             "ERROR: Current Custom Campaign has not been properly setup! Stopping loading.");
                         return true;
                     }
 
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     // Clear callers array with amount of campaign callers.
                     __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
@@ -415,7 +415,7 @@ namespace NewSafetyHelp.CallerPatches
                     return true;
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // In main Campaign.
+                if (!CustomCampaignGlobal.InCustomCampaign) // In main Campaign.
                 {
                     bool mainCampaignResult; // False
 
@@ -435,14 +435,14 @@ namespace NewSafetyHelp.CallerPatches
                 else // Custom Campaign
                 {
                     CustomCallerExtraInfo customCallerFound =
-                        CustomCampaignGlobal.getCustomCallerFromActiveCampaign(__instance.currentCallerID);
+                        CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
 
                     if (customCallerFound == null)
                     {
                         MelonLogger.Error(
                             $"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
 
-                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.getActiveCustomCampaign()
+                        foreach (CustomCallerExtraInfo customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
                                      .customCallersInCampaign)
                         {
                             MelonLogger.Error($"{customCallerE.callerName} : {customCallerE.orderInCampaign}");
@@ -509,7 +509,7 @@ namespace NewSafetyHelp.CallerPatches
 
 
                 if (GlobalVariables.currentDay >= 7 &&
-                    !CustomCampaignGlobal.inCustomCampaign) // Patched to work better with custom campaigns.
+                    !CustomCampaignGlobal.InCustomCampaign) // Patched to work better with custom campaigns.
                 {
                     return false;
                 }
@@ -551,7 +551,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 bool normalCallerAfterCheck = false;
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign.
+                if (!CustomCampaignGlobal.InCustomCampaign) // Not in custom campaign.
                 {
                     if (GlobalVariables.isXmasDLC &&
                         GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold &&
@@ -625,13 +625,13 @@ namespace NewSafetyHelp.CallerPatches
                         normalCallerAfterCheck = true;
                     }
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
                     #if DEBUG
                     MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
                     #endif
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

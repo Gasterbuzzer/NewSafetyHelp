@@ -35,9 +35,9 @@ namespace NewSafetyHelp.CustomVideos
             {
                 __instance.notification.SetActive(false);
 
-                if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

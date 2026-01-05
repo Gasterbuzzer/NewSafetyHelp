@@ -917,7 +917,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         string customCampaignNameCopy = customCampaignName;
 
                         CustomCampaignExtraInfo currentCustomCampaign =
-                            CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
+                            CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                                 customCampaignSearch.campaignName == customCampaignNameCopy);
 
                         if (currentCustomCampaign == null)
@@ -989,7 +989,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 // Add to correct campaign.
                 CustomCampaignExtraInfo foundCustomCampaign =
-                    CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
+                    CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                         customCampaignSearch.campaignName == customCampaignNameCopy);
 
                 if (foundCustomCampaign != null)

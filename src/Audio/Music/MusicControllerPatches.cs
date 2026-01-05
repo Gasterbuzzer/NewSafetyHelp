@@ -26,7 +26,7 @@ namespace NewSafetyHelp.Audio.Music
             private static bool Prefix(MethodBase __originalMethod, MusicController __instance)
             {
                 // If in the main game and the current day is the 7th day.
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.currentDay == 7 && !GlobalVariables.arcadeMode)
                     {
@@ -47,7 +47,7 @@ namespace NewSafetyHelp.Audio.Music
                     return true;
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main game
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main game
                 {
                     if (GlobalVariables.currentDay > 4)
                     {
@@ -76,9 +76,9 @@ namespace NewSafetyHelp.Audio.Music
                             chosenMusicIndex); // __instance.previousHoldMusicIndex = index1;
                     }
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign Music. Ignores the day
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Music. Ignores the day
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -222,13 +222,13 @@ namespace NewSafetyHelp.Audio.Music
                     }
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
                     __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

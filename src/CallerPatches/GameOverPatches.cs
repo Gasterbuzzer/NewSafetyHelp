@@ -38,9 +38,9 @@ namespace NewSafetyHelp.CallerPatches
                     return true;
                 }
 
-                if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

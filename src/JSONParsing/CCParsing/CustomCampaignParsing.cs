@@ -251,7 +251,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             
             // We finished adding all missing values and now add the campaign as available.
-            CustomCampaignGlobal.customCampaignsAvailable.Add(customCampaign);
+            CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }
         
         private static CustomCampaignExtraInfo ParseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,

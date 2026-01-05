@@ -22,7 +22,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign) // Use Custom Campaign saving.
+                if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
                     CustomCampaignSaving.saveCustomCampaignInfo();
                 }
@@ -63,7 +63,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign) // Use Custom Campaign saving.
+                if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
                     CustomCampaignSaving.saveCustomCampaignInfo();
                 }
@@ -101,7 +101,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     __instance.hasLoaded = false;
 
@@ -261,7 +261,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
 
                     // Custom Campaign Magic. The values for custom campaigns are loaded beforehand. So no need for else.
-                    if (!CustomCampaignGlobal.inCustomCampaign)
+                    if (!CustomCampaignGlobal.InCustomCampaign)
                     {
                         if (PlayerPrefs.HasKey("SavedGameFinished"))
                         {
@@ -319,7 +319,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                  * Special loading. (Options that are saved differently)
                  */
 
-                if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
                     CustomCampaignSaving.loadCustomCampaignOptions();
                     
@@ -368,7 +368,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign) // Use Custom Campaign saving.
+                if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
                     CustomCampaignSaving.resetCustomCampaignFile();
                     SceneManager.LoadScene("MainMenuScene"); // Reload Scene
@@ -487,7 +487,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                  * Specially handled settings.
                  */
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
                     PlayerPrefs.SetInt("SavedColorTheme", __instance.savedColorTheme);
                 }
@@ -540,14 +540,14 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 __instance.masterSlider.value = GlobalVariables.saveManagerScript.savedAmbienceVolume;
                 __instance.textSizeSlider.value = GlobalVariables.saveManagerScript.savedTextSizeMultiplier;
                 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
                     __instance.colorDropdown.value = GlobalVariables.saveManagerScript.savedColorTheme;
                     __instance.ColorThemeChanged();
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

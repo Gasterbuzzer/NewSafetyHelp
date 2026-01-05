@@ -44,7 +44,7 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                 
                 int dayAmount = 1;
                 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     foreach (Caller caller in GlobalVariables.callerControllerScript.callers)
                     {
@@ -73,7 +73,7 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                             continue;
                         }
                         
-                        CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(currentCallerIndex);
+                        CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(currentCallerIndex);
 
                         if (customCallerFound == null)
                         {

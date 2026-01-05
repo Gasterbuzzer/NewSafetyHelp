@@ -12,7 +12,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         private static void initializeCustomCampaignOnce()
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -81,13 +81,13 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         public static void saveCustomCampaignInfo()
         {
-            if (!CustomCampaignGlobal.inCustomCampaign)
+            if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 MelonLogger.Warning("WARNING: Called save custom campaign but there is no campaign active.");
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -261,13 +261,13 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         public static void loadFromFileCustomCampaignInfo()
         {
-            if (!CustomCampaignGlobal.inCustomCampaign)
+            if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 MelonLogger.Warning("WARNING: Called load custom campaign but there is no campaign active.");
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -419,13 +419,13 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         {
             MelonLogger.Msg("INFO: Resetting custom campaign file.");
 
-            if (!CustomCampaignGlobal.inCustomCampaign)
+            if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 MelonLogger.Warning("WARNING: Called reset custom campaign but there is no campaign active.");
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -508,7 +508,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         private static void initializeCustomCampaignOptionsOnce()
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -540,13 +540,13 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         public static void saveCustomCampaignOptions()
         {
-            if (!CustomCampaignGlobal.inCustomCampaign)
+            if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 MelonLogger.Warning("WARNING: Called save custom campaign but there is no campaign active.");
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -607,13 +607,13 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         public static void loadCustomCampaignOptions()
         {
             MelonLogger.Msg("INFO: Starting to load all custom campaign settings/options.");
-            if (!CustomCampaignGlobal.inCustomCampaign)
+            if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 MelonLogger.Warning("WARNING: Called load custom campaign but there is no campaign active.");
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {

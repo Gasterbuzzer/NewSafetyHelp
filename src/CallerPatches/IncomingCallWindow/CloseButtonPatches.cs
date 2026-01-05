@@ -23,7 +23,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 if (GlobalVariables.callerControllerScript.currentCallerID ==
                     GlobalVariables.callerControllerScript.callers.Length - 1)
                 {
-                    if (CustomCampaignGlobal.inCustomCampaign) // If we are not in the main campaign.
+                    if (CustomCampaignGlobal.InCustomCampaign) // If we are not in the main campaign.
                     {
                         MelonLogger.Msg(ConsoleColor.Green, "INFO: Playing custom ending cutscene.");
 
@@ -58,7 +58,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
                         .disconnect);
 
-                    if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.arcadeMode)
+                    if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.arcadeMode)
                     {
                         // If the next caller is the last, and we skip it (Consequence caller that we got right).
                         int checkResult = checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
@@ -89,7 +89,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             {
                 if (i < __instance.callers.Length) // Valid caller.
                 {
-                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(i);
+                    CustomCallerExtraInfo customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
 
                     // If the next caller does not exist or was not found, we simply say false.
                     // There might be valid callers after that one, but we are in an invalid state.

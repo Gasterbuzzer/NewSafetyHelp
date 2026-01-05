@@ -130,7 +130,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                 // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
                 // And only if not in a custom campaign.
-                if (!CustomCampaignGlobal.inCustomCampaign &&
+                if (!CustomCampaignGlobal.InCustomCampaign &&
                     profile != null && profile.callerMonster != null &&
                     !__instance.arcadeMode)
                 {
@@ -259,7 +259,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                 bool replaceTrue = false;
 
-                if (!CustomCampaignGlobal.inCustomCampaign && !__instance.arcadeMode)
+                if (!CustomCampaignGlobal.InCustomCampaign && !__instance.arcadeMode)
                 {
                     foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
                     {
@@ -371,7 +371,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                 }
 
                 // Not in custom campaign. This makes odd problems in custom campaigns.
-                if (!CustomCampaignGlobal.inCustomCampaign) 
+                if (!CustomCampaignGlobal.InCustomCampaign) 
                 {
                     if (profile != null && !__instance.arcadeMode &&
                         profile.consequenceCallerProfile !=

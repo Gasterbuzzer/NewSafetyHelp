@@ -86,7 +86,7 @@ namespace NewSafetyHelp
         // ReSharper disable once InconsistentNaming
         private static void Postfix(EntryUnlockController __instance)
         {
-            if (!CustomCampaignGlobal.inCustomCampaign)
+            if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 // We left the custom campaign. We reset the custom campaign values / entries.
                 if (addedEntriesToCustomCampaign)
@@ -127,7 +127,7 @@ namespace NewSafetyHelp
                     return;
                 }
 
-                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (customCampaign == null)
                 {
@@ -147,10 +147,10 @@ namespace NewSafetyHelp
                 MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added... (Custom Campaign)");
 
                 // Replace all entries that need replacement.
-                CustomCampaignGlobal.replaceAllProvidedCampaignEntries(ref __instance.allEntries);
+                CustomCampaignGlobal.ReplaceAllProvidedCampaignEntries(ref __instance.allEntries);
                 
                 // Read all JSON and add all monsters and campaigns (/Calls)
-                CustomCampaignGlobal.addAllCustomCampaignEntriesToArray(ref __instance.allEntries);
+                CustomCampaignGlobal.AddAllCustomCampaignEntriesToArray(ref __instance.allEntries);
 
                 addedEntriesToCustomCampaign = true;
                 MelonLogger.Msg(ConsoleColor.Green, "INFO: Added/Modified all custom entries successfully! (Custom Campaign)");

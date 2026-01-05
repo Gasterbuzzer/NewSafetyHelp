@@ -37,7 +37,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 List<string> defaultDayNames = new List<string>() {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
                 
-                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign)
+                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.arcadeMode)
                     {
@@ -47,7 +47,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     __result = defaultDayNames[GlobalVariables.currentDay - 1];
 
                 }
-                else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign)
+                else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     switch (GlobalVariables.currentDay)
                     {
@@ -68,9 +68,9 @@ namespace NewSafetyHelp.CallerPatches.UI
                             break;
                     }
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign Values
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Values
                 {
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (currentCustomCampaign != null)
                     {
@@ -96,12 +96,12 @@ namespace NewSafetyHelp.CallerPatches.UI
                         }
                         
                         bool foundDayStrings = false;
-                        List<string> daysStrings = CustomCampaignGlobal.getActiveModifierValue(
+                        List<string> daysStrings = CustomCampaignGlobal.GetActiveModifierValue(
                             c => c.dayTitleStrings, ref foundDayStrings,
                             v => v != null && v.Count > 0);
                         
                         bool foundUnlockDays = false;
-                        List<int> unlockDays = CustomCampaignGlobal.getActiveModifierValue(
+                        List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
                             c => c.unlockDays, ref foundUnlockDays,
                             v => v != null && v.Count > 0);
                         
@@ -218,12 +218,12 @@ namespace NewSafetyHelp.CallerPatches.UI
                 loadVarsMethod.Invoke(mainCanvasBehavior, null);
                 populateEntriesListMethod.Invoke(mainCanvasBehavior, null);
                 
-                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign)
+                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                 {
                   mainCanvasBehavior.trialScreen.SetActive(true);
                   mainCanvasBehavior.postProcessVolume.profile = mainCanvasBehavior.scaryProcessProfile;
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign Last Day
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Last Day
                 {
                     // Currently just skips it.
                 }
@@ -267,7 +267,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                   
                   GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
                   
-                  if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign)
+                  if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                   {
                     mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
                     GlobalVariables.fade.FadeIn();
@@ -276,7 +276,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     
                     GlobalVariables.fade.FadeOut();
                   }
-                  else if (CustomCampaignGlobal.inCustomCampaign) // Just Skip
+                  else if (CustomCampaignGlobal.InCustomCampaign) // Just Skip
                   {
                       // Skip
                   }
@@ -305,7 +305,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 mainCanvasBehavior.softwareStartupPanel.SetActive(false);
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
                 
-                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign)
+                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                 {
                   yield return new WaitForSeconds(0.4f);
                   
@@ -317,7 +317,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                   GlobalVariables.fade.FadeOut();
                   GlobalVariables.musicControllerScript.StartTrialMusic();
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign)
+                else if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     // Skip
                 }
@@ -332,10 +332,10 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 
                 // Custom Enables
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -429,13 +429,13 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 yield return new WaitForSeconds(2f);
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(), GlobalVariables.callerControllerScript.GetScore());
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -460,7 +460,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     _progressDay.SetValue(mainCanvasBehavior, true); // mainCanvasBehavior.progressDay = true;
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     GlobalVariables.saveManagerScript.savedDay = GlobalVariables.currentDay;
                     GlobalVariables.saveManagerScript.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
@@ -479,7 +479,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 else // Custom Campaign
                 {
                     
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -570,7 +570,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     GlobalVariables.musicControllerScript.StopTrialMusic();
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     GlobalVariables.saveManagerScript.savedGameFinished = 1;
                     GlobalVariables.saveManagerScript.savedGameFinishedDisplay = 1;
@@ -587,7 +587,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -629,7 +629,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 yield return new WaitForSeconds(0.5f);
                 
                 // Inject custom end clip here.
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
                     if (GlobalVariables.isXmasDLC)
@@ -639,7 +639,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -659,13 +659,13 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 mainCanvasBehavior.videoPlayer.Play();
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -692,7 +692,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                 }
                 
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&!CustomCampaignGlobal.inCustomCampaign) // Disable Achievement in Custom Campaign
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&!CustomCampaignGlobal.InCustomCampaign) // Disable Achievement in Custom Campaign
                 {
                     SteamUserStats.SetAchievement("GameFinished");
                     
@@ -741,7 +741,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else
                 {
-                    if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign, could be main or DLC.
+                    if (!CustomCampaignGlobal.InCustomCampaign) // Not in custom campaign, could be main or DLC.
                     {
                         foreach (int downedNetworkCall in GlobalVariables.callerControllerScript.downedNetworkCalls)
                         {
@@ -754,7 +754,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                     else // Custom Campaign
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         
                         if (customCaller == null)
                         {
@@ -824,7 +824,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 mainCanvasBehavior.cutsceneCanvas.SetActive(true);
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) // Not in custom campaign
                 {
                     mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
                 
@@ -835,7 +835,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -859,13 +859,13 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 GlobalVariables.fade.FadeOut(3f);
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
                     yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -889,7 +889,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                 }
                 
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign) // Don't show fired achievement in custom campaign.
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Don't show fired achievement in custom campaign.
                 {
                     SteamUserStats.SetAchievement("Fired");
                     SteamUserStats.StoreStats();
