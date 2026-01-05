@@ -38,7 +38,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -103,7 +103,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -236,7 +236,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

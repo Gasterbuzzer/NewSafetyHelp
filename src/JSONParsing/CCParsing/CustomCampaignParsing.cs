@@ -36,7 +36,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
             
-            CustomCampaignExtraInfo customCampaign = ParseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
+            CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = ParseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
                     ref jsonFolderPath, ref customCampaignName);
             
             // Check if any callers have to be added to this campaign.
@@ -254,7 +254,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }
         
-        private static CustomCampaignExtraInfo ParseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomCampaign.CustomCampaignModel.CustomCampaign ParseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath,
             ref string customCampaignName)
         {
@@ -681,7 +681,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             
             // Create
-            return new CustomCampaignExtraInfo
+            return new CustomCampaign.CustomCampaignModel.CustomCampaign
             {
                 campaignName = customCampaignName,
                 campaignDays = customCampaignDays,

@@ -78,7 +78,7 @@ namespace NewSafetyHelp.Audio.Music
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Music. Ignores the day
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -228,7 +228,7 @@ namespace NewSafetyHelp.Audio.Music
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

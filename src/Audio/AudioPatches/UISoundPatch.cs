@@ -24,7 +24,7 @@ namespace NewSafetyHelp.Audio.AudioPatches
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

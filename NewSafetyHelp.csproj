@@ -133,7 +133,7 @@
     <Compile Include="src\CallerPatches\UI\MainCanvasPatches.cs" />
     <Compile Include="src\CallerPatches\UI\NextCaller.cs" />
     <Compile Include="src\CallerPatches\UI\UIFallbacks.cs" />
-    <Compile Include="src\CustomCampaign\CustomCampaignModel\CustomCampaignExtraInfo.cs" />
+    <Compile Include="src\CustomCampaign\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaign\CustomRingtone\RingtoneExtraInfo.cs" />
     <Compile Include="src\CustomCampaign\Desktop\DesktopBackgroundPatches.cs" />

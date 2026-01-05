@@ -40,7 +40,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

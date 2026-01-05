@@ -37,11 +37,11 @@ namespace NewSafetyHelp.CustomVideos
 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("CustomCampaignExtraInfo is null. Critical error.");
+                        MelonLogger.Error("CustomCampaign is null. Critical error.");
                         yield break;
                     }
 

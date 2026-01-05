@@ -69,7 +69,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
 
             // Add to correct campaign.
-            CustomCampaignExtraInfo foundCustomCampaign =
+            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.campaignName == customCampaignName);
 

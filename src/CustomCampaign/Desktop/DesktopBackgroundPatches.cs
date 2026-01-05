@@ -23,7 +23,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

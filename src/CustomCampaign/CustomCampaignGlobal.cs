@@ -12,7 +12,7 @@ namespace NewSafetyHelp.CustomCampaign
 {
     public static class CustomCampaignGlobal
     {
-        public static readonly List<CustomCampaignExtraInfo> CustomCampaignsAvailable = new List<CustomCampaignExtraInfo>();
+        public static readonly List<CustomCampaignModel.CustomCampaign> CustomCampaignsAvailable = new List<CustomCampaignModel.CustomCampaign>();
 
         // ReSharper disable once RedundantDefaultMemberInitializer
         public static bool InCustomCampaign = false;
@@ -39,10 +39,10 @@ namespace NewSafetyHelp.CustomCampaign
         }
 
         /// <summary>
-        /// Returns the current campaign as CustomCampaignExtraInfo.
+        /// Returns the current campaign as CustomCampaign.
         /// </summary>
-        /// <returns>CustomCampaignExtraInfo Object of the current activate custom campaign.</returns>
-        public static CustomCampaignExtraInfo GetActiveCustomCampaign()
+        /// <returns>CustomCampaign Object of the current activate custom campaign.</returns>
+        public static CustomCampaignModel.CustomCampaign GetActiveCustomCampaign()
         {
             return CustomCampaignsAvailable.Find(scannedCampaign =>
                 scannedCampaign.campaignName == CurrentCustomCampaignName);
@@ -77,7 +77,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// <returns>ID of the theme if found. -1 if not found or if something went wrong.</returns>
         private static int GetThemeID(ThemesExtraInfo theme)
         {
-            CustomCampaignExtraInfo customCampaign = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -118,7 +118,7 @@ namespace NewSafetyHelp.CustomCampaign
         [CanBeNull]
         public static ThemesExtraInfo GetThemeFromID(int themeID)
         {
-            CustomCampaignExtraInfo customCampaign = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -169,7 +169,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// <returns>(Int) -1 = No theme found; Otherwise: ID of Theme.</returns>
         public static int GetThemeIDFromName(string themeName)
         {
-            CustomCampaignExtraInfo customCampaign = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -214,7 +214,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// <returns>(Int) -1 = No theme to be activated; Otherwise: ID of Theme to be activated.</returns>
         public static int CheckIfConditionalTheme()
         {
-            CustomCampaignExtraInfo customCampaign = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -259,7 +259,7 @@ namespace NewSafetyHelp.CustomCampaign
         [CanBeNull]
         public static ThemesExtraInfo GetActiveTheme(ref bool isCustomTheme)
         {
-            CustomCampaignExtraInfo customCampaign = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -311,11 +311,11 @@ namespace NewSafetyHelp.CustomCampaign
             ref bool foundModifier, Func<TValue, bool> predicate = null,
             Func<ModifierExtraInfo, bool> specialPredicate = null)
         {
-            CustomCampaignExtraInfo customCampaignExtraInfo = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
-            if (customCampaignExtraInfo == null)
+            if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting modifier!");
+                MelonLogger.Error("ERROR: customCampaign is null! Unable of getting modifier!");
                 return default;
             }
 
@@ -336,9 +336,9 @@ namespace NewSafetyHelp.CustomCampaign
             // We then pick the first in the list.
             // Note: General modifiers do not require to check for days, since they are always "valid", only the predicate.
 
-            if (customCampaignExtraInfo.customModifiersGeneral != null)
+            if (customCampaign.customModifiersGeneral != null)
             {
-                foreach (ModifierExtraInfo modifierGeneral in customCampaignExtraInfo.customModifiersGeneral)
+                foreach (ModifierExtraInfo modifierGeneral in customCampaign.customModifiersGeneral)
                 {
                     if (modifierGeneral == null)
                     {
@@ -359,9 +359,9 @@ namespace NewSafetyHelp.CustomCampaign
             // Now we check for conditional modifiers. Same work as with the general modifiers.
             // We only need to check if valid for the current day.
 
-            if (customCampaignExtraInfo.customModifiersDays != null)
+            if (customCampaign.customModifiersDays != null)
             {
-                foreach (ModifierExtraInfo modifierDay in customCampaignExtraInfo.customModifiersDays)
+                foreach (ModifierExtraInfo modifierDay in customCampaign.customModifiersDays)
                 {
                     if (modifierDay == null)
                     {
@@ -389,22 +389,22 @@ namespace NewSafetyHelp.CustomCampaign
         /// <param name="_monsterProfileList">MonsterProfileList to add the entries to.</param>
         public static void AddAllCustomCampaignEntriesToArray(ref MonsterProfileList _monsterProfileList)
         {
-            CustomCampaignExtraInfo customCampaignExtraInfo = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
-            if (customCampaignExtraInfo == null)
+            if (customCampaign == null)
             {
                 MelonLogger.Error(
-                    "ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                    "ERROR: customCampaign is null! Unable of adding entries to custom campaign!");
                 return;
             }
 
             #if DEBUG
             MelonLogger.Msg(
-                $"DEBUG: Now adding all {customCampaignExtraInfo.entriesOnlyInCampaign.Count} entries to the custom campaign.");
+                $"DEBUG: Now adding all {customCampaign.entriesOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
 
             // Add all entries.
-            foreach (EntryExtraInfo entryInCustomCampaign in customCampaignExtraInfo.entriesOnlyInCampaign)
+            foreach (EntryExtraInfo entryInCustomCampaign in customCampaign.entriesOnlyInCampaign)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
@@ -420,18 +420,18 @@ namespace NewSafetyHelp.CustomCampaign
 
         public static void ReplaceAllProvidedCampaignEntries(ref MonsterProfileList _monsterProfileList)
         {
-            CustomCampaignExtraInfo customCampaignExtraInfo = GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
-            if (customCampaignExtraInfo == null || !InCustomCampaign)
+            if (customCampaign == null || !InCustomCampaign)
             {
                 MelonLogger.Error(
-                    "ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                    "ERROR: customCampaign is null! Unable of adding entries to custom campaign!");
                 return;
             }
 
             #if DEBUG
             MelonLogger.Msg(
-                $"DEBUG: Now replacing all {customCampaignExtraInfo.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
+                $"DEBUG: Now replacing all {customCampaign.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
 
             if (_monsterProfileList.monsterProfiles.Length <= 0)
@@ -453,7 +453,7 @@ namespace NewSafetyHelp.CustomCampaign
                 }
 
                 // Find matching entry to replace
-                EntryExtraInfo entryFound = customCampaignExtraInfo.entryReplaceOnlyInCampaign.Find(replaceEntry =>
+                EntryExtraInfo entryFound = customCampaign.entryReplaceOnlyInCampaign.Find(replaceEntry =>
                     replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
                 );
 

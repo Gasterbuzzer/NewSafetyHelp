@@ -39,7 +39,7 @@ namespace NewSafetyHelp.CustomDesktop
                 // If in custom campaign, we replace it with custom text.
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -88,7 +88,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                 if (!CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Main Campaign
                 {
-                    foreach (CustomCampaignExtraInfo customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
+                    foreach (CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
                     {
                         CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
                     }
@@ -119,7 +119,7 @@ namespace NewSafetyHelp.CustomDesktop
                 // Change username text if available
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -446,7 +446,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     // Get our stored values
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {

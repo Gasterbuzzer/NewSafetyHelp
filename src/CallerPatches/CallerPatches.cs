@@ -218,7 +218,7 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     // Clear callers array with amount of campaign callers.
                     __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
@@ -631,7 +631,7 @@ namespace NewSafetyHelp.CallerPatches
                     MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
                     #endif
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

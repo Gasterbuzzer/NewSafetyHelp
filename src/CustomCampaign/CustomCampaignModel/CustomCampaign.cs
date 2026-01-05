@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 {
-    public class CustomCampaignExtraInfo
+    public class CustomCampaign
     {
         public string campaignName = "NO_CAMPAIGN_NAME_PROVIDED";
 

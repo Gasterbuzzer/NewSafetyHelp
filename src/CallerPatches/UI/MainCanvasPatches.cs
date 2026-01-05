@@ -70,7 +70,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Values
                 {
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (currentCustomCampaign != null)
                     {
@@ -335,11 +335,11 @@ namespace NewSafetyHelp.CallerPatches.UI
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null! Unable of enabling skip call button.");
+                        MelonLogger.Error("ERROR: CustomCampaign is null! Unable of enabling skip call button.");
                     }
                     else if (customCampaign.alwaysSkipCallButton)
                     {
@@ -435,7 +435,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -479,7 +479,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 else // Custom Campaign
                 {
                     
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -587,11 +587,11 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
                     
@@ -639,11 +639,11 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
 
@@ -665,11 +665,11 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
                     
@@ -835,11 +835,11 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
 
@@ -865,11 +865,11 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
                     

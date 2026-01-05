@@ -127,7 +127,7 @@ namespace NewSafetyHelp
                     return;
                 }
 
-                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (customCampaign == null)
                 {

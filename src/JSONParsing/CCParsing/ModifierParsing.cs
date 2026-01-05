@@ -34,7 +34,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
-            CustomCampaignExtraInfo foundCustomCampaign =
+            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.campaignName == customCampaignName);
 

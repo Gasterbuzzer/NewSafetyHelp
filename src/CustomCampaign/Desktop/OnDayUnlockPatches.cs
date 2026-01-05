@@ -107,11 +107,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         }
                         else // Custom Campaign
                         {
-                            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                             if (currentCampaign == null)
                             {
-                                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                                MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                                 return true;
                             }
                             
@@ -182,11 +182,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "EntryBrowser-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
                 
@@ -220,11 +220,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Scorecard")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
                 
@@ -258,11 +258,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Artbook-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
                 
@@ -296,12 +296,12 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Arcade-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
                     MelonLogger.Error(
-                        "ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                        "ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
 

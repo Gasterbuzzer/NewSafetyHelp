@@ -12,7 +12,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         private static void initializeCustomCampaignOnce()
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -87,7 +87,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -267,7 +267,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -425,7 +425,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -508,7 +508,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         private static void initializeCustomCampaignOptionsOnce()
         {
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -546,7 +546,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -613,7 +613,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
