@@ -119,9 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
+    <Compile Include="src\Audio\AudioPatches\UISoundPatch.cs" />
     <Compile Include="src\Audio\Music\Data\MusicExtraInfo.cs" />
     <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />
-    <Compile Include="src\Audio\UISoundPatch.cs" />
     <Compile Include="src\CallerPatches\Answer\ProvidingAnswer.cs" />
     <Compile Include="src\CallerPatches\CallerCreationAndUpdate\CreateAndUpdateCallerPatches.cs" />
     <Compile Include="src\CallerPatches\CallerModel\CustomCallerExtraInfo.cs" />

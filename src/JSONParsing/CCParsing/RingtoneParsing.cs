@@ -92,12 +92,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ref string jsonFolderPath, ref string customCampaignName)
         {
             int unlockDay = 0; // When the ringtone is unlocked.
+            
+            bool onlyOnUnlockDay = true; // If the ringtone should only play on the unlock day.
 
             string ringtoneAudioPath = ""; // Audio Path to load audio from.
+            
+            bool isGlitchedVersion = false;
 
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignNameValue))
             {
-                customCampaignName = (string)customCampaignNameValue;
+                customCampaignName = customCampaignNameValue.Value<string>();
             }
 
             if (jObjectParsed.TryGetValue("ringtone_audio_clip_name", out var ringtoneAudioClipName))
@@ -122,7 +126,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (jObjectParsed.TryGetValue("unlock_day", out var unlockDayValue))
             {
-                unlockDay = (int)unlockDayValue;
+                unlockDay = unlockDayValue.Value<int>();
+            }
+            
+            if (jObjectParsed.TryGetValue("only_play_on_unlock_day", out var onlyPlayOnUnlockDayValue))
+            {
+                onlyOnUnlockDay = onlyPlayOnUnlockDayValue.Value<bool>();
+            }
+            
+            if (jObjectParsed.TryGetValue("is_glitched_version", out var isGlitchedVersionValue))
+            {
+                isGlitchedVersion = isGlitchedVersionValue.Value<bool>();
             }
 
             return new RingtoneExtraInfo()
@@ -132,6 +146,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ringtoneClipPath = ringtoneAudioPath,
 
                 unlockDay = unlockDay,
+                
+                onlyOnUnlockDay = onlyOnUnlockDay,
+                
+                isGlitchedVersion = isGlitchedVersion
             };
         }
     }
