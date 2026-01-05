@@ -170,6 +170,7 @@
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\EntryParsing.cs" />
+    <Compile Include="src\JSONParsing\GlobalParsingVariables.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\JSONParsing\ParsingHelper.cs" />
     <Compile Include="src\Main.cs" />

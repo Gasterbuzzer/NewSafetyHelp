@@ -5,7 +5,6 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CallerPatches.UI;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.JSONParsing;
@@ -92,8 +91,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (!CustomCampaignGlobal.inCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
-                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in ParseJSONFiles
-                                 .customCallerMainGame)
+                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in GlobalParsingVariables.customCallerMainGame)
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {

@@ -65,8 +65,8 @@ namespace NewSafetyHelp.JSONParsing
                 int tempID = GetNewEntryID(entryUnlockerInstance);
 
                 // We add our amountExtra and increment it for the next extra.
-                tempID += ParseJSONFiles.amountExtra;
-                ParseJSONFiles.amountExtra++;
+                tempID += GlobalParsingVariables.amountExtra;
+                GlobalParsingVariables.amountExtra++;
 
                 newID = tempID;
             }

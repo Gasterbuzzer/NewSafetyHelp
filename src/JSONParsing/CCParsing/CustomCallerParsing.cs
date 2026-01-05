@@ -47,7 +47,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCallerExtraInfo _customCaller = ParseCustomCaller(ref jObjectParsed,
                 ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign,
                 ref customCallerMonsterName, ref customCallerAudioPath,
-                ref orderInCampaign, ParseJSONFiles.mainCampaignCallAmount, ref ParseJSONFiles.customCallerMainGame);
+                ref orderInCampaign, GlobalParsingVariables.mainCampaignCallAmount,
+                ref GlobalParsingVariables.customCallerMainGame);
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
@@ -102,7 +103,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (inMainCampaign)
             {
                 MelonLogger.Msg("INFO: Found entry to add to the main game.");
-                ParseJSONFiles.customCallerMainGame.Add(orderInCampaign, _customCaller);
+                GlobalParsingVariables.customCallerMainGame.Add(orderInCampaign, _customCaller);
             }
             else
             {
@@ -132,7 +133,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
                     #endif
 
-                    ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Add(_customCaller);
+                    GlobalParsingVariables.missingCustomCallerCallersCustomCampaign.Add(_customCaller);
                 }
             }
 
@@ -141,7 +142,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             #endif
         }
 
-        public static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign,
             ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,
             int mainCampaignCallAmount, ref Dictionary<int, CustomCallerExtraInfo> customCallerMainGame)

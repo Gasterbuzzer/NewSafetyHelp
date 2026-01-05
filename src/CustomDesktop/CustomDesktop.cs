@@ -93,9 +93,9 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
                     }
                     
-                    if (ParseJSONFiles.mainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
+                    if (GlobalParsingVariables.mainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
                     {
-                        foreach (EmailExtraInfo emailExtra in ParseJSONFiles.mainCampaignEmails)
+                        foreach (EmailExtraInfo emailExtra in GlobalParsingVariables.mainCampaignEmails)
                         {
                             if (emailExtra.inMainCampaign)
                             {

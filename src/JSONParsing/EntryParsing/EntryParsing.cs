@@ -495,7 +495,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             if ((jObjectParsed.ContainsKey("caller_audio_clip_name") || includeMainCampaign || _inCustomCampaign ||
                  replaceEntry) && newExtra != null)
             {
-                ParseJSONFiles.entriesExtraInfo.Add(newExtra);
+                GlobalParsingVariables.entriesExtraInfo.Add(newExtra);
             }
 
             // Generate new ID if not provided.
@@ -877,7 +877,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
 
                     // Include a copy of the monster in the extra info
-                    ParseJSONFiles.entriesExtraInfo.Find(item =>
+                    GlobalParsingVariables.entriesExtraInfo.Find(item =>
                             item.Name == foundMonsterCopy.monsterName || item.ID == foundMonsterCopy.monsterID)
                         .referenceCopyEntry = foundMonster;
                 }
@@ -893,7 +893,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     if (foundMonster == null)
                     {
                         // Include a copy of the monster in the extra info
-                        ParseJSONFiles.entriesExtraInfo.Find(item =>
+                        GlobalParsingVariables.entriesExtraInfo.Find(item =>
                                 item.Name == foundMonsterXMASCopy.monsterName ||
                                 item.ID == foundMonsterXMASCopy.monsterID)
                             .referenceCopyEntry = foundMonster;
@@ -907,7 +907,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 {
                     string monsterNameCopy = foundMonster.monsterName;
 
-                    EntryExtraInfo extraEntryInfo = ParseJSONFiles.entriesExtraInfo.Find(item => item.Name == monsterNameCopy);
+                    EntryExtraInfo extraEntryInfo = GlobalParsingVariables.entriesExtraInfo.Find(item => item.Name == monsterNameCopy);
                     if (extraEntryInfo != null) // Only if it exists.
                     {
                         extraEntryInfo.referenceCopyEntry = foundMonster;
@@ -928,7 +928,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 " Adding to late add.");
                             #endif
 
-                            ParseJSONFiles.missingReplaceEntriesCustomCampaign.Add(extraEntryInfo);
+                            GlobalParsingVariables.missingReplaceEntriesCustomCampaign.Add(extraEntryInfo);
 
                             return;
                         }
@@ -960,7 +960,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             MonsterProfile _newMonsterCopy = _newMonster;
 
             // Include a copy of the monster in the extra info
-            EntryExtraInfo extraEntryInfo = ParseJSONFiles.entriesExtraInfo.Find(item =>
+            EntryExtraInfo extraEntryInfo = GlobalParsingVariables.entriesExtraInfo.Find(item =>
                 item.Name == _newMonsterCopy.monsterName || item.ID == _newMonsterCopy.monsterID);
             if (extraEntryInfo != null) // Only if it exists.
             {
@@ -1019,7 +1019,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                     if (extraEntryInfo != null)
                     {
-                        ParseJSONFiles.missingEntriesCustomCampaign.Add(extraEntryInfo);
+                        GlobalParsingVariables.missingEntriesCustomCampaign.Add(extraEntryInfo);
                     }
                     else
                     {

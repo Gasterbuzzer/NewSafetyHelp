@@ -44,7 +44,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(CallerController __instance)
             {
-                foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
+                foreach (EntryExtraInfo item in GlobalParsingVariables.entriesExtraInfo)
                 {
                     if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name ||
                         __instance.currentCustomCaller.callerMonster.monsterID ==
@@ -134,7 +134,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                     profile != null && profile.callerMonster != null &&
                     !__instance.arcadeMode)
                 {
-                    foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in GlobalParsingVariables.entriesExtraInfo)
                     {
                         if (item.currentlySelected) // We found an entry to replace the audio for.
                         {
@@ -261,7 +261,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                 if (!CustomCampaignGlobal.inCustomCampaign && !__instance.arcadeMode)
                 {
-                    foreach (EntryExtraInfo item in ParseJSONFiles.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in GlobalParsingVariables.entriesExtraInfo)
                     {
                         if (item.inMainCampaign && !item.alreadyCalledOnce &&
                             !item.currentlySelected) // Find a valid entry.
@@ -384,13 +384,13 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                         {
                             MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
 
-                            if (ParseJSONFiles.entriesExtraInfo.Exists(item =>
+                            if (GlobalParsingVariables.entriesExtraInfo.Exists(item =>
                                     item.referenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile
                                         .name)) // IF the consequence caller has been replaced once.
                             {
                                 MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
-                                EntryExtraInfo foundExtraInfo = ParseJSONFiles.entriesExtraInfo.Find(item =>
+                                EntryExtraInfo foundExtraInfo = GlobalParsingVariables.entriesExtraInfo.Find(item =>
                                     item.referenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile.name);
 
@@ -428,7 +428,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             int entrySelected = Random.Range(0, entries.Count - 1);
 
                             // Audio check
-                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                            GlobalParsingVariables.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
                                 .currentlySelected = true;
 
                             // Get a "copy"
@@ -452,7 +452,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
-                            ParseJSONFiles.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                            GlobalParsingVariables.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
                                 .referenceProfileNameInternal = profile.name;
                         }
                     }

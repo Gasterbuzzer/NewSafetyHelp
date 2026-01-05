@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
@@ -18,13 +17,13 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             /// <summary>
             /// Patches the options menu to add our own options.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static void Prefix(MethodBase __originalMethod, OptionsMenuBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static void Prefix(OptionsMenuBehavior __instance)
             {
                 if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
                 {
-                    foreach (ThemesExtraInfo theme in ParseJSONFiles.mainGameThemes)
+                    foreach (ThemesExtraInfo theme in GlobalParsingVariables.mainGameThemes)
                     {
                         if (theme != null)
                         {
@@ -76,9 +75,9 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             /// <summary>
             /// Patches the color palette controller to also use custom themes.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, ColorPaletteController __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ColorPaletteController __instance)
             {
                 if (!CustomCampaignGlobal.inCustomCampaign)
                 {
@@ -88,15 +87,15 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     }
                     else // themeID >= 4
                     {
-                        for (int i = 0; i < ParseJSONFiles.mainGameThemes.Count; i++)
+                        for (int i = 0; i < GlobalParsingVariables.mainGameThemes.Count; i++)
                         {
                             if (GlobalVariables.saveManagerScript.savedColorTheme == i + 4)
                             {
-                                if (ParseJSONFiles.mainGameThemes[i] != null
-                                    && ParseJSONFiles.mainGameThemes[i].customThemePalette != null
-                                    && ParseJSONFiles.mainGameThemes[i].customThemePalette.colorSwatch != null)
+                                if (GlobalParsingVariables.mainGameThemes[i] != null
+                                    && GlobalParsingVariables.mainGameThemes[i].customThemePalette != null
+                                    && GlobalParsingVariables.mainGameThemes[i].customThemePalette.colorSwatch != null)
                                 {
-                                    __instance.colorPalette = ParseJSONFiles.mainGameThemes[i].customThemePalette;
+                                    __instance.colorPalette = GlobalParsingVariables.mainGameThemes[i].customThemePalette;
                                 }
                             }
                         }
@@ -227,9 +226,9 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             /// <summary>
             /// Patches the theme option to use our saving system instead. And we also allow picking custom themes.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, OptionsMenuBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(OptionsMenuBehavior __instance)
             {
                 if (!CustomCampaignGlobal.inCustomCampaign)
                 {

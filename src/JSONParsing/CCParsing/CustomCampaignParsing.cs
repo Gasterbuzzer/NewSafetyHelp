@@ -39,11 +39,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     ref jsonFolderPath, ref customCampaignName);
             
             // Check if any callers have to be added to this campaign.
-            if (ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Count > 0)
+            if (GlobalParsingVariables.missingCustomCallerCallersCustomCampaign.Count > 0)
             {
                 // Create a copy of the list to iterate over
                 List<CustomCallerExtraInfo> tempList =
-                    new List<CustomCallerExtraInfo>(ParseJSONFiles.missingCustomCallerCallersCustomCampaign);
+                    new List<CustomCallerExtraInfo>(GlobalParsingVariables.missingCustomCallerCallersCustomCampaign);
 
                 foreach (CustomCallerExtraInfo customCallerCC in tempList)
                 {
@@ -66,16 +66,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             _customCampaign.customCallersInCampaign.Add(customCallerCC);
                         }
 
-                        ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
+                        GlobalParsingVariables.missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
                     }
                 }
             }
 
             // Check if any entries have to be added to this campaign.
-            if (ParseJSONFiles.missingEntriesCustomCampaign.Count > 0)
+            if (GlobalParsingVariables.missingEntriesCustomCampaign.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(ParseJSONFiles.missingEntriesCustomCampaign);
+                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(GlobalParsingVariables.missingEntriesCustomCampaign);
 
                 foreach (EntryExtraInfo missingEntry in tempList)
                 {
@@ -87,16 +87,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         _customCampaign.entriesOnlyInCampaign.Add(missingEntry);
 
-                        ParseJSONFiles.missingEntriesCustomCampaign.Remove(missingEntry);
+                        GlobalParsingVariables.missingEntriesCustomCampaign.Remove(missingEntry);
                     }
                 }
             }
 
             // Check if any entries have to be added to this campaign.
-            if (ParseJSONFiles.missingReplaceEntriesCustomCampaign.Count > 0)
+            if (GlobalParsingVariables.missingReplaceEntriesCustomCampaign.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(ParseJSONFiles.missingReplaceEntriesCustomCampaign);
+                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(GlobalParsingVariables.missingReplaceEntriesCustomCampaign);
 
                 foreach (EntryExtraInfo missingEntry in tempList)
                 {
@@ -107,16 +107,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         #endif
 
                         _customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
-                        ParseJSONFiles.missingReplaceEntriesCustomCampaign.Remove(missingEntry);
+                        GlobalParsingVariables.missingReplaceEntriesCustomCampaign.Remove(missingEntry);
                     }
                 }
             }
 
             // Check if any emails have to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignEmails.Count > 0)
+            if (GlobalParsingVariables.missingCustomCampaignEmails.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<EmailExtraInfo> tempList = new List<EmailExtraInfo>(ParseJSONFiles.missingCustomCampaignEmails);
+                List<EmailExtraInfo> tempList = new List<EmailExtraInfo>(GlobalParsingVariables.missingCustomCampaignEmails);
 
                 foreach (EmailExtraInfo missingEmail in tempList)
                 {
@@ -127,16 +127,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         #endif
 
                         _customCampaign.emails.Add(missingEmail);
-                        ParseJSONFiles.missingCustomCampaignEmails.Remove(missingEmail);
+                        GlobalParsingVariables.missingCustomCampaignEmails.Remove(missingEmail);
                     }
                 }
             }
 
             // Check if any videos have to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignVideo.Count > 0)
+            if (GlobalParsingVariables.missingCustomCampaignVideo.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<CustomVideoExtraInfo> tempList = new List<CustomVideoExtraInfo>(ParseJSONFiles.missingCustomCampaignVideo);
+                List<CustomVideoExtraInfo> tempList = new List<CustomVideoExtraInfo>(GlobalParsingVariables.missingCustomCampaignVideo);
 
                 foreach (CustomVideoExtraInfo missingVideo in tempList)
                 {
@@ -147,16 +147,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         #endif
 
                         _customCampaign.allDesktopVideos.Add(missingVideo);
-                        ParseJSONFiles.missingCustomCampaignVideo.Remove(missingVideo);
+                        GlobalParsingVariables.missingCustomCampaignVideo.Remove(missingVideo);
                     }
                 }
             }
             
             // Check if any music has to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignMusic.Count > 0)
+            if (GlobalParsingVariables.missingCustomCampaignMusic.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<MusicExtraInfo> tempList = new List<MusicExtraInfo>(ParseJSONFiles.missingCustomCampaignMusic);
+                List<MusicExtraInfo> tempList = new List<MusicExtraInfo>(GlobalParsingVariables.missingCustomCampaignMusic);
 
                 foreach (MusicExtraInfo missingMusic in tempList)
                 {
@@ -167,16 +167,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         #endif
 
                         _customCampaign.customMusic.Add(missingMusic);
-                        ParseJSONFiles.missingCustomCampaignMusic.Remove(missingMusic);
+                        GlobalParsingVariables.missingCustomCampaignMusic.Remove(missingMusic);
                     }
                 }
             }
             
             // Check if any modifier has to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignModifier.Count > 0)
+            if (GlobalParsingVariables.missingCustomCampaignModifier.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<ModifierExtraInfo> tempList = new List<ModifierExtraInfo>(ParseJSONFiles.missingCustomCampaignModifier);
+                List<ModifierExtraInfo> tempList = new List<ModifierExtraInfo>(GlobalParsingVariables.missingCustomCampaignModifier);
 
                 foreach (ModifierExtraInfo missingModifier in tempList)
                 {
@@ -195,16 +195,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             _customCampaign.customModifiersDays.Add(missingModifier);
                         }
                         
-                        ParseJSONFiles.missingCustomCampaignModifier.Remove(missingModifier);
+                        GlobalParsingVariables.missingCustomCampaignModifier.Remove(missingModifier);
                     }
                 }
             }
             
             // Check if any theme has to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignTheme.Count > 0)
+            if (GlobalParsingVariables.missingCustomCampaignTheme.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<ThemesExtraInfo> tempList = new List<ThemesExtraInfo>(ParseJSONFiles.missingCustomCampaignTheme);
+                List<ThemesExtraInfo> tempList = new List<ThemesExtraInfo>(GlobalParsingVariables.missingCustomCampaignTheme);
 
                 foreach (ThemesExtraInfo missingTheme in tempList)
                 {
@@ -223,7 +223,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             _customCampaign.customThemesDays.Add(missingTheme);
                         }
                         
-                        ParseJSONFiles.missingCustomCampaignTheme.Remove(missingTheme);
+                        GlobalParsingVariables.missingCustomCampaignTheme.Remove(missingTheme);
                     }
                 }
             }

@@ -36,7 +36,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (inMainCampaign)
             {
-                ParseJSONFiles.mainCampaignEmails.Add(_customEmail);
+                GlobalParsingVariables.mainCampaignEmails.Add(_customEmail);
             }
             else
             {
@@ -55,7 +55,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
                     #endif
 
-                    ParseJSONFiles.missingCustomCampaignEmails.Add(_customEmail);
+                    GlobalParsingVariables.missingCustomCampaignEmails.Add(_customEmail);
                 }
             }
         }
