@@ -30,13 +30,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string customCampaignName = "";
             bool inMainCampaign = false;
 
-            EmailExtraInfo _customEmail = ParseEmail(ref jObjectParsed, ref usermodFolderPath,
+            EmailExtraInfo customEmail = ParseEmail(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath,
                 ref customCampaignName, ref inMainCampaign);
 
             if (inMainCampaign)
             {
-                GlobalParsingVariables.MainCampaignEmails.Add(_customEmail);
+                GlobalParsingVariables.MainCampaignEmails.Add(customEmail);
             }
             else
             {
@@ -47,7 +47,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 if (foundCustomCampaign != null)
                 {
-                    foundCustomCampaign.emails.Add(_customEmail);
+                    foundCustomCampaign.emails.Add(customEmail);
                 }
                 else
                 {
@@ -55,12 +55,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
                     #endif
 
-                    GlobalParsingVariables.PendingCustomCampaignEmails.Add(_customEmail);
+                    GlobalParsingVariables.PendingCustomCampaignEmails.Add(customEmail);
                 }
             }
         }
 
-        public static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign)
         {
             // Main

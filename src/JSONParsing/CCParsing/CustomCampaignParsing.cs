@@ -36,7 +36,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
             
-            CustomCampaignExtraInfo _customCampaign = parseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
+            CustomCampaignExtraInfo customCampaign = ParseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
                     ref jsonFolderPath, ref customCampaignName);
             
             // Check if any callers have to be added to this campaign.
@@ -56,15 +56,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         if (customCallerCC.isGameOverCaller)
                         {
-                            _customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
+                            customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
                         }
                         else if (customCallerCC.isWarningCaller)
                         {
-                            _customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
+                            customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
                         }
                         else
                         {
-                            _customCampaign.customCallersInCampaign.Add(customCallerCC);
+                            customCampaign.customCallersInCampaign.Add(customCallerCC);
                         }
 
                         GlobalParsingVariables.PendingCustomCampaignCustomCallers.Remove(customCallerCC);
@@ -86,7 +86,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing entry to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        _customCampaign.entriesOnlyInCampaign.Add(missingEntry);
+                        customCampaign.entriesOnlyInCampaign.Add(missingEntry);
 
                         GlobalParsingVariables.PendingCustomCampaignEntries.Remove(missingEntry);
                     }
@@ -107,7 +107,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding 'replace' missing entry to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        _customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
+                        customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
                         GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Remove(missingEntry);
                     }
                 }
@@ -127,7 +127,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing email to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        _customCampaign.emails.Add(missingEmail);
+                        customCampaign.emails.Add(missingEmail);
                         GlobalParsingVariables.PendingCustomCampaignEmails.Remove(missingEmail);
                     }
                 }
@@ -147,7 +147,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing video to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        _customCampaign.allDesktopVideos.Add(missingVideo);
+                        customCampaign.allDesktopVideos.Add(missingVideo);
                         GlobalParsingVariables.PendingCustomCampaignVideos.Remove(missingVideo);
                     }
                 }
@@ -167,7 +167,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        _customCampaign.customMusic.Add(missingMusic);
+                        customCampaign.customMusic.Add(missingMusic);
                         GlobalParsingVariables.PendingCustomCampaignMusic.Remove(missingMusic);
                     }
                 }
@@ -189,11 +189,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         if (missingModifier.unlockDays == null)
                         {
-                            _customCampaign.customModifiersGeneral.Add(missingModifier);
+                            customCampaign.customModifiersGeneral.Add(missingModifier);
                         }
                         else
                         {
-                            _customCampaign.customModifiersDays.Add(missingModifier);
+                            customCampaign.customModifiersDays.Add(missingModifier);
                         }
                         
                         GlobalParsingVariables.PendingCustomCampaignModifiers.Remove(missingModifier);
@@ -217,11 +217,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         if (missingTheme.unlockDays == null)
                         {
-                            _customCampaign.customThemesGeneral.Add(missingTheme);
+                            customCampaign.customThemesGeneral.Add(missingTheme);
                         }
                         else
                         {
-                            _customCampaign.customThemesDays.Add(missingTheme);
+                            customCampaign.customThemesDays.Add(missingTheme);
                         }
                         
                         GlobalParsingVariables.PendingCustomCampaignThemes.Remove(missingTheme);
@@ -243,7 +243,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         MelonLogger.Msg($"DEBUG: Adding missing ringtone to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        _customCampaign.customRingtones.Add(missingRingtone);
+                        customCampaign.customRingtones.Add(missingRingtone);
                         
                         GlobalParsingVariables.PendingCustomCampaignRingtones.Remove(missingRingtone);
                     }
@@ -251,10 +251,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             
             // We finished adding all missing values and now add the campaign as available.
-            CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
+            CustomCampaignGlobal.customCampaignsAvailable.Add(customCampaign);
         }
         
-        private static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomCampaignExtraInfo ParseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath,
             ref string customCampaignName)
         {

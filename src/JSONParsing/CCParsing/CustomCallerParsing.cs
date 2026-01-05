@@ -14,7 +14,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
     public static class CustomCallerParsing
     {
         /// <summary>
-        /// Creates a custom caller from a provided json file.
+        /// Creates a custom caller from a provided JSON file.
         /// </summary>
         /// <param name="jObjectParsed"></param>
         /// <param name="usermodFolderPath"></param>
@@ -44,7 +44,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string customCallerAudioPath = "";
 
             // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo _customCaller = ParseCustomCaller(ref jObjectParsed,
+            CustomCallerExtraInfo customCaller = ParseCustomCaller(ref jObjectParsed,
                 ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign,
                 ref customCallerMonsterName, ref customCallerAudioPath,
                 ref orderInCampaign, GlobalParsingVariables.MainCampaignCallAmount,
@@ -52,7 +52,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
-                _customCaller.monsterNameAttached = customCallerMonsterName;
+                customCaller.monsterNameAttached = customCallerMonsterName;
             }
 
             // Custom Caller Audio Path (Later gets added with coroutine)
@@ -78,8 +78,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    _customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    _customCaller.isCallerClipLoaded = true;
+                                    customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    customCaller.isCallerClipLoaded = true;
 
                                     if (AudioImport.currentLoadingAudios.Count <= 0)
                                     {
@@ -103,7 +103,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (inMainCampaign)
             {
                 MelonLogger.Msg("INFO: Found entry to add to the main game.");
-                GlobalParsingVariables.CustomCallersMainGame.Add(orderInCampaign, _customCaller);
+                GlobalParsingVariables.CustomCallersMainGame.Add(orderInCampaign, customCaller);
             }
             else
             {
@@ -114,17 +114,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 if (foundCustomCampaign != null)
                 {
-                    if (_customCaller.isGameOverCaller)
+                    if (customCaller.isGameOverCaller)
                     {
-                        foundCustomCampaign.customGameOverCallersInCampaign.Add(_customCaller);
+                        foundCustomCampaign.customGameOverCallersInCampaign.Add(customCaller);
                     }
-                    else if (_customCaller.isWarningCaller)
+                    else if (customCaller.isWarningCaller)
                     {
-                        foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);
+                        foundCustomCampaign.customWarningCallersInCampaign.Add(customCaller);
                     }
                     else
                     {
-                        foundCustomCampaign.customCallersInCampaign.Add(_customCaller);
+                        foundCustomCampaign.customCallersInCampaign.Add(customCaller);
                     }
                 }
                 else
@@ -133,7 +133,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
                     #endif
 
-                    GlobalParsingVariables.PendingCustomCampaignCustomCallers.Add(_customCaller);
+                    GlobalParsingVariables.PendingCustomCampaignCustomCallers.Add(customCaller);
                 }
             }
 
