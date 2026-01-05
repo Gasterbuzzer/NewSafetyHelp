@@ -166,6 +166,7 @@
     <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\RingtoneParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />

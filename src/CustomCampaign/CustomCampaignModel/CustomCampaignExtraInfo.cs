@@ -2,6 +2,7 @@
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -156,5 +157,9 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         
         public List<ModifierExtraInfo> customModifiersGeneral = new List<ModifierExtraInfo>(); // List of modifiers for general.
         public List<ModifierExtraInfo> customModifiersDays = new List<ModifierExtraInfo>(); // List of (conditional) modifiers that apply for certain days.
+        
+        // Ringtones
+        public bool removeDefaultRingtone = true;
+        public List<RingtoneExtraInfo> customRingtones = new List<RingtoneExtraInfo>(); // List of custom ringtones.
     }
 }

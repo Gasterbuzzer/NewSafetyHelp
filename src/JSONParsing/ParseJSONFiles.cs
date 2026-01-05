@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.ImportFiles;
@@ -127,6 +126,12 @@ namespace NewSafetyHelp.JSONParsing
                                 $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
                             ThemeParsing.CreateTheme(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
+                        
+                        case JSONParseTypes.Ringtone: // The provided JSON is a ringtone file (for custom campaigns).
+                            MelonLogger.Msg(
+                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a ringtone file.");
+                            RingtoneParsing.CreateRingtone(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
                             MelonLogger.Error(
@@ -149,17 +154,6 @@ namespace NewSafetyHelp.JSONParsing
         }
 
         /// <summary>
-        /// Checks if the JSON object contains any of the keys.
-        /// </summary>
-        /// <param name="keys">List of keys to check </param>
-        /// <param name="json">JObject with the keys</param>
-        /// <returns></returns>
-        public static bool containsKeys(List<string> keys, JObject json)
-        {
-            return keys.Any(json.ContainsKey); // Checks if any of the keys is in the JSON via the flag ContainsKey
-        }
-
-        /// <summary>
         /// Checks what type of JSON file it is and returns the type back. Used for checking what to do with the file.
         /// </summary>
         /// <param name="json"> JSON Object</param>
@@ -174,7 +168,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Added Campaign Settings
-            if (containsKeys(
+            if (ParsingHelper.containsKeys(
                     new List<string>
                         { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name" }, json))
             {
@@ -182,7 +176,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Custom Call added either to main campaign or custom campaign.
-            if (containsKeys(
+            if (ParsingHelper.containsKeys(
                     new List<string>
                     {
                         "custom_caller_transcript", "custom_caller_name", "order_in_campaign",
@@ -193,37 +187,38 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Entry was provided.
-            if (containsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json))
+            if (ParsingHelper.containsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json))
             {
                 return JSONParseTypes.Entry;
             }
 
             // Email was provided. 
-            if (containsKeys(
+            if (ParsingHelper.containsKeys(
                     new List<string> { "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json))
             {
                 return JSONParseTypes.Email;
             }
 
             // Video was provided (Desktop Video!)
-            if (containsKeys(new List<string> { "video_desktop_name", "video_file_name", "video_unlock_day" }, json))
+            if (ParsingHelper.containsKeys(
+                    new List<string> { "video_desktop_name", "video_file_name", "video_unlock_day" }, json))
             {
                 return JSONParseTypes.Video;
             }
 
             // Music was provided
-            if (containsKeys(new List<string> { "music_audio_clip_name" }, json))
+            if (ParsingHelper.containsKeys(new List<string> { "music_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Music;
             }
 
             // Modifier was provided
-            if (!containsKeys(
+            if (!ParsingHelper.containsKeys(
                     new List<string>
                         { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
                             "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
                 &&
-                containsKeys(new List<string>
+                ParsingHelper.containsKeys(new List<string>
                 {
                     "modifier_custom_campaign_attached"
                 }, json))
@@ -232,17 +227,23 @@ namespace NewSafetyHelp.JSONParsing
             }
             
             // Theme was provided
-            if (!containsKeys(
+            if (!ParsingHelper.containsKeys(
                     new List<string>
                     { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
                         "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
                 &&
-                containsKeys(new List<string>
+                ParsingHelper.containsKeys(new List<string>
                 {
                     "theme_custom_campaign_attached", "theme_name", "title_bar_color", "theme_in_main_campaign"
                 }, json))
             {
                 return JSONParseTypes.Theme;
+            }
+            
+            // Ringtone was provided
+            if (ParsingHelper.containsKeys(new List<string> { "ringtone_audio_clip_name" }, json))
+            {
+                return JSONParseTypes.Ringtone;
             }
             
             // Unknown JSON type or failed parsing the file.

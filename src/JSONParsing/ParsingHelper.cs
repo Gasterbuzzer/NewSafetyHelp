@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.EntryManager.EntryData;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing
@@ -102,6 +105,17 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             callback(monsterSoundClip);
+        }
+        
+        /// <summary>
+        /// Checks if the JSON object contains any of the keys.
+        /// </summary>
+        /// <param name="keys">List of keys to check </param>
+        /// <param name="json">JObject with the keys</param>
+        /// <returns></returns>
+        public static bool containsKeys(List<string> keys, JObject json)
+        {
+            return keys.Any(json.ContainsKey); // Checks if any of the keys is in the JSON via the flag ContainsKey
         }
     }
 }

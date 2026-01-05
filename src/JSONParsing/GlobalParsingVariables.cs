@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -48,6 +49,9 @@ namespace NewSafetyHelp.JSONParsing
 
         // List of emails to be added in the main campaign.
         public static List<EmailExtraInfo> mainCampaignEmails = new List<EmailExtraInfo>();
+        
+        // List of ringtones to be added in the main campaign.
+        public static List<RingtoneExtraInfo> missingCustomCampaignRingtones = new List<RingtoneExtraInfo>();
 
         // Entry Amount
         public static int amountExtra = 100000;

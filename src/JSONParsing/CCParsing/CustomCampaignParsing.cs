@@ -5,6 +5,7 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -224,6 +225,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         }
                         
                         GlobalParsingVariables.missingCustomCampaignTheme.Remove(missingTheme);
+                    }
+                }
+            }
+            
+            // Check if any theme has to be added to a custom campaign.
+            if (GlobalParsingVariables.missingCustomCampaignRingtones.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<RingtoneExtraInfo> tempList = new List<RingtoneExtraInfo>(GlobalParsingVariables.missingCustomCampaignRingtones);
+
+                foreach (RingtoneExtraInfo missingRingtone in tempList)
+                {
+                    if (missingRingtone.customCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Adding missing ringtone to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        _customCampaign.customRingtones.Add(missingRingtone);
+                        
+                        GlobalParsingVariables.missingCustomCampaignRingtones.Remove(missingRingtone);
                     }
                 }
             }
