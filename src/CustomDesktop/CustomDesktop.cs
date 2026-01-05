@@ -93,9 +93,9 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
                     }
                     
-                    if (GlobalParsingVariables.mainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
+                    if (GlobalParsingVariables.MainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
                     {
-                        foreach (EmailExtraInfo emailExtra in GlobalParsingVariables.mainCampaignEmails)
+                        foreach (EmailExtraInfo emailExtra in GlobalParsingVariables.MainCampaignEmails)
                         {
                             if (emailExtra.inMainCampaign)
                             {
@@ -311,10 +311,10 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                 }
 
-                if (MainClassForMonsterEntries._showUpdateMessage)
+                if (MainClassForMonsterEntries.ShowUpdateMessage)
                 {
-                    MainClassForMonsterEntries._showUpdateMessage = false;
-                    AsyncVersionChecker.showUpdateMessage();
+                    MainClassForMonsterEntries.ShowUpdateMessage = false;
+                    AsyncVersionChecker.ShowUpdateMessage();
                 }
                 
                 return false; // Skip original function.

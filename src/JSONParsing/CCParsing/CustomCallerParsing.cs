@@ -47,8 +47,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCallerExtraInfo _customCaller = ParseCustomCaller(ref jObjectParsed,
                 ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign,
                 ref customCallerMonsterName, ref customCallerAudioPath,
-                ref orderInCampaign, GlobalParsingVariables.mainCampaignCallAmount,
-                ref GlobalParsingVariables.customCallerMainGame);
+                ref orderInCampaign, GlobalParsingVariables.MainCampaignCallAmount,
+                ref GlobalParsingVariables.CustomCallersMainGame);
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
@@ -103,7 +103,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (inMainCampaign)
             {
                 MelonLogger.Msg("INFO: Found entry to add to the main game.");
-                GlobalParsingVariables.customCallerMainGame.Add(orderInCampaign, _customCaller);
+                GlobalParsingVariables.CustomCallersMainGame.Add(orderInCampaign, _customCaller);
             }
             else
             {
@@ -133,7 +133,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
                     #endif
 
-                    GlobalParsingVariables.missingCustomCallerCallersCustomCampaign.Add(_customCaller);
+                    GlobalParsingVariables.PendingCustomCampaignCustomCallers.Add(_customCaller);
                 }
             }
 

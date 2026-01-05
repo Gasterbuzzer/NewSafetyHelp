@@ -7,7 +7,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 {
     public static class CallerParsing
     {
-        public static void parseCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
+        public static void ParseCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string _callerName, ref string _callerTranscript,
             ref string _callerImageLocation, ref float _callerReplaceChance, ref bool _callerRestartCallAgain,
             ref Sprite _callerPortrait)
@@ -57,7 +57,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             
         }
 
-        public static void parseConsequenceCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
+        public static void ParseConsequenceCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string _consequenceCallerName, ref string _consequenceCallerTranscript,
             ref string _consequenceCallerImageLocation, ref Sprite _consequenceCallerPortrait)
         {

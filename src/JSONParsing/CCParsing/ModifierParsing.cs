@@ -55,7 +55,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Msg("DEBUG: Found modifier file before the custom campaign was found / does not exist.");
                 #endif
 
-                GlobalParsingVariables.missingCustomCampaignModifier.Add(customModifier);
+                GlobalParsingVariables.PendingCustomCampaignModifiers.Add(customModifier);
             }
         }
 

@@ -23,7 +23,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             {
                 if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
                 {
-                    foreach (ThemesExtraInfo theme in GlobalParsingVariables.mainGameThemes)
+                    foreach (ThemesExtraInfo theme in GlobalParsingVariables.MainGameThemes)
                     {
                         if (theme != null)
                         {
@@ -87,15 +87,15 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     }
                     else // themeID >= 4
                     {
-                        for (int i = 0; i < GlobalParsingVariables.mainGameThemes.Count; i++)
+                        for (int i = 0; i < GlobalParsingVariables.MainGameThemes.Count; i++)
                         {
                             if (GlobalVariables.saveManagerScript.savedColorTheme == i + 4)
                             {
-                                if (GlobalParsingVariables.mainGameThemes[i] != null
-                                    && GlobalParsingVariables.mainGameThemes[i].customThemePalette != null
-                                    && GlobalParsingVariables.mainGameThemes[i].customThemePalette.colorSwatch != null)
+                                if (GlobalParsingVariables.MainGameThemes[i] != null
+                                    && GlobalParsingVariables.MainGameThemes[i].customThemePalette != null
+                                    && GlobalParsingVariables.MainGameThemes[i].customThemePalette.colorSwatch != null)
                                 {
-                                    __instance.colorPalette = GlobalParsingVariables.mainGameThemes[i].customThemePalette;
+                                    __instance.colorPalette = GlobalParsingVariables.MainGameThemes[i].customThemePalette;
                                 }
                             }
                         }

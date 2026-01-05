@@ -91,7 +91,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (!CustomCampaignGlobal.inCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
-                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in GlobalParsingVariables.customCallerMainGame)
+                    foreach (KeyValuePair<int, CustomCallerExtraInfo> customCaller in GlobalParsingVariables.CustomCallersMainGame)
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {

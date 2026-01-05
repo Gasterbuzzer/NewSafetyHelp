@@ -43,7 +43,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     // Get replaced monster if valid
                     bool found = false;
                     MonsterProfile monsterToCheck = null;
-                    foreach (EntryExtraInfo item in GlobalParsingVariables.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
                     {
                         if (item.currentlySelected) // We found an entry to replace the audio for.
                         {

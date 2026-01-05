@@ -13,7 +13,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 {
     public static class EntryParsing
     {
-        private static void parseEntry(ref JObject jsonObjectParsed, ref string usermodFolderPath,
+        private static void ParseEntry(ref JObject jsonObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry,
             ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string _monsterName, 
             ref string _monsterDescription, ref List<string> _arcadeCalls, ref Sprite _monsterPortrait,
@@ -168,7 +168,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             
         }
 
-        private static void parsePhobias(ref JObject jsonObjectParsed, ref bool _spiderPhobia,
+        private static void ParsePhobias(ref JObject jsonObjectParsed, ref bool _spiderPhobia,
             ref bool _spiderPhobiaIncluded, ref bool _darknessPhobia, ref bool _darknessPhobiaIncluded,
             ref bool _dogPhobia, ref bool _dogPhobiaIncluded,
             ref bool _holesPhobia, ref bool _holesPhobiaIncluded, ref bool _insectPhobia, ref bool _insectPhobiaIncluded,
@@ -225,7 +225,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         // ----------------------------------------------------------------------------------------------------------
         
         // ReSharper disable once RedundantAssignment
-        private static void createNewExtra(ref EntryExtraInfo newExtra, ref string _monsterName, ref int newID,
+        private static void CreateNewExtra(ref EntryExtraInfo newExtra, ref string _monsterName, ref int newID,
             ref bool replaceEntry, ref string _callerName, ref string _callerTranscript, ref Sprite _callerPortrait,
             ref float _callerReplaceChance, ref bool _callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC,
             ref bool includeDLC, ref bool includeMainCampaign, ref string _consequenceCallerName,
@@ -362,29 +362,29 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             // We extract the info and save it (if the file is valid)
             // Parse Entry
-            parseEntry(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref accessLevel,
+            ParseEntry(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref accessLevel,
                 ref accessLevelAdded, ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign,
                 ref _monsterName, ref _monsterDescription, ref _arcadeCalls, ref _monsterPortrait,
                 ref _monsterPortraitLocation, ref _monsterAudioClipLocation, ref deleteReplaceEntry,
                 ref _inCustomCampaign, ref _customCampaignName);
 
             // Parse Phobias
-            parsePhobias(ref jObjectParsed, ref _spiderPhobia, ref _spiderPhobiaIncluded,
+            ParsePhobias(ref jObjectParsed, ref _spiderPhobia, ref _spiderPhobiaIncluded,
                 ref _darknessPhobia, ref _darknessPhobiaIncluded, ref _dogPhobia, ref _dogPhobiaIncluded,
                 ref _holesPhobia, ref _holesPhobiaIncluded, ref _insectPhobia, ref _insectPhobiaIncluded,
                 ref _watchingPhobia, ref _watchingPhobiaIncluded, ref _tightSpacePhobia, ref _tightSpacePhobiaIncluded);
 
             // Parse Default Caller
-            CallerParsing.parseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref _callerName,
+            CallerParsing.ParseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref _callerName,
                 ref _callerTranscript, ref _callerImageLocation, ref _callerReplaceChance, ref _callerRestartCallAgain,
                 ref _callerPortrait);
 
-            CallerParsing.parseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath,
+            CallerParsing.ParseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath,
                 ref _consequenceCallerName, ref _consequenceCallerTranscript, ref _consequenceCallerImageLocation,
                 ref _consequenceCallerPortrait);
 
             // Create new extra info.
-            createNewExtra(newExtra: ref newExtra, ref _monsterName, ref newID, ref replaceEntry, ref _callerName,
+            CreateNewExtra(newExtra: ref newExtra, ref _monsterName, ref newID, ref replaceEntry, ref _callerName,
                 ref _callerTranscript, ref _callerPortrait, ref _callerReplaceChance, ref _callerRestartCallAgain,
                 ref accessLevel, ref onlyDLC,
                 ref includeDLC, ref includeMainCampaign, ref _consequenceCallerName, ref _consequenceCallerTranscript,
@@ -495,11 +495,11 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             if ((jObjectParsed.ContainsKey("caller_audio_clip_name") || includeMainCampaign || _inCustomCampaign ||
                  replaceEntry) && newExtra != null)
             {
-                GlobalParsingVariables.entriesExtraInfo.Add(newExtra);
+                GlobalParsingVariables.EntriesMetadata.Add(newExtra);
             }
 
             // Generate new ID if not provided.
-            ParsingHelper.generateNewID(ref newExtra, ref newID, ref replaceEntry, ref jsonFolderPath,
+            ParsingHelper.GenerateNewID(ref newExtra, ref newID, ref replaceEntry, ref jsonFolderPath,
                 ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref _inCustomCampaign);
 
             if (replaceEntry) // We replace an Entry
@@ -509,7 +509,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 MonsterProfile foundMonster = null;
                 MonsterProfile foundMonsterXMAS = null; // For replacing DLC version as well
 
-                replaceEntryFunction(ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName,
+                ReplaceEntryFunction(ref entryUnlockerInstance, ref onlyDLC, ref includeDLC, ref _monsterName,
                     ref newID, ref _monsterPortraitLocation, ref _monsterPortrait,
                     ref _monsterDescription, ref replaceEntry, ref _arcadeCalls, ref accessLevel, ref accessLevelAdded,
                     ref includeMainCampaign, ref _spiderPhobiaIncluded, ref _spiderPhobia, ref _darknessPhobiaIncluded,
@@ -554,7 +554,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 MonsterProfile _newMonster = null;
 
-                createNewEntryFunction(ref entryUnlockerInstance, ref onlyDLC, ref includeDLC,
+                CreateNewEntryFunction(ref entryUnlockerInstance, ref onlyDLC, ref includeDLC,
                     ref _monsterName, ref newID, ref _monsterPortrait, ref _monsterDescription, ref _arcadeCalls,
                     ref accessLevel, ref _spiderPhobia, ref _darknessPhobia, ref _dogPhobia,
                     ref _holesPhobia, ref _insectPhobia, ref _watchingPhobia, ref _tightSpacePhobia, ref _newMonster,
@@ -596,7 +596,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
         }
         
-        private static void replaceEntryFunction(ref EntryUnlockController entryUnlockerInstance,
+        private static void ReplaceEntryFunction(ref EntryUnlockController entryUnlockerInstance,
             ref bool onlyDLC, ref bool includeDLC, ref string _monsterName, ref int newID,
             ref string _monsterPortraitLocation, ref Sprite _monsterPortrait, ref string _monsterDescription,
             ref bool replaceEntry, ref List<string> _arcadeCalls, ref int accessLevel, ref bool accessLevelAdded,
@@ -877,7 +877,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         ref entryUnlockerInstance.allMainCampaignEntries.monsterProfiles, _monsterName, foundMonster);
 
                     // Include a copy of the monster in the extra info
-                    GlobalParsingVariables.entriesExtraInfo.Find(item =>
+                    GlobalParsingVariables.EntriesMetadata.Find(item =>
                             item.Name == foundMonsterCopy.monsterName || item.ID == foundMonsterCopy.monsterID)
                         .referenceCopyEntry = foundMonster;
                 }
@@ -893,7 +893,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     if (foundMonster == null)
                     {
                         // Include a copy of the monster in the extra info
-                        GlobalParsingVariables.entriesExtraInfo.Find(item =>
+                        GlobalParsingVariables.EntriesMetadata.Find(item =>
                                 item.Name == foundMonsterXMASCopy.monsterName ||
                                 item.ID == foundMonsterXMASCopy.monsterID)
                             .referenceCopyEntry = foundMonster;
@@ -907,7 +907,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 {
                     string monsterNameCopy = foundMonster.monsterName;
 
-                    EntryExtraInfo extraEntryInfo = GlobalParsingVariables.entriesExtraInfo.Find(item => item.Name == monsterNameCopy);
+                    EntryExtraInfo extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item => item.Name == monsterNameCopy);
                     if (extraEntryInfo != null) // Only if it exists.
                     {
                         extraEntryInfo.referenceCopyEntry = foundMonster;
@@ -928,7 +928,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 " Adding to late add.");
                             #endif
 
-                            GlobalParsingVariables.missingReplaceEntriesCustomCampaign.Add(extraEntryInfo);
+                            GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Add(extraEntryInfo);
 
                             return;
                         }
@@ -939,7 +939,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             }
         }
         
-        private static void createNewEntryFunction(ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC,
+        private static void CreateNewEntryFunction(ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC,
             ref bool includeDLC, ref string _monsterName, ref int newID, ref Sprite _monsterPortrait,
             ref string _monsterDescription, ref List<string> _arcadeCalls, ref int accessLevel,
             ref bool _spiderPhobia, ref bool _darknessPhobia, ref bool _dogPhobia,
@@ -960,7 +960,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             MonsterProfile _newMonsterCopy = _newMonster;
 
             // Include a copy of the monster in the extra info
-            EntryExtraInfo extraEntryInfo = GlobalParsingVariables.entriesExtraInfo.Find(item =>
+            EntryExtraInfo extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item =>
                 item.Name == _newMonsterCopy.monsterName || item.ID == _newMonsterCopy.monsterID);
             if (extraEntryInfo != null) // Only if it exists.
             {
@@ -1019,7 +1019,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                     if (extraEntryInfo != null)
                     {
-                        GlobalParsingVariables.missingEntriesCustomCampaign.Add(extraEntryInfo);
+                        GlobalParsingVariables.PendingCustomCampaignEntries.Add(extraEntryInfo);
                     }
                     else
                     {

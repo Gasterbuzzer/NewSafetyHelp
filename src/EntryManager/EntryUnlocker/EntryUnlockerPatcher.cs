@@ -119,10 +119,10 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
 
                 if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission)
                 {
-                    if (MainClassForMonsterEntries.copyMonsterProfiles != null)
+                    if (MainClassForMonsterEntries.CopyMonsterProfiles != null)
                     {
                         // We have the copies. So we can check if to enable it.
-                        if (MainClassForMonsterEntries.copyMonsterProfiles.Contains(profileToCheck)) // A default entry to show. We return true.
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(profileToCheck)) // A default entry to show. We return true.
                         {
                             __result = true;
                         }

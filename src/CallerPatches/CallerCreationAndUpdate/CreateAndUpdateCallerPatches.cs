@@ -44,7 +44,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(CallerController __instance)
             {
-                foreach (EntryExtraInfo item in GlobalParsingVariables.entriesExtraInfo)
+                foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
                 {
                     if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name ||
                         __instance.currentCustomCaller.callerMonster.monsterID ==
@@ -134,7 +134,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                     profile != null && profile.callerMonster != null &&
                     !__instance.arcadeMode)
                 {
-                    foreach (EntryExtraInfo item in GlobalParsingVariables.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
                     {
                         if (item.currentlySelected) // We found an entry to replace the audio for.
                         {
@@ -143,29 +143,29 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             // We now check if we are allowed to save if the entry can be saved as already called.
                             if (!item.allowCallAgainOverRestart)
                             {
-                                if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
+                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.callerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
-                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(
+                                    NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
                                         item.Name + item.callerName, true);
                                 }
                                 else
                                 {
-                                    NewSafetyHelpMainClass.persistantEntrySave
+                                    NewSafetyHelpMainClass.PersistantEntrySave
                                         .GetEntry<bool>(item.Name + item.callerName).Value = true;
                                 }
                             }
                             else
                             {
-                                if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
+                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.callerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
-                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(
+                                    NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
                                         item.Name + item.callerName, false); // Store it as false
                                 }
                                 else
                                 {
-                                    NewSafetyHelpMainClass.persistantEntrySave
+                                    NewSafetyHelpMainClass.PersistantEntrySave
                                         .GetEntry<bool>(item.Name + item.callerName).Value = false;
                                 }
                             }
@@ -261,7 +261,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                 if (!CustomCampaignGlobal.inCustomCampaign && !__instance.arcadeMode)
                 {
-                    foreach (EntryExtraInfo item in GlobalParsingVariables.entriesExtraInfo)
+                    foreach (EntryExtraInfo item in GlobalParsingVariables.EntriesMetadata)
                     {
                         if (item.inMainCampaign && !item.alreadyCalledOnce &&
                             !item.currentlySelected) // Find a valid entry.
@@ -270,17 +270,17 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                             MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry;
 
-                            if (!NewSafetyHelpMainClass.persistantEntrySave.HasEntry(item.Name + item.callerName))
+                            if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.callerName))
                             {
                                 // ReSharper disable once RedundantTypeArgumentsOfMethod
                                 entryAlreadyCalledBeforeEntry =
-                                    NewSafetyHelpMainClass.persistantEntrySave.CreateEntry<bool>(
+                                    NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
                                         item.Name + item.callerName, false);
                             }
                             else
                             {
                                 entryAlreadyCalledBeforeEntry =
-                                    NewSafetyHelpMainClass.persistantEntrySave.GetEntry<bool>(item.Name +
+                                    NewSafetyHelpMainClass.PersistantEntrySave.GetEntry<bool>(item.Name +
                                         item.callerName);
                             }
 
@@ -384,13 +384,13 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                         {
                             MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
 
-                            if (GlobalParsingVariables.entriesExtraInfo.Exists(item =>
+                            if (GlobalParsingVariables.EntriesMetadata.Exists(item =>
                                     item.referenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile
                                         .name)) // IF the consequence caller has been replaced once.
                             {
                                 MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
-                                EntryExtraInfo foundExtraInfo = GlobalParsingVariables.entriesExtraInfo.Find(item =>
+                                EntryExtraInfo foundExtraInfo = GlobalParsingVariables.EntriesMetadata.Find(item =>
                                     item.referenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile.name);
 
@@ -428,7 +428,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             int entrySelected = Random.Range(0, entries.Count - 1);
 
                             // Audio check
-                            GlobalParsingVariables.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                            GlobalParsingVariables.EntriesMetadata.Find(item => item.Equals(entries[entrySelected]))
                                 .currentlySelected = true;
 
                             // Get a "copy"
@@ -452,7 +452,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
-                            GlobalParsingVariables.entriesExtraInfo.Find(item => item.Equals(entries[entrySelected]))
+                            GlobalParsingVariables.EntriesMetadata.Find(item => item.Equals(entries[entrySelected]))
                                 .referenceProfileNameInternal = profile.name;
                         }
                     }

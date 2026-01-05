@@ -45,7 +45,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Msg($"DEBUG: Found Video before the custom campaign was found / does not exist.");
                 #endif
 
-                GlobalParsingVariables.missingCustomCampaignVideo.Add(_customVideo);
+                GlobalParsingVariables.PendingCustomCampaignVideos.Add(_customVideo);
             }
         }
 

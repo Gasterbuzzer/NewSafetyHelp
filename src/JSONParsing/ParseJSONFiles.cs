@@ -168,7 +168,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Added Campaign Settings
-            if (ParsingHelper.containsKeys(
+            if (ParsingHelper.ContainsKeys(
                     new List<string>
                         { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name" }, json))
             {
@@ -176,7 +176,7 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Custom Call added either to main campaign or custom campaign.
-            if (ParsingHelper.containsKeys(
+            if (ParsingHelper.ContainsKeys(
                     new List<string>
                     {
                         "custom_caller_transcript", "custom_caller_name", "order_in_campaign",
@@ -187,38 +187,38 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Entry was provided.
-            if (ParsingHelper.containsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json))
+            if (ParsingHelper.ContainsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json))
             {
                 return JSONParseTypes.Entry;
             }
 
             // Email was provided. 
-            if (ParsingHelper.containsKeys(
+            if (ParsingHelper.ContainsKeys(
                     new List<string> { "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json))
             {
                 return JSONParseTypes.Email;
             }
 
             // Video was provided (Desktop Video!)
-            if (ParsingHelper.containsKeys(
+            if (ParsingHelper.ContainsKeys(
                     new List<string> { "video_desktop_name", "video_file_name", "video_unlock_day" }, json))
             {
                 return JSONParseTypes.Video;
             }
 
             // Music was provided
-            if (ParsingHelper.containsKeys(new List<string> { "music_audio_clip_name" }, json))
+            if (ParsingHelper.ContainsKeys(new List<string> { "music_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Music;
             }
 
             // Modifier was provided
-            if (!ParsingHelper.containsKeys(
+            if (!ParsingHelper.ContainsKeys(
                     new List<string>
                         { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
                             "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
                 &&
-                ParsingHelper.containsKeys(new List<string>
+                ParsingHelper.ContainsKeys(new List<string>
                 {
                     "modifier_custom_campaign_attached"
                 }, json))
@@ -227,12 +227,12 @@ namespace NewSafetyHelp.JSONParsing
             }
             
             // Theme was provided
-            if (!ParsingHelper.containsKeys(
+            if (!ParsingHelper.ContainsKeys(
                     new List<string>
                     { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
                         "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
                 &&
-                ParsingHelper.containsKeys(new List<string>
+                ParsingHelper.ContainsKeys(new List<string>
                 {
                     "theme_custom_campaign_attached", "theme_name", "title_bar_color", "theme_in_main_campaign"
                 }, json))
@@ -241,7 +241,7 @@ namespace NewSafetyHelp.JSONParsing
             }
             
             // Ringtone was provided
-            if (ParsingHelper.containsKeys(new List<string> { "ringtone_audio_clip_name" }, json))
+            if (ParsingHelper.ContainsKeys(new List<string> { "ringtone_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Ringtone;
             }

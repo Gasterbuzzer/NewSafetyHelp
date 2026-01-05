@@ -83,7 +83,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Msg("DEBUG: Found Music File before the custom campaign was found / does not exist.");
                 #endif
 
-                GlobalParsingVariables.missingCustomCampaignMusic.Add(customMusic);
+                GlobalParsingVariables.PendingCustomCampaignMusic.Add(customMusic);
             }
         }
 

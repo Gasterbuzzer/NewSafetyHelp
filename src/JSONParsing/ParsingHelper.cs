@@ -12,7 +12,6 @@ namespace NewSafetyHelp.JSONParsing
 {
     public static class ParsingHelper
     {
-        
         /// <summary>
         /// Returns a new ID that should be +1 from the largest.
         /// </summary>
@@ -33,8 +32,19 @@ namespace NewSafetyHelp.JSONParsing
             }
         }
         
-        public static void generateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry,
-            ref string jsonFolderPath, ref bool onlyDLC, ref bool includeDLC,
+        /// <summary>
+        /// Generates a new ID based on the given information.
+        /// </summary>
+        /// <param name="newExtra">Entry which will have its ID updated.</param>
+        /// <param name="newID">If an ID was provided, use this.</param>
+        /// <param name="replaceEntry">If this is supposed to replace an entry.</param>
+        /// <param name="jsonFolderPath">Folder path to the JSON file.</param>
+        /// <param name="onlyDlc">If only to consider the DLC.</param>
+        /// <param name="includeDlc">If to also consider the DLC included.</param>
+        /// <param name="entryUnlockerInstance">Instance of the entry unlocker. (Used to get new ID)</param>
+        /// <param name="inCustomCampaign">If this is in a custom campaign.</param>
+        public static void GenerateNewID(ref EntryExtraInfo newExtra, ref int newID, ref bool replaceEntry,
+            ref string jsonFolderPath, ref bool onlyDlc, ref bool includeDlc,
             ref EntryUnlockController entryUnlockerInstance, ref bool inCustomCampaign)
         {
             // Update ID if not given.
@@ -42,19 +52,19 @@ namespace NewSafetyHelp.JSONParsing
             {
                 // Get the max Monster ID.
                 int maxEntryIDMainCampaign = GetNewEntryID(entryUnlockerInstance);
-                int maxEntryIDMainDLC = GetNewEntryID(entryUnlockerInstance, 1);
+                int maxEntryIDMainDlc = GetNewEntryID(entryUnlockerInstance, 1);
 
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Entries in Main Campaign: {maxEntryIDMainCampaign} and entries in DLC: {maxEntryIDMainDLC}.");            
+                    MelonLogger.Msg($"DEBUG: Entries in Main Campaign: {maxEntryIDMainCampaign} and entries in DLC: {maxEntryIDMainDlc}.");            
                 #endif
                 
-                if (onlyDLC) // Only DLC
+                if (onlyDlc) // Only DLC
                 {
-                    newID = maxEntryIDMainDLC;
+                    newID = maxEntryIDMainDlc;
                 }
-                else if (includeDLC) // Also allow in DLC (We pick the largest from both)
+                else if (includeDlc) // Also allow in DLC (We pick the largest from both)
                 {
-                    newID = (maxEntryIDMainCampaign < maxEntryIDMainDLC) ? maxEntryIDMainDLC : maxEntryIDMainCampaign;
+                    newID = (maxEntryIDMainCampaign < maxEntryIDMainDlc) ? maxEntryIDMainDlc : maxEntryIDMainCampaign;
                 }
                 else // Only base game.
                 {
@@ -67,9 +77,9 @@ namespace NewSafetyHelp.JSONParsing
             {
                 int tempID = GetNewEntryID(entryUnlockerInstance);
 
-                // We add our amountExtra and increment it for the next extra.
-                tempID += GlobalParsingVariables.amountExtra;
-                GlobalParsingVariables.amountExtra++;
+                // We add our CustomCampaignEntryIDOffset and increment it for the next extra.
+                tempID += GlobalParsingVariables.CustomCampaignEntryIDOffset;
+                GlobalParsingVariables.CustomCampaignEntryIDOffset++;
 
                 newID = tempID;
             }
@@ -85,22 +95,22 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="callback"> Callback function for returning values and doing stuff with it that require the coroutine to finish first. </param>
         /// <param name="audioPath"> Path to the audio file. </param>
-        /// <param name="_audioType"> Audio type to parse. </param>
+        /// <param name="audioType"> Audio type to parse. </param>
         public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath,
-            AudioType _audioType = AudioType.WAV)
+            AudioType audioType = AudioType.WAV)
         {
             AudioClip monsterSoundClip = null;
 
             // Attempt to get the type
-            if (_audioType != AudioType.UNKNOWN)
+            if (audioType != AudioType.UNKNOWN)
             {
-                _audioType = AudioImport.GetAudioType(audioPath);
+                audioType = AudioImport.GetAudioType(audioPath);
 
                 yield return MelonCoroutines.Start(
                     AudioImport.LoadAudio
                     (
                         (myReturnValue) => { monsterSoundClip = myReturnValue; },
-                        audioPath, _audioType)
+                        audioPath, audioType)
                 );
             }
 
@@ -113,7 +123,7 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="keys">List of keys to check </param>
         /// <param name="json">JObject with the keys</param>
         /// <returns></returns>
-        public static bool containsKeys(List<string> keys, JObject json)
+        public static bool ContainsKeys(List<string> keys, JObject json)
         {
             return keys.Any(json.ContainsKey); // Checks if any of the keys is in the JSON via the flag ContainsKey
         }

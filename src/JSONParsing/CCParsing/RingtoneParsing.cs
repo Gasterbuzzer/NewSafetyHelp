@@ -84,7 +84,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Msg("DEBUG: Found ringtone file before the custom campaign was found / does not exist.");
                 #endif
 
-                GlobalParsingVariables.missingCustomCampaignRingtones.Add(customRingtone);
+                GlobalParsingVariables.PendingCustomCampaignRingtones.Add(customRingtone);
             }
         }
 

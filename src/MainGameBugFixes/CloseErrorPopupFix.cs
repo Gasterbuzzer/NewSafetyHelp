@@ -1,8 +1,5 @@
-﻿using System.Reflection;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.MainGameBugFixes
 {
@@ -11,13 +8,12 @@ namespace NewSafetyHelp.MainGameBugFixes
         [HarmonyLib.HarmonyPatch(typeof(GenericErrorPopupBehavior), "ExitButton")]
         public static class ExitButtonFix
         {
-
             /// <summary>
             /// Fixes the error popup to actually close instead of creating another error.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, GenericErrorPopupBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(GenericErrorPopupBehavior __instance)
             {
                 // Close popup instead of creating another error popup.
                 __instance.ConfirmButton();
@@ -32,9 +28,9 @@ namespace NewSafetyHelp.MainGameBugFixes
             /// <summary>
             /// Fixes the error popup from having two buttons.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static void Prefix(MethodBase __originalMethod, GenericErrorPopupBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static void Prefix(GenericErrorPopupBehavior __instance)
             {
                 GameObject closeButton = __instance.transform.Find("WindowsBar").Find("CloseButton").gameObject;
 

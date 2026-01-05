@@ -39,7 +39,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             if (customTheme.inMainCampaign)
             {
-                GlobalParsingVariables.mainGameThemes.Add(customTheme);
+                GlobalParsingVariables.MainGameThemes.Add(customTheme);
             }
             else
             {
@@ -60,7 +60,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg("DEBUG: Found theme file before the custom campaign was found / does not exist.");
                     #endif
 
-                    GlobalParsingVariables.missingCustomCampaignTheme.Add(customTheme);
+                    GlobalParsingVariables.PendingCustomCampaignThemes.Add(customTheme);
                 }
             }
         }

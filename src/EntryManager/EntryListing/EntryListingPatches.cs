@@ -37,7 +37,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                     if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission &&
                         !customCampaign.doShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
                     {
-                        if (MainClassForMonsterEntries.copyMonsterProfiles
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles
                             .Contains(__instance.myProfile)) // Contained in main campaign.
                         {
                             FieldInfo hasClickedField = typeof(EntryListingBehavior).GetField("hasClicked",

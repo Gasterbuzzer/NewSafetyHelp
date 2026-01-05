@@ -13,50 +13,29 @@ namespace NewSafetyHelp.JSONParsing
     public static class GlobalParsingVariables
     {
         // "Global" Variables for handling extra information such as caller audio. Gets stored as its ID and with its Name.
-        public static List<EntryExtraInfo> entriesExtraInfo = new List<EntryExtraInfo>();
+        public static List<EntryExtraInfo> EntriesMetadata = new List<EntryExtraInfo>();
         
-        // Main Game Themes
-        public static List<ThemesExtraInfo> mainGameThemes = new List<ThemesExtraInfo>();
+        // Main Game (Main Campaign) Lists
+        public static List<ThemesExtraInfo> MainGameThemes = new List<ThemesExtraInfo>();
+        public static List<EmailExtraInfo> MainCampaignEmails = new List<EmailExtraInfo>();
+        public static Dictionary<int, CustomCallerExtraInfo> CustomCallersMainGame = new Dictionary<int, CustomCallerExtraInfo>();
 
-        // Map for custom callers to replaced in the main game. (ID of the call to replace, Caller for that ID)
-        public static Dictionary<int, CustomCallerExtraInfo> customCallerMainGame =
-            new Dictionary<int, CustomCallerExtraInfo>();
-
-        // List of custom caller yet to be added to custom campaign. Happens when the custom caller file was found before.
-        public static List<CustomCallerExtraInfo> missingCustomCallerCallersCustomCampaign =
-            new List<CustomCallerExtraInfo>();
-
-        // List of entries yet to be added to custom campaign. Happens when the entries file was found before.
-        public static List<EntryExtraInfo> missingEntriesCustomCampaign = new List<EntryExtraInfo>();
-
-        // List of entries that replace yet to be added to custom campaign. Happens when the replacement entries file was found before.
-        public static List<EntryExtraInfo> missingReplaceEntriesCustomCampaign = new List<EntryExtraInfo>();
-
-        // List of emails to be added in a custom campaign when the custom campaign is not parsed yet.
-        public static List<EmailExtraInfo> missingCustomCampaignEmails = new List<EmailExtraInfo>();
-
-        // List of music to be added in a custom campaign when the custom campaign is not parsed yet.
-        public static List<MusicExtraInfo> missingCustomCampaignMusic = new List<MusicExtraInfo>();
-
-        // List of modifiers to be added in a custom campaign when the custom campaign is not parsed yet.
-        public static List<ModifierExtraInfo> missingCustomCampaignModifier = new List<ModifierExtraInfo>();
+        // Custom Campaign Pending Content (Content to be added later because the custom campaign has not been parsed yet)
+        public static List<CustomCallerExtraInfo> PendingCustomCampaignCustomCallers = new List<CustomCallerExtraInfo>();
+        public static List<EntryExtraInfo> PendingCustomCampaignEntries = new List<EntryExtraInfo>();
+        public static List<EntryExtraInfo> PendingCustomCampaignReplaceEntries = new List<EntryExtraInfo>();
+        public static List<EmailExtraInfo> PendingCustomCampaignEmails = new List<EmailExtraInfo>();
+        public static List<MusicExtraInfo> PendingCustomCampaignMusic = new List<MusicExtraInfo>();
+        public static List<ModifierExtraInfo> PendingCustomCampaignModifiers = new List<ModifierExtraInfo>();
+        public static List<ThemesExtraInfo> PendingCustomCampaignThemes = new List<ThemesExtraInfo>();
+        public static List<CustomVideoExtraInfo> PendingCustomCampaignVideos = new List<CustomVideoExtraInfo>();
+        public static List<RingtoneExtraInfo> PendingCustomCampaignRingtones = new List<RingtoneExtraInfo>();
         
-        // List of themes to be added in a custom campaign when the custom campaign is not parsed yet.
-        public static List<ThemesExtraInfo> missingCustomCampaignTheme = new List<ThemesExtraInfo>();
+        // Configuration
+        // ID Offset for Entries in the custom campaign.
+        public static int CustomCampaignEntryIDOffset = 100000;
 
-        // List of videos to be added in a custom campaign when the custom campaign is not parsed yet.
-        public static List<CustomVideoExtraInfo> missingCustomCampaignVideo = new List<CustomVideoExtraInfo>();
-
-        // List of emails to be added in the main campaign.
-        public static List<EmailExtraInfo> mainCampaignEmails = new List<EmailExtraInfo>();
-        
-        // List of ringtones to be added in the main campaign.
-        public static List<RingtoneExtraInfo> missingCustomCampaignRingtones = new List<RingtoneExtraInfo>();
-
-        // Entry Amount
-        public static int amountExtra = 100000;
-
-        // Campaign Information
-        public const int mainCampaignCallAmount = 116;
+        // Constant Campaign Information. (How many callers exist in the main campaign)
+        public const int MainCampaignCallAmount = 116;
     }
 }
