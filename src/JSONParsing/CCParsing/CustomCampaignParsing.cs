@@ -235,7 +235,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 foreach (CustomRingtone missingRingtone in tempList)
                 {
-                    if (missingRingtone.customCampaignName == customCampaignName)
+                    if (missingRingtone.CustomCampaignName == customCampaignName)
                     {
                         #if DEBUG
                         MelonLogger.Msg($"DEBUG: Adding missing ringtone to the custom campaign: {customCampaignName}.");
@@ -334,6 +334,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool disablePickingThemeOption = false; // If true, it will hide the option to set the theme.
 
             string defaultTheme = null;
+            
+            // Ringtone
+
+            bool doNotAccountDefaultRingtone = true;
             
             /*
              * Parsing the JSON File
@@ -678,6 +682,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 disablePickingThemeOption = (bool) disableThemeDropdownValue;
             }
             
+            if (jObjectParsed.TryGetValue("do_not_account_default_ringtone", out var doNotAccountDefaultRingtoneValue))
+            {
+                doNotAccountDefaultRingtone = (bool) doNotAccountDefaultRingtoneValue;
+            }
+            
             // Create
             return new CustomCampaign.CustomCampaignModel.CustomCampaign
             {
@@ -735,7 +744,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 disableGreenColorBackground = disableGreenColorBackground,
                 
                 defaultTheme = defaultTheme,
-                disablePickingThemeOption = disablePickingThemeOption
+                disablePickingThemeOption = disablePickingThemeOption,
+                
+                doNotAccountDefaultRingtone = doNotAccountDefaultRingtone
             };
         }
     }

@@ -2,19 +2,22 @@
 {
     public class CustomRingtone
     {
-        public string customCampaignName = null; // If in a custom campaign, this is the name of custom campaign.
+        public string CustomCampaignName = null; // If in a custom campaign, this is the name of custom campaign.
         
         // Audio Clip
-        public string ringtoneClipPath = "";
+        public string RingtoneClipPath = "";
         
-        public RichAudioClip ringtoneClip = null;
+        public RichAudioClip RingtoneClip = null;
+        
+        // If the ringtone is supposed to appended instead of being the only one.
+        public bool AppendRingtone = false;
         
         // Unlock Day (When it is allowed to play. 0 => every day)
-        public int unlockDay = 0;
+        public int UnlockDay = 0;
         
-        public bool onlyOnUnlockDay = true; // If the ringtone should only appear on the unlock day.
+        public bool OnlyOnUnlockDay = true; // If the ringtone should only appear on the unlock day.
         
         // Glitched version
-        public bool isGlitchedVersion = false; // When network is down, use this version.
+        public bool IsGlitchedVersion = false; // When network is down, use this version.
     }
 }

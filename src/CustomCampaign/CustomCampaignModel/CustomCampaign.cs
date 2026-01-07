@@ -157,7 +157,7 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public List<CustomModifier> customModifiersDays = new List<CustomModifier>(); // List of (conditional) modifiers that apply for certain days.
         
         // Ringtones
-        public bool removeDefaultRingtone = true;
+        public bool doNotAccountDefaultRingtone = true;
         public List<CustomRingtone.CustomRingtone> customRingtones = new List<CustomRingtone.CustomRingtone>(); // List of custom ringtones.
     }
 }

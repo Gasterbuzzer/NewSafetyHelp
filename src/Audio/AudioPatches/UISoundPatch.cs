@@ -14,6 +14,13 @@ namespace NewSafetyHelp.Audio.AudioPatches
         [HarmonyLib.HarmonyPatch(typeof(UISoundController), "Start")]
         public static class StartPatch
         {
+            // If we have run the function for the first time.
+            // Is used to get the default ringtone.
+            private static bool firstRun;
+            
+            private static RichAudioClip defaultRingtone;
+            private static RichAudioClip defaultWarpedRingtone;
+            
             /// <summary>
             /// Patches the start function to replace audio clips.
             /// </summary>
@@ -21,6 +28,13 @@ namespace NewSafetyHelp.Audio.AudioPatches
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(UISoundController __instance)
             {
+                if (!firstRun)
+                {
+                    defaultRingtone = __instance.phoneCall;
+                    defaultWarpedRingtone = __instance.phoneCallWarped;
+                    firstRun = true;
+                }
+                
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -39,16 +53,17 @@ namespace NewSafetyHelp.Audio.AudioPatches
                         List<CustomRingtone> validRingtonesGlitched = new List<CustomRingtone>();
 
                         // For each ringtone that is valid for this current day, attempt to find all valid.
-                        foreach (CustomRingtone customRingtone in customCampaign.customRingtones.Where(c => c.unlockDay <= GlobalVariables.currentDay))
+                        foreach (CustomRingtone customRingtone in customCampaign.customRingtones.Where(c => c.UnlockDay <= GlobalVariables.currentDay))
                         {
                             // If we are only allowed to play on the unlock day.
                             // Then the unlock day must be equal to the current day.
-                            if (customRingtone.onlyOnUnlockDay && customRingtone.unlockDay != GlobalVariables.currentDay)
+                            
+                            if (customRingtone.OnlyOnUnlockDay && customRingtone.UnlockDay != GlobalVariables.currentDay)
                             {
                                 continue;
                             }
                             
-                            if (customRingtone.isGlitchedVersion)
+                            if (customRingtone.IsGlitchedVersion)
                             {
                                 validRingtonesGlitched.Add(customRingtone);
                             }
@@ -59,40 +74,58 @@ namespace NewSafetyHelp.Audio.AudioPatches
                         }
                         
                         // Now for each valid ringtone we try to pick one valid.
-
                         ReplacePhoneCallIfValid(ref __instance.phoneCall, ref validRingtonesNormal,
-                            customCampaign.removeDefaultRingtone);
+                            customCampaign.doNotAccountDefaultRingtone, ref defaultRingtone);
 
                         ReplacePhoneCallIfValid(ref __instance.phoneCallWarped, ref validRingtonesGlitched,
-                            customCampaign.removeDefaultRingtone);
+                            customCampaign.doNotAccountDefaultRingtone, ref defaultWarpedRingtone);
                     }
                 }
             }
 
-            private static void ReplacePhoneCallIfValid(ref RichAudioClip clipToReplace, ref List<CustomRingtone> validRingtones, bool removeDefaultRingtone)
+            private static void ReplacePhoneCallIfValid(ref RichAudioClip clipToReplace,
+                ref List<CustomRingtone> validRingtones, bool doNotAccountDefaultRingtone,
+                ref RichAudioClip gameDefaultRingtone)
             {
                 if (validRingtones.Count > 0)
                 {
-                    int maxExclusive = validRingtones.Count;
+                    if (validRingtones.Any(r => r.AppendRingtone)) // If any ringtones have to be appended. (Random Pick)
+                    {
+                        int maxExclusive = validRingtones.Count;
 
-                    // If we don't remove the ringtone, we also account for not changing the phone call.
-                    if (!removeDefaultRingtone)
-                    {
-                        maxExclusive++;
-                    }
-                            
-                    int chosenPhoneCall = Random.Range(0, maxExclusive);
-
-                    if (removeDefaultRingtone)
-                    {
-                        clipToReplace = validRingtones[chosenPhoneCall].ringtoneClip;
-                    }
-                    else
-                    {
-                        if (chosenPhoneCall != validRingtones.Count)
+                        // If we don't remove the ringtone, we also account for not changing the phone call.
+                        if (!doNotAccountDefaultRingtone)
                         {
-                            clipToReplace = validRingtones[chosenPhoneCall].ringtoneClip;
+                            maxExclusive++;
                         }
+
+                        int chosenPhoneCall = Random.Range(0, maxExclusive);
+                        
+                        MelonLogger.Error($"DEBUG: ChosenPhoneCall: '{chosenPhoneCall}'.\n" +
+                                          $"maxExclusive: '{maxExclusive}'.\n" +
+                                          $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
+                                          $"validRingtones.Any(r => r.AppendRingtone): '{validRingtones.Any(r => r.AppendRingtone)}'.\n" +
+                                          $"validRingtones.Count '{validRingtones.Count}'.\n");
+
+                        if (doNotAccountDefaultRingtone)
+                        {
+                            clipToReplace = validRingtones.Where(r => r.AppendRingtone).ElementAt(chosenPhoneCall).RingtoneClip;
+                        }
+                        else
+                        {
+                            if (chosenPhoneCall != validRingtones.Count)
+                            {
+                                clipToReplace = validRingtones.Where(r => r.AppendRingtone).ElementAt(chosenPhoneCall).RingtoneClip;
+                            }
+                            else
+                            {
+                                clipToReplace = gameDefaultRingtone;
+                            }
+                        }
+                    }
+                    else // No appends, we simply use the first one.
+                    {
+                        clipToReplace = validRingtones[0].RingtoneClip;
                     }
                 }
             }

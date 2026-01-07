@@ -33,16 +33,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Add ringtone clip
             if (jObjectParsed.ContainsKey("ringtone_audio_clip_name"))
             {
-                if (string.IsNullOrEmpty(customCustomRingtone.ringtoneClipPath))
+                if (string.IsNullOrEmpty(customCustomRingtone.RingtoneClipPath))
                 {
                     MelonLogger.Warning(
                         $"WARNING: No valid ringtone file given for file in {jsonFolderPath}.");
                 }
                 // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customCustomRingtone.ringtoneClipPath))
+                else if (!File.Exists(customCustomRingtone.RingtoneClipPath))
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customCustomRingtone.ringtoneClipPath}'." +
+                        $"ERROR: Location {jsonFolderPath} does not contain '{customCustomRingtone.RingtoneClipPath}'." +
                         " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
@@ -54,16 +54,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    customCustomRingtone.ringtoneClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    customCustomRingtone.RingtoneClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else
                                 {
                                     MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customCustomRingtone.ringtoneClipPath}" +
+                                        $"ERROR: Failed to load audio clip {customCustomRingtone.RingtoneClipPath}" +
                                         " for custom caller.");
                                 }
                             },
-                            customCustomRingtone.ringtoneClipPath)
+                            customCustomRingtone.RingtoneClipPath)
                     );
                 }
             }
@@ -98,6 +98,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             bool isGlitchedVersion = false;
 
+            bool appendRingtone = false; // If this is an append ringtone caller.
+
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignNameValue))
             {
                 customCampaignName = customCampaignNameValue.Value<string>();
@@ -127,6 +129,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 unlockDay = unlockDayValue.Value<int>();
             }
+
+            if (unlockDay == 0)
+            {
+                onlyOnUnlockDay = false;
+            }
             
             if (jObjectParsed.TryGetValue("only_play_on_unlock_day", out var onlyPlayOnUnlockDayValue))
             {
@@ -137,18 +144,25 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 isGlitchedVersion = isGlitchedVersionValue.Value<bool>();
             }
+            
+            if (jObjectParsed.TryGetValue("is_append_ringtone", out var isAppendRingtoneValue))
+            {
+                appendRingtone = isAppendRingtoneValue.Value<bool>();
+            }
 
             return new CustomRingtone()
             {
-                customCampaignName = customCampaignName,
+                CustomCampaignName = customCampaignName,
 
-                ringtoneClipPath = ringtoneAudioPath,
+                RingtoneClipPath = ringtoneAudioPath,
 
-                unlockDay = unlockDay,
+                UnlockDay = unlockDay,
                 
-                onlyOnUnlockDay = onlyOnUnlockDay,
+                OnlyOnUnlockDay = onlyOnUnlockDay,
                 
-                isGlitchedVersion = isGlitchedVersion
+                IsGlitchedVersion = isGlitchedVersion,
+                
+                AppendRingtone = appendRingtone
             };
         }
     }
