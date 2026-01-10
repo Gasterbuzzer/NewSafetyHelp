@@ -48,28 +48,28 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    if (customCampaign.customGameOverCallersInCampaign.Count > 0)
+                    if (customCampaign.CustomGameOverCallersInCampaign.Count > 0)
                     {
                         CallerModel.CustomCaller customCallerGameOverChosen = null;
 
-                        if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller =>
+                        if (customCampaign.CustomGameOverCallersInCampaign.Exists(customCaller =>
                                 customCaller.GameOverCallDay <= -1))
                         {
                             // Will choose a random game over caller if all are set at -1.
                             customCallerGameOverChosen =
-                                customCampaign.customGameOverCallersInCampaign.FindAll(customCaller =>
+                                customCampaign.CustomGameOverCallersInCampaign.FindAll(customCaller =>
                                     customCaller.GameOverCallDay <= -1)[
-                                    Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
+                                    Random.Range(0, customCampaign.CustomGameOverCallersInCampaign.Count)];
                         }
 
                         // If any exist that are valid for the current day, we instead replace it with those.
-                        if (customCampaign.customGameOverCallersInCampaign.Exists(customCaller =>
+                        if (customCampaign.CustomGameOverCallersInCampaign.Exists(customCaller =>
                                 customCaller.GameOverCallDay == GlobalVariables.currentDay))
                         {
                             customCallerGameOverChosen =
-                                customCampaign.customGameOverCallersInCampaign.FindAll(customCaller =>
+                                customCampaign.CustomGameOverCallersInCampaign.FindAll(customCaller =>
                                     customCaller.GameOverCallDay == GlobalVariables.currentDay)[
-                                    Random.Range(0, customCampaign.customGameOverCallersInCampaign.Count)];
+                                    Random.Range(0, customCampaign.CustomGameOverCallersInCampaign.Count)];
                         }
 
                         // Create custom caller and then replace gameOverCall with it.

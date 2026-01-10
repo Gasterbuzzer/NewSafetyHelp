@@ -94,7 +94,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                                 return false;
                             }
 
-                            if (customCampaign.skipCallersCorrectly)
+                            if (customCampaign.SkipCallersCorrectly)
                             {
                                 __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
                                 ++__instance.correctCallsToday;

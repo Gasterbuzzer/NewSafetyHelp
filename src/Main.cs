@@ -134,7 +134,7 @@ namespace NewSafetyHelp
                     return;
                 }
 
-                if (customCampaign.removeExistingEntries)
+                if (customCampaign.RemoveExistingEntries)
                 {
                     __instance.allEntries.monsterProfiles = Array.Empty<MonsterProfile>(); // Remove all entries.
                 }

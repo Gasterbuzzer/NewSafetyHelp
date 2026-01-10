@@ -122,16 +122,16 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                             }
                             
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: This object unlock in day: {unlockDay} (Current Day is {GlobalVariables.currentDay}). The threshold is: {__instance.scoreThresholdToUnlock}. The current score for that day is {currentCampaign.savedDayScores[unlockDay]}. (For GameObject: '{__instance.gameObject.name}')");
+                                MelonLogger.Msg($"DEBUG: This object unlock in day: {unlockDay} (Current Day is {GlobalVariables.currentDay}). The threshold is: {__instance.scoreThresholdToUnlock}. The current score for that day is {currentCampaign.SavedDayScores[unlockDay]}. (For GameObject: '{__instance.gameObject.name}')");
                             #endif
                             
                             if (__instance.scoreThresholdToUnlock > 0.0f) // Has a set value other than the default.
                             {
-                                if (currentCampaign.savedDayScores[unlockDay] < (double) __instance.scoreThresholdToUnlock)
+                                if (currentCampaign.SavedDayScores[unlockDay] < (double) __instance.scoreThresholdToUnlock)
                                 {
 
                                     #if DEBUG
-                                        MelonLogger.Msg($"DEBUG: The score {currentCampaign.savedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject. Disabling this GameObject '{__instance.gameObject.name}'.\n");
+                                        MelonLogger.Msg($"DEBUG: The score {currentCampaign.SavedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject. Disabling this GameObject '{__instance.gameObject.name}'.\n");
                                     #endif
                                     
                                     __instance.gameObject.SetActive(false);
@@ -139,7 +139,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                                 else
                                 {
                                     MelonLogger.Msg($"UNITY LOG: Email unlocked: {__instance.gameObject.name}| Day Checked: {(unlockDay).ToString()}| Day Score: " +
-                                                    $"{currentCampaign.savedDayScores[unlockDay]}.\n");
+                                                    $"{currentCampaign.SavedDayScores[unlockDay]}.\n");
                                 }
                             }
                         }
@@ -196,7 +196,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     specialPredicate: m => m.entryBrowserChanged);
             
                 // If always on. We just leave them on.
-                if (currentCampaign.entryBrowserAlwaysActive)
+                if (currentCampaign.EntryBrowserAlwaysActive)
                 {
                     enableEntryBrowser = true;
                 }
@@ -234,7 +234,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     specialPredicate: m => m.scorecardChanged);
                 
                 // If always on. We just leave them on.
-                if (currentCampaign.scorecardAlwaysActive)
+                if (currentCampaign.ScorecardAlwaysActive)
                 {
                     enableScorecard = true;
                 }
@@ -272,7 +272,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     specialPredicate: m => m.artbookChanged);
                 
                 // If always on. We just leave them on.
-                if (currentCampaign.artbookAlwaysActive)
+                if (currentCampaign.ArtbookAlwaysActive)
                 {
                     artBookEnabled = true;
                 }
@@ -311,7 +311,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     specialPredicate: m => m.arcadeChanged);
                 
                 // If always on. We just leave them on.
-                if (currentCampaign.arcadeAlwaysActive)
+                if (currentCampaign.ArcadeAlwaysActive)
                 {
                     arcadeEnabled = true;
                 }

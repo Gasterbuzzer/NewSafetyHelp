@@ -44,9 +44,9 @@ namespace NewSafetyHelp.CustomVideos
 
                     CustomVideo correctVideo;
                     
-                    if (customCampaign.allDesktopVideos.Exists(video => video.desktopName + video.videoURL == __instance.gameObject.name))
+                    if (customCampaign.AllDesktopVideos.Exists(video => video.desktopName + video.videoURL == __instance.gameObject.name))
                     {
-                        correctVideo = customCampaign.allDesktopVideos.Find(video => video.desktopName + video.videoURL == __instance.gameObject.name);
+                        correctVideo = customCampaign.AllDesktopVideos.Find(video => video.desktopName + video.videoURL == __instance.gameObject.name);
                     }
                     else
                     {

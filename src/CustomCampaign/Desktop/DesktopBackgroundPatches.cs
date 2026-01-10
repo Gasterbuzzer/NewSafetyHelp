@@ -35,7 +35,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     bool disableGreenColorBackground = false;
                     Color? desktopBackgroundColor = null;
                     
-                    if (customCampaign.disableGreenColorBackground)
+                    if (customCampaign.DisableGreenColorBackground)
                     {
                         disableGreenColorBackground = true;
                     }
@@ -72,11 +72,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     
                     Sprite setBackgroundSprite;
                     
-                    if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.savedGameFinishedDisplay == 1) // If we finished the campaign.
+                    if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.SavedGameFinishedDisplay == 1) // If we finished the campaign.
                     {
-                        if (customCampaign.gameFinishedBackground != null)
+                        if (customCampaign.GameFinishedBackground != null)
                         {
-                            setBackgroundSprite = customCampaign.gameFinishedBackground;
+                            setBackgroundSprite = customCampaign.GameFinishedBackground;
                         }
                         else
                         {
@@ -85,10 +85,10 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
                     else // Current Day Background instead.
                     {
-                        if (customCampaign.backgroundSprites.Count > 0 
-                            && GlobalVariables.currentDay <= customCampaign.backgroundSprites.Count) // We have backgrounds to replace.
+                        if (customCampaign.BackgroundSprites.Count > 0 
+                            && GlobalVariables.currentDay <= customCampaign.BackgroundSprites.Count) // We have backgrounds to replace.
                         {
-                            setBackgroundSprite = customCampaign.backgroundSprites[GlobalVariables.currentDay - 1];
+                            setBackgroundSprite = customCampaign.BackgroundSprites[GlobalVariables.currentDay - 1];
                         }
                         else
                         {
@@ -126,7 +126,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     {
                         // Game Finished
                         if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 
-                            || customCampaign.savedGameFinishedDisplay == 1)
+                            || customCampaign.SavedGameFinishedDisplay == 1)
                         {
                             if (gameFinishedBackgroundFound && gameFinishedBackground != null)
                             {

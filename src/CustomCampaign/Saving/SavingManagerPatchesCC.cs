@@ -556,7 +556,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                         return false;
                     }
 
-                    __instance.colorDropdown.value = customCampaign.activeTheme;
+                    __instance.colorDropdown.value = customCampaign.ActiveTheme;
                     __instance.ColorThemeChanged();
                 }
                 

@@ -54,7 +54,7 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else
                 {
-                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.GetActiveCustomCampaign().campaignDays);
+                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.GetActiveCustomCampaign().CampaignDays);
                 }
 
 
@@ -210,7 +210,7 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
                     else if (!CustomCampaignGlobal.CustomCampaignsAvailable.Exists(scannedCampaign =>
-                                 scannedCampaign.campaignName ==
+                                 scannedCampaign.CampaignName ==
                                  CustomCampaignGlobal.CurrentCustomCampaignName)) // Custom Campaign is not registered.
                     {
                         MelonLogger.Error(
@@ -221,9 +221,9 @@ namespace NewSafetyHelp.CallerPatches
                     CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     // Clear callers array with amount of campaign callers.
-                    __instance.callers = new Caller[currentCustomCampaign.customCallersInCampaign.Count];
+                    __instance.callers = new Caller[currentCustomCampaign.CustomCallersInCampaign.Count];
 
-                    if (currentCustomCampaign.customCallersInCampaign.Count <= 0)
+                    if (currentCustomCampaign.CustomCallersInCampaign.Count <= 0)
                     {
                         MelonLogger.Warning(
                             "WARNING: Custom Campaign has no custom caller assigned! Unexpected behavior will occur when in campaign.");
@@ -233,7 +233,7 @@ namespace NewSafetyHelp.CallerPatches
                     Dictionary<int, int> listOfConsequenceCallers = new Dictionary<int, int>();
 
                     // Add all customCallers in Callers list.
-                    foreach (CallerModel.CustomCaller customCallerCC in currentCustomCampaign.customCallersInCampaign)
+                    foreach (CallerModel.CustomCaller customCallerCC in currentCustomCampaign.CustomCallersInCampaign)
                     {
                         CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
@@ -321,12 +321,12 @@ namespace NewSafetyHelp.CallerPatches
 
                         // Sanity check if we actually have a valid order provided.
                         if (customCallerCC.OrderInCampaign < 0 || customCallerCC.OrderInCampaign >=
-                            currentCustomCampaign.customCallersInCampaign.Count)
+                            currentCustomCampaign.CustomCallersInCampaign.Count)
                         {
                             MelonLogger.Error("ERROR: " +
                                               "Provided order is not valid! (Might be missing a caller(s) in between callers!)" +
                                               $" (Info: Provided Order: {customCallerCC.OrderInCampaign}; " +
-                                              $"CampaignSize: {currentCustomCampaign.customCallersInCampaign.Count})");
+                                              $"CampaignSize: {currentCustomCampaign.CustomCallersInCampaign.Count})");
                         }
                         else
                         {
@@ -355,7 +355,7 @@ namespace NewSafetyHelp.CallerPatches
                         foreach (KeyValuePair<int, int> customCallerIDWithConsequenceCaller in listOfConsequenceCallers)
                         {
                             if (customCallerIDWithConsequenceCaller.Value <
-                                currentCustomCampaign.customCallersInCampaign
+                                currentCustomCampaign.CustomCallersInCampaign
                                     .Count) // We have a valid ConsequenceCaller ID.
                             {
                                 // We check if the current consequence caller and the original caller exists.
@@ -443,7 +443,7 @@ namespace NewSafetyHelp.CallerPatches
                             $"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
 
                         foreach (CallerModel.CustomCaller customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
-                                     .customCallersInCampaign)
+                                     .CustomCallersInCampaign)
                         {
                             MelonLogger.Error($"{customCallerE.CallerName} : {customCallerE.OrderInCampaign}");
                         }
@@ -643,12 +643,12 @@ namespace NewSafetyHelp.CallerPatches
 
                     // Not Arcade Mode, is last call of day?, not DLC, threshold correct, current day is after day 1 and no save immunity.
                     if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC &&
-                        !__instance.ScoreIsPassing(customCampaign.gameOverThreshold) &&
+                        !__instance.ScoreIsPassing(customCampaign.GameOverThreshold) &&
                         GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                     {
                         __instance.TriggerGameOver();
                     }
-                    else if (!__instance.ScoreIsPassing(customCampaign.warningThreshold) &&
+                    else if (!__instance.ScoreIsPassing(customCampaign.WarningThreshold) &&
                              !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
                         #if DEBUG
@@ -658,11 +658,11 @@ namespace NewSafetyHelp.CallerPatches
                         int callersTodayRequiredWarning;
 
                         if (GlobalVariables.currentDay <=
-                            customCampaign.warningCallThresholdCallerAmounts
+                            customCampaign.WarningCallThresholdCallerAmounts
                                 .Count) // We have enough information per day until the warning call appears.
                         {
                             callersTodayRequiredWarning =
-                                customCampaign.warningCallThresholdCallerAmounts[GlobalVariables.currentDay - 1];
+                                customCampaign.WarningCallThresholdCallerAmounts[GlobalVariables.currentDay - 1];
                         }
                         else
                         {
@@ -688,15 +688,15 @@ namespace NewSafetyHelp.CallerPatches
                             CallerModel.CustomCaller warningCallerToday = null;
 
                             // Try finding a warning caller.
-                            if (customCampaign.customWarningCallersInCampaign.Count >
+                            if (customCampaign.CustomWarningCallersInCampaign.Count >
                                 0) // We actually have any warning call to insert here.
                             {
-                                if (customCampaign.customWarningCallersInCampaign.Exists(warningCaller =>
+                                if (customCampaign.CustomWarningCallersInCampaign.Exists(warningCaller =>
                                         warningCaller.WarningCallDay <=
                                         -1)) // If we have warning caller without a day attached we use this one before trying to find a more fitting one.
                                 {
                                     List<CallerModel.CustomCaller> allWarningCallsWithoutDay =
-                                        customCampaign.customWarningCallersInCampaign.FindAll(warningCaller =>
+                                        customCampaign.CustomWarningCallersInCampaign.FindAll(warningCaller =>
                                             warningCaller.WarningCallDay <= -1);
 
                                     if (allWarningCallsWithoutDay.Count > 0)
@@ -709,7 +709,7 @@ namespace NewSafetyHelp.CallerPatches
 
                                 // Try finding a warning call that is set for the current day.
                                 List<CallerModel.CustomCaller> allWarningCallsForToday =
-                                    customCampaign.customWarningCallersInCampaign.FindAll(warningCaller =>
+                                    customCampaign.CustomWarningCallersInCampaign.FindAll(warningCaller =>
                                         warningCaller.WarningCallDay == GlobalVariables.currentDay);
                                 if (allWarningCallsForToday.Count > 0)
                                 {
@@ -827,7 +827,8 @@ namespace NewSafetyHelp.CallerPatches
                     }
                 }
 
-                if (normalCallerAfterCheck) // Since we have duplicated copies of this, we just have a flag called if that section is called.
+                // Since we have duplicated copies of this, we just have a flag called if that section is called.
+                if (normalCallerAfterCheck) 
                 {
                     if (!(bool)_firstCaller.GetValue(__instance) && !__instance.arcadeMode) // !__instance.firstCaller
                     {

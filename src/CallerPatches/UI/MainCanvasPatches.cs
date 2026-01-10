@@ -72,17 +72,17 @@ namespace NewSafetyHelp.CallerPatches.UI
                         string dayString;
                         
                         // Campaign find campaign.
-                        if (currentCustomCampaign.campaignDayStrings.Count > 0)
+                        if (currentCustomCampaign.CampaignDayStrings.Count > 0)
                         {
-                            if (GlobalVariables.currentDay > currentCustomCampaign.campaignDayStrings.Count 
-                                || currentCustomCampaign.campaignDays > currentCustomCampaign.campaignDayStrings.Count)
+                            if (GlobalVariables.currentDay > currentCustomCampaign.CampaignDayStrings.Count 
+                                || currentCustomCampaign.CampaignDays > currentCustomCampaign.CampaignDayStrings.Count)
                             {
                                 MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
                                 dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                             }
                             else
                             {
-                                dayString = currentCustomCampaign.campaignDayStrings[(GlobalVariables.currentDay - 1) % currentCustomCampaign.campaignDayStrings.Count];
+                                dayString = currentCustomCampaign.CampaignDayStrings[(GlobalVariables.currentDay - 1) % currentCustomCampaign.CampaignDayStrings.Count];
                             }
                         }
                         else
@@ -116,7 +116,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                                 {
                                     if (unlockDays == null) // General Days, we simply display what we can.
                                     {
-                                        if (currentCustomCampaign.campaignDays > daysStrings.Count)
+                                        if (currentCustomCampaign.CampaignDays > daysStrings.Count)
                                         {
                                             MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using modulated values. ");
                                         }
@@ -334,7 +334,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     {
                         MelonLogger.Error("ERROR: CustomCampaign is null! Unable of enabling skip call button.");
                     }
-                    else if (customCampaign.alwaysSkipCallButton)
+                    else if (customCampaign.AlwaysSkipCallButton)
                     {
                         CustomDesktopHelper.getCallSkipButton().SetActive(true);
                     }
@@ -435,7 +435,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
 
-                    customCampaign.savedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
+                    customCampaign.SavedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
                 }
                 
                 FieldInfo _progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -479,9 +479,9 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
                     
-                    customCampaign.currentDay = GlobalVariables.currentDay;
-                    customCampaign.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
-                    customCampaign.currentPermissionTier  = GlobalVariables.entryUnlockScript.currentTier;
+                    customCampaign.CurrentDay = GlobalVariables.currentDay;
+                    customCampaign.SavedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
+                    customCampaign.CurrentPermissionTier  = GlobalVariables.entryUnlockScript.currentTier;
                     
                     List<bool> flagArray = new List<bool>();
                     
@@ -499,8 +499,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                         }
                     }
                     
-                    customCampaign.savedCallersCorrectAnswer = flagArray;
-                    customCampaign.savedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
+                    customCampaign.SavedCallersCorrectAnswer = flagArray;
+                    customCampaign.SavedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
                 }
                 
                 GlobalVariables.saveManagerScript.SaveGameProgress();
@@ -586,8 +586,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
                     
-                    customCampaign.savedGameFinished = 1;
-                    customCampaign.savedGameFinishedDisplay = 1;
+                    customCampaign.SavedGameFinished = 1;
+                    customCampaign.SavedGameFinishedDisplay = 1;
                     
                     List<bool> flagArray = new List<bool>();
                     
@@ -602,8 +602,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                         flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
                     }
                     
-                    customCampaign.savedCallersCorrectAnswer = flagArray;
-                    customCampaign.savedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
+                    customCampaign.SavedCallersCorrectAnswer = flagArray;
+                    customCampaign.SavedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
                 }
                 
                 // Works for both custom campaigns and main campaign.
@@ -638,9 +638,9 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
 
-                    if (!string.IsNullOrEmpty(customCampaign.endCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) // If provided
                     {
-                        mainCanvasBehavior.videoPlayer.url = customCampaign.endCutsceneVideoName;
+                        mainCanvasBehavior.videoPlayer.url = customCampaign.EndCutsceneVideoName;
                     }
                     else // If not, we show the default one.
                     {
@@ -664,7 +664,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
                     
-                    if (!string.IsNullOrEmpty(customCampaign.endCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) // If provided
                     {
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();
@@ -832,9 +832,9 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
 
-                    if (!string.IsNullOrEmpty(customCampaign.gameOverCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.GameOverCutsceneVideoName)) // If provided
                     {
-                        mainCanvasBehavior.videoPlayer.url = customCampaign.gameOverCutsceneVideoName;
+                        mainCanvasBehavior.videoPlayer.url = customCampaign.GameOverCutsceneVideoName;
                     }
                     else // If not, we show the default one.
                     {
@@ -862,7 +862,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
                     
-                    if (!string.IsNullOrEmpty(customCampaign.gameOverCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.GameOverCutsceneVideoName)) // If provided
                     {
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();

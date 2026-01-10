@@ -45,7 +45,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         return;
                     }
 
-                    foreach (CustomTheme theme in customCampaign.customThemesGeneral)
+                    foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
                     {
                         if (theme != null)
                         {
@@ -58,7 +58,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         }
                     }
                     
-                    if (customCampaign.disablePickingThemeOption)
+                    if (customCampaign.DisablePickingThemeOption)
                     {
                         CustomDesktopHelper.disableThemeDropdownInGame();
                     }
@@ -113,23 +113,23 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     
                     #if DEBUG
                     MelonLogger.Msg($"DEBUG: Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
-                                    $"and custom campaign activeTheme: {customCampaign.activeTheme}.");
+                                    $"and custom campaign activeTheme: {customCampaign.ActiveTheme}.");
                     #endif
                     
                     // Now if we have not loaded in the default theme ever, we do it now.
-                    if (!string.IsNullOrEmpty(customCampaign.defaultTheme) 
-                        && !customCampaign.defaultThemeAppliedOnce)
+                    if (!string.IsNullOrEmpty(customCampaign.DefaultTheme) 
+                        && !customCampaign.DefaultThemeAppliedOnce)
                     {
-                        int themeID = CustomCampaignGlobal.GetThemeIDFromName(customCampaign.defaultTheme);
+                        int themeID = CustomCampaignGlobal.GetThemeIDFromName(customCampaign.DefaultTheme);
 
                         if (themeID > 0)
                         {
-                            customCampaign.defaultThemeAppliedOnce = true;
-                            customCampaign.activeTheme = themeID;
+                            customCampaign.DefaultThemeAppliedOnce = true;
+                            customCampaign.ActiveTheme = themeID;
                         }
                     }
 
-                    if (customCampaign.activeTheme <= 3)
+                    if (customCampaign.ActiveTheme <= 3)
                     {
                         normalPaletteUpdate(__instance);
                     }
@@ -162,8 +162,8 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                             MelonLogger.Msg($"DEBUG: Is the theme custom? '{isCustomTheme}'. " +
                                             $"Was theme invalid? '{theme != null}'. ");
                         
-                            MelonLogger.Msg($"DEBUG: How many general themes? '{customCampaign.customThemesGeneral.Count}'. " +
-                                            $"How many conditional themes? '{customCampaign.customThemesDays.Count}'.");
+                            MelonLogger.Msg($"DEBUG: How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
+                                            $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.");
                             #endif
 
                             if (isCustomTheme 
@@ -244,7 +244,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         return true;
                     }
                     
-                    customCampaign.activeTheme = __instance.colorDropdown.value;
+                    customCampaign.ActiveTheme = __instance.colorDropdown.value;
                     GlobalVariables.saveManagerScript.savedColorTheme = __instance.colorDropdown.value;
                 }
                 

@@ -32,11 +32,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Add to correct campaign.
             CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.campaignName == customCampaignName);
+                    customCampaignSearch.CampaignName == customCampaignName);
 
             if (foundCustomCampaign != null)
             {
-                foundCustomCampaign.allDesktopVideos.Add(_customVideo);
+                foundCustomCampaign.AllDesktopVideos.Add(_customVideo);
             }
             else
             {

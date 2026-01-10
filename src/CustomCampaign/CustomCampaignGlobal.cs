@@ -43,7 +43,7 @@ namespace NewSafetyHelp.CustomCampaign
         public static CustomCampaignModel.CustomCampaign GetActiveCustomCampaign()
         {
             return CustomCampaignsAvailable.Find(scannedCampaign =>
-                scannedCampaign.campaignName == CurrentCustomCampaignName);
+                scannedCampaign.CampaignName == CurrentCustomCampaignName);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace NewSafetyHelp.CustomCampaign
         [CanBeNull]
         public static CallerPatches.CallerModel.CustomCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
-            return GetActiveCustomCampaign().customCallersInCampaign
+            return GetActiveCustomCampaign().CustomCallersInCampaign
                 .Find(customCaller => customCaller.OrderInCampaign == orderID);
         }
 
@@ -65,7 +65,7 @@ namespace NewSafetyHelp.CustomCampaign
         /// <returns>EntryMetadata Object with the returned object. If not found, default. </returns>
         public static EntryMetadata GetEntryFromActiveCampaign(string entryName)
         {
-            return GetActiveCustomCampaign().entriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
+            return GetActiveCustomCampaign().EntriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
         }
 
         /// <summary>
@@ -83,23 +83,23 @@ namespace NewSafetyHelp.CustomCampaign
                 return -1;
             }
 
-            if (customCampaign.customThemesGeneral != null)
+            if (customCampaign.CustomThemesGeneral != null)
             {
-                int generalIDSearch = customCampaign.customThemesGeneral.IndexOf(theme);
+                int generalIDSearch = customCampaign.CustomThemesGeneral.IndexOf(theme);
                 if (generalIDSearch != -1)
                 {
                     return generalIDSearch + 4;
                 }
             }
 
-            if (customCampaign.customThemesDays != null)
+            if (customCampaign.CustomThemesDays != null)
             {
-                int conditionalIDSearch = customCampaign.customThemesDays.IndexOf(theme);
+                int conditionalIDSearch = customCampaign.CustomThemesDays.IndexOf(theme);
                 if (conditionalIDSearch != -1)
                 {
-                    if (customCampaign.customThemesGeneral != null)
+                    if (customCampaign.CustomThemesGeneral != null)
                     {
-                        conditionalIDSearch += customCampaign.customThemesGeneral.Count;
+                        conditionalIDSearch += customCampaign.CustomThemesGeneral.Count;
                     }
                     
                     return conditionalIDSearch + 4;
@@ -132,9 +132,9 @@ namespace NewSafetyHelp.CustomCampaign
 
             int currentThemeID = 3;
 
-            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
             {
-                foreach (CustomTheme theme in customCampaign.customThemesGeneral)
+                foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
                 {
                     currentThemeID++;
 
@@ -145,9 +145,9 @@ namespace NewSafetyHelp.CustomCampaign
                 }
             }
 
-            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
             {
-                foreach (CustomTheme theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.CustomThemesDays)
                 {
                     currentThemeID++;
 
@@ -177,9 +177,9 @@ namespace NewSafetyHelp.CustomCampaign
 
             int currentThemeID = 3;
 
-            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
             {
-                foreach (CustomTheme theme in customCampaign.customThemesGeneral)
+                foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
                 {
                     currentThemeID++;
 
@@ -190,9 +190,9 @@ namespace NewSafetyHelp.CustomCampaign
                 }
             }
 
-            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
             {
-                foreach (CustomTheme theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.CustomThemesDays)
                 {
                     currentThemeID++;
 
@@ -228,9 +228,9 @@ namespace NewSafetyHelp.CustomCampaign
                 return -1;
             }
 
-            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
             {
-                foreach (CustomTheme theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.CustomThemesDays)
                 {
                     if (theme != null && theme.attachedToTheme.Equals(currentTheme.themeName))
                     {
@@ -267,34 +267,34 @@ namespace NewSafetyHelp.CustomCampaign
             
             isCustomTheme = false;
 
-            if (customCampaign.activeTheme <= 3) // Default Theme
+            if (customCampaign.ActiveTheme <= 3) // Default Theme
             {
                 return null;
             }
 
-            int indexAsGeneral = customCampaign.activeTheme - 4;
+            int indexAsGeneral = customCampaign.ActiveTheme - 4;
 
             if (indexAsGeneral >= 0 
-                && customCampaign.customThemesGeneral != null
-                && indexAsGeneral < customCampaign.customThemesGeneral.Count) // We have a general theme.
+                && customCampaign.CustomThemesGeneral != null
+                && indexAsGeneral < customCampaign.CustomThemesGeneral.Count) // We have a general theme.
             {
                 isCustomTheme = true;
-                return customCampaign.customThemesGeneral[indexAsGeneral];
+                return customCampaign.CustomThemesGeneral[indexAsGeneral];
             }
 
-            int indexAsDays = customCampaign.activeTheme - 4;
+            int indexAsDays = customCampaign.ActiveTheme - 4;
 
-            if (customCampaign.customThemesGeneral != null)
+            if (customCampaign.CustomThemesGeneral != null)
             {
-                indexAsDays -= customCampaign.customThemesGeneral.Count;
+                indexAsDays -= customCampaign.CustomThemesGeneral.Count;
             }
 
             if (indexAsDays >= 0
-                && customCampaign.customThemesDays != null
-                && indexAsDays < customCampaign.customThemesDays.Count) // We have a (conditional) days theme.
+                && customCampaign.CustomThemesDays != null
+                && indexAsDays < customCampaign.CustomThemesDays.Count) // We have a (conditional) days theme.
             {
                 isCustomTheme = true;
-                return customCampaign.customThemesDays[indexAsDays];
+                return customCampaign.CustomThemesDays[indexAsDays];
             }
 
             return null;
@@ -334,9 +334,9 @@ namespace NewSafetyHelp.CustomCampaign
             // We then pick the first in the list.
             // Note: General modifiers do not require to check for days, since they are always "valid", only the predicate.
 
-            if (customCampaign.customModifiersGeneral != null)
+            if (customCampaign.CustomModifiersGeneral != null)
             {
-                foreach (CustomModifier modifierGeneral in customCampaign.customModifiersGeneral)
+                foreach (CustomModifier modifierGeneral in customCampaign.CustomModifiersGeneral)
                 {
                     if (modifierGeneral == null)
                     {
@@ -357,9 +357,9 @@ namespace NewSafetyHelp.CustomCampaign
             // Now we check for conditional modifiers. Same work as with the general modifiers.
             // We only need to check if valid for the current day.
 
-            if (customCampaign.customModifiersDays != null)
+            if (customCampaign.CustomModifiersDays != null)
             {
-                foreach (CustomModifier modifierDay in customCampaign.customModifiersDays)
+                foreach (CustomModifier modifierDay in customCampaign.CustomModifiersDays)
                 {
                     if (modifierDay == null)
                     {
@@ -384,8 +384,8 @@ namespace NewSafetyHelp.CustomCampaign
         /// <summary>
         /// Adds all entries of a custom campaign to the array of entries.
         /// </summary>
-        /// <param name="_monsterProfileList">MonsterProfileList to add the entries to.</param>
-        public static void AddAllCustomCampaignEntriesToArray(ref MonsterProfileList _monsterProfileList)
+        /// <param name="monsterProfileList">MonsterProfileList to add the entries to.</param>
+        public static void AddAllCustomCampaignEntriesToArray(ref MonsterProfileList monsterProfileList)
         {
             CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -398,25 +398,25 @@ namespace NewSafetyHelp.CustomCampaign
 
             #if DEBUG
             MelonLogger.Msg(
-                $"DEBUG: Now adding all {customCampaign.entriesOnlyInCampaign.Count} entries to the custom campaign.");
+                $"DEBUG: Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
 
             // Add all entries.
-            foreach (EntryMetadata entryInCustomCampaign in customCampaign.entriesOnlyInCampaign)
+            foreach (EntryMetadata entryInCustomCampaign in customCampaign.EntriesOnlyInCampaign)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
                 #endif
 
                 EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry,
-                    ref _monsterProfileList.monsterProfiles, "allEntries");
+                    ref monsterProfileList.monsterProfiles, "allEntries");
             }
 
             // Sort afterward
-            EntryManager.EntryManager.SortMonsterProfiles(ref _monsterProfileList.monsterProfiles);
+            EntryManager.EntryManager.SortMonsterProfiles(ref monsterProfileList.monsterProfiles);
         }
 
-        public static void ReplaceAllProvidedCampaignEntries(ref MonsterProfileList _monsterProfileList)
+        public static void ReplaceAllProvidedCampaignEntries(ref MonsterProfileList monsterProfileList)
         {
             CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -429,10 +429,10 @@ namespace NewSafetyHelp.CustomCampaign
 
             #if DEBUG
             MelonLogger.Msg(
-                $"DEBUG: Now replacing all {customCampaign.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
+                $"DEBUG: Now replacing all {customCampaign.EntryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
 
-            if (_monsterProfileList.monsterProfiles.Length <= 0)
+            if (monsterProfileList.monsterProfiles.Length <= 0)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Monster Profile ");
@@ -440,9 +440,9 @@ namespace NewSafetyHelp.CustomCampaign
                 return;
             }
 
-            for (int i = 0; i < _monsterProfileList.monsterProfiles.Length; i++)
+            for (int i = 0; i < monsterProfileList.monsterProfiles.Length; i++)
             {
-                MonsterProfile realEntry = _monsterProfileList.monsterProfiles[i];
+                MonsterProfile realEntry = monsterProfileList.monsterProfiles[i];
 
                 if (realEntry == null)
                 {
@@ -451,7 +451,7 @@ namespace NewSafetyHelp.CustomCampaign
                 }
 
                 // Find matching entry to replace
-                EntryMetadata entryFound = customCampaign.entryReplaceOnlyInCampaign.Find(replaceEntry =>
+                EntryMetadata entryFound = customCampaign.EntryReplaceOnlyInCampaign.Find(replaceEntry =>
                     replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
                 );
 
@@ -465,7 +465,7 @@ namespace NewSafetyHelp.CustomCampaign
                     }
 
                     // Delete by name.
-                    EntryManager.EntryManager.DeleteMonsterProfile(ref _monsterProfileList.monsterProfiles, null,
+                    EntryManager.EntryManager.DeleteMonsterProfile(ref monsterProfileList.monsterProfiles, null,
                         entryFound.Name);
 
                     #if DEBUG
@@ -482,7 +482,7 @@ namespace NewSafetyHelp.CustomCampaign
                         continue;
                     }
 
-                    _monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
+                    monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
 
                     #if DEBUG
                     MelonLogger.Msg($"DEBUG: Replacing entry {entryFound.Name} with custom entry in custom campaign.");

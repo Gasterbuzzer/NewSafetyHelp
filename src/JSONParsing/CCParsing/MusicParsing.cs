@@ -70,11 +70,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Add to correct campaign.
             CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.campaignName == customCampaignName);
+                    customCampaignSearch.CampaignName == customCampaignName);
 
             if (foundCustomCampaign != null)
             {
-                foundCustomCampaign.customMusic.Add(customMusic);
+                foundCustomCampaign.CustomMusic.Add(customMusic);
             }
             else
             {

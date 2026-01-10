@@ -54,15 +54,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         if (customCallerCC.IsGameOverCaller)
                         {
-                            customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
+                            customCampaign.CustomGameOverCallersInCampaign.Add(customCallerCC);
                         }
                         else if (customCallerCC.IsWarningCaller)
                         {
-                            customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
+                            customCampaign.CustomWarningCallersInCampaign.Add(customCallerCC);
                         }
                         else
                         {
-                            customCampaign.customCallersInCampaign.Add(customCallerCC);
+                            customCampaign.CustomCallersInCampaign.Add(customCallerCC);
                         }
 
                         GlobalParsingVariables.PendingCustomCampaignCustomCallers.Remove(customCallerCC);
@@ -84,7 +84,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing entry to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        customCampaign.entriesOnlyInCampaign.Add(missingEntry);
+                        customCampaign.EntriesOnlyInCampaign.Add(missingEntry);
 
                         GlobalParsingVariables.PendingCustomCampaignEntries.Remove(missingEntry);
                     }
@@ -105,7 +105,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding 'replace' missing entry to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
+                        customCampaign.EntryReplaceOnlyInCampaign.Add(missingEntry);
                         GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Remove(missingEntry);
                     }
                 }
@@ -125,7 +125,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing email to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        customCampaign.emails.Add(missingEmail);
+                        customCampaign.Emails.Add(missingEmail);
                         GlobalParsingVariables.PendingCustomCampaignEmails.Remove(missingEmail);
                     }
                 }
@@ -145,7 +145,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing video to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        customCampaign.allDesktopVideos.Add(missingVideo);
+                        customCampaign.AllDesktopVideos.Add(missingVideo);
                         GlobalParsingVariables.PendingCustomCampaignVideos.Remove(missingVideo);
                     }
                 }
@@ -165,7 +165,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             MelonLogger.Msg($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        customCampaign.customMusic.Add(missingMusic);
+                        customCampaign.CustomMusic.Add(missingMusic);
                         GlobalParsingVariables.PendingCustomCampaignMusic.Remove(missingMusic);
                     }
                 }
@@ -187,11 +187,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         if (missingModifier.unlockDays == null)
                         {
-                            customCampaign.customModifiersGeneral.Add(missingModifier);
+                            customCampaign.CustomModifiersGeneral.Add(missingModifier);
                         }
                         else
                         {
-                            customCampaign.customModifiersDays.Add(missingModifier);
+                            customCampaign.CustomModifiersDays.Add(missingModifier);
                         }
                         
                         GlobalParsingVariables.PendingCustomCampaignModifiers.Remove(missingModifier);
@@ -215,11 +215,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         if (missingTheme.unlockDays == null)
                         {
-                            customCampaign.customThemesGeneral.Add(missingTheme);
+                            customCampaign.CustomThemesGeneral.Add(missingTheme);
                         }
                         else
                         {
-                            customCampaign.customThemesDays.Add(missingTheme);
+                            customCampaign.CustomThemesDays.Add(missingTheme);
                         }
                         
                         GlobalParsingVariables.PendingCustomCampaignThemes.Remove(missingTheme);
@@ -241,7 +241,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         MelonLogger.Msg($"DEBUG: Adding missing ringtone to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        customCampaign.customRingtones.Add(missingRingtone);
+                        customCampaign.CustomRingtones.Add(missingRingtone);
                         
                         GlobalParsingVariables.PendingCustomCampaignRingtones.Remove(missingRingtone);
                     }
@@ -690,63 +690,63 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Create
             return new CustomCampaign.CustomCampaignModel.CustomCampaign
             {
-                campaignName = customCampaignName,
-                campaignDays = customCampaignDays,
-                campaignIcon = customCampaignSprite,
-                campaignDayStrings = customCampaignDaysNames,
-                campaignDesktopName = customCampaignDesktopName,
+                CampaignName = customCampaignName,
+                CampaignDays = customCampaignDays,
+                CampaignIcon = customCampaignSprite,
+                CampaignDayStrings = customCampaignDaysNames,
+                CampaignDesktopName = customCampaignDesktopName,
 
-                removeExistingEntries = removeAllExistingEntries,
-                resetDefaultEntriesPermission = resetDefaultEntriesPermission,
-                doShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
+                RemoveExistingEntries = removeAllExistingEntries,
+                ResetDefaultEntriesPermission = resetDefaultEntriesPermission,
+                DoShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
                 
-                skipCallersCorrectly = skipCallersCorrectly,
+                SkipCallersCorrectly = skipCallersCorrectly,
 
-                loadingTexts = loadingTexts,
+                LoadingTexts = loadingTexts,
 
-                desktopUsernameText = desktopUsernameText,
-                desktopDateStartYear = desktopDateStartYear,
-                desktopDateStartMonth = desktopDateStartMonth,
-                desktopDateStartDay = desktopDateStartDay,
-                useEuropeDateFormat = useEuropeDateFormat,
+                DesktopUsernameText = desktopUsernameText,
+                DesktopDateStartYear = desktopDateStartYear,
+                DesktopDateStartMonth = desktopDateStartMonth,
+                DesktopDateStartDay = desktopDateStartDay,
+                UseEuropeDateFormat = useEuropeDateFormat,
 
-                gameOverThreshold = gameOverThreshold,
-                warningThreshold = warningThreshold,
-                warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
+                GameOverThreshold = gameOverThreshold,
+                WarningThreshold = warningThreshold,
+                WarningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
 
-                endCutsceneVideoName = endCutscenePath,
-                gameOverCutsceneVideoName = gameOverCutscenePath,
+                EndCutsceneVideoName = endCutscenePath,
+                GameOverCutsceneVideoName = gameOverCutscenePath,
                 
-                alwaysRandomMusic = useRandomMusic,
-                removeDefaultMusic = removeDefaultMusic,
+                AlwaysRandomMusic = useRandomMusic,
+                RemoveDefaultMusic = removeDefaultMusic,
 
-                entryBrowserAlwaysActive = entryBrowserAlwaysActive,
-                scorecardAlwaysActive = scorecardAlwaysActive,
-                artbookAlwaysActive = artbookAlwaysActive,
-                arcadeAlwaysActive = arcadeAlwaysActive,
+                EntryBrowserAlwaysActive = entryBrowserAlwaysActive,
+                ScorecardAlwaysActive = scorecardAlwaysActive,
+                ArtbookAlwaysActive = artbookAlwaysActive,
+                ArcadeAlwaysActive = arcadeAlwaysActive,
 
-                disableAllDefaultVideos = disableDefaultVideos,
+                DisableAllDefaultVideos = disableDefaultVideos,
 
-                renameMainGameDesktopIcon = renameMainProgram,
-                changeMainGameDesktopIcon = changeMainProgramSprite,
+                RenameMainGameDesktopIcon = renameMainProgram,
+                ChangeMainGameDesktopIcon = changeMainProgramSprite,
 
-                alwaysSkipCallButton = alwaysSkipCallButton,
+                AlwaysSkipCallButton = alwaysSkipCallButton,
 
-                removeDefaultEmails = removeAllDefaultEmails,
+                RemoveDefaultEmails = removeAllDefaultEmails,
 
-                backgroundSprites = backgroundSprites,
-                gameFinishedBackground = backgroundFinishedGameSprite,
+                BackgroundSprites = backgroundSprites,
+                GameFinishedBackground = backgroundFinishedGameSprite,
 
-                disableDesktopLogo = disableDesktopLogo,
-                customDesktopLogo = customDesktopLogo,
-                customDesktopLogoTransparency = customDesktopLogoTransparency,
+                DisableDesktopLogo = disableDesktopLogo,
+                CustomDesktopLogo = customDesktopLogo,
+                CustomDesktopLogoTransparency = customDesktopLogoTransparency,
 
-                disableGreenColorBackground = disableGreenColorBackground,
+                DisableGreenColorBackground = disableGreenColorBackground,
                 
-                defaultTheme = defaultTheme,
-                disablePickingThemeOption = disablePickingThemeOption,
+                DefaultTheme = defaultTheme,
+                DisablePickingThemeOption = disablePickingThemeOption,
                 
-                doNotAccountDefaultRingtone = doNotAccountDefaultRingtone
+                DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone
             };
         }
     }

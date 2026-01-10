@@ -917,7 +917,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                         CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign =
                             CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                                customCampaignSearch.campaignName == customCampaignNameCopy);
+                                customCampaignSearch.CampaignName == customCampaignNameCopy);
 
                         if (currentCustomCampaign == null)
                         {
@@ -932,7 +932,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                             return;
                         }
 
-                        currentCustomCampaign.entryReplaceOnlyInCampaign.Add(extraEntryInfo);
+                        currentCustomCampaign.EntryReplaceOnlyInCampaign.Add(extraEntryInfo);
                     }
                 }
             }
@@ -989,7 +989,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 // Add to correct campaign.
                 CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
                     CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                        customCampaignSearch.campaignName == customCampaignNameCopy);
+                        customCampaignSearch.CampaignName == customCampaignNameCopy);
 
                 if (foundCustomCampaign != null)
                 {
@@ -999,7 +999,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                     if (extraEntryInfo != null)
                     {
-                        foundCustomCampaign.entriesOnlyInCampaign.Add(extraEntryInfo);
+                        foundCustomCampaign.EntriesOnlyInCampaign.Add(extraEntryInfo);
                     }
                     else
                     {

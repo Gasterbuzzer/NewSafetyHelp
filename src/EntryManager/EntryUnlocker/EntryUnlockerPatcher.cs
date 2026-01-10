@@ -114,7 +114,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     return;
                 }
 
-                if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission)
+                if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission)
                 {
                     if (MainClassForMonsterEntries.CopyMonsterProfiles != null)
                     {

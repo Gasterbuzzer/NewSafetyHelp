@@ -85,19 +85,19 @@ namespace NewSafetyHelp.Audio.Music
                         return true;
                     }
 
-                    if (customCampaign.alwaysRandomMusic || GlobalVariables.currentDay > 4)
+                    if (customCampaign.AlwaysRandomMusic || GlobalVariables.currentDay > 4)
                     {
                         int amountOfClips = 0;
 
-                        int customMusicAmount = customCampaign.customMusic
+                        int customMusicAmount = customCampaign.CustomMusic
                             .Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList().Count;
 
-                        if (!customCampaign.removeDefaultMusic)
+                        if (!customCampaign.RemoveDefaultMusic)
                         {
                             amountOfClips += __instance.onHoldMusicClips.Length;
                         }
 
-                        if (customCampaign.customMusic.Count > 0) // We have custom music
+                        if (customCampaign.CustomMusic.Count > 0) // We have custom music
                         {
                             amountOfClips += customMusicAmount;
                         }
@@ -112,7 +112,7 @@ namespace NewSafetyHelp.Audio.Music
                             chosenMusicIndex = Random.Range(0, amountOfClips);
                         }
 
-                        if (!customCampaign.removeDefaultMusic)
+                        if (!customCampaign.RemoveDefaultMusic)
                         {
                             if (chosenMusicIndex >= __instance.onHoldMusicClips.Length)
                             {
@@ -120,7 +120,7 @@ namespace NewSafetyHelp.Audio.Music
                                 chosenMusicIndex -= __instance.onHoldMusicClips.Length;
                             }
                         }
-                        else if (customCampaign.removeDefaultMusic)
+                        else if (customCampaign.RemoveDefaultMusic)
                         {
                             playCustomMusic = true;
                         }
@@ -130,7 +130,7 @@ namespace NewSafetyHelp.Audio.Music
                                         $"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)_previousHoldMusicIndex.GetValue(__instance)}." +
                                         $" (From custom music? {playCustomMusic})" +
                                         $" (Amount of clips: {amountOfClips})" +
-                                        $" (Remove default music? {customCampaign.removeDefaultMusic})" +
+                                        $" (Remove default music? {customCampaign.RemoveDefaultMusic})" +
                                         $" (Current day: {GlobalVariables.currentDay})");
 
                         if (playCustomMusic)
@@ -145,20 +145,20 @@ namespace NewSafetyHelp.Audio.Music
                     {
                         int amountOfClips = 0;
 
-                        int customMusicAmount = customCampaign.customMusic
+                        int customMusicAmount = customCampaign.CustomMusic
                             .Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList().Count;
 
-                        if (!customCampaign.removeDefaultMusic)
+                        if (!customCampaign.RemoveDefaultMusic)
                         {
                             amountOfClips += __instance.onHoldMusicClips.Length;
                         }
 
-                        if (customCampaign.customMusic.Count > 0) // We have custom music
+                        if (customCampaign.CustomMusic.Count > 0) // We have custom music
                         {
                             amountOfClips += customMusicAmount;
                         }
 
-                        if (customCampaign.removeDefaultMusic) // Only custom music
+                        if (customCampaign.RemoveDefaultMusic) // Only custom music
                         {
                             playCustomMusic = true;
 
@@ -170,7 +170,7 @@ namespace NewSafetyHelp.Audio.Music
                                 chosenMusicIndex = Random.Range(0, amountOfClips);
                             }
                         }
-                        else if (!customCampaign.removeDefaultMusic &&
+                        else if (!customCampaign.RemoveDefaultMusic &&
                                  customMusicAmount > 0) // Combined custom and normal music
                         {
                             int whichMusicList = Random.Range(0, 2); // 0 or 1
@@ -204,7 +204,7 @@ namespace NewSafetyHelp.Audio.Music
                                     break;
                             }
                         }
-                        else if (!customCampaign.removeDefaultMusic && customMusicAmount <= 0) // Normal
+                        else if (!customCampaign.RemoveDefaultMusic && customMusicAmount <= 0) // Normal
                         {
                             for (int musicChoosingAttempt = 0;
                                  chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
@@ -237,7 +237,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (playCustomMusic)
                     {
-                        List<CustomMusic> customMusicList = customCampaign.customMusic
+                        List<CustomMusic> customMusicList = customCampaign.CustomMusic
                             .Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList();
 
                         if (customMusicList.Count > 0 && customMusicList[chosenMusicIndex].musicClip != null)
@@ -249,7 +249,7 @@ namespace NewSafetyHelp.Audio.Music
                             MelonLogger.Warning("WARNING: Music clip is empty! Possibly failed loading?");
                         }
                     }
-                    else if (!customCampaign.removeDefaultMusic)
+                    else if (!customCampaign.RemoveDefaultMusic)
                     {
                         __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
                     }

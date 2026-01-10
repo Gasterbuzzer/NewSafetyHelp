@@ -32,8 +32,8 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                         return;
                     }
 
-                    if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission &&
-                        !customCampaign.doShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
+                    if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission &&
+                        !customCampaign.DoShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
                     {
                         if (MainClassForMonsterEntries.CopyMonsterProfiles
                             .Contains(__instance.myProfile)) // Contained in main campaign.

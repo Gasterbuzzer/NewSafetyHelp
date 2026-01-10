@@ -46,14 +46,14 @@ namespace NewSafetyHelp.Audio.AudioPatches
                     }
 
                     // Ringtone
-                    if (customCampaign.customRingtones != null 
-                        && customCampaign.customRingtones.Count > 0)
+                    if (customCampaign.CustomRingtones != null 
+                        && customCampaign.CustomRingtones.Count > 0)
                     {
                         List<CustomRingtone> validRingtonesNormal = new List<CustomRingtone>();
                         List<CustomRingtone> validRingtonesGlitched = new List<CustomRingtone>();
 
                         // For each ringtone that is valid for this current day, attempt to find all valid.
-                        foreach (CustomRingtone customRingtone in customCampaign.customRingtones.Where(c => c.UnlockDay <= GlobalVariables.currentDay))
+                        foreach (CustomRingtone customRingtone in customCampaign.CustomRingtones.Where(c => c.UnlockDay <= GlobalVariables.currentDay))
                         {
                             // If we are only allowed to play on the unlock day.
                             // Then the unlock day must be equal to the current day.
@@ -75,10 +75,10 @@ namespace NewSafetyHelp.Audio.AudioPatches
                         
                         // Now for each valid ringtone we try to pick one valid.
                         ReplacePhoneCallIfValid(ref __instance.phoneCall, ref validRingtonesNormal,
-                            customCampaign.doNotAccountDefaultRingtone, ref defaultRingtone);
+                            customCampaign.DoNotAccountDefaultRingtone, ref defaultRingtone);
 
                         ReplacePhoneCallIfValid(ref __instance.phoneCallWarped, ref validRingtonesGlitched,
-                            customCampaign.doNotAccountDefaultRingtone, ref defaultWarpedRingtone);
+                            customCampaign.DoNotAccountDefaultRingtone, ref defaultWarpedRingtone);
                     }
                 }
             }

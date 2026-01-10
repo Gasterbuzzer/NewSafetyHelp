@@ -34,7 +34,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Add to correct campaign.
             CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.campaignName == customCampaignName);
+                    customCampaignSearch.CampaignName == customCampaignName);
             
             if (customTheme.inMainCampaign)
             {
@@ -46,11 +46,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (customTheme.unlockDays == null)
                     {
-                        foundCustomCampaign.customThemesGeneral.Add(customTheme);
+                        foundCustomCampaign.CustomThemesGeneral.Add(customTheme);
                     }
                     else
                     {
-                        foundCustomCampaign.customThemesDays.Add(customTheme);
+                        foundCustomCampaign.CustomThemesDays.Add(customTheme);
                     }
                 }
                 else

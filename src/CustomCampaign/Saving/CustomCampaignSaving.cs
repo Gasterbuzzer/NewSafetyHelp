@@ -19,55 +19,55 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            if (currentCampaign.campaignSaveCategory == null)
+            if (currentCampaign.CampaignSaveCategory == null)
             {
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName +
-                    currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
+                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedDays", 1);
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedDays", 1);
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedEntryTier", 1);
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedEntryTier", 1);
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
             }
             
-            for (int i = 0; i < currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value; i++)
+            for (int i = 0; i < currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value; i++)
             {
-                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
+                if (currentCampaign.CampaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
                 {
-                    currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
+                    currentCampaign.CampaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
                 }
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinished", 0);
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedGameFinished", 0);
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
             }
             
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays; i++)
             {
-                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
+                if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
-                    currentCampaign.campaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
+                    currentCampaign.CampaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
                 }
             }
 
@@ -96,76 +96,76 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Custom Campaigns
             // We use this painful category name to avoid any conflicts.
-            if (currentCampaign.campaignSaveCategory == null)
+            if (currentCampaign.CampaignSaveCategory == null)
             {
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName +
-                    currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
+                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
 
             // Create Campaign Days Save Value
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays") == null)
             {
                 MelonPreferences_Entry<int> currentSavedDays =
-                    currentCampaign.campaignSaveCategory.CreateEntry("savedDays", 1);
-                currentSavedDays.Value = currentCampaign.currentDay;
+                    currentCampaign.CampaignSaveCategory.CreateEntry("savedDays", 1);
+                currentSavedDays.Value = currentCampaign.CurrentDay;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value = currentCampaign.currentDay;
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays").Value = currentCampaign.CurrentDay;
             }
             
             // Current Caller Index
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
             {
                 MelonPreferences_Entry<int> savedCurrentCaller =
-                    currentCampaign.campaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
-                savedCurrentCaller.Value = currentCampaign.savedCurrentCaller;
+                    currentCampaign.CampaignSaveCategory.CreateEntry("savedCurrentCaller", 0);
+                savedCurrentCaller.Value = currentCampaign.SavedCurrentCaller;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value =
-                    currentCampaign.savedCurrentCaller;
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value =
+                    currentCampaign.SavedCurrentCaller;
             }
 
             // Current permission tier
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedEntryTier") == null)
             {
                 MelonPreferences_Entry<int> currentSavedTier =
-                    currentCampaign.campaignSaveCategory.CreateEntry("savedEntryTier", 1);
-                currentSavedTier.Value = currentCampaign.currentPermissionTier;
+                    currentCampaign.CampaignSaveCategory.CreateEntry("savedEntryTier", 1);
+                currentSavedTier.Value = currentCampaign.CurrentPermissionTier;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value =
-                    currentCampaign.currentPermissionTier;
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedEntryTier").Value =
+                    currentCampaign.CurrentPermissionTier;
             }
 
             // Correct answers.
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCallerArrayLength") == null)
             {
                 MelonPreferences_Entry<int> savedCallerArrayLength =
-                    currentCampaign.campaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
-                savedCallerArrayLength.Value = currentCampaign.savedCallerArrayLength;
+                    currentCampaign.CampaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
+                savedCallerArrayLength.Value = currentCampaign.SavedCallerArrayLength;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value =
-                    currentCampaign.savedCallerArrayLength;
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value =
+                    currentCampaign.SavedCallerArrayLength;
             }
 
             // For each correct answer create the correct entry.
-            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
+            for (int i = 0; i < currentCampaign.SavedCallerArrayLength; i++)
             {
-                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
+                if (currentCampaign.CampaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
                 {
                     MelonPreferences_Entry<bool> savedCallerCorrectAnswers =
-                        currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
+                        currentCampaign.CampaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{i}", false);
 
-                    if (currentCampaign.savedCallersCorrectAnswer.Count >
+                    if (currentCampaign.SavedCallersCorrectAnswer.Count >
                         i) // If we have enough values for "i". It should be correct but who knows.
                     {
                         savedCallerCorrectAnswers.Value =
-                            currentCampaign.savedCallersCorrectAnswer[i]; // Whatever value we have at that index.
+                            currentCampaign.SavedCallersCorrectAnswer[i]; // Whatever value we have at that index.
                     }
                     else
                     {
@@ -175,11 +175,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
                 else
                 {
-                    if (currentCampaign.savedCallersCorrectAnswer.Count >
+                    if (currentCampaign.SavedCallersCorrectAnswer.Count >
                         i) // If we have enough values for "i". It should be but who knows.
                     {
-                        currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value =
-                            currentCampaign.savedCallersCorrectAnswer[i]; // Whatever value where have at that index.
+                        currentCampaign.CampaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value =
+                            currentCampaign.SavedCallersCorrectAnswer[i]; // Whatever value where have at that index.
                     }
                     else
                     {
@@ -190,43 +190,43 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             }
 
             // Special Values
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished") == null)
             {
                 MelonPreferences_Entry<int> savedGameFinished =
-                    currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinished", 0);
-                savedGameFinished.Value = currentCampaign.savedGameFinished;
+                    currentCampaign.CampaignSaveCategory.CreateEntry("savedGameFinished", 0);
+                savedGameFinished.Value = currentCampaign.SavedGameFinished;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value =
-                    currentCampaign.savedGameFinished;
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished").Value =
+                    currentCampaign.SavedGameFinished;
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay") == null)
             {
                 MelonPreferences_Entry<int> savedGameFinishedDisplay =
-                    currentCampaign.campaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
-                savedGameFinishedDisplay.Value = currentCampaign.savedGameFinishedDisplay;
+                    currentCampaign.CampaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
+                savedGameFinishedDisplay.Value = currentCampaign.SavedGameFinishedDisplay;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value =
-                    currentCampaign.savedGameFinishedDisplay;
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value =
+                    currentCampaign.SavedGameFinishedDisplay;
             }
 
             // Day score
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays; i++)
             {
-                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
+                if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
                     MelonPreferences_Entry<float> savedCallerCorrectAnswers =
-                        currentCampaign.campaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
+                        currentCampaign.CampaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
 
-                    if (currentCampaign.savedDayScores.Count >
+                    if (currentCampaign.SavedDayScores.Count >
                         i) // If we have enough values for "i". It should be but who knows.
                     {
                         savedCallerCorrectAnswers.Value =
-                            currentCampaign.savedDayScores[i]; // Whatever value where have at that index.
+                            currentCampaign.SavedDayScores[i]; // Whatever value where have at that index.
                     }
                     else
                     {
@@ -236,11 +236,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
                 else
                 {
-                    if (currentCampaign.savedDayScores.Count >
+                    if (currentCampaign.SavedDayScores.Count >
                         i) // If we have enough values for "i". It should be but who knows.
                     {
-                        currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value =
-                            currentCampaign.savedDayScores[i]; // Whatever value where have at that index.
+                        currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value =
+                            currentCampaign.SavedDayScores[i]; // Whatever value where have at that index.
                     }
                     else
                     {
@@ -252,7 +252,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // We finished storing all important values. Now we save.
             MelonPreferences.Save();
 
-            MelonLogger.Msg($"INFO: Finished saving custom campaign {currentCampaign.campaignName}.");
+            MelonLogger.Msg($"INFO: Finished saving custom campaign {currentCampaign.CampaignName}.");
         }
 
         /// <summary>
@@ -276,60 +276,60 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Custom Campaigns
             // We use this painful category name to avoid any conflicts.
-            if (currentCampaign.campaignSaveCategory == null)
+            if (currentCampaign.CampaignSaveCategory == null)
             {
                 // We get the category if not set yet.
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName +
-                    currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
+                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOnce();
 
             // Load all values first into the currentCampaign Object.
-            currentCampaign.currentDay = currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value;
-            currentCampaign.currentPermissionTier =
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value;
-            currentCampaign.savedCallerArrayLength =
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value;
-            currentCampaign.savedCurrentCaller =
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value;
+            currentCampaign.CurrentDay = currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays").Value;
+            currentCampaign.CurrentPermissionTier =
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedEntryTier").Value;
+            currentCampaign.SavedCallerArrayLength =
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value;
+            currentCampaign.SavedCurrentCaller =
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value;
 
             // Special Values
-            currentCampaign.savedGameFinished =
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value;
-            currentCampaign.savedGameFinishedDisplay =
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value;
+            currentCampaign.SavedGameFinished =
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished").Value;
+            currentCampaign.SavedGameFinishedDisplay =
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value;
 
             // Add all correct answers.
-            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
+            for (int i = 0; i < currentCampaign.SavedCallerArrayLength; i++)
             {
-                if (currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") != null)
+                if (currentCampaign.CampaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") != null)
                 {
-                    currentCampaign.savedCallersCorrectAnswer.Add(currentCampaign.campaignSaveCategory
+                    currentCampaign.SavedCallersCorrectAnswer.Add(currentCampaign.CampaignSaveCategory
                         .GetEntry<bool>($"savedCallerCorrectAnswer{i}").Value);
                 }
                 else
                 {
                     MelonLogger.Warning(
                         $"WARNING: While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist! Setting to 0.0 for {i}.");
-                    currentCampaign.savedCallersCorrectAnswer.Add(false);
+                    currentCampaign.SavedCallersCorrectAnswer.Add(false);
                 }
             }
 
             // Saved Day Scores
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays; i++)
             {
-                if (currentCampaign.campaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") != null)
+                if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") != null)
                 {
-                    currentCampaign.savedDayScores.Add(currentCampaign.campaignSaveCategory
+                    currentCampaign.SavedDayScores.Add(currentCampaign.CampaignSaveCategory
                         .GetEntry<float>($"SavedDayScore{i}").Value);
                 }
                 else
                 {
                     MelonLogger.Warning(
                         $"WARNING: While loading all saved caller answers, 'SavedDayScore{i}' does not exist! Setting to false for {i}.");
-                    currentCampaign.savedDayScores.Add(0.0f);
+                    currentCampaign.SavedDayScores.Add(0.0f);
                 }
             }
 
@@ -337,27 +337,27 @@ namespace NewSafetyHelp.CustomCampaign.Saving
              * Load the values into actual game values now.
              */
 
-            GlobalVariables.saveManagerScript.savedDay = currentCampaign.currentDay;
-            GlobalVariables.currentDay = currentCampaign.currentDay;
+            GlobalVariables.saveManagerScript.savedDay = currentCampaign.CurrentDay;
+            GlobalVariables.currentDay = currentCampaign.CurrentDay;
 
-            GlobalVariables.saveManagerScript.savedCurrentCaller = currentCampaign.savedCurrentCaller;
+            GlobalVariables.saveManagerScript.savedCurrentCaller = currentCampaign.SavedCurrentCaller;
 
-            GlobalVariables.saveManagerScript.savedEntryTier = currentCampaign.currentPermissionTier;
+            GlobalVariables.saveManagerScript.savedEntryTier = currentCampaign.CurrentPermissionTier;
 
-            GlobalVariables.saveManagerScript.savedCallerArrayLength = currentCampaign.savedCallerArrayLength;
+            GlobalVariables.saveManagerScript.savedCallerArrayLength = currentCampaign.SavedCallerArrayLength;
 
             // Add all saved answers.
-            bool[] flagArray = new bool[currentCampaign.savedCallerArrayLength];
+            bool[] flagArray = new bool[currentCampaign.SavedCallerArrayLength];
 
-            for (int index = 0; index < currentCampaign.savedCallerArrayLength; ++index)
+            for (int index = 0; index < currentCampaign.SavedCallerArrayLength; ++index)
             {
                 MelonPreferences_Entry<bool> entry =
-                    currentCampaign.campaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{index}");
+                    currentCampaign.CampaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{index}");
 
                 if (entry == null)
                 {
                     // If entry does not exist, create it with default value false.
-                    entry = currentCampaign.campaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{index}", false);
+                    entry = currentCampaign.CampaignSaveCategory.CreateEntry($"savedCallerCorrectAnswer{index}", false);
                 }
 
                 flagArray[index] = entry.Value;
@@ -366,39 +366,39 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             GlobalVariables.saveManagerScript.savedCallerCorrectAnswers = flagArray;
 
             // Special Values
-            GlobalVariables.saveManagerScript.savedGameFinished = currentCampaign.savedGameFinished;
-            GlobalVariables.saveManagerScript.savedGameFinishedDisplay = currentCampaign.savedGameFinishedDisplay;
+            GlobalVariables.saveManagerScript.savedGameFinished = currentCampaign.SavedGameFinished;
+            GlobalVariables.saveManagerScript.savedGameFinishedDisplay = currentCampaign.SavedGameFinishedDisplay;
 
-            for (int i = 0; i < Mathf.Min(7, currentCampaign.campaignDays); ++i)
+            for (int i = 0; i < Mathf.Min(7, currentCampaign.CampaignDays); ++i)
             {
                 switch (i)
                 {
                     case 0:
-                        GlobalVariables.saveManagerScript.savedDayScore1 = currentCampaign.savedDayScores[i];
+                        GlobalVariables.saveManagerScript.savedDayScore1 = currentCampaign.SavedDayScores[i];
                         break;
 
                     case 1:
-                        GlobalVariables.saveManagerScript.savedDayScore2 = currentCampaign.savedDayScores[i];
+                        GlobalVariables.saveManagerScript.savedDayScore2 = currentCampaign.SavedDayScores[i];
                         break;
 
                     case 2:
-                        GlobalVariables.saveManagerScript.savedDayScore3 = currentCampaign.savedDayScores[i];
+                        GlobalVariables.saveManagerScript.savedDayScore3 = currentCampaign.SavedDayScores[i];
                         break;
 
                     case 3:
-                        GlobalVariables.saveManagerScript.savedDayScore4 = currentCampaign.savedDayScores[i];
+                        GlobalVariables.saveManagerScript.savedDayScore4 = currentCampaign.SavedDayScores[i];
                         break;
 
                     case 4:
-                        GlobalVariables.saveManagerScript.savedDayScore5 = currentCampaign.savedDayScores[i];
+                        GlobalVariables.saveManagerScript.savedDayScore5 = currentCampaign.SavedDayScores[i];
                         break;
 
                     case 5:
-                        GlobalVariables.saveManagerScript.savedDayScore6 = currentCampaign.savedDayScores[i];
+                        GlobalVariables.saveManagerScript.savedDayScore6 = currentCampaign.SavedDayScores[i];
                         break;
 
                     case 6:
-                        GlobalVariables.saveManagerScript.savedDayScore7 = currentCampaign.savedDayScores[i];
+                        GlobalVariables.saveManagerScript.savedDayScore7 = currentCampaign.SavedDayScores[i];
                         break;
 
                     default:
@@ -434,18 +434,18 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Custom Campaigns
 
-            if (currentCampaign.campaignSaveCategory == null) // We haven't loaded it in?
+            if (currentCampaign.CampaignSaveCategory == null) // We haven't loaded it in?
             {
                 LoadFromFileCustomCampaignInfo();
             }
 
-            if (currentCampaign.campaignSaveCategory == null)
+            if (currentCampaign.CampaignSaveCategory == null)
             {
                 MelonLogger.Error("ERROR: Tried resetting but save is still null!");
                 return;
             }
 
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays") == null)
             {
                 // If null, we cancel our operation since there is no save.
                 MelonLogger.Error("ERROR: Tried resetting when no save is available!");
@@ -456,50 +456,50 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // MelonPreferences.RemoveCategoryFromFile("",currentCampaign.campaignName + currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
 
             // We have a save file, so we reset the values.
-            currentCampaign.currentDay = 1;
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedDays").Value = 1;
+            currentCampaign.CurrentDay = 1;
+            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays").Value = 1;
 
-            currentCampaign.currentPermissionTier = 1;
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedEntryTier").Value = 1;
+            currentCampaign.CurrentPermissionTier = 1;
+            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedEntryTier").Value = 1;
 
-            currentCampaign.savedCurrentCaller = 0;
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value = 0;
+            currentCampaign.SavedCurrentCaller = 0;
+            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCurrentCaller").Value = 0;
 
-            currentCampaign.savedCallersCorrectAnswer = new List<bool>();
+            currentCampaign.SavedCallersCorrectAnswer = new List<bool>();
 
             // Now we reset the saved callers answers.
-            for (int i = 0; i < currentCampaign.savedCallerArrayLength; i++)
+            for (int i = 0; i < currentCampaign.SavedCallerArrayLength; i++)
             {
-                currentCampaign.campaignSaveCategory.DeleteEntry($"savedCallerCorrectAnswer{i}");
+                currentCampaign.CampaignSaveCategory.DeleteEntry($"savedCallerCorrectAnswer{i}");
             }
 
             // Reset daily score
-            currentCampaign.savedDayScores = new List<float>();
-            for (int i = 0; i < currentCampaign.campaignDays; i++)
+            currentCampaign.SavedDayScores = new List<float>();
+            for (int i = 0; i < currentCampaign.CampaignDays; i++)
             {
-                currentCampaign.campaignSaveCategory.DeleteEntry($"SavedDayScore{i}");
+                currentCampaign.CampaignSaveCategory.DeleteEntry($"SavedDayScore{i}");
             }
 
             // We reset our caller array length
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value = 0;
-            currentCampaign.savedCallerArrayLength = 0;
+            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value = 0;
+            currentCampaign.SavedCallerArrayLength = 0;
 
             // Special Values
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
-            currentCampaign.savedGameFinished = 0;
+            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
+            currentCampaign.SavedGameFinished = 0;
 
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
-            currentCampaign.savedGameFinishedDisplay = 0;
+            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
+            currentCampaign.SavedGameFinishedDisplay = 0;
             
             // Options
-            currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value = 0;
-            currentCampaign.activeTheme = 0;
+            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value = 0;
+            currentCampaign.ActiveTheme = 0;
             
             // Theme
-            currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = false;
-            currentCampaign.defaultThemeAppliedOnce = false;
+            currentCampaign.CampaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = false;
+            currentCampaign.DefaultThemeAppliedOnce = false;
 
-            MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.campaignName}.");
+            MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.CampaignName}.");
         }
 
         /// <summary>
@@ -515,20 +515,20 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            if (currentCampaign.campaignSaveCategory == null)
+            if (currentCampaign.CampaignSaveCategory == null)
             {
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName +
-                    currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
+                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
             
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("savedColorTheme", 0);
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedColorTheme", 0);
             }
             
-            if (currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("themeShownOnce") == null)
             {
-                currentCampaign.campaignSaveCategory.CreateEntry("themeShownOnce", false);
+                currentCampaign.CampaignSaveCategory.CreateEntry("themeShownOnce", false);
             }
 
             MelonPreferences.Save();
@@ -554,12 +554,12 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             }
             
             // Custom Campaigns
-            if (currentCampaign.campaignSaveCategory == null)
+            if (currentCampaign.CampaignSaveCategory == null)
             {
                 // We get the category if not set yet.
                 // We use this painful category name to avoid any conflicts.
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName +
-                    currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
+                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
@@ -568,36 +568,36 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Create Theme Saving
             
             #if DEBUG
-                MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.activeTheme}).");
+                MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.ActiveTheme}).");
             #endif
             
-            if (currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
             {
-                MelonPreferences_Entry<int> savedColorTheme = currentCampaign.campaignSaveCategory.CreateEntry(
+                MelonPreferences_Entry<int> savedColorTheme = currentCampaign.CampaignSaveCategory.CreateEntry(
                     "savedColorTheme", 0);
                 
-                savedColorTheme.Value = currentCampaign.activeTheme;
+                savedColorTheme.Value = currentCampaign.ActiveTheme;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value = currentCampaign.activeTheme;
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value = currentCampaign.ActiveTheme;
             }
             
-            if (currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce") == null)
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("themeShownOnce") == null)
             {
-                MelonPreferences_Entry<bool> themeShownOnce = currentCampaign.campaignSaveCategory.CreateEntry(
+                MelonPreferences_Entry<bool> themeShownOnce = currentCampaign.CampaignSaveCategory.CreateEntry(
                     "themeShownOnce", false);
                 
-                themeShownOnce.Value = currentCampaign.defaultThemeAppliedOnce;
+                themeShownOnce.Value = currentCampaign.DefaultThemeAppliedOnce;
             }
             else
             {
-                currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = currentCampaign.defaultThemeAppliedOnce;
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = currentCampaign.DefaultThemeAppliedOnce;
             }
             
             MelonPreferences.Save();
 
-            MelonLogger.Msg($"INFO: Finished saving (Options) for the custom campaign {currentCampaign.campaignName}.");
+            MelonLogger.Msg($"INFO: Finished saving (Options) for the custom campaign {currentCampaign.CampaignName}.");
         }
 
         /// <summary>
@@ -622,30 +622,30 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Custom Campaigns
             // We use this painful category name to avoid any conflicts.
-            if (currentCampaign.campaignSaveCategory == null)
+            if (currentCampaign.CampaignSaveCategory == null)
             {
                 // We get the category if not set yet.
-                currentCampaign.campaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.campaignName +
-                    currentCampaign.campaignDesktopName + currentCampaign.campaignDays);
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
+                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
             
             #if DEBUG
-                MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
+                MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
             #endif
             // Load all values first into the currentCampaign Object.
-            currentCampaign.activeTheme = currentCampaign.campaignSaveCategory.GetEntry<int>("savedColorTheme").Value;
+            currentCampaign.ActiveTheme = currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value;
             
             // If we have applied the default theme at least once.
-            currentCampaign.defaultThemeAppliedOnce = currentCampaign.campaignSaveCategory.GetEntry<bool>("themeShownOnce").Value;
+            currentCampaign.DefaultThemeAppliedOnce = currentCampaign.CampaignSaveCategory.GetEntry<bool>("themeShownOnce").Value;
             
             /*
              * Load the values into actual game values now.
              */
 
-            GlobalVariables.saveManagerScript.savedColorTheme = currentCampaign.activeTheme;
+            GlobalVariables.saveManagerScript.savedColorTheme = currentCampaign.ActiveTheme;
             
             if ((bool)GlobalVariables.colorPaletteController)
             {
