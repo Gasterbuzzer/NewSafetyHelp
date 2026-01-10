@@ -55,7 +55,7 @@ namespace NewSafetyHelp.CustomCampaign
         public static CallerPatches.CallerModel.CustomCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
             return GetActiveCustomCampaign().customCallersInCampaign
-                .Find(customCaller => customCaller.orderInCampaign == orderID);
+                .Find(customCaller => customCaller.OrderInCampaign == orderID);
         }
 
         /// <summary>

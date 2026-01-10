@@ -79,13 +79,13 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                             return true;
                         }
                         
-                        if (!GlobalVariables.isXmasDLC && customCaller.downedNetworkCaller)
+                        if (!GlobalVariables.isXmasDLC && customCaller.DownedNetworkCaller)
                         {
 
                             #if DEBUG
                                 MelonLogger.Msg($"DEBUG: Custom caller is set to play warped phone call sound" +
-                                                $" (INFO: Downed Network? {customCaller.downedNetworkCaller};" +
-                                                $" Caller Name: {customCaller.callerName}" +
+                                                $" (INFO: Downed Network? {customCaller.DownedNetworkCaller};" +
+                                                $" Caller Name: {customCaller.CallerName}" +
                                                 ").");
                             #endif
                             

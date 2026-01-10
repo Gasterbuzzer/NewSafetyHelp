@@ -50,7 +50,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
-                customCaller.monsterNameAttached = customCallerMonsterName;
+                customCaller.MonsterNameAttached = customCallerMonsterName;
             }
 
             // Custom Caller Audio Path (Later gets added with coroutine)
@@ -76,8 +76,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    customCaller.isCallerClipLoaded = true;
+                                    customCaller.CallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    customCaller.IsCallerClipLoaded = true;
 
                                     if (AudioImport.CurrentLoadingAudios.Count <= 0)
                                     {
@@ -112,11 +112,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 if (foundCustomCampaign != null)
                 {
-                    if (customCaller.isGameOverCaller)
+                    if (customCaller.IsGameOverCaller)
                     {
                         foundCustomCampaign.customGameOverCallersInCampaign.Add(customCaller);
                     }
-                    else if (customCaller.isWarningCaller)
+                    else if (customCaller.IsWarningCaller)
                     {
                         foundCustomCampaign.customWarningCallersInCampaign.Add(customCaller);
                     }
@@ -309,23 +309,23 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             return new CallerPatches.CallerModel.CustomCaller(orderInCampaign)
             {
-                callerName = customCallerName,
-                callerImage = customCallerImage,
-                callTranscript = customCallerTranscript,
-                monsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
-                inCustomCampaign = !inMainCampaign,
-                callerIncreasesTier = increasesTier,
-                callerClipPath = customCallerAudioPath,
-                consequenceCallerID = customCallerConsequenceCallerID,
-                belongsToCustomCampaign = customCampaignName,
-                lastDayCaller = isLastCallerOfDay,
-                downedNetworkCaller = downedCall,
+                CallerName = customCallerName,
+                CallerImage = customCallerImage,
+                CallTranscript = customCallerTranscript,
+                MonsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
+                InCustomCampaign = !inMainCampaign,
+                CallerIncreasesTier = increasesTier,
+                CallerClipPath = customCallerAudioPath,
+                ConsequenceCallerID = customCallerConsequenceCallerID,
+                BelongsToCustomCampaign = customCampaignName,
+                LastDayCaller = isLastCallerOfDay,
+                DownedNetworkCaller = downedCall,
 
-                isWarningCaller = isWarningCaller,
-                warningCallDay = warningCallDay,
+                IsWarningCaller = isWarningCaller,
+                WarningCallDay = warningCallDay,
 
-                isGameOverCaller = isGameOverCaller,
-                gameOverCallDay = gameOverCallDay
+                IsGameOverCaller = isGameOverCaller,
+                GameOverCallDay = gameOverCallDay
             };
         }
     }

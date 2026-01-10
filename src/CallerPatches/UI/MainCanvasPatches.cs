@@ -752,7 +752,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                             return true;
                         }
 
-                        if (customCaller.downedNetworkCaller) // This is set to true if the caller is allowed to down the network.
+                        if (customCaller.DownedNetworkCaller) // This is set to true if the caller is allowed to down the network.
                         {
                             __result = true;
                             return false;

@@ -46,17 +46,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 foreach (CallerPatches.CallerModel.CustomCaller customCallerCC in tempList)
                 {
-                    if (customCallerCC.belongsToCustomCampaign == customCampaignName)
+                    if (customCallerCC.BelongsToCustomCampaign == customCampaignName)
                     {
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.callerName} to the custom campaign: {customCampaignName}.");
+                            MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        if (customCallerCC.isGameOverCaller)
+                        if (customCallerCC.IsGameOverCaller)
                         {
                             customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
                         }
-                        else if (customCallerCC.isWarningCaller)
+                        else if (customCallerCC.IsWarningCaller)
                         {
                             customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
                         }

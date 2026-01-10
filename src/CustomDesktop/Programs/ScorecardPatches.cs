@@ -78,10 +78,10 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                         }
                         
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.callerName}. (Info: {caller.answeredCorrectly})");
+                            MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.CallerName}. (Info: {caller.answeredCorrectly})");
                         #endif
                         
-                        if (customCallerFound.lastDayCaller)
+                        if (customCallerFound.LastDayCaller)
                         {
                             if (caller.callerProfile.callerMonster !=  null) // Since custom callers could also be the last caller. We also create a profile for them.
                             {
