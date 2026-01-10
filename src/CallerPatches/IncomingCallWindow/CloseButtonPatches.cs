@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
@@ -9,7 +8,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
     public static class CloseButtonPatches
     {
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "CloseCallButton", new Type[] { })]
-        public static class ScorecardPatch
+        public static class CloseCallPatches
         {
             /// <summary>
             /// Patches the close call button to play cutscenes only when in main campaign.
@@ -61,7 +60,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.arcadeMode)
                     {
                         // If the next caller is the last, and we skip it (Consequence caller that we got right).
-                        int checkResult = checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                        int checkResult = CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
@@ -81,7 +80,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
         /// </summary>
         /// <param name="__instance">CallerController Instance</param>
         /// <returns> If we wound any caller that fits the above criteria. </returns>
-        public static int checkIfAnyValidCallerLeft(CallerController __instance)
+        public static int CheckIfAnyValidCallerLeft(CallerController __instance)
         {
             int callersSkipped = 0;
             

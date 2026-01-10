@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
@@ -155,7 +154,6 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         }
                         else // If not enabled by beating the game or unlocked by 
                         {
-                            
                             #if DEBUG
                                 MelonLogger.Msg($"DEBUG: Didn't beat the game to unlock this or not in winter DLC. Disabling the GameObject '{__instance.gameObject.name}'. BeatGameUnlock: '{__instance.beatGameUnlock}'. SaveManagerScript: '{(bool) GlobalVariables.saveManagerScript}'. SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
                             #endif
@@ -166,7 +164,6 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 }
                 else
                 {
-                    
                     #if DEBUG
                         MelonLogger.Msg($"DEBUG: Disabling. GameObject made for Arcade.\n");
                     #endif

@@ -377,7 +377,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     if (CustomCampaignGlobal.InCustomCampaign
                         && !GlobalVariables.arcadeMode)
                     {
-                        int checkResult = CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                        int checkResult = CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.

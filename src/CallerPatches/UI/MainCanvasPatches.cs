@@ -20,9 +20,8 @@ namespace NewSafetyHelp.CallerPatches.UI
         private static readonly int Shake = Animator.StringToHash("shake");
 
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "WriteDayString")]
-        public static class ScorecardPatch
+        public static class WriteDayStringPatch
         {
-
             /// <summary>
             /// Patches the main canvas day string function to use custom day strings.
             /// </summary>
@@ -31,7 +30,6 @@ namespace NewSafetyHelp.CallerPatches.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref string __result)
             {
-                
                 List<string> defaultDayNames = new List<string>() {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
                 
                 if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
@@ -178,7 +176,6 @@ namespace NewSafetyHelp.CallerPatches.UI
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "StartSoftwareRoutine")]
         public static class SoftwareRoutinePatches
         {
-
             /// <summary>
             /// Patches start software routine to work better with custom campaigns.
             /// </summary>

@@ -70,7 +70,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         __instance.myImage.color = (Color) desktopBackgroundColor;
                     }
                     
-                    Sprite setBackgroundSprite = null;
+                    Sprite setBackgroundSprite;
                     
                     if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.savedGameFinishedDisplay == 1) // If we finished the campaign.
                     {

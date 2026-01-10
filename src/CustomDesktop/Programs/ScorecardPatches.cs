@@ -16,7 +16,6 @@ namespace NewSafetyHelp.CustomDesktop.Programs
         [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "PopulateList")]
         public static class ScorecardPatch
         {
-
             /// <summary>
             /// Patches the scorecard function to respect custom callers correctly.
             /// </summary>
@@ -24,7 +23,6 @@ namespace NewSafetyHelp.CustomDesktop.Programs
             // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(ScorecardBehavior __instance)
             {
-        
                 Type scorecardBehavior = typeof(ScorecardBehavior);
                 
                 MethodInfo clearListMethod = scorecardBehavior.GetMethod("ClearList", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -122,7 +120,6 @@ namespace NewSafetyHelp.CustomDesktop.Programs
         [HarmonyLib.HarmonyPatch(typeof(ScorecardBehavior), "LoadCallerAnswers")]
         public static class LoadCallerAnswersPatch
         {
-
             /// <summary>
             /// Patches the scorecard load caller answers to gracefully handle null callers. (Broken caller list)
             /// </summary>

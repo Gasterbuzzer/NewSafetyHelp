@@ -23,7 +23,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.arcadeMode)
                 {
                     // If the next caller is the last, and we skip it (Consequence caller that we got right).
-                    if (CloseButtonPatches.checkIfAnyValidCallerLeft(GlobalVariables.callerControllerScript) > 0)
+                    if (CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript) > 0)
                     {
                         GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
