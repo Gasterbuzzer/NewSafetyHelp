@@ -1,5 +1,13 @@
 ﻿namespace NewSafetyHelp.CallerPatches.CallerModel
 {
+    public enum CheckOptions
+    {
+        GreaterThanOrEqualTo,
+        LessThanOrEqualTo,
+        EqualTo,
+        NoneSet
+    }
+    
     public class CustomCaller
     {
         // Base Values
@@ -41,7 +49,12 @@
         public bool IsGameOverCaller = false;
         public int GameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
         
+        // Accuracy Caller
+        public bool IsAccuracyCaller = false; // If this caller is an accuracy caller.
+        public float RequiredAccuracy = -1; // If this caller is an accuracy caller, this is the required accuracy.
+        public CheckOptions AccuracyCheck = CheckOptions.NoneSet; // How it should be checked for.
+        
         // Constructor
-        public CustomCaller(int _orderInCampaign) { OrderInCampaign = _orderInCampaign;}
+        public CustomCaller(int orderInCampaign) { OrderInCampaign = orderInCampaign;}
     }
 }
