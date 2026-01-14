@@ -744,15 +744,15 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                     else // Custom Campaign
                     {
-                        CallerModel.CustomCaller customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                        CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         
-                        if (customCaller == null)
+                        if (customCCaller == null)
                         {
                             MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
                             return true;
                         }
 
-                        if (customCaller.DownedNetworkCaller) // This is set to true if the caller is allowed to down the network.
+                        if (customCCaller.DownedNetworkCaller) // This is set to true if the caller is allowed to down the network.
                         {
                             __result = true;
                             return false;

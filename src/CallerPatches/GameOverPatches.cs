@@ -2,9 +2,7 @@
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -50,13 +48,13 @@ namespace NewSafetyHelp.CallerPatches
 
                     if (customCampaign.CustomGameOverCallersInCampaign.Count > 0)
                     {
-                        CallerModel.CustomCaller customCallerGameOverChosen = null;
+                        CallerModel.CustomCCaller customCCallerGameOverChosen = null;
 
                         if (customCampaign.CustomGameOverCallersInCampaign.Exists(customCaller =>
                                 customCaller.GameOverCallDay <= -1))
                         {
                             // Will choose a random game over caller if all are set at -1.
-                            customCallerGameOverChosen =
+                            customCCallerGameOverChosen =
                                 customCampaign.CustomGameOverCallersInCampaign.FindAll(customCaller =>
                                     customCaller.GameOverCallDay <= -1)[
                                     Random.Range(0, customCampaign.CustomGameOverCallersInCampaign.Count)];
@@ -66,24 +64,24 @@ namespace NewSafetyHelp.CallerPatches
                         if (customCampaign.CustomGameOverCallersInCampaign.Exists(customCaller =>
                                 customCaller.GameOverCallDay == GlobalVariables.currentDay))
                         {
-                            customCallerGameOverChosen =
+                            customCCallerGameOverChosen =
                                 customCampaign.CustomGameOverCallersInCampaign.FindAll(customCaller =>
                                     customCaller.GameOverCallDay == GlobalVariables.currentDay)[
                                     Random.Range(0, customCampaign.CustomGameOverCallersInCampaign.Count)];
                         }
 
                         // Create custom caller and then replace gameOverCall with it.
-                        if (customCallerGameOverChosen != null)
+                        if (customCCallerGameOverChosen != null)
                         {
                             #if DEBUG
                             MelonLogger.Msg(
-                                $"DEBUG: GameOver caller found to replace! {customCallerGameOverChosen.CallerName}.");
+                                $"DEBUG: GameOver caller found to replace! {customCCallerGameOverChosen.CallerName}.");
                             #endif
 
                             CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
-                            newProfile.callerName = customCallerGameOverChosen.CallerName;
-                            newProfile.callTranscription = customCallerGameOverChosen.CallTranscript;
+                            newProfile.callerName = customCCallerGameOverChosen.CallerName;
+                            newProfile.callTranscription = customCCallerGameOverChosen.CallTranscript;
 
                             // Fallback for missing picture or audio.
                             MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic",
@@ -99,9 +97,9 @@ namespace NewSafetyHelp.CallerPatches
                                 return true;
                             }
 
-                            if (customCallerGameOverChosen.CallerImage != null)
+                            if (customCCallerGameOverChosen.CallerImage != null)
                             {
-                                newProfile.callerPortrait = customCallerGameOverChosen.CallerImage;
+                                newProfile.callerPortrait = customCCallerGameOverChosen.CallerImage;
                             }
                             else
                             {
@@ -111,9 +109,9 @@ namespace NewSafetyHelp.CallerPatches
                                 newProfile.callerPortrait = (Sprite)getRandomPicMethod.Invoke(__instance, null);
                             }
 
-                            if (customCallerGameOverChosen.CallerClip != null)
+                            if (customCCallerGameOverChosen.CallerClip != null)
                             {
-                                newProfile.callerClip = customCallerGameOverChosen.CallerClip;
+                                newProfile.callerClip = customCCallerGameOverChosen.CallerClip;
                             }
                             else
                             {
@@ -131,8 +129,8 @@ namespace NewSafetyHelp.CallerPatches
                                 newProfile.callerClip = (RichAudioClip)getRandomClip.Invoke(__instance, null);
                             }
 
-                            if (!string.IsNullOrEmpty(customCallerGameOverChosen.MonsterNameAttached) ||
-                                customCallerGameOverChosen.MonsterIDAttached != -1)
+                            if (!string.IsNullOrEmpty(customCCallerGameOverChosen.MonsterNameAttached) ||
+                                customCCallerGameOverChosen.MonsterIDAttached != -1)
                             {
                                 MelonLogger.Warning(
                                     "WARNING: A monster was provided for the GameOver caller, but GameOver callers do not use any entries! Will default to none.");
@@ -141,7 +139,7 @@ namespace NewSafetyHelp.CallerPatches
                             newProfile.callerMonster = null;
 
 
-                            if (customCallerGameOverChosen.CallerIncreasesTier)
+                            if (customCCallerGameOverChosen.CallerIncreasesTier)
                             {
                                 MelonLogger.Warning(
                                     "WARNING: Increase tier was provided for a GameOver caller! It will be set to false!");
@@ -150,7 +148,7 @@ namespace NewSafetyHelp.CallerPatches
                             newProfile.increaseTier = false;
 
 
-                            if (customCallerGameOverChosen.ConsequenceCallerID != -1)
+                            if (customCCallerGameOverChosen.ConsequenceCallerID != -1)
                             {
                                 MelonLogger.Warning(
                                     "WARNING: GameOver Callers cannot be consequence caller, ignoring option.");

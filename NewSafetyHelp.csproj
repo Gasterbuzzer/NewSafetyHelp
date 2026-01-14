@@ -124,7 +124,7 @@
     <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />
     <Compile Include="src\CallerPatches\Answer\ProvidingAnswer.cs" />
     <Compile Include="src\CallerPatches\CallerCreationAndUpdate\CreateAndUpdateCallerPatches.cs" />
-    <Compile Include="src\CallerPatches\CallerModel\CustomCaller.cs" />
+    <Compile Include="src\CallerPatches\CallerModel\CustomCCaller.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
     <Compile Include="src\CallerPatches\GameOverPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\CloseButtonPatches.cs" />

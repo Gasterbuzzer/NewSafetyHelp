@@ -41,10 +41,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignCustomCallers.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<CallerPatches.CallerModel.CustomCaller> tempList =
-                    new List<CallerPatches.CallerModel.CustomCaller>(GlobalParsingVariables.PendingCustomCampaignCustomCallers);
+                List<CallerPatches.CallerModel.CustomCCaller> tempList =
+                    new List<CallerPatches.CallerModel.CustomCCaller>(GlobalParsingVariables.PendingCustomCampaignCustomCallers);
 
-                foreach (CallerPatches.CallerModel.CustomCaller customCallerCC in tempList)
+                foreach (CallerPatches.CallerModel.CustomCCaller customCallerCC in tempList)
                 {
                     if (customCallerCC.BelongsToCustomCampaign == customCampaignName)
                     {

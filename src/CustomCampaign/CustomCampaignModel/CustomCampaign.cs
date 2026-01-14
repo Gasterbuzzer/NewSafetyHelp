@@ -27,13 +27,13 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
          */
 
         // Caller in the campaign
-        public List<CallerPatches.CallerModel.CustomCaller> CustomCallersInCampaign = new List<CallerPatches.CallerModel.CustomCaller>();
+        public List<CallerPatches.CallerModel.CustomCCaller> CustomCallersInCampaign = new List<CallerPatches.CallerModel.CustomCCaller>();
 
         // Warning Callers in the campaign
-        public List<CallerPatches.CallerModel.CustomCaller> CustomWarningCallersInCampaign = new List<CallerPatches.CallerModel.CustomCaller>();
+        public List<CallerPatches.CallerModel.CustomCCaller> CustomWarningCallersInCampaign = new List<CallerPatches.CallerModel.CustomCCaller>();
 
         // Game Over Callers in the campaign
-        public List<CallerPatches.CallerModel.CustomCaller> CustomGameOverCallersInCampaign = new List<CallerPatches.CallerModel.CustomCaller>();
+        public List<CallerPatches.CallerModel.CustomCCaller> CustomGameOverCallersInCampaign = new List<CallerPatches.CallerModel.CustomCCaller>();
 
         // Entries that exist only in this campaign.  
         public List<EntryMetadata> EntriesOnlyInCampaign = new List<EntryMetadata>();

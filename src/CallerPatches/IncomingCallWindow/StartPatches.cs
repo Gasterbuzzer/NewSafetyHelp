@@ -71,21 +71,21 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
-                        CallerModel.CustomCaller customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
+                        CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
                         
-                        if (customCaller == null)
+                        if (customCCaller == null)
                         {
                             MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
                             return true;
                         }
                         
-                        if (!GlobalVariables.isXmasDLC && customCaller.DownedNetworkCaller)
+                        if (!GlobalVariables.isXmasDLC && customCCaller.DownedNetworkCaller)
                         {
 
                             #if DEBUG
                                 MelonLogger.Msg($"DEBUG: Custom caller is set to play warped phone call sound" +
-                                                $" (INFO: Downed Network? {customCaller.DownedNetworkCaller};" +
-                                                $" Caller Name: {customCaller.CallerName}" +
+                                                $" (INFO: Downed Network? {customCCaller.DownedNetworkCaller};" +
+                                                $" Caller Name: {customCCaller.CallerName}" +
                                                 ").");
                             #endif
                             

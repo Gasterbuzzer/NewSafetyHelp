@@ -127,5 +127,22 @@ namespace NewSafetyHelp.JSONParsing
         {
             return keys.Any(json.ContainsKey); // Checks if any of the keys is in the JSON via the flag ContainsKey
         }
+        
+        /// <summary>
+        /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <typeparam name="T">Type of the target.</typeparam>
+        public static void TryAssign<T>(JObject jObjectParsed, string key, ref T target)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return;
+            }
+
+            target = token.Value<T>();
+        }
     }
 }

@@ -50,9 +50,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// Gets the custom caller by its order id provided. 
         /// </summary>
         /// <param name="orderID">Order number in the current custom campaign.</param>
-        /// <returns>CustomCaller Object with the returned object. If not found, default. </returns>
+        /// <returns>CustomCCaller Object with the returned object. If not found, default. </returns>
         [CanBeNull]
-        public static CallerPatches.CallerModel.CustomCaller GetCustomCallerFromActiveCampaign(int orderID)
+        public static CallerPatches.CallerModel.CustomCCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
             return GetActiveCustomCampaign().CustomCallersInCampaign
                 .Find(customCaller => customCaller.OrderInCampaign == orderID);

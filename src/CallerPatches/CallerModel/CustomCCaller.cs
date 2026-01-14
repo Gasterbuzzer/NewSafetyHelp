@@ -8,7 +8,7 @@
         NoneSet
     }
     
-    public class CustomCaller
+    public class CustomCCaller
     {
         // Base Values
         public RichAudioClip CallerClip = null; // Caller Clip
@@ -55,9 +55,10 @@
         // Accuracy Caller
         public bool IsAccuracyCaller = false; // If this caller is an accuracy caller.
         public float RequiredAccuracy = -1; // If this caller is an accuracy caller, this is the required accuracy.
+        public bool UseTotalAccuracy = false; // If this caller looks for the day accuracy (false) or if the global accuracy (true).
         public CheckOptions AccuracyCheck = CheckOptions.NoneSet; // How it should be checked for.
         
         // Constructor
-        public CustomCaller(int orderInCampaign) { OrderInCampaign = orderInCampaign;}
+        public CustomCCaller(int orderInCampaign) { OrderInCampaign = orderInCampaign;}
     }
 }

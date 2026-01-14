@@ -6,7 +6,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaign.Helper;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -91,7 +91,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
                 {
-                    foreach (KeyValuePair<int, CallerModel.CustomCaller> customCaller in GlobalParsingVariables.CustomCallersMainGame)
+                    foreach (KeyValuePair<int, CustomCCaller> customCaller in GlobalParsingVariables.CustomCallersMainGame)
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {
@@ -233,7 +233,7 @@ namespace NewSafetyHelp.CallerPatches
                     Dictionary<int, int> listOfConsequenceCallers = new Dictionary<int, int>();
 
                     // Add all customCallers in Callers list.
-                    foreach (CallerModel.CustomCaller customCallerCC in currentCustomCampaign.CustomCallersInCampaign)
+                    foreach (CustomCCaller customCallerCC in currentCustomCampaign.CustomCallersInCampaign)
                     {
                         CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
@@ -434,15 +434,15 @@ namespace NewSafetyHelp.CallerPatches
                 }
                 else // Custom Campaign
                 {
-                    CallerModel.CustomCaller customCallerFound =
+                    CustomCCaller customCCallerFound =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
 
-                    if (customCallerFound == null)
+                    if (customCCallerFound == null)
                     {
                         MelonLogger.Error(
                             $"ERROR: Was unable of finding the current caller. Calling original. For ID: {__instance.currentCallerID}");
 
-                        foreach (CallerModel.CustomCaller customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
+                        foreach (CustomCCaller customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
                                      .CustomCallersInCampaign)
                         {
                             MelonLogger.Error($"{customCallerE.CallerName} : {customCallerE.OrderInCampaign}");
@@ -452,11 +452,11 @@ namespace NewSafetyHelp.CallerPatches
                     }
 
                     // If the last caller of the day, this will result in true.
-                    __result = customCallerFound.LastDayCaller;
+                    __result = customCCallerFound.LastDayCaller;
 
                     #if DEBUG
                     MelonLogger.Msg(
-                        $"DEBUG: Last caller of day: '{__result}'. Caller name: '{customCallerFound.CallerName}'.");
+                        $"DEBUG: Last caller of day: '{__result}'. Caller name: '{customCCallerFound.CallerName}'.");
 
                     #endif
                 }
@@ -685,7 +685,7 @@ namespace NewSafetyHelp.CallerPatches
                         if (__instance.callersToday ==
                             callersTodayRequiredWarning) // Now the warning call should appear.
                         {
-                            CallerModel.CustomCaller warningCallerToday = null;
+                            CustomCCaller warningCCallerToday = null;
 
                             // Try finding a warning caller.
                             if (customCampaign.CustomWarningCallersInCampaign.Count >
@@ -695,42 +695,42 @@ namespace NewSafetyHelp.CallerPatches
                                         warningCaller.WarningCallDay <=
                                         -1)) // If we have warning caller without a day attached we use this one before trying to find a more fitting one.
                                 {
-                                    List<CallerModel.CustomCaller> allWarningCallsWithoutDay =
+                                    List<CustomCCaller> allWarningCallsWithoutDay =
                                         customCampaign.CustomWarningCallersInCampaign.FindAll(warningCaller =>
                                             warningCaller.WarningCallDay <= -1);
 
                                     if (allWarningCallsWithoutDay.Count > 0)
                                     {
-                                        warningCallerToday =
+                                        warningCCallerToday =
                                             allWarningCallsWithoutDay
                                                 [Random.Range(0, allWarningCallsWithoutDay.Count)]; // Choose a random one from the available list.
                                     }
                                 }
 
                                 // Try finding a warning call that is set for the current day.
-                                List<CallerModel.CustomCaller> allWarningCallsForToday =
+                                List<CustomCCaller> allWarningCallsForToday =
                                     customCampaign.CustomWarningCallersInCampaign.FindAll(warningCaller =>
                                         warningCaller.WarningCallDay == GlobalVariables.currentDay);
                                 if (allWarningCallsForToday.Count > 0)
                                 {
-                                    warningCallerToday =
+                                    warningCCallerToday =
                                         allWarningCallsForToday
                                             [Random.Range(0, allWarningCallsForToday.Count)]; // Choose a random one from the available list.
                                 }
                             }
 
                             // If we found a warning call to replace it, we insert it here.
-                            if (warningCallerToday != null)
+                            if (warningCCallerToday != null)
                             {
                                 #if DEBUG
                                 MelonLogger.Msg(
-                                    $"DEBUG: Warning caller found to replace! {warningCallerToday.CallerName}.");
+                                    $"DEBUG: Warning caller found to replace! {warningCCallerToday.CallerName}.");
                                 #endif
 
                                 CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
-                                newProfile.callerName = warningCallerToday.CallerName;
-                                newProfile.callTranscription = warningCallerToday.CallTranscript;
+                                newProfile.callerName = warningCCallerToday.CallerName;
+                                newProfile.callTranscription = warningCCallerToday.CallTranscript;
 
                                 // Fallback for missing picture or audio.
                                 MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic",
@@ -746,9 +746,9 @@ namespace NewSafetyHelp.CallerPatches
                                     return true;
                                 }
 
-                                if (warningCallerToday.CallerImage != null)
+                                if (warningCCallerToday.CallerImage != null)
                                 {
-                                    newProfile.callerPortrait = warningCallerToday.CallerImage;
+                                    newProfile.callerPortrait = warningCCallerToday.CallerImage;
                                 }
                                 else
                                 {
@@ -758,9 +758,9 @@ namespace NewSafetyHelp.CallerPatches
                                     newProfile.callerPortrait = (Sprite)getRandomPicMethod.Invoke(__instance, null);
                                 }
 
-                                if (warningCallerToday.CallerClip != null)
+                                if (warningCCallerToday.CallerClip != null)
                                 {
-                                    newProfile.callerClip = warningCallerToday.CallerClip;
+                                    newProfile.callerClip = warningCCallerToday.CallerClip;
                                 }
                                 else
                                 {
@@ -778,8 +778,8 @@ namespace NewSafetyHelp.CallerPatches
                                     newProfile.callerClip = (RichAudioClip)getRandomClip.Invoke(__instance, null);
                                 }
 
-                                if (!string.IsNullOrEmpty(warningCallerToday.MonsterNameAttached) ||
-                                    warningCallerToday.MonsterIDAttached != -1)
+                                if (!string.IsNullOrEmpty(warningCCallerToday.MonsterNameAttached) ||
+                                    warningCCallerToday.MonsterIDAttached != -1)
                                 {
                                     MelonLogger.Warning(
                                         "WARNING: A monster was provided for the warning caller, but warning callers do not use any entries! Will default to none.");
@@ -788,7 +788,7 @@ namespace NewSafetyHelp.CallerPatches
                                 newProfile.callerMonster = null;
 
 
-                                if (warningCallerToday.CallerIncreasesTier)
+                                if (warningCCallerToday.CallerIncreasesTier)
                                 {
                                     MelonLogger.Warning(
                                         "WARNING: Increase tier was provided for a warning caller! It will be set to false!");
@@ -797,7 +797,7 @@ namespace NewSafetyHelp.CallerPatches
                                 newProfile.increaseTier = false;
 
 
-                                if (warningCallerToday.ConsequenceCallerID != -1)
+                                if (warningCCallerToday.ConsequenceCallerID != -1)
                                 {
                                     MelonLogger.Warning(
                                         "WARNING: Warning callers cannot be consequence caller, ignoring option.");
@@ -872,6 +872,80 @@ namespace NewSafetyHelp.CallerPatches
                     }
                     else
                     {
+                        // Custom Caller check before we continue.
+                        if (CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID) != null)
+                        {
+                            // Accuracy Caller part.
+                            CustomCCaller currentCaller =
+                                CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
+
+                            if (currentCaller != null && currentCaller.IsAccuracyCaller)
+                            {
+                                bool showCaller = false;
+
+                                float currentAccuracy;
+
+                                if (currentCaller.UseTotalAccuracy)
+                                {
+                                    currentAccuracy = AccuracyHelper.ComputeTotalCampaignAccuracy();
+                                }
+                                else
+                                {
+                                    currentAccuracy = AccuracyHelper.ComputeDayAccuracy();
+                                }
+
+                                switch (currentCaller.AccuracyCheck)
+                                {
+                                    case CheckOptions.EqualTo:
+                                        if (Mathf.Approximately(currentCaller.RequiredAccuracy, currentAccuracy))
+                                        {
+                                            showCaller = true;
+                                        }
+
+                                        break;
+
+                                    case CheckOptions.GreaterThanOrEqualTo:
+                                        if (currentCaller.RequiredAccuracy >= currentAccuracy)
+                                        {
+                                            showCaller = true;
+                                        }
+
+                                        break;
+
+                                    case CheckOptions.LessThanOrEqualTo:
+                                        if (currentCaller.RequiredAccuracy <= currentAccuracy)
+                                        {
+                                            showCaller = true;
+                                        }
+
+                                        break;
+
+                                    case CheckOptions.NoneSet:
+                                        showCaller = true;
+                                        break;
+                                }
+
+                                if (!showCaller)
+                                {
+                                    __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                                    
+                                    // Here we insert a small check to see if this caller wants to end the day.
+                                    if (__instance.IsLastCallOfDay())
+                                    {
+                                        GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
+                                            .EndDayRoutine());
+                                        GlobalVariables.mainCanvasScript.NoCallerWindow();
+                                        return false; // Skip original function.
+                                    }
+
+                                    // Next caller.
+                                    __instance.AnswerCaller();
+
+                                    return false;
+                                }
+                            }
+                        }
+                        
                         if (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)
                         {
                             GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();

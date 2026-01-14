@@ -88,19 +88,19 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             {
                 if (i < __instance.callers.Length) // Valid caller.
                 {
-                    CallerModel.CustomCaller customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
+                    CallerModel.CustomCCaller customCCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
 
                     // If the next caller does not exist or was not found, we simply say false.
                     // There might be valid callers after that one, but we are in an invalid state.
-                    if (customCallerFound == null)
+                    if (customCCallerFound == null)
                     {
                         return -1;
                     }
 
                     #if DEBUG
                     MelonLogger.Msg(
-                        $"DEBUG: Last caller of day (Caller ID: {i}): '{customCallerFound.LastDayCaller}'." +
-                        $" Next caller name (Caller ID: {i}): '{customCallerFound.CallerName}'.");
+                        $"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
+                        $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'.");
                     #endif
 
                     #if DEBUG
@@ -111,7 +111,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         " Is this caller allowed to be called? (Meaning we got the answer wrong from the previous caller): " +
                         $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
                         ".\n " +
-                        $"Is this caller the last one of the day? '{customCallerFound.LastDayCaller}'.");
+                        $"Is this caller the last one of the day? '{customCCallerFound.LastDayCaller}'.");
                     #endif
 
                     // Not a consequence caller. We can simply return false, since we have a valid caller.
@@ -124,7 +124,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     callersSkipped++;
 
                     // If that caller ends the day.
-                    if (customCallerFound.LastDayCaller
+                    if (customCCallerFound.LastDayCaller
                         && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile))
                     {
                         return callersSkipped;

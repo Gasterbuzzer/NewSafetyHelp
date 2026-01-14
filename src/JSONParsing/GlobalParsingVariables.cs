@@ -17,10 +17,10 @@ namespace NewSafetyHelp.JSONParsing
         // Main Game (Main Campaign) Lists
         public static List<CustomTheme> MainGameThemes = new List<CustomTheme>();
         public static List<CustomEmail> MainCampaignEmails = new List<CustomEmail>();
-        public static Dictionary<int, CallerPatches.CallerModel.CustomCaller> CustomCallersMainGame = new Dictionary<int, CallerPatches.CallerModel.CustomCaller>();
+        public static Dictionary<int, CallerPatches.CallerModel.CustomCCaller> CustomCallersMainGame = new Dictionary<int, CallerPatches.CallerModel.CustomCCaller>();
 
         // Custom Campaign Pending Content (Content to be added later because the custom campaign has not been parsed yet)
-        public static List<CallerPatches.CallerModel.CustomCaller> PendingCustomCampaignCustomCallers = new List<CallerPatches.CallerModel.CustomCaller>();
+        public static List<CallerPatches.CallerModel.CustomCCaller> PendingCustomCampaignCustomCallers = new List<CallerPatches.CallerModel.CustomCCaller>();
         public static List<EntryMetadata> PendingCustomCampaignEntries = new List<EntryMetadata>();
         public static List<EntryMetadata> PendingCustomCampaignReplaceEntries = new List<EntryMetadata>();
         public static List<CustomEmail> PendingCustomCampaignEmails = new List<CustomEmail>();

@@ -69,19 +69,19 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                             continue;
                         }
                         
-                        CallerPatches.CallerModel.CustomCaller customCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(currentCallerIndex);
+                        CallerPatches.CallerModel.CustomCCaller customCCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(currentCallerIndex);
 
-                        if (customCallerFound == null)
+                        if (customCCallerFound == null)
                         {
                             MelonLogger.Warning($"WARNING: There seems to be an empty custom caller. Possible missing caller? (Index {currentCallerIndex})");
                             continue;
                         }
                         
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding: {customCallerFound.CallerName}. (Info: {caller.answeredCorrectly})");
+                            MelonLogger.Msg($"DEBUG: Adding: {customCCallerFound.CallerName}. (Info: {caller.answeredCorrectly})");
                         #endif
                         
-                        if (customCallerFound.LastDayCaller)
+                        if (customCCallerFound.LastDayCaller)
                         {
                             if (caller.callerProfile.callerMonster !=  null) // Since custom callers could also be the last caller. We also create a profile for them.
                             {
