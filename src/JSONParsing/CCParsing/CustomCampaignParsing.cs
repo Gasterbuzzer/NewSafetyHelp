@@ -252,9 +252,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }
         
-        private static CustomCampaign.CustomCampaignModel.CustomCampaign ParseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
-            ref string jsonFolderPath,
-            ref string customCampaignName)
+        private static CustomCampaign.CustomCampaignModel.CustomCampaign ParseCampaignFile(ref JObject jObjectParsed,
+            ref string usermodFolderPath, ref string jsonFolderPath, ref string customCampaignName)
         {
             // Desktop
             string customCampaignDesktopName = "NO_NAME\nPROVIDED";
@@ -343,59 +342,21 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Parsing the JSON File
              */
             
-            if (jObjectParsed.TryGetValue("custom_campaign_name", out var customCampaignNameValue))
-            {
-                customCampaignName = (string) customCampaignNameValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_campaign_desktop_name", out var customCampaignDesktopNameValue))
-            {
-                customCampaignDesktopName = (string) customCampaignDesktopNameValue;
-            }
-
-            if (jObjectParsed.TryGetValue("desktop_username_text", out var desktopUsernameTextValue))
-            {
-                desktopUsernameText = (string) desktopUsernameTextValue;
-            }
-
-            if (jObjectParsed.TryGetValue("start_year", out var startYearValue))
-            {
-                desktopDateStartYear = (int) startYearValue;
-            }
-
-            if (jObjectParsed.TryGetValue("start_month", out var startMonthValue))
-            {
-                desktopDateStartMonth = (int) startMonthValue;
-            }
-
-            if (jObjectParsed.TryGetValue("start_day", out var startDayValue))
-            {
-                desktopDateStartDay = (int) startDayValue;
-            }
-
-            if (jObjectParsed.TryGetValue("use_europe_date_format", out var useEuropeanDateFormatValue))
-            {
-                useEuropeDateFormat = (bool) useEuropeanDateFormatValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("custom_campaign_days", out var customCampaignDaysValue))
-            {
-                customCampaignDays = (int) customCampaignDaysValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("custom_campaign_remove_main_entries", out var customCampaignRemoveMainEntriesValue))
-            {
-                removeAllExistingEntries = (bool) customCampaignRemoveMainEntriesValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_name", ref customCampaignName);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_desktop_name", ref customCampaignDesktopName);
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref desktopUsernameText);
+            ParsingHelper.TryAssign(jObjectParsed, "start_year", ref desktopDateStartYear);
+            ParsingHelper.TryAssign(jObjectParsed, "start_month", ref desktopDateStartMonth);
+            ParsingHelper.TryAssign(jObjectParsed, "start_day", ref desktopDateStartDay);
+            ParsingHelper.TryAssign(jObjectParsed, "use_europe_date_format", ref useEuropeDateFormat);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_days", ref customCampaignDays);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_remove_main_entries", ref removeAllExistingEntries);
             
             if (jObjectParsed.TryGetValue("custom_campaign_empty_main_entries_permission", out var customCampaignEmptyMainEntriesPermissionValue))
             {
                 resetDefaultEntriesPermission = (bool) customCampaignEmptyMainEntriesPermissionValue;
 
-                if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out JToken resultNewTag))
-                {
-                    doShowNewTagForMainGameEntries = (bool) resultNewTag;
-                }
+                ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_show_new_tag_for_main_entries", ref doShowNewTagForMainGameEntries);
             }
             
             // Sanity check in case it was passed but no entries have been reset to 0th permission.
@@ -404,15 +365,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Warning("WARNING: Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_gameover_threshold", out var customCampaignGameoverThresholdValue))
-            {
-                gameOverThreshold = (int) customCampaignGameoverThresholdValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_campaign_warning_threshold", out var customCampaignWarningThresholdValue))
-            {
-                warningThreshold = (int) customCampaignWarningThresholdValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_gameover_threshold", ref gameOverThreshold);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_warning_threshold", ref warningThreshold);
             
             if (jObjectParsed.TryGetValue("custom_campaign_days_names", out var customCampaignDaysNamesValue))
             {
@@ -536,55 +490,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
-            if (jObjectParsed.TryGetValue("always_randomize_music", out JToken alwaysRandomizeMusicValue))
-            {
-                useRandomMusic = (bool) alwaysRandomizeMusicValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("remove_default_music", out JToken removeDefaultMusicValue))
-            {
-                removeDefaultMusic = (bool) removeDefaultMusicValue;
-            }
-
-            if (jObjectParsed.TryGetValue("entry_browser_always_active", out var entryBrowserAlwaysActiveValue))
-            {
-                entryBrowserAlwaysActive = (bool) entryBrowserAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("scorecard_always_active", out var scorecardAlwaysActiveValue))
-            {
-                scorecardAlwaysActive = (bool) scorecardAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("artbook_always_active", out var artbookAlwaysActiveValue))
-            {
-                artbookAlwaysActive = (bool) artbookAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("arcade_always_active", out var arcadeAlwaysActiveValue))
-            {
-                arcadeAlwaysActive = (bool) arcadeAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("always_show_skip_call_wait_time", out var alwaysShowSkipCallWaitTimeValue))
-            {
-                alwaysSkipCallButton = (bool) alwaysShowSkipCallWaitTimeValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("rename_main_game_desktop_icon", out var renameMainGameDesktopIconValue))
-            {
-                renameMainProgram = (string) renameMainGameDesktopIconValue;
-            }
-
-            if (jObjectParsed.TryGetValue("disable_main_campaign_videos", out var disableMainCampaignVideosValue))
-            {
-                disableDefaultVideos = (bool) disableMainCampaignVideosValue;
-            }
-
-            if (jObjectParsed.TryGetValue("remove_default_emails", out var removeDefaultEmailsValue))
-            {
-                removeAllDefaultEmails = (bool) removeDefaultEmailsValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "always_randomize_music", ref useRandomMusic);
+            ParsingHelper.TryAssign(jObjectParsed, "remove_default_music", ref removeDefaultMusic);
+            ParsingHelper.TryAssign(jObjectParsed, "entry_browser_always_active", ref entryBrowserAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "scorecard_always_active", ref scorecardAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "artbook_always_active", ref artbookAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "arcade_always_active", ref arcadeAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "always_show_skip_call_wait_time", ref alwaysSkipCallButton);
+            ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon", ref renameMainProgram);
+            ParsingHelper.TryAssign(jObjectParsed, "disable_main_campaign_videos", ref disableDefaultVideos);
+            ParsingHelper.TryAssign(jObjectParsed, "remove_default_emails", ref removeAllDefaultEmails);
             
             if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out var mainGameDesktopIconPathValue))
             {
@@ -637,26 +552,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("disable_desktop_logo", out var disableDesktopLogoValue))
-            {
-                disableDesktopLogo = (bool) disableDesktopLogoValue;
-            }
-
-            if (jObjectParsed.TryGetValue("disable_green_color_on_desktop", out var disableGreenColorOnDesktopValue))
-            {
-                disableGreenColorBackground = (bool) disableGreenColorOnDesktopValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_desktop_logo_transparency", out var customDesktopLogoTransparencyValue))
-            {
-                customDesktopLogoTransparency = (float) customDesktopLogoTransparencyValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableDesktopLogo);
+            ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_desktop_logo_transparency", ref customDesktopLogoTransparency);
+            ParsingHelper.TryAssign(jObjectParsed, "skip_callers_correctly", ref skipCallersCorrectly);
             
-            if (jObjectParsed.TryGetValue("skip_callers_correctly", out var skipCallersCorrectlyValue))
-            {
-                skipCallersCorrectly = (bool) skipCallersCorrectlyValue;
-            }
-
             if (jObjectParsed.TryGetValue("custom_desktop_logo_name", out var customDesktopLogoNameValue))
             {
                 string customDesktopLogoPath = (string) customDesktopLogoNameValue;
@@ -672,22 +572,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
-            if (jObjectParsed.TryGetValue("defaultTheme", out JToken defaultThemeValue))
-            {
-                defaultTheme = defaultThemeValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "defaultTheme", ref defaultTheme);
+            ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
+            ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
             
-            if (jObjectParsed.TryGetValue("disable_theme_dropdown", out var disableThemeDropdownValue))
-            {
-                disablePickingThemeOption = (bool) disableThemeDropdownValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("do_not_account_default_ringtone", out var doNotAccountDefaultRingtoneValue))
-            {
-                doNotAccountDefaultRingtone = (bool) doNotAccountDefaultRingtoneValue;
-            }
-            
-            // Create
             return new CustomCampaign.CustomCampaignModel.CustomCampaign
             {
                 CampaignName = customCampaignName,
