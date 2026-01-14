@@ -17,7 +17,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         /// <param name="jObjectParsed"> JObject parsed. </param>
         /// <param name="usermodFolderPath">Path to JSON file.</param>
         /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateModifier(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
+        public static void CreateModifier(JObject jObjectParsed, string usermodFolderPath = "",
+            string jsonFolderPath = "")
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
@@ -62,7 +63,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ref string jsonFolderPath, ref string customCampaignName)
         {
             // When the modifier is unlocked. If null, it is a general modifier.
-            List<int> unlockDays = null; 
+            List<int> unlockDays = null;
 
             /*
              * Desktop Settings
@@ -82,32 +83,33 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite backgroundLogo = null;
             bool disableBackgroundLogo = false;
             float backgroundLogoTransparency = 0.2627f;
-            
+
             // Credits
             string desktopCredits = null;
-            
+
             // Desktop settings
             bool entryBrowserActive = false;
             // If this setting was changed at all. Is used when checking.
             // If this is true and the "active" is false, it will disable the entry browser for example.
-            bool entryBrowserChanged = false; 
-        
+            bool entryBrowserChanged = false;
+
             bool scorecardActive = false;
             bool scorecardChanged = false; // See entryBrowserChanged for explanation.
-        
+
             bool artbookActive = false;
             bool artbookChanged = false; // See entryBrowserChanged for explanation.
-        
+
             bool arcadeActive = false;
             bool arcadeChanged = false; // See entryBrowserChanged for explanation.
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
 
-            if (jObjectParsed.TryGetValue("modifier_custom_campaign_attached", out JToken customCampaignNameValue))
-            {
-                customCampaignName = customCampaignNameValue.Value<string>();
-            }
+            /*
+             * Modifier Parsing
+             */
+
+            ParsingHelper.TryAssign(jObjectParsed, "modifier_custom_campaign_attached", ref customCampaignName);
 
             if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
             {
@@ -119,22 +121,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     unlockDays = new List<int>();
 
-                    foreach (JToken unlockDayToken in (JArray) unlockDayValue)
+                    foreach (JToken unlockDayToken in (JArray)unlockDayValue)
                     {
                         unlockDays.Add(unlockDayToken.Value<int>());
                     }
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_username_text", out JToken desktopUsernameTextValue))
-            {
-                username = desktopUsernameTextValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref username);
 
-            if (jObjectParsed.TryGetValue("rename_main_game_desktop_icon", out JToken renameMainGameDesktopIconValue))
-            {
-                renameMainGameDesktopIcon = renameMainGameDesktopIconValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon", ref renameMainGameDesktopIcon);
 
             if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out JToken mainGameDesktopIconPathValue))
             {
@@ -169,14 +165,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     {
                         backgroundSprites.Add(
                             ImageImport.LoadImage(jsonFolderPath + "\\" + backgroundName.Value<string>(),
-                            usermodFolderPath + "\\" + backgroundName.Value<string>()));
+                                usermodFolderPath + "\\" + backgroundName.Value<string>()));
                     }
                 }
             }
-            
+
             if (jObjectParsed.TryGetValue("game_finished_desktop_background", out JToken gameFinishedDesktopBackground))
             {
-                string gameFinishedBackgroundPath = (string) gameFinishedDesktopBackground;
+                string gameFinishedBackgroundPath = (string)gameFinishedDesktopBackground;
 
                 if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
                 {
@@ -185,15 +181,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
                 else
                 {
-                    gameFinishedBackgroundSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + gameFinishedBackgroundPath,
+                    gameFinishedBackgroundSprite = ImageImport.LoadImage(
+                        jsonFolderPath + "\\" + gameFinishedBackgroundPath,
                         usermodFolderPath + "\\" + gameFinishedBackgroundPath);
                 }
             }
 
-            if (jObjectParsed.TryGetValue("disable_green_color_on_desktop", out JToken disableGreenColorOnDesktopValue))
-            {
-                disableGreenColorBackground = disableGreenColorOnDesktopValue.Value<bool>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
             {
@@ -201,7 +195,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     List<float> desktopBackgroundColorList = new List<float>();
 
-                    foreach (JToken desktopBackgroundColorToken in (JArray) _desktopBackgroundColor)
+                    foreach (JToken desktopBackgroundColorToken in (JArray)_desktopBackgroundColor)
                     {
                         desktopBackgroundColorList.Add(desktopBackgroundColorToken.Value<float>());
                     }
@@ -210,12 +204,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     {
                         case 3:
                             desktopBackgroundColor = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
-                                GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]));
+                                GetConvertedColorFloat(desktopBackgroundColorList[1]),
+                                GetConvertedColorFloat(desktopBackgroundColorList[2]));
                             break;
 
                         case 4:
                             desktopBackgroundColor = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
-                                GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]), 
+                                GetConvertedColorFloat(desktopBackgroundColorList[1]),
+                                GetConvertedColorFloat(desktopBackgroundColorList[2]),
                                 GetConvertedColorFloat(desktopBackgroundColorList[3]));
                             break;
 
@@ -244,22 +240,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("disable_desktop_logo", out JToken disableDesktopLogoValue))
-            {
-                disableBackgroundLogo = disableDesktopLogoValue.Value<bool>();
-            }
-
-            if (jObjectParsed.TryGetValue("desktop_logo_transparency",
-                    out JToken customDesktopLogoTransparencyValue))
-            {
-                backgroundLogoTransparency = customDesktopLogoTransparencyValue.Value<float>();
-            }
-            
-            if (jObjectParsed.TryGetValue("desktop_credits",
-                    out JToken desktopCreditsValue))
-            {
-                desktopCredits = desktopCreditsValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
@@ -270,28 +253,28 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     dayTitleStrings.Add(campaignDay.Value<string>());
                 }
             }
-            
+
             if (jObjectParsed.TryGetValue("entry_browser_state", out var entryBrowserAlwaysActiveValue))
             {
-                entryBrowserActive = (bool) entryBrowserAlwaysActiveValue;
+                entryBrowserActive = (bool)entryBrowserAlwaysActiveValue;
                 entryBrowserChanged = true;
             }
 
             if (jObjectParsed.TryGetValue("scorecard_state", out var scorecardAlwaysActiveValue))
             {
-                scorecardActive = (bool) scorecardAlwaysActiveValue;
+                scorecardActive = (bool)scorecardAlwaysActiveValue;
                 scorecardChanged = true;
             }
 
             if (jObjectParsed.TryGetValue("artbook_state", out var artbookAlwaysActiveValue))
             {
-                artbookActive = (bool) artbookAlwaysActiveValue;
+                artbookActive = (bool)artbookAlwaysActiveValue;
                 artbookChanged = true;
             }
 
             if (jObjectParsed.TryGetValue("arcade_state", out var arcadeAlwaysActiveValue))
             {
-                arcadeActive = (bool) arcadeAlwaysActiveValue;
+                arcadeActive = (bool)arcadeAlwaysActiveValue;
                 arcadeChanged = true;
             }
 
@@ -314,20 +297,20 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 customBackgroundLogo = backgroundLogo,
                 disableDesktopLogo = disableBackgroundLogo,
                 backgroundLogoTransparency = backgroundLogoTransparency,
-                
+
                 desktopCredits = desktopCredits,
 
                 dayTitleStrings = dayTitleStrings,
-                
+
                 entryBrowserActive = entryBrowserActive,
                 entryBrowserChanged = entryBrowserChanged,
-                
+
                 scorecardActive = scorecardActive,
                 scorecardChanged = scorecardChanged,
-                
+
                 artbookActive = artbookActive,
                 artbookChanged = artbookChanged,
-                
+
                 arcadeActive = arcadeActive,
                 arcadeChanged = arcadeChanged
             };

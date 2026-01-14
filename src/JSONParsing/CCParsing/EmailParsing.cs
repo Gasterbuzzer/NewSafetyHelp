@@ -74,40 +74,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             int emailUnlockDay = 0;
             int emailUnlockThreshold = 0;
 
-            if (jObjectParsed.TryGetValue("email_in_main_campaign", out var emailInMainCampaignValue))
-            {
-                inMainCampaign = (bool)emailInMainCampaignValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_custom_campaign_name", out var emailCustomCampaignNameValue))
-            {
-                customCampaignName = (string)emailCustomCampaignNameValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_subject", out var emailSubjectValue))
-            {
-                emailSubject = (string)emailSubjectValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_sender", out var emailSenderValue))
-            {
-                emailSender = (string)emailSenderValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_body", out var emailBodyValue))
-            {
-                emailBody = (string)emailBodyValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_unlock_day", out var emailUnlockDayValue))
-            {
-                emailUnlockDay = (int)emailUnlockDayValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_unlock_threshold", out var emailUnlockThresholdValue))
-            {
-                emailUnlockThreshold = (int)emailUnlockThresholdValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "email_in_main_campaign", ref inMainCampaign);
+            ParsingHelper.TryAssign(jObjectParsed, "email_custom_campaign_name", ref customCampaignName);
+            ParsingHelper.TryAssign(jObjectParsed, "email_subject", ref emailSubject);
+            ParsingHelper.TryAssign(jObjectParsed, "email_sender", ref emailSender);
+            ParsingHelper.TryAssign(jObjectParsed, "email_body", ref emailBody);
+            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
+            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref emailUnlockThreshold);
 
             if (jObjectParsed.TryGetValue("email_image", out var emailImageValue))
             {

@@ -100,10 +100,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             bool appendRingtone = false; // If this is an append ringtone caller.
 
-            if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignNameValue))
-            {
-                customCampaignName = customCampaignNameValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
             if (jObjectParsed.TryGetValue("ringtone_audio_clip_name", out var ringtoneAudioClipName))
             {
@@ -125,30 +122,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("unlock_day", out var unlockDayValue))
-            {
-                unlockDay = unlockDayValue.Value<int>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
 
             if (unlockDay == 0)
             {
                 onlyOnUnlockDay = false;
             }
             
-            if (jObjectParsed.TryGetValue("only_play_on_unlock_day", out var onlyPlayOnUnlockDayValue))
-            {
-                onlyOnUnlockDay = onlyPlayOnUnlockDayValue.Value<bool>();
-            }
-            
-            if (jObjectParsed.TryGetValue("is_glitched_version", out var isGlitchedVersionValue))
-            {
-                isGlitchedVersion = isGlitchedVersionValue.Value<bool>();
-            }
-            
-            if (jObjectParsed.TryGetValue("is_append_ringtone", out var isAppendRingtoneValue))
-            {
-                appendRingtone = isAppendRingtoneValue.Value<bool>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "only_play_on_unlock_day", ref onlyOnUnlockDay);
+            ParsingHelper.TryAssign(jObjectParsed, "is_glitched_version", ref isGlitchedVersion);
+            ParsingHelper.TryAssign(jObjectParsed, "is_append_ringtone", ref appendRingtone);
 
             return new CustomRingtone()
             {

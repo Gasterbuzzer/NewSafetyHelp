@@ -93,10 +93,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             string musicAudioPath = ""; // Audio Path to load audio from.
 
-            if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignNameValue))
-            {
-                customCampaignName = (string)customCampaignNameValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
             if (jObjectParsed.TryGetValue("music_audio_clip_name", out var musicAudioClipName))
             {
@@ -117,11 +114,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     musicAudioPath = jsonFolderPath + "\\" + musicAudioClipName;
                 }
             }
-
-            if (jObjectParsed.TryGetValue("unlock_day", out var unlockDayValue))
-            {
-                unlockDay = (int)unlockDayValue;
-            }
+            
+            ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
 
             return new CustomMusic
             {

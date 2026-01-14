@@ -26,7 +26,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            CustomVideo _customVideo = ParseVideo(ref jObjectParsed, ref usermodFolderPath,
+            CustomVideo customVideo = ParseVideo(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
@@ -36,15 +36,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (foundCustomCampaign != null)
             {
-                foundCustomCampaign.AllDesktopVideos.Add(_customVideo);
+                foundCustomCampaign.AllDesktopVideos.Add(customVideo);
             }
             else
             {
                 #if DEBUG
-                MelonLogger.Msg($"DEBUG: Found Video before the custom campaign was found / does not exist.");
+                    MelonLogger.Msg($"DEBUG: Found Video before the custom campaign was found / does not exist.");
                 #endif
 
-                GlobalParsingVariables.PendingCustomCampaignVideos.Add(_customVideo);
+                GlobalParsingVariables.PendingCustomCampaignVideos.Add(customVideo);
             }
         }
 
@@ -59,20 +59,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Unlock
             int videoUnlockDay = 0;
 
-            if (jObjectParsed.TryGetValue("video_desktop_name", out var videoDesktopNameValue))
-            {
-                videoName = (string)videoDesktopNameValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
-            {
-                customCampaignName = (string)customCampaignAttachedValue;
-            }
-
-            if (jObjectParsed.TryGetValue("video_unlock_day", out var videoUnlockDayValue))
-            {
-                videoUnlockDay = (int)videoUnlockDayValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "video_desktop_name", ref videoName);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
+            ParsingHelper.TryAssign(jObjectParsed, "video_unlock_day", ref videoUnlockDay);
 
             if (jObjectParsed.TryGetValue("video_file_name", out var videoFileNameValue))
             {
