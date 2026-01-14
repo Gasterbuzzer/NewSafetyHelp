@@ -74,16 +74,16 @@ namespace NewSafetyHelp.Audio.AudioPatches
                         }
                         
                         // Now for each valid ringtone we try to pick one valid.
-                        ReplacePhoneCallIfValid(ref __instance.phoneCall, ref validRingtonesNormal,
+                        ReplacePhoneRingtoneIfValid(ref __instance.phoneCall, ref validRingtonesNormal,
                             customCampaign.DoNotAccountDefaultRingtone, ref defaultRingtone);
 
-                        ReplacePhoneCallIfValid(ref __instance.phoneCallWarped, ref validRingtonesGlitched,
+                        ReplacePhoneRingtoneIfValid(ref __instance.phoneCallWarped, ref validRingtonesGlitched,
                             customCampaign.DoNotAccountDefaultRingtone, ref defaultWarpedRingtone);
                     }
                 }
             }
 
-            private static void ReplacePhoneCallIfValid(ref RichAudioClip clipToReplace,
+            private static void ReplacePhoneRingtoneIfValid(ref RichAudioClip clipToReplace,
                 ref List<CustomRingtone> validRingtones, bool doNotAccountDefaultRingtone,
                 ref RichAudioClip gameDefaultRingtone)
             {
@@ -100,12 +100,14 @@ namespace NewSafetyHelp.Audio.AudioPatches
                         }
 
                         int chosenPhoneCall = Random.Range(0, maxExclusive);
-                        
-                        MelonLogger.Error($"DEBUG: ChosenPhoneCall: '{chosenPhoneCall}'.\n" +
-                                          $"maxExclusive: '{maxExclusive}'.\n" +
-                                          $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
-                                          $"validRingtones.Any(r => r.AppendRingtone): '{validRingtones.Any(r => r.AppendRingtone)}'.\n" +
-                                          $"validRingtones.Count '{validRingtones.Count}'.\n");
+
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: ChosenPhoneCall: '{chosenPhoneCall}'.\n" +
+                                              $"maxExclusive: '{maxExclusive}'.\n" +
+                                              $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
+                                              $"validRingtones.Any(r => r.AppendRingtone): '{validRingtones.Any(r => r.AppendRingtone)}'.\n" +
+                                              $"validRingtones.Count '{validRingtones.Count}'.\n");
+                        #endif
 
                         if (doNotAccountDefaultRingtone)
                         {
