@@ -5,6 +5,7 @@ using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -143,6 +144,59 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             target = token.Value<T>();
+        }
+        
+        /// <summary>
+        /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
+        /// This version takes in a bool that updates to "true" if updated.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <typeparam name="T">Type of the target.</typeparam>
+        public static void TryAssignWithBool<T>(JObject jObjectParsed, string key, ref T target, ref bool wasAssigned)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                wasAssigned = false;
+                return;
+            }
+
+            wasAssigned = true;
+            target = token.Value<T>();
+        }
+        
+        /// <summary>
+        /// Tries to assign the target with the image from the given JSON at the given key.
+        /// If not found or if any problems happen, it will not write.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
+        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
+        /// <param name="customCampaignName">(Optional) Name of the custom campaign. Used to display errors.</param>
+        public static void TryAssignSprite(JObject jObjectParsed, string key, ref Sprite target, string jsonFolderPath,
+            string usermodFolderPath, string customCampaignName = null)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return;
+            }
+
+            string imagePath = token.Value<string>();
+
+            if (string.IsNullOrEmpty(imagePath))
+            {
+                MelonLogger.Error(
+                    $"ERROR: Invalid file name given for '{imagePath}'." +
+                    $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
+            }
+            else
+            {
+                target = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
+                    usermodFolderPath + "\\" + imagePath);
+            }
         }
     }
 }

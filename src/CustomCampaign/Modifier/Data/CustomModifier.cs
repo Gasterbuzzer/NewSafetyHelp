@@ -36,8 +36,21 @@ namespace NewSafetyHelp.CustomCampaign.Modifier.Data
         public Sprite customBackgroundLogo = null; // Logo to show in desktop (if not disabled)
         public float backgroundLogoTransparency = 0.2627f;
         
+        public bool HideDiscordProgramChanged = false; // (If it was changed) (It means if to take into consideration)
+        public bool HideDiscordProgram = false; // For those who want more immersion. Should not be recommended.
+
+        // Program Icons
+        
+        public Sprite MailBoxIcon = null; // Mail Box Icon on Desktop
+        public Sprite EntryBrowserIcon = null; // Entry Browser Icon on Desktop
+        public Sprite OptionsIcon = null; // Options Icon on Desktop
+        public Sprite ArtbookIcon = null; // Artbook Icon on Desktop
+        public Sprite ArcadeIcon = null; // Arcade Icon on Desktop
+        public Sprite ScorecardIcon = null; // Weekly Report Icon on Desktop
+        
         // Credits
-        [CanBeNull] public string desktopCredits = null;
+        [CanBeNull] public string DesktopCredits = null;
+        public Sprite CreditsIcon = null; // Credits Icon on Desktop
         
         /*
          * Enable Scorecard and such.

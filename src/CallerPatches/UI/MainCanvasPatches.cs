@@ -386,6 +386,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 yield return new WaitForSeconds(5f);
                 
+                mainCanvasBehavior.inputBlocker.SetActive(false);
+                
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
                 GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                 mainCanvasBehavior.softwareStartupPanel.SetActive(true);
@@ -742,7 +744,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                             }
                         }
                     }
-                    else // Custom Campaign
+                    else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                     {
                         CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         

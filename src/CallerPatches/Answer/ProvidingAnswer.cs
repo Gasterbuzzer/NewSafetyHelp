@@ -158,17 +158,17 @@ namespace NewSafetyHelp.CallerPatches.Answer
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
-                FieldInfo _onCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
+                FieldInfo onCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-
-                if (_onCallConcluded == null)
+                
+                if (onCallConcluded == null)
                 {
                     MelonLogger.Error("ERROR: OnCallConcluded is null. Calling original function.");
                     return true;
                 }
                 else // _onCallConcluded != null
                 {
-                    Delegate del = (Delegate)_onCallConcluded.GetValue(null); // Since its static.
+                    Delegate del = (Delegate) onCallConcluded.GetValue(null); // Since its static.
 
                     if (del != null)
                     {
@@ -184,20 +184,18 @@ namespace NewSafetyHelp.CallerPatches.Answer
                 }
 
                 // Some reflection.
-                MethodInfo _newCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine",
+                MethodInfo newCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
-                if (_newCallRoutine == null)
+                if (newCallRoutine == null)
                 {
                     MelonLogger.Error("ERROR: NewCallRoutine is null. Calling original function.");
                     return true;
                 }
 
-                IEnumerator newCallRoutine = (IEnumerator)_newCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
-                IEnumerator newCallRoutineDefaultValues =
-                    (IEnumerator)_newCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
-
-
+                IEnumerator newCallRoutineTenValue = (IEnumerator)newCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
+                IEnumerator newCallRoutineDefaultValues = (IEnumerator)newCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
+                
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
 
                 FieldInfo _callerAudioSource = typeof(CallerController).GetField("callerAudioSource",
@@ -209,10 +207,10 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     return true;
                 }
 
-                FieldInfo _triggerGameOver = typeof(CallerController).GetField("triggerGameOver",
+                FieldInfo triggerGameOver = typeof(CallerController).GetField("triggerGameOver",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
-                if (_triggerGameOver == null)
+                if (triggerGameOver == null)
                 {
                     MelonLogger.Error("ERROR: triggerGameOver is null. Calling original function.");
                     return true;
@@ -235,7 +233,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         __instance.CreateCustomCaller();
 
                         __instance.StartCoroutine(
-                            newCallRoutine); // this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
+                            newCallRoutineTenValue); // this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
 
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
 
@@ -296,15 +294,15 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         else
                         {
                             __instance.StartCoroutine(
-                                newCallRoutine); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
+                                newCallRoutineTenValue); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
                         }
                     }
                 }
-                else if ((bool)_triggerGameOver.GetValue(__instance)) // __instance.triggerGameOver
+                else if ((bool)triggerGameOver.GetValue(__instance)) // __instance.triggerGameOver
                 {
                     GlobalVariables.mainCanvasScript.PlayGameOverCutscene();
                 }
-                else // Main Game
+                else // Not Arcade Mode
                 {
                     MethodInfo _checkCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer",
                         BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
@@ -332,47 +330,58 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                     if (__instance.IsLastCallOfDay())
                     {
-                        if (!GlobalVariables.isXmasDLC && !__instance.ScoreIsPassing(__instance.gameOverThreshold) &&
-                            GlobalVariables.currentDay > 1 &&
-                            GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                        if (!GlobalVariables.isXmasDLC 
+                            && !__instance.ScoreIsPassing(__instance.gameOverThreshold) 
+                            && GlobalVariables.currentDay > 1 
+                            && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
-                            __instance.StartCoroutine(
-                                newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
+                            // In case we are not in the DLC and our score is not passing,
+                            // we show the last game over caller.
+                            
+                            //__instance.StartCoroutine(__instance.NewCallRoutine());
+                            __instance.StartCoroutine(newCallRoutineDefaultValues); 
 
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
                         }
 
                         if (GlobalVariables.isXmasDLC &&
-                            GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold &&
-                            GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                            GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold 
+                            && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
-                            __instance.StartCoroutine(
-                                newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine());
+                            // We are in the DLC and our cheer score is less than the threshold,
+                            // we show the last game over caller.
+                            
+                            //__instance.StartCoroutine(__instance.NewCallRoutine());
+                            __instance.StartCoroutine(newCallRoutineDefaultValues); 
 
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
                         }
 
-                        FieldInfo _lastDayNum = typeof(CallerController).GetField("lastDayNum",
+                        FieldInfo lastDayNum = typeof(CallerController).GetField("lastDayNum",
                             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-                        if (_lastDayNum == null)
+                        if (lastDayNum == null)
                         {
                             MelonLogger.Error("ERROR: lastDayNum is null. Calling original function.");
                             return true;
                         }
 
-                        if (GlobalVariables.currentDay < (int)_lastDayNum.GetValue(__instance)) //__instance.lastDayNum
+                        if (GlobalVariables.currentDay < (int)lastDayNum.GetValue(__instance)) //__instance.lastDayNum
                         {
-                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
-                                .EndDayRoutine()); //  GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            // GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            GlobalVariables.mainCanvasScript.StartCoroutine(
+                                GlobalVariables.mainCanvasScript.EndDayRoutine());
 
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
                         }
                     }
                     
+                    
+                    // (VERY IMPORTANT: AFTER THIS FUNCTION THE NEXT CALLER GETS CALLED. IF WE WISH TO PREVENT THAT
+                    // WE NEED TO END THE DAY HERE OR SKIP THE FUNCTION)
                     // Checks if we need to end the day, in case the next caller gets skipped.
                     if (CustomCampaignGlobal.InCustomCampaign
                         && !GlobalVariables.arcadeMode)
@@ -380,7 +389,8 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         int checkResult = CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
-                            GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
+                            // Increase caller ID, since we are skipping callers.
+                            GlobalVariables.callerControllerScript.currentCallerID += checkResult;
                         
                             // Start the end day routine and stop any caller. And we end the day.
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
@@ -390,6 +400,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         }
                     }
 
+                    // Next caller after providing an answer.
                     if (__instance.currentCallerID + 1 < __instance.callers.Length)
                     {
                         __instance.StartCoroutine(

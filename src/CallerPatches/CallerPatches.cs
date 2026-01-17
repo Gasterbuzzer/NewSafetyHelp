@@ -432,7 +432,7 @@ namespace NewSafetyHelp.CallerPatches
 
                     __result = mainCampaignResult;
                 }
-                else // Custom Campaign
+                else if (CustomCampaignGlobal.InCustomCampaign)// Custom Campaign
                 {
                     CustomCCaller customCCallerFound =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
@@ -873,7 +873,9 @@ namespace NewSafetyHelp.CallerPatches
                     else
                     {
                         // Custom Caller check before we continue.
-                        if (CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID) != null)
+                        if (CustomCampaignGlobal.InCustomCampaign)
+                        {
+                            if (CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID) != null)
                         {
                             // Accuracy Caller part.
                             CustomCCaller currentCaller =
@@ -881,49 +883,12 @@ namespace NewSafetyHelp.CallerPatches
 
                             if (currentCaller != null && currentCaller.IsAccuracyCaller)
                             {
-                                bool showCaller = false;
+                                float currentAccuracy = AccuracyHelper.GetCorrectAccuracy(currentCaller);
 
-                                float currentAccuracy;
-
-                                if (currentCaller.UseTotalAccuracy)
-                                {
-                                    currentAccuracy = AccuracyHelper.ComputeTotalCampaignAccuracy();
-                                }
-                                else
-                                {
-                                    currentAccuracy = AccuracyHelper.ComputeDayAccuracy();
-                                }
-
-                                switch (currentCaller.AccuracyCheck)
-                                {
-                                    case CheckOptions.EqualTo:
-                                        if (Mathf.Approximately(currentCaller.RequiredAccuracy, currentAccuracy))
-                                        {
-                                            showCaller = true;
-                                        }
-
-                                        break;
-
-                                    case CheckOptions.GreaterThanOrEqualTo:
-                                        if (currentCaller.RequiredAccuracy >= currentAccuracy)
-                                        {
-                                            showCaller = true;
-                                        }
-
-                                        break;
-
-                                    case CheckOptions.LessThanOrEqualTo:
-                                        if (currentCaller.RequiredAccuracy <= currentAccuracy)
-                                        {
-                                            showCaller = true;
-                                        }
-
-                                        break;
-
-                                    case CheckOptions.NoneSet:
-                                        showCaller = true;
-                                        break;
-                                }
+                                bool showCaller = AccuracyHelper.CheckIfCallerIsToBeShown(currentCaller, currentAccuracy);
+                                
+                                MelonLogger.Error($"Current Accuracy: '{currentAccuracy}'. Required: '{currentCaller.RequiredAccuracy}'. " +
+                                                  $"Should the caller be shown? '{showCaller}'.");
 
                                 if (!showCaller)
                                 {
@@ -944,6 +909,7 @@ namespace NewSafetyHelp.CallerPatches
                                     return false;
                                 }
                             }
+                        }
                         }
                         
                         if (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)
@@ -1006,7 +972,8 @@ namespace NewSafetyHelp.CallerPatches
             {
                 yield return new WaitForSeconds(Random.Range(minTime, maxTime));
 
-                if (GlobalVariables.mainCanvasScript != null && GlobalVariables.mainCanvasScript.callWindow != null)
+                if (GlobalVariables.mainCanvasScript != null 
+                    && GlobalVariables.mainCanvasScript.callWindow != null)
                 {
                     GlobalVariables.mainCanvasScript.callWindow.SetActive(true);
                 }

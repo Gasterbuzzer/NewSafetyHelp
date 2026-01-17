@@ -23,11 +23,11 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>GameObject for the main menu canvas. </returns>
         private static GameObject getMainMenuCanvas()
         {
-            GameObject foundMainMenuCanvas = GameObject.Find("MainMenuCanvas");
+            GameObject foundGameObject = GameObject.Find("MainMenuCanvas");
 
-            if (foundMainMenuCanvas != null)
+            if (foundGameObject != null)
             {
-                return foundMainMenuCanvas;
+                return foundGameObject;
             }
             else
             {
@@ -42,11 +42,11 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Desktop GameObject</returns>
         private static GameObject getDesktop()
         {
-            GameObject foundDesktop = getMainMenuCanvas().transform.Find("Desktop").gameObject;
+            GameObject foundGameObject = getMainMenuCanvas().transform.Find("Desktop").gameObject;
 
-            if (foundDesktop != null)
+            if (foundGameObject != null)
             {
-                return foundDesktop;
+                return foundGameObject;
             }
             else
             {
@@ -62,11 +62,11 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Logo GameObject</returns>
         public static GameObject getLogo()
         {
-            GameObject foundLogo = getDesktop().transform.Find("Logo").gameObject;
+            GameObject foundGameObject = getDesktop().transform.Find("Logo").gameObject;
 
-            if (foundLogo != null)
+            if (foundGameObject != null)
             {
-                return foundLogo;
+                return foundGameObject;
             }
             else
             {
@@ -82,12 +82,12 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Email List GameObject</returns>
         private static GameObject getEmailList()
         {
-            GameObject foundEmailList = getMainMenuCanvas().transform.Find("EmailPopup").Find("EmailsScrollview")
+            GameObject foundGameObject = getMainMenuCanvas().transform.Find("EmailPopup").Find("EmailsScrollview")
                 .Find("Viewport").Find("Content").gameObject;
 
-            if (foundEmailList != null)
+            if (foundGameObject != null)
             {
-                return foundEmailList;
+                return foundGameObject;
             }
             else
             {
@@ -102,11 +102,11 @@ namespace NewSafetyHelp.CustomDesktop
         /// </summary>
         public static void removeMainGameEmails()
         {
-            GameObject foundEmailList = getEmailList();
+            GameObject foundGameObject = getEmailList();
 
-            if (foundEmailList != null)
+            if (foundGameObject != null)
             {
-                foreach (Transform childEmail in foundEmailList.transform)
+                foreach (Transform childEmail in foundGameObject.transform)
                 {
                     if (childEmail.gameObject.name.Contains("EmailListing"))
                     {
@@ -231,24 +231,24 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Window Bar GameObject</returns>
         private static GameObject getWindowsBar()
         {
-            GameObject foundWindowBar = getDesktop().transform.Find("WindowsBar (1)").gameObject;
+            GameObject foundGameObject = getDesktop().transform.Find("WindowsBar (1)").gameObject;
 
-            if (foundWindowBar != null)
+            if (foundGameObject != null)
             {
-                return foundWindowBar;
+                return foundGameObject;
             }
             else // Try again with a different name.
             {
-                foundWindowBar = getDesktop().transform.Find("WindowsBar").gameObject;
+                foundGameObject = getDesktop().transform.Find("WindowsBar").gameObject;
 
-                if (foundWindowBar != null)
+                if (foundGameObject != null)
                 {
                     MelonLogger.Error(
                         "ERROR: Failed to find windows bar from Main Menu. Possibly called outside of MainMenuCanvas?");
                     return null;
                 }
 
-                return foundWindowBar;
+                return foundGameObject;
             }
         }
 
@@ -258,16 +258,136 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Credits GameObject</returns>
         public static GameObject getCreditsGameObject()
         {
-            GameObject foundCredits = getLeftPrograms().transform.Find("Readme").gameObject;
+            GameObject foundGameObject = getLeftPrograms().transform.Find("Readme").gameObject;
 
-            if (foundCredits != null)
+            if (foundGameObject != null)
             {
-                return foundCredits;
+                return foundGameObject;
             }
             else
             {
                 MelonLogger.Error(
                     "ERROR: Failed to find credits from the program list. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the Mailbox GameObject from the programs list.
+        /// </summary>
+        /// <returns>Mailbox GameObject</returns>
+        public static GameObject GetMailboxGameObject()
+        {
+            GameObject foundGameObject = getLeftPrograms().transform.Find("Email-Executable").gameObject;
+
+            if (foundGameObject != null)
+            {
+                return foundGameObject;
+            }
+            else
+            {
+                MelonLogger.Error(
+                    "ERROR: Failed to find mailbox from the program list. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the Options GameObject from the programs list.
+        /// </summary>
+        /// <returns>Options GameObject</returns>
+        public static GameObject GetOptionsGameObject()
+        {
+            GameObject foundGameObject = getLeftPrograms().transform.Find("Options-Executable").gameObject;
+
+            if (foundGameObject != null)
+            {
+                return foundGameObject;
+            }
+            else
+            {
+                MelonLogger.Error(
+                    "ERROR: Failed to find Options from the program list. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the EntryBrowser GameObject from the programs list.
+        /// </summary>
+        /// <returns>EntryBrowser GameObject</returns>
+        public static GameObject GetEntryBrowserGameObject()
+        {
+            GameObject foundGameObject = getLeftPrograms().transform.Find("EntryBrowser-Executable").gameObject;
+
+            if (foundGameObject != null)
+            {
+                return foundGameObject;
+            }
+            else
+            {
+                MelonLogger.Error(
+                    "ERROR: Failed to find EntryBrowser from the program list. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the Artbook GameObject from the programs list.
+        /// </summary>
+        /// <returns>Artbook GameObject</returns>
+        public static GameObject GetArtbookGameObject()
+        {
+            GameObject foundGameObject = getLeftPrograms().transform.Find("Artbook-Executable").gameObject;
+
+            if (foundGameObject != null)
+            {
+                return foundGameObject;
+            }
+            else
+            {
+                MelonLogger.Error(
+                    "ERROR: Failed to find Artbook from the program list. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the Arcade GameObject from the programs list.
+        /// </summary>
+        /// <returns>Arcade GameObject</returns>
+        public static GameObject GetArcadeGameObject()
+        {
+            GameObject foundGameObject = getLeftPrograms().transform.Find("Arcade-Executable").gameObject;
+
+            if (foundGameObject != null)
+            {
+                return foundGameObject;
+            }
+            else
+            {
+                MelonLogger.Error(
+                    "ERROR: Failed to find Arcade from the program list. Possibly called outside of MainMenuCanvas?");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets the Scorecard GameObject from the programs list.
+        /// </summary>
+        /// <returns>Scorecard GameObject</returns>
+        public static GameObject GetScorecardGameObject()
+        {
+            GameObject foundGameObject = getLeftPrograms().transform.Find("Scorecard").gameObject;
+
+            if (foundGameObject != null)
+            {
+                return foundGameObject;
+            }
+            else
+            {
+                MelonLogger.Error(
+                    "ERROR: Failed to find Scorecard from the program list. Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -298,12 +418,12 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Next Call Button GameObject</returns>
         public static GameObject getCallSkipButton()
         {
-            GameObject foundNextCallButton = GameObject.Find("MainCanvas").transform.Find("Panel").transform
+            GameObject foundGameObject = GameObject.Find("MainCanvas").transform.Find("Panel").transform
                 .Find("CallWindow").transform.Find("LargeCallerPortrait").transform.Find("CallSkipButton").gameObject;
 
-            if (foundNextCallButton != null)
+            if (foundGameObject != null)
             {
-                return foundNextCallButton;
+                return foundGameObject;
             }
             else
             {
@@ -318,11 +438,11 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns> GameObject for the programs on the left. </returns>
         private static GameObject getLeftPrograms()
         {
-            GameObject foundLeftSidePrograms = getDesktop().transform.Find("Programs").gameObject;
+            GameObject foundGameObject = getDesktop().transform.Find("Programs").gameObject;
 
-            if (foundLeftSidePrograms != null)
+            if (foundGameObject != null)
             {
-                return foundLeftSidePrograms;
+                return foundGameObject;
             }
             else
             {
@@ -338,11 +458,11 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns> GameObject for the programs on the right. </returns>
         private static GameObject getRightPrograms()
         {
-            GameObject foundRightSidePrograms = getDesktop().transform.Find("RightHandPrograms").gameObject;
+            GameObject foundGameObject = getDesktop().transform.Find("RightHandPrograms").gameObject;
 
-            if (foundRightSidePrograms != null)
+            if (foundGameObject != null)
             {
-                return foundRightSidePrograms;
+                return foundGameObject;
             }
             else
             {
@@ -358,15 +478,15 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns> GameObject for the winter dlc program on the left. </returns>
         private static GameObject getWinterDLCProgram()
         {
-            GameObject winterDLCProgram = getLeftPrograms().transform.Find("DLC-Executable").gameObject;
+            GameObject foundGameObject = getLeftPrograms().transform.Find("DLC-Executable").gameObject;
 
-            if (winterDLCProgram != null)
+            if (foundGameObject != null)
             {
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Found the DLC Icon.");
                 #endif
 
-                return winterDLCProgram;
+                return foundGameObject;
             }
             else
             {
@@ -480,11 +600,11 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns> GameObject for the main game program on the left. </returns>
         public static GameObject getMainGameProgram()
         {
-            GameObject mainGameProgram = getLeftPrograms().transform.Find("HSH-Executable").gameObject;
+            GameObject foundGameObject = getLeftPrograms().transform.Find("HSH-Executable").gameObject;
 
-            if (mainGameProgram != null)
+            if (foundGameObject != null)
             {
-                return mainGameProgram;
+                return foundGameObject;
             }
             else
             {
@@ -498,13 +618,13 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the NSE Discord program. Used for creating copies to modify.
         /// </summary>
         /// <returns> GameObject for the NSE Discord program on the right. </returns>
-        private static GameObject getNSEDiscordProgram()
+        public static GameObject GetNSEDiscordProgram()
         {
-            GameObject discordProgram = getRightPrograms().transform.Find("Discord-Executable").gameObject;
+            GameObject foundGameObject = getRightPrograms().transform.Find("Discord-Executable").gameObject;
 
-            if (discordProgram != null)
+            if (foundGameObject != null)
             {
-                return discordProgram;
+                return foundGameObject;
             }
             else
             {
@@ -557,7 +677,7 @@ namespace NewSafetyHelp.CustomDesktop
         public static void createBackToMainGameButton()
         {
             GameObject backToMainMenuGameButton =
-                Object.Instantiate(getNSEDiscordProgram(), getRightPrograms().transform);
+                Object.Instantiate(GetNSEDiscordProgram(), getRightPrograms().transform);
 
             Object.Destroy(backToMainMenuGameButton.GetComponent<LinkExecutable>()); // Remove old executable Behavior.
 
@@ -644,10 +764,37 @@ namespace NewSafetyHelp.CustomDesktop
         
         public static void disableThemeDropdownInGame()
         {
-            GameObject videoOptions = GameObject.Find("MainCanvas").transform.Find("OptionsPopup").transform
-                .Find("OptionsScrollRect").transform.Find("Viewport").transform.Find("Content").transform
-                .Find("VideoOptions").gameObject;
+            GameObject mainCanvas = GameObject.Find("MainCanvas");
+            if (mainCanvas == null)
+            {
+                return;
+            }
 
+            GameObject optionsPopup = mainCanvas.transform.Find("OptionsPopup").gameObject;
+            if (optionsPopup == null)
+            {
+                return;
+            }
+
+            GameObject optionsScrollRect = optionsPopup.transform.Find("OptionsScrollRect").gameObject;
+            if (optionsScrollRect == null)
+            {
+                return;
+            }
+            
+            GameObject viewport = optionsScrollRect.transform.Find("Viewport").gameObject;
+            if (viewport == null)
+            {
+                return;
+            }
+            
+            GameObject content = viewport.transform.Find("Content").gameObject;
+            if (content == null)
+            {
+                return;
+            }
+            
+            GameObject videoOptions = content.transform.Find("VideoOptions").gameObject;
             if (videoOptions == null)
             {
                 return;

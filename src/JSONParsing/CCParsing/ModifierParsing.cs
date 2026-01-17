@@ -83,9 +83,18 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite backgroundLogo = null;
             bool disableBackgroundLogo = false;
             float backgroundLogoTransparency = 0.2627f;
+            
+            // Icons
+            Sprite mailBoxIcon = null; // Mail Box Icon on Desktop
+            Sprite entryBrowserIcon = null; // Entry Browser Icon on Desktop
+            Sprite optionsIcon = null; // Options Icon on Desktop
+            Sprite artbookIcon = null; // Artbook Icon on Desktop
+            Sprite arcadeIcon = null; // Arcade Icon on Desktop
+            Sprite scorecardIcon = null; // Weekly Report Icon on Desktop
 
             // Credits
             string desktopCredits = null;
+            Sprite creditsIcon = null; // Credits Icon on Desktop
 
             // Desktop settings
             bool entryBrowserActive = false;
@@ -101,6 +110,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             bool arcadeActive = false;
             bool arcadeChanged = false; // See entryBrowserChanged for explanation.
+            
+            bool hideDiscordProgramChanged = false;
+            bool hideDiscordProgram = false; // For those who want more immersion. Should not be recommended.
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
@@ -109,7 +121,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Modifier Parsing
              */
 
-            ParsingHelper.TryAssign(jObjectParsed, "modifier_custom_campaign_attached", ref customCampaignName);
+            ParsingHelper.TryAssign(jObjectParsed, "modifier_custom_campaign_attached",
+                ref customCampaignName);
 
             if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
             {
@@ -130,24 +143,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref username);
 
-            ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon", ref renameMainGameDesktopIcon);
+            ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon",
+                ref renameMainGameDesktopIcon);
 
-            if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out JToken mainGameDesktopIconPathValue))
-            {
-                string customMainGameDesktopIcon = mainGameDesktopIconPathValue.Value<string>();
-
-                if (string.IsNullOrEmpty(customMainGameDesktopIcon))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given in theme for '{customMainGameDesktopIcon}'." +
-                        $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    mainGameDesktopIconSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customMainGameDesktopIcon,
-                        usermodFolderPath + "\\" + customMainGameDesktopIcon);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref mainGameDesktopIconSprite,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("desktop_backgrounds", out JToken customCampaignDesktopBackgrounds))
             {
@@ -169,24 +169,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     }
                 }
             }
-
-            if (jObjectParsed.TryGetValue("game_finished_desktop_background", out JToken gameFinishedDesktopBackground))
-            {
-                string gameFinishedBackgroundPath = (string)gameFinishedDesktopBackground;
-
-                if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating modifier for campaign: {(!string.IsNullOrEmpty(customCampaignName) ? $"{customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    gameFinishedBackgroundSprite = ImageImport.LoadImage(
-                        jsonFolderPath + "\\" + gameFinishedBackgroundPath,
-                        usermodFolderPath + "\\" + gameFinishedBackgroundPath);
-                }
-            }
-
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "game_finished_desktop_background",
+                ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
@@ -224,59 +210,58 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_logo_image_name", out JToken customDesktopLogoNameValue))
-            {
-                string customDesktopLogoPath = customDesktopLogoNameValue.Value<string>();
-
-                if (string.IsNullOrEmpty(customDesktopLogoPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given in theme for '{customDesktopLogoPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    backgroundLogo = ImageImport.LoadImage(jsonFolderPath + "\\" + customDesktopLogoPath,
-                        usermodFolderPath + "\\" + customDesktopLogoPath);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_logo_image_name", ref backgroundLogo,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
+            
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram,
+                ref hideDiscordProgramChanged);
+
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_credits_image_name", ref creditsIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_mailbox_image_name", ref mailBoxIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_entry_browser_image_name", ref entryBrowserIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_options_image_name", ref optionsIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_artbook_image_name", ref artbookIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_arcade_image_name", ref arcadeIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_scorecard_image_name", ref scorecardIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
-                JArray _customCampaignDays = (JArray)customCampaignDaysNamesValue;
+                JArray customCampaignDays = (JArray)customCampaignDaysNamesValue;
 
-                foreach (JToken campaignDay in _customCampaignDays)
+                foreach (JToken campaignDay in customCampaignDays)
                 {
                     dayTitleStrings.Add(campaignDay.Value<string>());
                 }
             }
 
-            if (jObjectParsed.TryGetValue("entry_browser_state", out var entryBrowserAlwaysActiveValue))
-            {
-                entryBrowserActive = (bool)entryBrowserAlwaysActiveValue;
-                entryBrowserChanged = true;
-            }
-
-            if (jObjectParsed.TryGetValue("scorecard_state", out var scorecardAlwaysActiveValue))
-            {
-                scorecardActive = (bool)scorecardAlwaysActiveValue;
-                scorecardChanged = true;
-            }
-
-            if (jObjectParsed.TryGetValue("artbook_state", out var artbookAlwaysActiveValue))
-            {
-                artbookActive = (bool)artbookAlwaysActiveValue;
-                artbookChanged = true;
-            }
-
-            if (jObjectParsed.TryGetValue("arcade_state", out var arcadeAlwaysActiveValue))
-            {
-                arcadeActive = (bool)arcadeAlwaysActiveValue;
-                arcadeChanged = true;
-            }
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive,
+                ref entryBrowserChanged);
+            
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "scorecard_state", ref scorecardActive,
+                ref scorecardChanged);
+            
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "artbook_state", ref artbookActive,
+                ref artbookChanged);
+            
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "arcade_state", ref arcadeActive,
+                ref arcadeChanged);
 
             return new CustomModifier
             {
@@ -297,8 +282,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 customBackgroundLogo = backgroundLogo,
                 disableDesktopLogo = disableBackgroundLogo,
                 backgroundLogoTransparency = backgroundLogoTransparency,
+                
+                HideDiscordProgramChanged = hideDiscordProgramChanged,
+                HideDiscordProgram = hideDiscordProgram,
+                
+                MailBoxIcon = mailBoxIcon,
+                EntryBrowserIcon = entryBrowserIcon,
+                OptionsIcon = optionsIcon,
+                ArtbookIcon = artbookIcon,
+                ArcadeIcon = arcadeIcon,
+                ScorecardIcon = scorecardIcon,
 
-                desktopCredits = desktopCredits,
+                DesktopCredits = desktopCredits,
+                CreditsIcon = creditsIcon,
 
                 dayTitleStrings = dayTitleStrings,
 
