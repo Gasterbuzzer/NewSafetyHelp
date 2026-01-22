@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -153,6 +155,8 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="key">Key to be found.</param>
         /// <param name="target">Target to write the value to.</param>
+        /// <param name="wasAssigned"> If the value was assigned. This is used in some parsing to allow both
+        /// true and false and default values.</param>
         /// <typeparam name="T">Type of the target.</typeparam>
         public static void TryAssignWithBool<T>(JObject jObjectParsed, string key, ref T target, ref bool wasAssigned)
         {
@@ -196,6 +200,93 @@ namespace NewSafetyHelp.JSONParsing
             {
                 target = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
                     usermodFolderPath + "\\" + imagePath);
+            }
+        }
+        
+        /// <summary>
+        /// Attempts to assign the audio file path to the target string. But only if the audio file exists.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
+        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
+        /// <param name="customCallerName">(Optional) Name of the custom caller. Used to display errors.</param>
+        public static void TryAssignAudioPath(JObject jObjectParsed, string key, ref string target,
+            string jsonFolderPath, string usermodFolderPath, string customCallerName = null)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return;
+            }
+
+            string audioPath = token.Value<string>();
+
+            if (!File.Exists(jsonFolderPath + "\\" + audioPath))
+            {
+                if (!File.Exists(usermodFolderPath + "\\" + audioPath))
+                {
+                    MelonLogger.Warning(
+                        "WARNING: Could not find provided audio file for custom caller at " +
+                        $"'{jsonFolderPath}'" +
+                        $" {(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"for {customCallerName}" : "")}.");
+                }
+                else
+                {
+                    target = usermodFolderPath + "\\" + audioPath;
+                }
+            }
+            else
+            {
+                target = jsonFolderPath + "\\" + audioPath;
+            }
+        }
+        
+        /// <summary>
+        /// Attempts to assign the audio file path to the target string. But only if the audio file exists.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        public static void TryAssignAccuracyType(JObject jObjectParsed, string key, ref CheckOptions target)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return;
+            }
+            
+            string accuracyCheckTypeString = token.Value<string>();
+
+            if (!string.IsNullOrEmpty(accuracyCheckTypeString))
+            {
+                switch (accuracyCheckTypeString)
+                {
+                    case "eq": // Equal
+                        target = CheckOptions.EqualTo;
+                        break;
+                        
+                    case "none": // None
+                        target = CheckOptions.NoneSet;
+                        break;
+                        
+                    case "geq": // Greater than or equal to
+                        target = CheckOptions.GreaterThanOrEqualTo;
+                        break;
+                        
+                    case "leq": // Less than or equal to
+                        target = CheckOptions.LessThanOrEqualTo;
+                        break;
+                        
+                    default:
+                        MelonLogger.Warning("WARNING: Provided accuracy check type" +
+                                            $" '{accuracyCheckTypeString}' is not in any known format." +
+                                            " Please double check.");
+                        break;
+                }
+            }
+            else
+            {
+                MelonLogger.Warning("WARNING: Unable of parsing accuracy check type. Possible syntax problem?");
             }
         }
     }

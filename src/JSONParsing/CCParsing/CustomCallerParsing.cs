@@ -4,7 +4,6 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -195,26 +194,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_transcript", ref customCallerTranscript);
 
-            if (jObjectParsed.TryGetValue("custom_caller_image_name", out var customCallerImageNameValue))
-            {
-                string customCallerImageLocation = (string)customCallerImageNameValue;
-
-                if (string.IsNullOrEmpty(customCallerImageLocation))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{usermodFolderPath}'. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
-                }
-                else
-                {
-                    customCallerImage = ImageImport.LoadImage(jsonFolderPath + "\\" + customCallerImageLocation,
-                        usermodFolderPath + "\\" + customCallerImageLocation);
-                }
-            }
-            else
-            {
-                MelonLogger.Warning(
-                    $"WARNING: No custom caller portrait given for file in {usermodFolderPath}. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_caller_image_name", ref customCallerImage, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "order_in_campaign", ref orderInCampaign);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_monster_name", ref customCallerMonsterName);
@@ -222,25 +202,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_increases_tier", ref increasesTier);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_last_caller_day", ref isLastCallerOfDay);
 
-            if (jObjectParsed.TryGetValue("custom_caller_audio_clip_name", out var customCallerAudioClipNameValue))
-            {
-                if (!File.Exists(jsonFolderPath + "\\" + customCallerAudioClipNameValue))
-                {
-                    if (!File.Exists(usermodFolderPath + "\\" + customCallerAudioClipNameValue))
-                    {
-                        MelonLogger.Warning(
-                            $"WARNING: Could not find provided audio file for custom caller at '{jsonFolderPath}' {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
-                    }
-                    else
-                    {
-                        customCallerAudioPath = usermodFolderPath + "\\" + customCallerAudioClipNameValue;
-                    }
-                }
-                else
-                {
-                    customCallerAudioPath = jsonFolderPath + "\\" + customCallerAudioClipNameValue;
-                }
-            }
+            ParsingHelper.TryAssignAudioPath(jObjectParsed, "custom_caller_audio_clip_name",
+                ref customCallerAudioPath,  jsonFolderPath, usermodFolderPath, customCallerName);
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_consequence_caller_id", ref customCallerConsequenceCallerID);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_downed_network", ref downedCall);
@@ -261,40 +224,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "accuracy_required", ref requiredAccuracy);
             ParsingHelper.TryAssign(jObjectParsed, "use_total_accuracy", ref useTotalAccuracy);
 
-            if (jObjectParsed.TryGetValue("accuracy_check_type", out var accuracyCheckTypeValue))
-            {
-                string accuracyCheckTypeString = accuracyCheckTypeValue.Value<string>();
-
-                if (!string.IsNullOrEmpty(accuracyCheckTypeString))
-                {
-                    switch (accuracyCheckTypeString)
-                    {
-                        case "eq": // Equal
-                            accuracyCheck = CheckOptions.EqualTo;
-                            break;
-                        
-                        case "none": // None
-                            accuracyCheck = CheckOptions.NoneSet;
-                            break;
-                        
-                        case "geq": // Greater than or equal to
-                            accuracyCheck = CheckOptions.GreaterThanOrEqualTo;
-                            break;
-                        
-                        case "leq": // Less than or equal to
-                            accuracyCheck = CheckOptions.LessThanOrEqualTo;
-                            break;
-                        
-                        default:
-                            MelonLogger.Warning($"WARNING: Provided accuracy check type '{accuracyCheckTypeString}' is not in any known format. Please double check.");
-                            break;
-                    }
-                }
-                else
-                {
-                    MelonLogger.Warning("WARNING: Unable of parsing accuracy check type. Possible syntax problem?");
-                }
-            }
+            ParsingHelper.TryAssignAccuracyType(jObjectParsed, "accuracy_type", ref accuracyCheck);
 
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)

@@ -82,30 +82,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref emailUnlockThreshold);
 
-            if (jObjectParsed.TryGetValue("email_image", out var emailImageValue))
-            {
-                string emailImagePath = (string)emailImageValue;
-
-                if (!string.IsNullOrEmpty(emailImagePath))
-                {
-                    if (File.Exists(jsonFolderPath + "\\" + emailImagePath) ||
-                        File.Exists(usermodFolderPath + "\\" + emailImagePath))
-                    {
-                        emailImage = ImageImport.LoadImage(jsonFolderPath + "\\" + emailImagePath,
-                            usermodFolderPath + "\\" + emailImagePath);
-                    }
-                    else
-                    {
-                        MelonLogger.Warning(
-                            $"WARNING: Email {emailImagePath} has image option provided but it could not be found! Not showing any image.");
-                    }
-                }
-                else
-                {
-                    MelonLogger.Warning(
-                        $"WARNING: Email at {jsonFolderPath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
+                usermodFolderPath, customCampaignName);
 
             return new CustomEmail
             {
