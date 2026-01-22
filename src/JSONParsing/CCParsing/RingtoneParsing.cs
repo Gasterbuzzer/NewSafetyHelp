@@ -102,26 +102,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
-            if (jObjectParsed.TryGetValue("ringtone_audio_clip_name", out var ringtoneAudioClipName))
-            {
-                if (!File.Exists(jsonFolderPath + "\\" + ringtoneAudioClipName))
-                {
-                    if (!File.Exists(usermodFolderPath + "\\" + ringtoneAudioClipName))
-                    {
-                        MelonLogger.Warning("WARNING: " +
-                                            $"Could not find provided audio file for custom caller at '{jsonFolderPath}' for {ringtoneAudioClipName}.");
-                    }
-                    else
-                    {
-                        ringtoneAudioPath = usermodFolderPath + "\\" + ringtoneAudioClipName;
-                    }
-                }
-                else
-                {
-                    ringtoneAudioPath = jsonFolderPath + "\\" + ringtoneAudioClipName;
-                }
-            }
+            ParsingHelper.TryAssignAudioPath(jObjectParsed, "ringtone_audio_clip_name", ref ringtoneAudioPath,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
+            // Unlock Day
             ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
 
             if (unlockDay == 0)

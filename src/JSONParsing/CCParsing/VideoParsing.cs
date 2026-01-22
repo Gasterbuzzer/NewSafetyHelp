@@ -1,5 +1,4 @@
-﻿using System.IO;
-using MelonLoader;
+﻿using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomVideos;
 using Newtonsoft.Json.Linq;
@@ -63,27 +62,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
             ParsingHelper.TryAssign(jObjectParsed, "video_unlock_day", ref videoUnlockDay);
 
-            if (jObjectParsed.TryGetValue("video_file_name", out var videoFileNameValue))
-            {
-                videoFilePath = jsonFolderPath + "\\" + (string)videoFileNameValue;
-                string videoFileAlternativePath = usermodFolderPath + "\\" + (string)videoFileNameValue;
-
-                if (string.IsNullOrEmpty(videoFilePath))
-                {
-                    MelonLogger.Warning("WARNING: Provided video path but name is empty. Unable to show show video.");
-                }
-                else if (!File.Exists(videoFilePath))
-                {
-                    if (!File.Exists(videoFileAlternativePath))
-                    {
-                        MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
-                    }
-                    else
-                    {
-                        videoFilePath = videoFileAlternativePath;
-                    }
-                }
-            }
+            ParsingHelper.TryAssignVideoPath(jObjectParsed, "video_file_name", ref videoFilePath,
+                jsonFolderPath, usermodFolderPath);
 
             return new CustomVideo
             {

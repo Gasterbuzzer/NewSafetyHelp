@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaign;
@@ -354,7 +353,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             if (jObjectParsed.TryGetValue("custom_campaign_empty_main_entries_permission", out var customCampaignEmptyMainEntriesPermissionValue))
             {
-                resetDefaultEntriesPermission = (bool) customCampaignEmptyMainEntriesPermissionValue;
+                resetDefaultEntriesPermission = customCampaignEmptyMainEntriesPermissionValue.Value<bool>();
 
                 ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_show_new_tag_for_main_entries", ref doShowNewTagForMainGameEntries);
             }
@@ -378,25 +377,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_icon_image_name", out var customCampaignIconImageNameValue))
-            {
-                string customCampaignImagePath = (string) customCampaignIconImageNameValue;
-
-                if (string.IsNullOrEmpty(customCampaignImagePath))
-                {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{usermodFolderPath}'. Default icon will be shown.");
-                }
-                else
-                {
-                    customCampaignSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customCampaignImagePath,
-                        usermodFolderPath + "\\" + customCampaignImagePath);
-                }
-            }
-            else
-            {
-                MelonLogger.Warning(
-                    $"WARNING: No custom campaign icon given for file in {usermodFolderPath}. Default icon will be shown.");
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_icon_image_name", ref customCampaignSprite, jsonFolderPath,
+                usermodFolderPath, customCampaignName);
             
             if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text1", out var customCampaignLoadingDesktopText1Value))
             {
@@ -432,63 +414,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
-            if (jObjectParsed.TryGetValue("custom_campaign_end_cutscene_video_name", out var customCampaignEndCutsceneVideoNameValue))
-            {
-                endCutscenePath = jsonFolderPath + "\\" + (string) customCampaignEndCutsceneVideoNameValue;
-                string endCutsceneAlternativePath = usermodFolderPath + "\\" + (string) customCampaignEndCutsceneVideoNameValue;
-
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: End cutscene video found: '{(string) customCampaignEndCutsceneVideoNameValue}'");
-                #endif
-
-                if (string.IsNullOrEmpty((string) customCampaignEndCutsceneVideoNameValue))
-                {
-                    MelonLogger.Warning(
-                        "WARNING: Provided video cutscene name but name is empty. Unable to show custom end cutscene.");
-                    endCutscenePath = "";
-                }
-                else if (!File.Exists(endCutscenePath))
-                {
-                    if (!File.Exists(endCutsceneAlternativePath))
-                    {
-                        MelonLogger.Warning($"WARNING: Provided video cutscene {endCutscenePath} does not exist.");
-                        endCutscenePath = "";
-                    }
-                    else
-                    {
-                        endCutscenePath = endCutsceneAlternativePath;
-                    }
-                }
-            }
-
-            if (jObjectParsed.TryGetValue("custom_campaign_gameover_cutscene_video_name", out var customCampaignGameoverCutsceneVideoNameValue))
-            {
-                gameOverCutscenePath = jsonFolderPath + "\\" + (string) customCampaignGameoverCutsceneVideoNameValue;
-                string gameOverCutsceneAlternativePath = usermodFolderPath + "\\" + (string) customCampaignGameoverCutsceneVideoNameValue;
-
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Game Over video found: '{gameOverCutscenePath}'");
-                #endif
-
-                if (string.IsNullOrEmpty((string) customCampaignGameoverCutsceneVideoNameValue))
-                {
-                    MelonLogger.Warning(
-                        "WARNING: Provided video cutscene name but name is empty. Unable to show custom game over cutscene.");
-                    gameOverCutscenePath = "";
-                }
-                else if (!File.Exists(gameOverCutscenePath))
-                {
-                    if (!File.Exists(gameOverCutsceneAlternativePath))
-                    {
-                        MelonLogger.Warning($"WARNING: Provided video cutscene {gameOverCutscenePath} does not exist.");
-                        gameOverCutscenePath = "";
-                    }
-                    else
-                    {
-                        gameOverCutscenePath = gameOverCutsceneAlternativePath;
-                    }
-                }
-            }
+            ParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_end_cutscene_video_name",
+                ref endCutscenePath, jsonFolderPath, usermodFolderPath);
+            
+            ParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_gameover_cutscene_video_name",
+                ref gameOverCutscenePath, jsonFolderPath, usermodFolderPath);
             
             ParsingHelper.TryAssign(jObjectParsed, "always_randomize_music", ref useRandomMusic);
             ParsingHelper.TryAssign(jObjectParsed, "remove_default_music", ref removeDefaultMusic);
@@ -501,21 +431,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "disable_main_campaign_videos", ref disableDefaultVideos);
             ParsingHelper.TryAssign(jObjectParsed, "remove_default_emails", ref removeAllDefaultEmails);
             
-            if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out var mainGameDesktopIconPathValue))
-            {
-                string customMainGameDesktopIcon = (string) mainGameDesktopIconPathValue;
-
-                if (string.IsNullOrEmpty(customMainGameDesktopIcon))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{customMainGameDesktopIcon}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    changeMainProgramSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customMainGameDesktopIcon,
-                        usermodFolderPath + "\\" + customMainGameDesktopIcon);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref changeMainProgramSprite,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
             
             if (jObjectParsed.TryGetValue("custom_campaign_desktop_backgrounds", out var customCampaignDesktopBackgrounds))
             {
@@ -536,41 +453,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_desktop_game_finished_background", out var customCampaignDesktopGameFinishedBackground))
-            {
-                string gameFinishedBackgroundPath = (string) customCampaignDesktopGameFinishedBackground;
-
-                if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    backgroundFinishedGameSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + gameFinishedBackgroundPath,
-                        usermodFolderPath + "\\" + gameFinishedBackgroundPath);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_desktop_game_finished_background", ref backgroundFinishedGameSprite,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableDesktopLogo);
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
             ParsingHelper.TryAssign(jObjectParsed, "custom_desktop_logo_transparency", ref customDesktopLogoTransparency);
             ParsingHelper.TryAssign(jObjectParsed, "skip_callers_correctly", ref skipCallersCorrectly);
             
-            if (jObjectParsed.TryGetValue("custom_desktop_logo_name", out var customDesktopLogoNameValue))
-            {
-                string customDesktopLogoPath = (string) customDesktopLogoNameValue;
-
-                if (string.IsNullOrEmpty(customDesktopLogoPath))
-                {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{customDesktopLogoPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    customDesktopLogo = ImageImport.LoadImage(jsonFolderPath + "\\" + customDesktopLogoPath,
-                        usermodFolderPath + "\\" + customDesktopLogoPath);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_desktop_logo_name", ref customDesktopLogo,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssign(jObjectParsed, "defaultTheme", ref defaultTheme);
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);

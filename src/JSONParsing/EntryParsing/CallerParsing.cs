@@ -16,22 +16,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ParsingHelper.TryAssign(jsonObjectParsed, "caller_transcript", ref callerTranscript);
 
             // Caller Image
-            if (jsonObjectParsed.TryGetValue("caller_image_name", out var callerImageNameValue))
-            {
-                callerImageLocation = (string) callerImageNameValue;
-
-                if (string.IsNullOrEmpty(callerImageLocation))
-                {
-                    callerPortrait = null;
-
-                    MelonLogger.Warning($"WARNING: Invalid Caller Portrait for {usermodFolderPath}. No image will be shown.");
-                }
-                else
-                {
-                    callerPortrait = ImageImport.LoadImage(jsonFolderPath + "\\" + callerImageLocation,
-                        usermodFolderPath + "\\" + callerImageLocation);
-                }
-            }
+            ParsingHelper.TryAssign(jsonObjectParsed, "caller_image_name", ref callerImageLocation);
+            ParsingHelper.TryAssignSprite(jsonObjectParsed, "caller_image_name", ref callerPortrait,
+                jsonFolderPath, usermodFolderPath, callerName);
 
             ParsingHelper.TryAssign(jsonObjectParsed, "caller_chance", ref callerReplaceChance);
             
@@ -51,22 +38,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ParsingHelper.TryAssign(jsonObjectParsed, "consequence_caller_transcript", ref consequenceCallerTranscript);
             
             // Consequence Caller Image
-            if (jsonObjectParsed.TryGetValue("consequence_caller_image_name", out var consequenceCallerImageNameValue))
-            {
-                consequenceCallerImageLocation = (string) consequenceCallerImageNameValue;
-
-                if (string.IsNullOrEmpty(consequenceCallerImageLocation))
-                {
-                    consequenceCallerPortrait = null;
-
-                    MelonLogger.Warning($"WARNING: Invalid Consequence Caller Portrait for {usermodFolderPath}. No image will be shown.");
-                }
-                else
-                {
-                    consequenceCallerPortrait = ImageImport.LoadImage(jsonFolderPath + "\\" + consequenceCallerImageLocation,
-                        usermodFolderPath + "\\" + consequenceCallerImageLocation);
-                }
-            }
+            ParsingHelper.TryAssign(jsonObjectParsed, "consequence_caller_image_name", ref consequenceCallerImageLocation);
+            ParsingHelper.TryAssignSprite(jsonObjectParsed, "caller_image_name", ref consequenceCallerPortrait,
+                jsonFolderPath, usermodFolderPath, consequenceCallerName);
         }
     }
 }

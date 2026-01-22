@@ -95,25 +95,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
-            if (jObjectParsed.TryGetValue("music_audio_clip_name", out var musicAudioClipName))
-            {
-                if (!File.Exists(jsonFolderPath + "\\" + musicAudioClipName))
-                {
-                    if (!File.Exists(usermodFolderPath + "\\" + musicAudioClipName))
-                    {
-                        MelonLogger.Warning("WARNING: " +
-                                            $"Could not find provided audio file for custom caller at '{jsonFolderPath}' for {musicAudioClipName}.");
-                    }
-                    else
-                    {
-                        musicAudioPath = usermodFolderPath + "\\" + musicAudioClipName;
-                    }
-                }
-                else
-                {
-                    musicAudioPath = jsonFolderPath + "\\" + musicAudioClipName;
-                }
-            }
+            ParsingHelper.TryAssignAudioPath(jObjectParsed, "music_audio_clip_name", ref musicAudioPath,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
 

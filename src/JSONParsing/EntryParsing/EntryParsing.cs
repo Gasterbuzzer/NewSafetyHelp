@@ -41,7 +41,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // Monster Description
             if (jsonObjectParsed.TryGetValue("monster_description", out var monsterDescriptionValue))
             {
-                monsterDescription = (string) monsterDescriptionValue;
+                monsterDescription = monsterDescriptionValue.Value<string>();
             }
             else
             {
@@ -60,11 +60,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ParsingHelper.TryAssign(jsonObjectParsed, "include_campaign", ref includeMainCampaign);
             
             // Access Level and Arcade Calls
-            if (jsonObjectParsed.TryGetValue("access_level", out var accessLevelValue))
-            {
-                accessLevel = (int) accessLevelValue;
-                accessLevelAdded = true;
-            }
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "access_level", ref accessLevel,
+                ref accessLevelAdded);
 
             if (jsonObjectParsed.TryGetValue("arcade_calls", out var arcadeCallsValue))
             {
@@ -72,7 +69,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 foreach (JToken arcadeCustomCall in test)
                 {
-                    arcadeCalls.Add((string) arcadeCustomCall);
+                    arcadeCalls.Add(arcadeCustomCall.Value<string>());
                 }
             }
             else
@@ -82,12 +79,11 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     MelonLogger.Msg($"Info: No Arcade Calls given for file in {usermodFolderPath}. Defaulting to empty values.");
                 }
             }
-
-
+            
             // Image
             if (jsonObjectParsed.TryGetValue("monster_portrait_image_name", out var monsterPortraitImageNameValue))
             {
-                monsterPortraitLocation = (string) monsterPortraitImageNameValue;
+                monsterPortraitLocation = monsterPortraitImageNameValue.Value<string>();
 
                 if (string.IsNullOrEmpty(monsterPortraitLocation))
                 {
@@ -115,7 +111,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // Monster Audio Path (Later gets added with coroutine)
             if (jsonObjectParsed.TryGetValue("monster_audio_clip_name", out var monsterAudioClipNameValue))
             {
-                monsterAudioClipLocation = (string) monsterAudioClipNameValue;
+                monsterAudioClipLocation = monsterAudioClipNameValue.Value<string>();
 
                 if (string.IsNullOrEmpty(monsterAudioClipLocation) && !replaceEntry)
                 {
@@ -132,13 +128,13 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             
             // Custom Campaign
 
-            if (jsonObjectParsed.ContainsKey("attached_custom_campaign_name"))
+            if (jsonObjectParsed.TryGetValue("attached_custom_campaign_name", out var attachedCustomCampaignName))
             {
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Found an entry that is custom campaign only.");
                 #endif
                 
-                customCampaignName = (string) jsonObjectParsed["attached_custom_campaign_name"];
+                customCampaignName = attachedCustomCampaignName.Value<string>();
                 inCustomCampaign = true;
             }
             
@@ -154,47 +150,26 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         {
             // Phobias, they don't require to be warned, since they optional.
 
-            if (jsonObjectParsed.TryGetValue("spider_phobia", out var spiderPhobiaValue))
-            {
-                spiderPhobia = (bool) spiderPhobiaValue;
-                spiderPhobiaIncluded = true;
-            }
-
-            if (jsonObjectParsed.TryGetValue("darkness_phobia", out var darknessPhobiaValue))
-            {
-                darknessPhobia = (bool) darknessPhobiaValue;
-                darknessPhobiaIncluded = true;
-            }
-
-            if (jsonObjectParsed.TryGetValue("dog_phobia", out var dogPhobiaValue))
-            {
-                dogPhobia = (bool) dogPhobiaValue;
-                dogPhobiaIncluded = true;
-            }
-
-            if (jsonObjectParsed.TryGetValue("holes_phobia", out var holesPhobiaValue))
-            {
-                holesPhobia = (bool) holesPhobiaValue;
-                holesPhobiaIncluded = true;
-            }
-
-            if (jsonObjectParsed.TryGetValue("insect_phobia", out var insectPhobiaValue))
-            {
-                insectPhobia = (bool) insectPhobiaValue;
-                insectPhobiaIncluded = true;
-            }
-
-            if (jsonObjectParsed.TryGetValue("watching_phobia", out var watchingPhobiaValue))
-            {
-                watchingPhobia = (bool) watchingPhobiaValue;
-                watchingPhobiaIncluded = true;
-            }
-
-            if (jsonObjectParsed.TryGetValue("tight_space_phobia", out var tightSpacePhobiaValue))
-            {
-                tightSpacePhobia = (bool) tightSpacePhobiaValue;
-                tightSpacePhobiaIncluded = true;
-            }
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "spider_phobia", ref spiderPhobia,
+                ref spiderPhobiaIncluded);
+            
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "darkness_phobia", ref darknessPhobia,
+                ref darknessPhobiaIncluded);
+            
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "dog_phobia", ref dogPhobia,
+                ref dogPhobiaIncluded);
+            
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "holes_phobia", ref holesPhobia,
+                ref holesPhobiaIncluded);
+            
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "insect_phobia", ref insectPhobia,
+                ref insectPhobiaIncluded);
+            
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "watching_phobia", ref watchingPhobia,
+                ref watchingPhobiaIncluded);
+            
+            ParsingHelper.TryAssignWithBool(jsonObjectParsed, "tight_space_phobia", ref tightSpacePhobia,
+                ref tightSpacePhobiaIncluded);
         }
         
         // ----------------------------------------------------------------------------------------------------------

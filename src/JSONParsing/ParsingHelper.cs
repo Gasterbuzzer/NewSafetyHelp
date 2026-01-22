@@ -243,7 +243,7 @@ namespace NewSafetyHelp.JSONParsing
         }
         
         /// <summary>
-        /// Attempts to assign the audio file path to the target string. But only if the audio file exists.
+        /// Attempts to parse the check option provided.
         /// </summary>
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="key">Key to be found.</param>
@@ -259,20 +259,26 @@ namespace NewSafetyHelp.JSONParsing
 
             if (!string.IsNullOrEmpty(accuracyCheckTypeString))
             {
-                switch (accuracyCheckTypeString)
+                switch (accuracyCheckTypeString.ToLower())
                 {
+                    case "equal":
                     case "eq": // Equal
                         target = CheckOptions.EqualTo;
                         break;
                         
+                    case "no":
+                    case "n":
                     case "none": // None
                         target = CheckOptions.NoneSet;
                         break;
                         
+                    case "greaterorequal":
                     case "geq": // Greater than or equal to
                         target = CheckOptions.GreaterThanOrEqualTo;
                         break;
                         
+                    case "lesserorequal":
+                    case "lessorequal":
                     case "leq": // Less than or equal to
                         target = CheckOptions.LessThanOrEqualTo;
                         break;
@@ -287,6 +293,46 @@ namespace NewSafetyHelp.JSONParsing
             else
             {
                 MelonLogger.Warning("WARNING: Unable of parsing accuracy check type. Possible syntax problem?");
+            }
+        }
+        
+        /// <summary>
+        /// Attempts to assign the video file path to the target string. But only if the video file exists.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
+        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
+        public static void TryAssignVideoPath(JObject jObjectParsed, string key, ref string target,
+            string jsonFolderPath, string usermodFolderPath)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return;
+            }
+            
+            string videoFilePath = token.Value<string>();
+            
+            videoFilePath = jsonFolderPath + "\\" + videoFilePath;
+            string videoFileAlternativePath = usermodFolderPath + "\\" + videoFilePath;
+
+            if (string.IsNullOrEmpty(videoFilePath))
+            {
+                MelonLogger.Warning("WARNING: Provided video path but name is empty. Unable to show show video.");
+                target = "";
+            }
+            else if (!File.Exists(videoFilePath))
+            {
+                if (!File.Exists(videoFileAlternativePath))
+                {
+                    MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
+                    target = "";
+                }
+                else
+                {
+                    target = videoFileAlternativePath;
+                }
             }
         }
     }
