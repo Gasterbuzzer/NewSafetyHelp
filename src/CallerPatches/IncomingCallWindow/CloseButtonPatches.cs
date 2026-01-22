@@ -8,7 +8,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
     public static class CloseButtonPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "CloseCallButton", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "CloseCallButton")]
         public static class CloseCallPatches
         {
             /// <summary>
@@ -130,8 +130,10 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     #endif
 
                     // Consequence caller
+                    bool isConsequenceCaller = false;
                     if (GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null)
                     {
+                        isConsequenceCaller = true;
                         // This consequence caller is supposed to be called, since the player got the response wrong.
                         if (GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile))
                         {
@@ -173,8 +175,10 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     }
                     
                     // If not a consequence caller or an accuracy caller, we simply return, since it's a normal caller.
-                    return -1;
-                    
+                    if (!isConsequenceCaller && !customCCallerFound.IsAccuracyCaller)
+                    {
+                        return -1;
+                    }
                 }
             }
 

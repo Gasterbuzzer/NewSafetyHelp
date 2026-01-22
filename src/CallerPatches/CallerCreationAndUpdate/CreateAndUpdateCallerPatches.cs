@@ -34,7 +34,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
         }
         
         // Patches the caller to have a custom caller clip in arcade mode.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CreateCustomCaller", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CreateCustomCaller")]
         public static class UpdateArcadeCallerAudio
         {
             /// <summary>
@@ -221,7 +221,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
         }
         
         // Patches the caller to replace it with another with random chance.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", new[] { typeof(CallerProfile) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", typeof(CallerProfile))]
         public static class UpdateCampaignCallerRandom
         {
             /// <summary>
@@ -464,6 +464,10 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                 __instance.currentCallerProfile = profile;
                 GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
 
+                #if DEBUG
+                    MelonLogger.Msg($"DEBUG: Current caller calling is '{profile.callerName}'.");
+                #endif
+                
                 return false; // Skip the original function
             }
         }

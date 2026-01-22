@@ -33,6 +33,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         
                         GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
+                        __instance.inputBlocker.SetActive(false);
                         return false; // Skip original function.
                     }
                 }
@@ -47,6 +48,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                     GlobalVariables.callerControllerScript.StopAllRoutines();
                     __instance.callWindow.SetActive(true);
                 }
+                
+                __instance.inputBlocker.SetActive(false);
 
                 return false; // Skip the original function
             }

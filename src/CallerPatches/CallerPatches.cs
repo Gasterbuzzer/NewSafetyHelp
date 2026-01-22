@@ -18,7 +18,7 @@ namespace NewSafetyHelp.CallerPatches
 {
     public static class CallerPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "Start", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "Start")]
         public static class AddCustomCampaign
         {
             /// <summary>
@@ -393,7 +393,7 @@ namespace NewSafetyHelp.CallerPatches
             }
         }
 
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "IsLastCallOfDay", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "IsLastCallOfDay")]
         public static class LastCallOfDayPatch
         {
             /// <summary>
@@ -465,7 +465,7 @@ namespace NewSafetyHelp.CallerPatches
             }
         }
 
-        [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "IncreaseTier", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "IncreaseTier")]
         public static class IncreaseTierPatch
         {
             /// <summary>
@@ -521,7 +521,7 @@ namespace NewSafetyHelp.CallerPatches
             }
         }
 
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "AnswerCaller", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "AnswerCaller")]
         public static class AnswerCallerPatch
         {
             /// <summary>
@@ -894,9 +894,11 @@ namespace NewSafetyHelp.CallerPatches
                                     bool showCaller =
                                         AccuracyHelper.CheckIfCallerIsToBeShown(currentCaller, currentAccuracy);
 
-                                    MelonLogger.Error(
-                                        $"Current Accuracy: '{currentAccuracy}'. Required: '{currentCaller.RequiredAccuracy}'. " +
+                                    #if DEBUG
+                                    MelonLogger.Msg(
+                                        $"DEBUG: Current Accuracy: '{currentAccuracy}'. Required: '{currentCaller.RequiredAccuracy}'. " +
                                         $"Should the caller be shown? '{showCaller}'.");
+                                    #endif
 
                                     if (!showCaller)
                                     {
@@ -976,12 +978,12 @@ namespace NewSafetyHelp.CallerPatches
                 // ReSharper disable once RedundantAssignment
                 ref IEnumerator __result, ref float minTime, ref float maxTime)
             {
-                __result = newCallRoutine(__instance, minTime, maxTime);
+                __result = NewCallRoutine(__instance, minTime, maxTime);
 
                 return false; // Skip the original function
             }
 
-            private static IEnumerator newCallRoutine(CallerController __instance, float minTime, float maxTime)
+            private static IEnumerator NewCallRoutine(CallerController __instance, float minTime, float maxTime)
             {
                 yield return new WaitForSeconds(Random.Range(minTime, maxTime));
 
