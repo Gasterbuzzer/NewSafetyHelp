@@ -73,7 +73,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
         }
         
         // Patches the caller to have a custom audio in campaign.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine", new[] { typeof(CallerProfile) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine",typeof(CallerProfile))]
         public static class UpdateCampaignCallerAudio
         {
             // ReSharper disable once RedundantAssignment
@@ -192,7 +192,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             $"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
                         #endif
                     }
-                    else
+                    else if (!CustomCampaignGlobal.InCustomCampaign)
                     {
                         MelonLogger.Msg("INFO: This caller does not have a monster entry. Thus not replaced.");
                     }

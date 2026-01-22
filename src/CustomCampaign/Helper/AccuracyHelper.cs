@@ -9,7 +9,7 @@ namespace NewSafetyHelp.CustomCampaign.Helper
         /// Computes the total campaign accuracy. (0-1 format)
         /// </summary>
         /// <returns></returns>
-        public static float ComputeTotalCampaignAccuracy()
+        private static float ComputeTotalCampaignAccuracy()
         {
             float correctCallers = 0;
             
@@ -28,7 +28,7 @@ namespace NewSafetyHelp.CustomCampaign.Helper
         /// Computes the accuracy for the current day. (0-1 format)
         /// </summary>
         /// <returns></returns>
-        public static float ComputeDayAccuracy()
+        private static float ComputeDayAccuracy()
         {
             return (float) GlobalVariables.callerControllerScript.correctCallsToday / GlobalVariables.callerControllerScript.callersToday;
         }

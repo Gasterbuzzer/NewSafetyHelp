@@ -1,4 +1,6 @@
-﻿using NewSafetyHelp.CallerPatches.IncomingCallWindow;
+﻿using System;
+using MelonLoader;
+using NewSafetyHelp.CallerPatches.IncomingCallWindow;
 using NewSafetyHelp.CustomCampaign;
 
 namespace NewSafetyHelp.CallerPatches.UI
@@ -25,6 +27,10 @@ namespace NewSafetyHelp.CallerPatches.UI
                     // If the next caller is the last, and we skip it (Consequence caller that we got right).
                     if (CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript) > 0)
                     {
+                        #if DEBUG
+                            MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: Last caller was the last one. Already ending the day.");
+                        #endif
+                        
                         GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                         return false; // Skip original function.

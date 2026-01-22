@@ -138,7 +138,10 @@ namespace NewSafetyHelp.CallerPatches.Answer
                 {
                     __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
 
-                    MelonLogger.Msg("INFO: Dynamic Caller. No replacement possible. Always correct.");
+                    if (!CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        MelonLogger.Msg("INFO: Dynamic Caller. No replacement possible. Always correct.");
+                    }
                 }
 
                 dynamicCaller.SetValue(__instance, false);
@@ -147,7 +150,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
             }
         }
 
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", new[] { typeof(MonsterProfile) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", typeof(MonsterProfile))]
         public static class SubmitAnswerPatch
         {
             /// <summary>
@@ -158,6 +161,11 @@ namespace NewSafetyHelp.CallerPatches.Answer
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
+                
+                #if DEBUG
+                    MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: SubmitAnswer Called.");
+                #endif
+                
                 FieldInfo onCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
                 
@@ -371,8 +379,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         if (GlobalVariables.currentDay < (int)lastDayNum.GetValue(__instance)) //__instance.lastDayNum
                         {
                             // GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
-                            GlobalVariables.mainCanvasScript.StartCoroutine(
-                                GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
 
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
@@ -389,6 +396,11 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         int checkResult = CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
+                            
+                            #if DEBUG
+                            MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: Calling end day routine from submit answer.");
+                            #endif
+                            
                             // Increase caller ID, since we are skipping callers.
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult;
                         

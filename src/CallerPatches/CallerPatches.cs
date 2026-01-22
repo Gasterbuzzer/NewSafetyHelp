@@ -861,6 +861,11 @@ namespace NewSafetyHelp.CallerPatches
                         // Here we insert a small check to see if this caller wants to end the day.
                         if (__instance.IsLastCallOfDay())
                         {
+                            
+                            #if DEBUG
+                            MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: Calling end day routine from answer caller.");
+                            #endif
+                            
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
                                 .EndDayRoutine());
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
@@ -875,41 +880,49 @@ namespace NewSafetyHelp.CallerPatches
                         // Custom Caller check before we continue.
                         if (CustomCampaignGlobal.InCustomCampaign)
                         {
-                            if (CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID) != null)
-                        {
-                            // Accuracy Caller part.
-                            CustomCCaller currentCaller =
-                                CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
-
-                            if (currentCaller != null && currentCaller.IsAccuracyCaller)
+                            if (CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID) !=
+                                null)
                             {
-                                float currentAccuracy = AccuracyHelper.GetCorrectAccuracy(currentCaller);
+                                // Accuracy Caller part.
+                                CustomCCaller currentCaller =
+                                    CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
 
-                                bool showCaller = AccuracyHelper.CheckIfCallerIsToBeShown(currentCaller, currentAccuracy);
-                                
-                                MelonLogger.Error($"Current Accuracy: '{currentAccuracy}'. Required: '{currentCaller.RequiredAccuracy}'. " +
-                                                  $"Should the caller be shown? '{showCaller}'.");
-
-                                if (!showCaller)
+                                if (currentCaller != null && currentCaller.IsAccuracyCaller)
                                 {
-                                    __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
-                                    
-                                    // Here we insert a small check to see if this caller wants to end the day.
-                                    if (__instance.IsLastCallOfDay())
+                                    float currentAccuracy = AccuracyHelper.GetCorrectAccuracy(currentCaller);
+
+                                    bool showCaller =
+                                        AccuracyHelper.CheckIfCallerIsToBeShown(currentCaller, currentAccuracy);
+
+                                    MelonLogger.Error(
+                                        $"Current Accuracy: '{currentAccuracy}'. Required: '{currentCaller.RequiredAccuracy}'. " +
+                                        $"Should the caller be shown? '{showCaller}'.");
+
+                                    if (!showCaller)
                                     {
-                                        GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
-                                            .EndDayRoutine());
-                                        GlobalVariables.mainCanvasScript.NoCallerWindow();
-                                        return false; // Skip original function.
+                                        __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+
+                                        // Here we insert a small check to see if this caller wants to end the day.
+                                        if (__instance.IsLastCallOfDay())
+                                        {
+                                            #if DEBUG
+                                            MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: Calling end day routine from answer caller (accuracy caller).");
+                                            #endif
+                                            
+                                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables
+                                                .mainCanvasScript
+                                                .EndDayRoutine());
+                                            GlobalVariables.mainCanvasScript.NoCallerWindow();
+                                            return false; // Skip original function.
+                                        }
+
+                                        // Next caller.
+                                        __instance.AnswerCaller();
+
+                                        return false;
                                     }
-
-                                    // Next caller.
-                                    __instance.AnswerCaller();
-
-                                    return false;
                                 }
                             }
-                        }
                         }
                         
                         if (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)

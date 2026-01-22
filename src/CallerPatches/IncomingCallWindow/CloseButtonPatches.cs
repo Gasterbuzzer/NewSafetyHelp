@@ -62,8 +62,13 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     {
                         // If the next caller is the last, and we skip it (Consequence caller that we got right).
                         int checkResult = CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                        
                         if (checkResult > 0)
                         {
+                            #if DEBUG
+                            MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: Calling end day routine from close button.");
+                            #endif
+                            
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
@@ -98,15 +103,24 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         return -1;
                     }
 
+                    // Checks for seeing if the next caller is valid:
+                    
+                    // 1. Is an accuracy caller that will be shown.
+                    
+                    // 2. If any valid caller comes afterward. (One that cannot be skipped)
+                    
+                    // 3. Is a consequence caller that will be shown.
+                    
                     #if DEBUG
-                    MelonLogger.Msg(
+                    MelonLogger.Msg(ConsoleColor.DarkMagenta,
                         $"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
-                        $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'.");
+                        $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'." +
+                        $" Is a accuracy caller?: '{customCCallerFound.IsAccuracyCaller}'.");
                     #endif
 
                     #if DEBUG
-                    MelonLogger.Msg(
-                        "DEBUG: Is ConsequenceProfile null? (Meaning it's this current caller is a consequence caller):" +
+                    MelonLogger.Msg(ConsoleColor.DarkMagenta,
+                        "DEBUG: Is ConsequenceProfile not null? (Meaning it's this current caller is a consequence caller):" +
                         $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
                         ".\n" +
                         " Is this caller allowed to be called? (Meaning we got the answer wrong from the previous caller): " +
@@ -115,43 +129,52 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         $"Is this caller the last one of the day? '{customCCallerFound.LastDayCaller}'.");
                     #endif
 
-                    // Checks for seeing if the next caller is valid:
-                    
-                    // 1. Is an accuracy caller that will be shown.
-                    
-                    // 2. If any valid caller comes afterward. (One that cannot be skipped)
-                    
-                    // 3. Is a consequence caller that will be shown.
-
-                    float currentAccuracy = AccuracyHelper.GetCorrectAccuracy(customCCallerFound);
-
-                    bool showCaller = AccuracyHelper.CheckIfCallerIsToBeShown(customCCallerFound, currentAccuracy);
-
-                    if (showCaller)
+                    // Consequence caller
+                    if (GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null)
                     {
-                        return -1;
-                    }
-
-                    // Not a consequence caller. We can simply return false, since we have a valid caller.
-                    if (GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile == null)
-                    {
-                        return -1;
+                        // This consequence caller is supposed to be called, since the player got the response wrong.
+                        if (GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile))
+                        {
+                            return -1;
+                        }
+                        
+                        callersSkipped++;
+                        
+                        // Caller is supposed to be skipped. So we simply give the amount to skip.
+                        if (customCCallerFound.LastDayCaller)
+                        {
+                            return callersSkipped;
+                        }
                     }
                     
-                    // If the consequence caller is valid and is supposed to be called.
-                    if (GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile))
+                    // If accuracy caller
+                    if (customCCallerFound.IsAccuracyCaller)
                     {
-                        return -1;
+                        float currentAccuracy = AccuracyHelper.GetCorrectAccuracy(customCCallerFound);
+
+                        bool showCaller = AccuracyHelper.CheckIfCallerIsToBeShown(customCCallerFound, currentAccuracy);
+                        
+                        // Accuracy caller that is supposed to be called, since its condition was fulfilled.
+                        if (customCCallerFound.IsAccuracyCaller && showCaller)
+                        {
+                            return -1;
+                        }
+                        
+                        callersSkipped++;
+
+                        // Last caller of the day that is supposed to be skipped.
+                        if (customCCallerFound.LastDayCaller)
+                        {
+                            if (!showCaller)
+                            {
+                                return callersSkipped;
+                            }
+                        }
                     }
                     
-                    callersSkipped++;
+                    // If not a consequence caller or an accuracy caller, we simply return, since it's a normal caller.
+                    return -1;
                     
-                    // If that caller ends the day.
-                    if (customCCallerFound.LastDayCaller
-                        && !GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile))
-                    {
-                        return callersSkipped;
-                    }
                 }
             }
 
