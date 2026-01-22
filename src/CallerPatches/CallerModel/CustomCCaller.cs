@@ -1,4 +1,6 @@
-﻿namespace NewSafetyHelp.CallerPatches.CallerModel
+﻿using NewSafetyHelp.CustomCampaign.Abstract;
+
+namespace NewSafetyHelp.CallerPatches.CallerModel
 {
     public enum CheckOptions
     {
@@ -8,7 +10,7 @@
         NoneSet
     }
     
-    public class CustomCCaller
+    public class CustomCCaller : CustomCampaignElementBase
     {
         // Base Values
         public RichAudioClip CallerClip = null; // Caller Clip
@@ -40,7 +42,6 @@
         
         // Custom Campaign Settings
         public bool InCustomCampaign = false;
-        public string BelongsToCustomCampaign = "NO_CUSTOM_CAMPAIGN";
         
         // Special Values
         

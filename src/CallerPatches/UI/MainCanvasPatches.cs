@@ -92,12 +92,12 @@ namespace NewSafetyHelp.CallerPatches.UI
                         
                         bool foundDayStrings = false;
                         List<string> daysStrings = CustomCampaignGlobal.GetActiveModifierValue(
-                            c => c.dayTitleStrings, ref foundDayStrings,
+                            c => c.DayTitleStrings, ref foundDayStrings,
                             v => v != null && v.Count > 0);
                         
                         bool foundUnlockDays = false;
                         List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
-                            c => c.unlockDays, ref foundUnlockDays,
+                            c => c.UnlockDays, ref foundUnlockDays,
                             v => v != null && v.Count > 0);
                         
                         // Modifier

@@ -42,12 +42,12 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     
                     bool disableColorBackgroundFound = false;
                     bool disableColorBackground = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.disableColorBackground,
+                        c => c.DisableColorBackground,
                         ref disableColorBackgroundFound);
                     
                     bool desktopBackgroundColorFound = false;
                     Color? modifierDesktopBackgroundColor = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.desktopBackgroundColor,
+                        c => c.DesktopBackgroundColor,
                         ref desktopBackgroundColorFound,
                         v => v != null);
 
@@ -105,19 +105,19 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
 
                     bool desktopBackgroundsFound = false;
                     List<Sprite> desktopBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.desktopBackgrounds,
+                        c => c.DesktopBackgrounds,
                         ref desktopBackgroundsFound,
                         v => v != null && v.Count > 0);
                     
                     bool gameFinishedBackgroundFound = false;
                     Sprite gameFinishedBackground = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.gameFinishedBackground,
+                        c => c.GameFinishedBackground,
                         ref gameFinishedBackgroundFound,
                         v => v != null);
                     
                     bool unlockDaysFound = false;
                     List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.unlockDays,
+                        c => c.UnlockDays,
                         ref unlockDaysFound,
                         v => v != null && v.Count > 0);
                     

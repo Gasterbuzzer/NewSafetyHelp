@@ -67,12 +67,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             return new CustomVideo
             {
-                desktopName = videoName,
-                customCampaignName = customCampaignName,
+                DesktopName = videoName,
+                CustomCampaignName = customCampaignName,
 
-                videoURL = videoFilePath,
+                VideoURL = videoFilePath,
 
-                unlockDay = videoUnlockDay,
+                UnlockDay = videoUnlockDay,
             };
         }
     }

@@ -87,16 +87,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             return new CustomEmail
             {
-                inMainCampaign = inMainCampaign,
-                customCampaignName = customCampaignName,
-                emailSubject = emailSubject,
-                senderName = emailSender,
-                emailBody = emailBody,
+                InMainCampaign = inMainCampaign,
+                CustomCampaignName = customCampaignName,
+                EmailSubject = emailSubject,
+                SenderName = emailSender,
+                EmailBody = emailBody,
 
-                unlockDay = emailUnlockDay,
-                unlockThreshold = emailUnlockThreshold,
+                UnlockDay = emailUnlockDay,
+                UnlockThreshold = emailUnlockThreshold,
 
-                emailImage = emailImage
+                EmailImage = emailImage
             };
         }
     }

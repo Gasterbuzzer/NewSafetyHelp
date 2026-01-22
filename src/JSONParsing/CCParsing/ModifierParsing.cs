@@ -40,7 +40,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (foundCustomCampaign != null)
             {
-                if (customModifier.unlockDays == null)
+                if (customModifier.UnlockDays == null)
                 {
                     foundCustomCampaign.CustomModifiersGeneral.Add(customModifier);
                 }
@@ -265,23 +265,23 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             return new CustomModifier
             {
-                customCampaignName = customCampaignName,
+                CustomCampaignName = customCampaignName,
 
-                unlockDays = unlockDays,
+                UnlockDays = unlockDays,
 
-                usernameText = username,
+                UsernameText = username,
 
-                renameMainGameDesktopIcon = renameMainGameDesktopIcon,
-                mainGameDesktopIcon = mainGameDesktopIconSprite,
+                RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
+                MainGameDesktopIcon = mainGameDesktopIconSprite,
 
-                desktopBackgrounds = backgroundSprites,
-                gameFinishedBackground = gameFinishedBackgroundSprite,
-                disableColorBackground = disableGreenColorBackground,
-                desktopBackgroundColor = desktopBackgroundColor,
+                DesktopBackgrounds = backgroundSprites,
+                GameFinishedBackground = gameFinishedBackgroundSprite,
+                DisableColorBackground = disableGreenColorBackground,
+                DesktopBackgroundColor = desktopBackgroundColor,
 
-                customBackgroundLogo = backgroundLogo,
-                disableDesktopLogo = disableBackgroundLogo,
-                backgroundLogoTransparency = backgroundLogoTransparency,
+                CustomBackgroundLogo = backgroundLogo,
+                DisableDesktopLogo = disableBackgroundLogo,
+                BackgroundLogoTransparency = backgroundLogoTransparency,
                 
                 HideDiscordProgramChanged = hideDiscordProgramChanged,
                 HideDiscordProgram = hideDiscordProgram,
@@ -296,19 +296,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DesktopCredits = desktopCredits,
                 CreditsIcon = creditsIcon,
 
-                dayTitleStrings = dayTitleStrings,
+                DayTitleStrings = dayTitleStrings,
 
-                entryBrowserActive = entryBrowserActive,
-                entryBrowserChanged = entryBrowserChanged,
+                EntryBrowserActive = entryBrowserActive,
+                EntryBrowserChanged = entryBrowserChanged,
 
-                scorecardActive = scorecardActive,
-                scorecardChanged = scorecardChanged,
+                ScorecardActive = scorecardActive,
+                ScorecardChanged = scorecardChanged,
 
-                artbookActive = artbookActive,
-                artbookChanged = artbookChanged,
+                ArtbookActive = artbookActive,
+                ArtbookChanged = artbookChanged,
 
-                arcadeActive = arcadeActive,
-                arcadeChanged = arcadeChanged
+                ArcadeActive = arcadeActive,
+                ArcadeChanged = arcadeChanged
             };
         }
     }

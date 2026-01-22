@@ -36,7 +36,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
             
-            if (customTheme.inMainCampaign)
+            if (customTheme.InMainCampaign)
             {
                 GlobalParsingVariables.MainGameThemes.Add(customTheme);
             }
@@ -44,7 +44,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 if (foundCustomCampaign != null)
                 {
-                    if (customTheme.unlockDays == null)
+                    if (customTheme.UnlockDays == null)
                     {
                         foundCustomCampaign.CustomThemesGeneral.Add(customTheme);
                     }
@@ -142,16 +142,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             return new CustomTheme()
             {
-                inMainCampaign = inMainCampaign,
+                InMainCampaign = inMainCampaign,
                 
-                themeName = themeName,
-                customCampaignName = customCampaignName,
+                ThemeName = themeName,
+                CustomCampaignName = customCampaignName,
                 
-                attachedToTheme = attachedToTheme,
+                AttachedToTheme = attachedToTheme,
                 
-                unlockDays = unlockDays,
+                UnlockDays = unlockDays,
                 
-                customThemePalette = themeColorPalette
+                CustomThemePalette = themeColorPalette
             };
         }
 

@@ -96,7 +96,7 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         foreach (CustomEmail emailExtra in GlobalParsingVariables.MainCampaignEmails)
                         {
-                            if (emailExtra.inMainCampaign)
+                            if (emailExtra.InMainCampaign)
                             {
                                 CustomDesktopHelper.createEmail(emailExtra);
                             }
@@ -136,7 +136,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     bool usernameTextProvided = false;
                     string usernameText = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.usernameText, ref usernameTextProvided,
+                        c => c.UsernameText, ref usernameTextProvided,
                         v => !string.IsNullOrEmpty(v));
                     
                     if (!string.IsNullOrEmpty(usernameText)) // Modifier username is provided.
@@ -181,11 +181,11 @@ namespace NewSafetyHelp.CustomDesktop
 
                     bool disableDesktopLogoFound = false;
                     bool disableDesktopLogo = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.disableDesktopLogo, ref disableDesktopLogoFound);
+                        c => c.DisableDesktopLogo, ref disableDesktopLogoFound);
 
                     bool customBackgroundLogoFound = false;
                     Sprite customBackgroundLogo = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.customBackgroundLogo, ref customBackgroundLogoFound,
+                        c => c.CustomBackgroundLogo, ref customBackgroundLogoFound,
                         v => v != null);
 
                     if (disableDesktopLogoFound && disableDesktopLogo)
@@ -218,7 +218,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     bool backgroundLogoTransparencyFound = false;
                     float backgroundLogoTransparency = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.backgroundLogoTransparency, ref backgroundLogoTransparencyFound,
+                        c => c.BackgroundLogoTransparency, ref backgroundLogoTransparencyFound,
                         v => !v.Equals(0.2627f));
 
                     if (backgroundLogoTransparencyFound) // Modifier
@@ -245,7 +245,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     bool renameMainGameDesktopIconFound = false;
                     string renameMainGameDesktopIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.renameMainGameDesktopIcon, ref renameMainGameDesktopIconFound,
+                        c => c.RenameMainGameDesktopIcon, ref renameMainGameDesktopIconFound,
                         v => !string.IsNullOrEmpty(v));
                     
                     if (renameMainGameDesktopIconFound)
@@ -366,7 +366,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     bool mainGameDesktopIconFound = false;
                     Sprite mainGameDesktopIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.mainGameDesktopIcon, ref mainGameDesktopIconFound,
+                        c => c.MainGameDesktopIcon, ref mainGameDesktopIconFound,
                         v => v != null);
                     
                     if (mainGameDesktopIconFound)

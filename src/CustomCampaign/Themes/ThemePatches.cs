@@ -26,11 +26,11 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     {
                         if (theme != null)
                         {
-                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.themeName);
+                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.ThemeName);
                         
                             if (!alreadyPresent)
                             {
-                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
+                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.ThemeName));
                             }
                         }
                     }
@@ -49,11 +49,11 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     {
                         if (theme != null)
                         {
-                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.themeName);
+                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.ThemeName);
                         
                             if (!alreadyPresent)
                             {
-                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
+                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.ThemeName));
                             }
                         }
                     }
@@ -91,10 +91,10 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                             if (GlobalVariables.saveManagerScript.savedColorTheme == i + 4)
                             {
                                 if (GlobalParsingVariables.MainGameThemes[i] != null
-                                    && GlobalParsingVariables.MainGameThemes[i].customThemePalette != null
-                                    && GlobalParsingVariables.MainGameThemes[i].customThemePalette.colorSwatch != null)
+                                    && GlobalParsingVariables.MainGameThemes[i].CustomThemePalette != null
+                                    && GlobalParsingVariables.MainGameThemes[i].CustomThemePalette.colorSwatch != null)
                                 {
-                                    __instance.colorPalette = GlobalParsingVariables.MainGameThemes[i].customThemePalette;
+                                    __instance.colorPalette = GlobalParsingVariables.MainGameThemes[i].CustomThemePalette;
                                 }
                             }
                         }
@@ -142,11 +142,11 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                             CustomTheme theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme);
                             
                             if (theme != null
-                                && theme.customThemePalette != null
-                                && theme.customThemePalette.colorSwatch != null
-                                && theme.customThemePalette.colorSwatch.Length > 0)
+                                && theme.CustomThemePalette != null
+                                && theme.CustomThemePalette.colorSwatch != null
+                                && theme.CustomThemePalette.colorSwatch.Length > 0)
                             {
-                                __instance.colorPalette = theme.customThemePalette;
+                                __instance.colorPalette = theme.CustomThemePalette;
                             }
                             else
                             {
@@ -168,11 +168,11 @@ namespace NewSafetyHelp.CustomCampaign.Themes
 
                             if (isCustomTheme 
                                 && theme != null
-                                && theme.customThemePalette != null
-                                && theme.customThemePalette.colorSwatch != null
-                                && theme.customThemePalette.colorSwatch.Length > 0)
+                                && theme.CustomThemePalette != null
+                                && theme.CustomThemePalette.colorSwatch != null
+                                && theme.CustomThemePalette.colorSwatch.Length > 0)
                             {
-                                __instance.colorPalette = theme.customThemePalette;
+                                __instance.colorPalette = theme.CustomThemePalette;
                             }
                             else
                             {

@@ -246,7 +246,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CallerIncreasesTier = increasesTier,
                 CallerClipPath = customCallerAudioPath,
                 ConsequenceCallerID = customCallerConsequenceCallerID,
-                BelongsToCustomCampaign = customCampaignName,
+                CustomCampaignName = customCampaignName,
                 LastDayCaller = isLastCallerOfDay,
                 DownedNetworkCaller = downedCall,
 

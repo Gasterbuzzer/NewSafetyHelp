@@ -1,13 +1,13 @@
-﻿namespace NewSafetyHelp.Audio.Music.Data
+﻿using NewSafetyHelp.CustomCampaign.Abstract;
+
+namespace NewSafetyHelp.Audio.Music.Data
 {
-    public class CustomMusic
+    public class CustomMusic : CustomCampaignElementBase
     {
-        public string customCampaignName = null;
-
-        public string musicClipPath = "";
+        public string MusicClipPath = "";
         
-        public RichAudioClip musicClip = null;
+        public RichAudioClip MusicClip = null;
 
-        public int unlockDay = 0;
+        public int UnlockDay = 0;
     }
 }

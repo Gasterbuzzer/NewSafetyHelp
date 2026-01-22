@@ -90,7 +90,7 @@ namespace NewSafetyHelp.Audio.Music
                         int amountOfClips = 0;
 
                         int customMusicAmount = customCampaign.CustomMusic
-                            .Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList().Count;
+                            .Where(clip => clip.UnlockDay <= GlobalVariables.currentDay).ToList().Count;
 
                         if (!customCampaign.RemoveDefaultMusic)
                         {
@@ -146,7 +146,7 @@ namespace NewSafetyHelp.Audio.Music
                         int amountOfClips = 0;
 
                         int customMusicAmount = customCampaign.CustomMusic
-                            .Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList().Count;
+                            .Where(clip => clip.UnlockDay <= GlobalVariables.currentDay).ToList().Count;
 
                         if (!customCampaign.RemoveDefaultMusic)
                         {
@@ -238,11 +238,11 @@ namespace NewSafetyHelp.Audio.Music
                     if (playCustomMusic)
                     {
                         List<CustomMusic> customMusicList = customCampaign.CustomMusic
-                            .Where(clip => clip.unlockDay <= GlobalVariables.currentDay).ToList();
+                            .Where(clip => clip.UnlockDay <= GlobalVariables.currentDay).ToList();
 
-                        if (customMusicList.Count > 0 && customMusicList[chosenMusicIndex].musicClip != null)
+                        if (customMusicList.Count > 0 && customMusicList[chosenMusicIndex].MusicClip != null)
                         {
-                            __instance.StartMusic(customMusicList[chosenMusicIndex].musicClip);
+                            __instance.StartMusic(customMusicList[chosenMusicIndex].MusicClip);
                         }
                         else
                         {

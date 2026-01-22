@@ -191,9 +191,9 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             
                 bool entryBrowserFound = false;
                 bool entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.entryBrowserActive,
+                    c => c.EntryBrowserActive,
                     ref entryBrowserFound,
-                    specialPredicate: m => m.entryBrowserChanged);
+                    specialPredicate: m => m.EntryBrowserChanged);
             
                 // If always on. We just leave them on.
                 if (currentCampaign.EntryBrowserAlwaysActive)
@@ -229,9 +229,9 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             
                 bool scorecardFound = false;
                 bool scorecard = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.scorecardActive,
+                    c => c.ScorecardActive,
                     ref scorecardFound,
-                    specialPredicate: m => m.scorecardChanged);
+                    specialPredicate: m => m.ScorecardChanged);
                 
                 // If always on. We just leave them on.
                 if (currentCampaign.ScorecardAlwaysActive)
@@ -267,9 +267,9 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             
                 bool artbookFound = false;
                 bool artbook = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.artbookActive,
+                    c => c.ArtbookActive,
                     ref artbookFound,
-                    specialPredicate: m => m.artbookChanged);
+                    specialPredicate: m => m.ArtbookChanged);
                 
                 // If always on. We just leave them on.
                 if (currentCampaign.ArtbookAlwaysActive)
@@ -306,9 +306,9 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             
                 bool arcadeFound = false;
                 bool arcade = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.arcadeActive,
+                    c => c.ArcadeActive,
                     ref arcadeFound,
-                    specialPredicate: m => m.arcadeChanged);
+                    specialPredicate: m => m.ArcadeChanged);
                 
                 // If always on. We just leave them on.
                 if (currentCampaign.ArcadeAlwaysActive)

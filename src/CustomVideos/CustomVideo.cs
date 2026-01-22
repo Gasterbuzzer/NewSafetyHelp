@@ -1,13 +1,13 @@
-﻿namespace NewSafetyHelp.CustomVideos
+﻿using NewSafetyHelp.CustomCampaign.Abstract;
+
+namespace NewSafetyHelp.CustomVideos
 {
-    public class CustomVideo
+    public class CustomVideo : CustomCampaignElementBase
     {
-        public string desktopName = "NO_DESKTOP_NAME";
+        public string DesktopName = "NO_DESKTOP_NAME";
 
-        public string videoURL = null;
+        public string VideoURL = null;
 
-        public int unlockDay = 1;
-
-        public string customCampaignName = null;
+        public int UnlockDay = 1;
     }
 }

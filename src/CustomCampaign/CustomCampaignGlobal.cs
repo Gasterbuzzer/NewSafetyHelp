@@ -189,7 +189,7 @@ namespace NewSafetyHelp.CustomCampaign
                 {
                     currentThemeID++;
 
-                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    if (theme != null && theme.ThemeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
                     {
                         return currentThemeID;
                     }
@@ -202,7 +202,7 @@ namespace NewSafetyHelp.CustomCampaign
                 {
                     currentThemeID++;
 
-                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    if (theme != null && theme.ThemeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
                     {
                         return currentThemeID;
                     }
@@ -238,9 +238,9 @@ namespace NewSafetyHelp.CustomCampaign
             {
                 foreach (CustomTheme theme in customCampaign.CustomThemesDays)
                 {
-                    if (theme != null && theme.attachedToTheme.Equals(currentTheme.themeName))
+                    if (theme != null && theme.AttachedToTheme.Equals(currentTheme.ThemeName))
                     {
-                        if (theme.unlockDays.Contains(GlobalVariables.currentDay))
+                        if (theme.UnlockDays.Contains(GlobalVariables.currentDay))
                         {
                             int foundThemeID = GetThemeID(theme);
 
@@ -374,8 +374,8 @@ namespace NewSafetyHelp.CustomCampaign
 
                     TValue value = selector(modifierDay);
 
-                    if (predicate(value) && modifierDay.unlockDays != null
-                                         && modifierDay.unlockDays.Contains(GlobalVariables.currentDay)
+                    if (predicate(value) && modifierDay.UnlockDays != null
+                                         && modifierDay.UnlockDays.Contains(GlobalVariables.currentDay)
                                          && specialPredicate(modifierDay))
                     {
                         foundModifier = true;
@@ -462,7 +462,7 @@ namespace NewSafetyHelp.CustomCampaign
                 );
 
                 // If we delete the entry or replace it.
-                if (entryFound != null && entryFound.deleteEntry) // Delete
+                if (entryFound != null && entryFound.DeleteEntry) // Delete
                 {
                     if (string.IsNullOrEmpty(entryFound.Name))
                     {

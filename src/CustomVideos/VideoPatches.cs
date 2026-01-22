@@ -44,9 +44,9 @@ namespace NewSafetyHelp.CustomVideos
 
                     CustomVideo correctVideo;
                     
-                    if (customCampaign.AllDesktopVideos.Exists(video => video.desktopName + video.videoURL == __instance.gameObject.name))
+                    if (customCampaign.AllDesktopVideos.Exists(video => video.DesktopName + video.VideoURL == __instance.gameObject.name))
                     {
-                        correctVideo = customCampaign.AllDesktopVideos.Find(video => video.desktopName + video.videoURL == __instance.gameObject.name);
+                        correctVideo = customCampaign.AllDesktopVideos.Find(video => video.DesktopName + video.VideoURL == __instance.gameObject.name);
                     }
                     else
                     {
@@ -56,7 +56,7 @@ namespace NewSafetyHelp.CustomVideos
 
                     if (correctVideo != null)
                     {
-                        __instance.videoPlayer.url = correctVideo.videoURL;
+                        __instance.videoPlayer.url = correctVideo.VideoURL;
                     }
                 }
                 else // Main Campaign

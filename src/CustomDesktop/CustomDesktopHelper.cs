@@ -151,16 +151,16 @@ namespace NewSafetyHelp.CustomDesktop
                     return null;
                 }
 
-                if (emailToCreate.emailSubject != "")
+                if (emailToCreate.EmailSubject != "")
                 {
-                    newEmail.name = emailToCreate.emailSubject.Replace("EmailListing", "");
+                    newEmail.name = emailToCreate.EmailSubject.Replace("EmailListing", "");
 
-                    emailListing.myEmail.name = emailToCreate.emailSubject.Replace("EmailListing", "");
+                    emailListing.myEmail.name = emailToCreate.EmailSubject.Replace("EmailListing", "");
 
-                    emailListing.mySubjectText.text = emailToCreate.emailSubject;
+                    emailListing.mySubjectText.text = emailToCreate.EmailSubject;
 
                     // Email Subject
-                    emailListing.myEmail.subjectLine = emailToCreate.emailSubject;
+                    emailListing.myEmail.subjectLine = emailToCreate.EmailSubject;
                 }
                 else
                 {
@@ -174,12 +174,12 @@ namespace NewSafetyHelp.CustomDesktop
                     emailListing.myEmail.subjectLine = "UnnamedEmail";
                 }
 
-                if (emailToCreate.senderName != "")
+                if (emailToCreate.SenderName != "")
                 {
-                    emailListing.mySenderText.text = emailToCreate.senderName;
+                    emailListing.mySenderText.text = emailToCreate.SenderName;
 
                     // Email Sender
-                    emailListing.myEmail.sender = emailToCreate.senderName;
+                    emailListing.myEmail.sender = emailToCreate.SenderName;
                 }
                 else
                 {
@@ -190,16 +190,16 @@ namespace NewSafetyHelp.CustomDesktop
                 }
 
                 // If empty, it will just not be shown.
-                emailListing.myEmail.emailBody = emailToCreate.emailBody;
+                emailListing.myEmail.emailBody = emailToCreate.EmailBody;
 
-                emailListing.myEmail.imageAttachment = emailToCreate.emailImage;
+                emailListing.myEmail.imageAttachment = emailToCreate.EmailImage;
 
                 // DayUnlock
 
                 OnDayUnlock newEmailOnDayUnlock = newEmail.GetComponent<OnDayUnlock>();
 
-                newEmailOnDayUnlock.unlockDay = emailToCreate.unlockDay;
-                newEmailOnDayUnlock.scoreThresholdToUnlock = emailToCreate.unlockThreshold;
+                newEmailOnDayUnlock.unlockDay = emailToCreate.UnlockDay;
+                newEmailOnDayUnlock.scoreThresholdToUnlock = emailToCreate.UnlockThreshold;
 
                 // Mark the email as not read.
 
@@ -516,25 +516,25 @@ namespace NewSafetyHelp.CustomDesktop
 
             GameObject newCustomVideo = Object.Instantiate(trailerFileOriginal, trailerFileOriginal.transform.parent);
 
-            if (string.IsNullOrEmpty(customVideo.desktopName))
+            if (string.IsNullOrEmpty(customVideo.DesktopName))
             {
                 MelonLogger.Error(
                     "ERROR: No filename provided for video to be created! Can lead to crashes or unwanted failures.");
             }
 
-            newCustomVideo.name = customVideo.desktopName + customVideo.videoURL;
+            newCustomVideo.name = customVideo.DesktopName + customVideo.VideoURL;
 
             // Update desktop name
             TextMeshProUGUI textChildGameObjectText = newCustomVideo.transform.Find("TextBackground").transform
                 .Find("ExecutableName").gameObject.GetComponent<TextMeshProUGUI>();
 
-            textChildGameObjectText.text = customVideo.desktopName;
+            textChildGameObjectText.text = customVideo.DesktopName;
 
             // Unlock Day
             OnDayUnlock onDayUnlock = newCustomVideo.GetComponent<OnDayUnlock>();
-            onDayUnlock.unlockDay = customVideo.unlockDay;
+            onDayUnlock.unlockDay = customVideo.UnlockDay;
 
-            if (customVideo.unlockDay <= GlobalVariables.currentDay)
+            if (customVideo.UnlockDay <= GlobalVariables.currentDay)
             {
                 newCustomVideo.SetActive(true);
             }

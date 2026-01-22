@@ -214,14 +214,14 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             newExtra.consequenceCallerImage = consequenceCallerPortrait;
 
             // Custom Campaign
-            newExtra.onlyCustomCampaign = inCustomCampaign;
-            newExtra.customCampaignName = customCampaignName;
+            newExtra.OnlyCustomCampaign = inCustomCampaign;
+            newExtra.CustomCampaignName = customCampaignName;
 
             if (deleteReplaceEntry)
             {
                 if (replaceEntry)
                 {
-                    newExtra.deleteEntry = deleteReplaceEntry;
+                    newExtra.DeleteEntry = deleteReplaceEntry;
                 }
                 else
                 {

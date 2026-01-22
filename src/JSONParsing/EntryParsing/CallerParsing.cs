@@ -1,6 +1,4 @@
-﻿using MelonLoader;
-using NewSafetyHelp.ImportFiles;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.EntryParsing

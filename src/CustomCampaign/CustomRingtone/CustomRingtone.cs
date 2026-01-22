@@ -1,9 +1,9 @@
-﻿namespace NewSafetyHelp.CustomCampaign.CustomRingtone
+﻿using NewSafetyHelp.CustomCampaign.Abstract;
+
+namespace NewSafetyHelp.CustomCampaign.CustomRingtone
 {
-    public class CustomRingtone
+    public class CustomRingtone : CustomCampaignElementBase
     {
-        public string CustomCampaignName = null; // If in a custom campaign, this is the name of custom campaign.
-        
         // Audio Clip
         public string RingtoneClipPath = "";
         

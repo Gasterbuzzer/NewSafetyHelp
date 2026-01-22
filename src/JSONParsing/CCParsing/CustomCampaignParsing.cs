@@ -45,7 +45,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 foreach (CallerPatches.CallerModel.CustomCCaller customCallerCC in tempList)
                 {
-                    if (customCallerCC.BelongsToCustomCampaign == customCampaignName)
+                    if (customCallerCC.CustomCampaignName == customCampaignName)
                     {
                         #if DEBUG
                             MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
@@ -68,107 +68,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     }
                 }
             }
+            
 
             // Check if any entries have to be added to this campaign.
-            if (GlobalParsingVariables.PendingCustomCampaignEntries.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EntryMetadata> tempList = new List<EntryMetadata>(GlobalParsingVariables.PendingCustomCampaignEntries);
-
-                foreach (EntryMetadata missingEntry in tempList)
-                {
-                    if (missingEntry.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing entry to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        customCampaign.EntriesOnlyInCampaign.Add(missingEntry);
-
-                        GlobalParsingVariables.PendingCustomCampaignEntries.Remove(missingEntry);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEntries,
+                ref customCampaign.EntriesOnlyInCampaign, customCampaignName, "entries");
 
             // Check if any entries have to be added to this campaign.
-            if (GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EntryMetadata> tempList = new List<EntryMetadata>(GlobalParsingVariables.PendingCustomCampaignReplaceEntries);
-
-                foreach (EntryMetadata missingEntry in tempList)
-                {
-                    if (missingEntry.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding 'replace' missing entry to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        customCampaign.EntryReplaceOnlyInCampaign.Add(missingEntry);
-                        GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Remove(missingEntry);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignReplaceEntries,
+                ref customCampaign.EntryReplaceOnlyInCampaign, customCampaignName, "replace-entries");
 
             // Check if any emails have to be added to a custom campaign.
-            if (GlobalParsingVariables.PendingCustomCampaignEmails.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<CustomEmail> tempList = new List<CustomEmail>(GlobalParsingVariables.PendingCustomCampaignEmails);
-
-                foreach (CustomEmail missingEmail in tempList)
-                {
-                    if (missingEmail.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing email to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        customCampaign.Emails.Add(missingEmail);
-                        GlobalParsingVariables.PendingCustomCampaignEmails.Remove(missingEmail);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEmails,
+                ref customCampaign.Emails, customCampaignName, "emails");
 
             // Check if any videos have to be added to a custom campaign.
-            if (GlobalParsingVariables.PendingCustomCampaignVideos.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<CustomVideo> tempList = new List<CustomVideo>(GlobalParsingVariables.PendingCustomCampaignVideos);
-
-                foreach (CustomVideo missingVideo in tempList)
-                {
-                    if (missingVideo.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing video to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        customCampaign.AllDesktopVideos.Add(missingVideo);
-                        GlobalParsingVariables.PendingCustomCampaignVideos.Remove(missingVideo);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
+                ref customCampaign.AllDesktopVideos, customCampaignName, "videos");
             
             // Check if any music has to be added to a custom campaign.
-            if (GlobalParsingVariables.PendingCustomCampaignMusic.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<CustomMusic> tempList = new List<CustomMusic>(GlobalParsingVariables.PendingCustomCampaignMusic);
-
-                foreach (CustomMusic missingMusic in tempList)
-                {
-                    if (missingMusic.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        customCampaign.CustomMusic.Add(missingMusic);
-                        GlobalParsingVariables.PendingCustomCampaignMusic.Remove(missingMusic);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignMusic,
+                ref customCampaign.CustomMusic, customCampaignName, "music");
             
             // Check if any modifier has to be added to a custom campaign.
             if (GlobalParsingVariables.PendingCustomCampaignModifiers.Count > 0)
@@ -178,13 +98,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 foreach (CustomModifier missingModifier in tempList)
                 {
-                    if (missingModifier.customCampaignName == customCampaignName)
+                    if (missingModifier.CustomCampaignName == customCampaignName)
                     {
                         #if DEBUG
                             MelonLogger.Msg($"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        if (missingModifier.unlockDays == null)
+                        if (missingModifier.UnlockDays == null)
                         {
                             customCampaign.CustomModifiersGeneral.Add(missingModifier);
                         }
@@ -206,13 +126,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 foreach (CustomTheme missingTheme in tempList)
                 {
-                    if (missingTheme.customCampaignName == customCampaignName)
+                    if (missingTheme.CustomCampaignName == customCampaignName)
                     {
                         #if DEBUG
                         MelonLogger.Msg($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        if (missingTheme.unlockDays == null)
+                        if (missingTheme.UnlockDays == null)
                         {
                             customCampaign.CustomThemesGeneral.Add(missingTheme);
                         }
@@ -227,25 +147,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             
             // Check if any theme has to be added to a custom campaign.
-            if (GlobalParsingVariables.PendingCustomCampaignRingtones.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<CustomRingtone> tempList = new List<CustomRingtone>(GlobalParsingVariables.PendingCustomCampaignRingtones);
-
-                foreach (CustomRingtone missingRingtone in tempList)
-                {
-                    if (missingRingtone.CustomCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Adding missing ringtone to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        customCampaign.CustomRingtones.Add(missingRingtone);
-                        
-                        GlobalParsingVariables.PendingCustomCampaignRingtones.Remove(missingRingtone);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignRingtones,
+                ref customCampaign.CustomRingtones, customCampaignName, "ringtone");
             
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);

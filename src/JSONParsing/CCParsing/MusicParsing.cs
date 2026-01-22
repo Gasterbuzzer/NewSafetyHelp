@@ -33,16 +33,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Add music clip
             if (jObjectParsed.ContainsKey("music_audio_clip_name"))
             {
-                if (string.IsNullOrEmpty(customMusic.musicClipPath))
+                if (string.IsNullOrEmpty(customMusic.MusicClipPath))
                 {
                     MelonLogger.Warning(
                         $"WARNING: No valid music file given for file in {jsonFolderPath}. No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customMusic.musicClipPath))
+                else if (!File.Exists(customMusic.MusicClipPath))
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customMusic.musicClipPath}'." +
+                        $"ERROR: Location {jsonFolderPath} does not contain '{customMusic.MusicClipPath}'." +
                         " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
@@ -54,15 +54,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    customMusic.musicClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    customMusic.MusicClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else
                                 {
                                     MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customMusic.musicClipPath} for custom caller.");
+                                        $"ERROR: Failed to load audio clip {customMusic.MusicClipPath} for custom caller.");
                                 }
                             },
-                            customMusic.musicClipPath)
+                            customMusic.MusicClipPath)
                     );
                 }
             }
@@ -102,11 +102,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             return new CustomMusic
             {
-                customCampaignName = customCampaignName,
+                CustomCampaignName = customCampaignName,
 
-                musicClipPath = musicAudioPath,
+                MusicClipPath = musicAudioPath,
 
-                unlockDay = unlockDay,
+                UnlockDay = unlockDay,
             };
         }
     }

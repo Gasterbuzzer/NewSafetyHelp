@@ -6,6 +6,7 @@ using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.CustomCampaign.Abstract;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -332,6 +333,38 @@ namespace NewSafetyHelp.JSONParsing
                 else
                 {
                     target = videoFileAlternativePath;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
+        /// </summary>
+        /// <param name="pendingList">List of pending to be added.</param>
+        /// <param name="listToBeAddedTo">List where to add the pending elements.</param>
+        /// <param name="customCampaignName">Custom Campaign to be which the elements get added to.</param>
+        /// <param name="elementName">For debug printing. It shows what type of element was added.</param>
+        /// <typeparam name="T">Type of the target in the lists.</typeparam>
+        public static void AddPendingElementsToCampaign<T>(ref List<T> pendingList, ref List<T> listToBeAddedTo,
+            string customCampaignName, string elementName = "NO_NAME_GIVEN") where T : CustomCampaignElementBase
+        {
+            if (pendingList.Count > 0)
+            {
+                // Create a copy of the list to iterate over.
+                List<T> tempList = new List<T>(pendingList);
+
+                foreach (T missingElement in tempList)
+                {
+                    if (missingElement.CustomCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                            MelonLogger.Msg($"DEBUG: Adding missing {elementName} to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        listToBeAddedTo.Add(missingElement);
+
+                        pendingList.Remove(missingElement);
+                    }
                 }
             }
         }
