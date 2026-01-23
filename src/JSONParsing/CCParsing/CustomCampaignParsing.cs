@@ -1,13 +1,8 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
-using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomRingtone;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
-using NewSafetyHelp.CustomVideos;
-using NewSafetyHelp.Emails;
-using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -81,6 +76,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Check if any emails have to be added to a custom campaign.
             ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEmails,
                 ref customCampaign.Emails, customCampaignName, "emails");
+            
+            // Sort by unlock day. This is to prevent some oddities where some emails that appear later, appear in the list sooner.
+            customCampaign.Emails.Sort((emailOne, emailTwo) => emailOne.UnlockDay.CompareTo(emailTwo.UnlockDay));
 
             // Check if any videos have to be added to a custom campaign.
             ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
@@ -146,7 +144,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
-            // Check if any theme has to be added to a custom campaign.
+            // Check if any ringtone has to be added to a custom campaign.
             ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignRingtones,
                 ref customCampaign.CustomRingtones, customCampaignName, "ringtone");
             
