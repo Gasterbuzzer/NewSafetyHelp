@@ -39,10 +39,10 @@ namespace NewSafetyHelp.CallerPatches
 
                 __instance.arcadeMode = GlobalVariables.arcadeMode;
 
-                FieldInfo _lastDayNum = callerController.GetField("lastDayNum",
+                FieldInfo lastDayNum = callerController.GetField("lastDayNum",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                if (_lastDayNum == null)
+                if (lastDayNum == null)
                 {
                     MelonLogger.Error("ERROR: CallerController.lastDayNum is null!");
                     return true;
@@ -50,11 +50,11 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
-                    _lastDayNum.SetValue(__instance, __instance.mainGameLastDay);
+                    lastDayNum.SetValue(__instance, __instance.mainGameLastDay);
                 }
                 else
                 {
-                    _lastDayNum.SetValue(__instance, CustomCampaignGlobal.GetActiveCustomCampaign().CampaignDays);
+                    lastDayNum.SetValue(__instance, CustomCampaignGlobal.GetActiveCustomCampaign().CampaignDays);
                 }
 
 
@@ -80,7 +80,7 @@ namespace NewSafetyHelp.CallerPatches
                     __instance.callers = __instance.xmasCallers;
                     __instance.warningCall = __instance.xmasWarningCall;
                     __instance.gameOverCall = __instance.xmasGameOverCall;
-                    _lastDayNum.SetValue(__instance, __instance.xmasLastDay);
+                    lastDayNum.SetValue(__instance, __instance.xmasLastDay);
                     __instance.downedNetworkCalls = __instance.xmasDownedNetworkCalls;
                 }
 
@@ -897,7 +897,8 @@ namespace NewSafetyHelp.CallerPatches
                                     #if DEBUG
                                     MelonLogger.Msg(
                                         $"DEBUG: Current Accuracy: '{currentAccuracy}'. Required: '{currentCaller.RequiredAccuracy}'. " +
-                                        $"Should the caller be shown? '{showCaller}'.");
+                                        $"Should the caller be shown? '{showCaller}'. " +
+                                        $"With Accuracy type '{currentCaller.AccuracyCheck.ToString()}'.");
                                     #endif
 
                                     if (!showCaller)

@@ -20,7 +20,7 @@ namespace NewSafetyHelp.CustomCampaign.Helper
                     correctCallers++;
                 }
             }
-
+            
             return correctCallers / GlobalVariables.callerControllerScript.callers.Length;
         }
         
@@ -85,10 +85,8 @@ namespace NewSafetyHelp.CustomCampaign.Helper
             {
                 return ComputeTotalCampaignAccuracy();
             }
-            else
-            {
-                return ComputeDayAccuracy();
-            }
+            
+            return ComputeDayAccuracy();
         }
     }
 }

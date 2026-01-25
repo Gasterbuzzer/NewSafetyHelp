@@ -224,7 +224,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "accuracy_required", ref requiredAccuracy);
             ParsingHelper.TryAssign(jObjectParsed, "use_total_accuracy", ref useTotalAccuracy);
 
-            ParsingHelper.TryAssignAccuracyType(jObjectParsed, "accuracy_type", ref accuracyCheck);
+            ParsingHelper.TryAssignAccuracyType(jObjectParsed, "accuracy_check_type", ref accuracyCheck);
 
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
