@@ -140,6 +140,7 @@
     <Compile Include="src\CustomCampaign\Desktop\OnDayUnlockPatches.cs" />
     <Compile Include="src\CustomCampaign\Helper\AccuracyHelper.cs" />
     <Compile Include="src\CustomCampaign\Abstract\CustomCampaignElement.cs" />
+    <Compile Include="src\CustomCampaign\Helper\AccuracyType.cs" />
     <Compile Include="src\CustomCampaign\Saving\CustomCampaignSaving.cs" />
     <Compile Include="src\CustomCampaign\Themes\ThemePatches.cs" />
     <Compile Include="src\CustomCampaign\Themes\CustomTheme.cs" />

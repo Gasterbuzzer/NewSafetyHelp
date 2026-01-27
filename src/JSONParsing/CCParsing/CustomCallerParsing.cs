@@ -4,6 +4,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaign.Helper;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -172,10 +173,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Accuracy Caller
             bool isAccuracyCaller = false; // If this caller is an accuracy caller.
-            float requiredAccuracy = -1; // If this caller is an accuracy caller, this is the required accuracy.
-            // If this caller looks for the day accuracy (true) or if the global accuracy (false).
-            bool useTotalAccuracy = false; 
-            CheckOptions accuracyCheck = CheckOptions.NoneSet; // How it should be checked for.
+            List<AccuracyType> accuracyChecks = new List<AccuracyType>(); // How it should be checked for.
             
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
@@ -221,10 +219,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Accuracy Caller Section
             
             ParsingHelper.TryAssign(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller);
-            ParsingHelper.TryAssign(jObjectParsed, "accuracy_required", ref requiredAccuracy);
-            ParsingHelper.TryAssign(jObjectParsed, "use_total_accuracy", ref useTotalAccuracy);
-
-            ParsingHelper.TryAssignAccuracyType(jObjectParsed, "accuracy_check_type", ref accuracyCheck);
+            ParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
 
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
@@ -257,9 +252,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 GameOverCallDay = gameOverCallDay,
                 
                 IsAccuracyCaller = isAccuracyCaller,
-                RequiredAccuracy = requiredAccuracy,
-                UseTotalAccuracy = useTotalAccuracy,
-                AccuracyCheck = accuracyCheck
+                AccuracyChecks = accuracyChecks
             };
         }
     }

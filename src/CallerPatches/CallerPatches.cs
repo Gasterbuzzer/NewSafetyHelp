@@ -889,16 +889,10 @@ namespace NewSafetyHelp.CallerPatches
 
                                 if (currentCaller != null && currentCaller.IsAccuracyCaller)
                                 {
-                                    float currentAccuracy = AccuracyHelper.GetCorrectAccuracy(currentCaller);
-
-                                    bool showCaller =
-                                        AccuracyHelper.CheckIfCallerIsToBeShown(currentCaller, currentAccuracy);
+                                    bool showCaller = AccuracyHelper.CheckIfCallerIsToBeShown(currentCaller);
 
                                     #if DEBUG
-                                    MelonLogger.Msg(
-                                        $"DEBUG: Current Accuracy: '{currentAccuracy}'. Required: '{currentCaller.RequiredAccuracy}'. " +
-                                        $"Should the caller be shown? '{showCaller}'. " +
-                                        $"With Accuracy type '{currentCaller.AccuracyCheck.ToString()}'.");
+                                        MelonLogger.Msg($"DEBUG: Should the accuracy caller be shown? '{showCaller}'. ");
                                     #endif
 
                                     if (!showCaller)

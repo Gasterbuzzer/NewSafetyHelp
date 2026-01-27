@@ -1,14 +1,9 @@
-﻿using NewSafetyHelp.CustomCampaign.Abstract;
+﻿using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaign.Abstract;
+using NewSafetyHelp.CustomCampaign.Helper;
 
 namespace NewSafetyHelp.CallerPatches.CallerModel
 {
-    public enum CheckOptions
-    {
-        GreaterThanOrEqualTo,
-        LessThanOrEqualTo,
-        EqualTo,
-        NoneSet
-    }
     
     public class CustomCCaller : CustomCampaignElementBase
     {
@@ -55,9 +50,7 @@ namespace NewSafetyHelp.CallerPatches.CallerModel
         
         // Accuracy Caller
         public bool IsAccuracyCaller = false; // If this caller is an accuracy caller.
-        public float RequiredAccuracy = -1; // If this caller is an accuracy caller, this is the required accuracy.
-        public bool UseTotalAccuracy = false; // If this caller looks for the day accuracy (false) or if the global accuracy (true).
-        public CheckOptions AccuracyCheck = CheckOptions.NoneSet; // How it should be checked for.
+        public List<AccuracyType> AccuracyChecks = new List<AccuracyType>(); // List of all accuracy checks.
         
         // Constructor
         public CustomCCaller(int orderInCampaign) { OrderInCampaign = orderInCampaign;}

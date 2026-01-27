@@ -1,10 +1,20 @@
-﻿using NewSafetyHelp.CallerPatches.CallerModel;
+﻿using MelonLoader;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.Helper
 {
     public static class AccuracyHelper
     {
+        public enum CheckOptions
+        {
+            GreaterThanOrEqualTo,
+            LessThanOrEqualTo,
+            EqualTo,
+            NotEqualTo,
+            NoneSet
+        }
+        
         /// <summary>
         /// Computes the total campaign accuracy. (0-1 format)
         /// </summary>
@@ -37,51 +47,77 @@ namespace NewSafetyHelp.CustomCampaign.Helper
         /// Checks if the provided caller has to required accuracy to be allowed to be shown.
         /// </summary>
         /// <param name="currentCaller">Caller to be checked.</param>
-        /// <param name="currentAccuracy">Accuracy to test against.</param>
         /// <returns>(True) Caller is allowed to call. (False) Caller is not allowed to call.</returns>
-        public static bool CheckIfCallerIsToBeShown(CustomCCaller currentCaller, float currentAccuracy)
+        public static bool CheckIfCallerIsToBeShown(CustomCCaller currentCaller)
         {
-            switch (currentCaller.AccuracyCheck)
+            foreach (AccuracyType accuracyType in currentCaller.AccuracyChecks)
             {
-                case CheckOptions.EqualTo:
-                    if (Mathf.Approximately(currentCaller.RequiredAccuracy, currentAccuracy))
-                    {
-                        return true;
-                    }
+                float currentAccuracy = GetCorrectAccuracy(accuracyType.UseTotalAccuracy);
+                
+                #if DEBUG
+                MelonLogger.Msg($"DEBUG: " +
+                                $"Accuracy caller with current check '{accuracyType.AccuracyCheck.ToString()}' " +
+                                $"and required accuracy '{accuracyType.RequiredAccuracy}'. " +
+                                $"The current accuracy is: '{currentAccuracy}'.");
+                #endif
+                
+                switch (accuracyType.AccuracyCheck)
+                {
+                    case CheckOptions.EqualTo:
+                        if (!Mathf.Approximately(accuracyType.RequiredAccuracy, currentAccuracy))
+                        {
+                            return false;
+                        }
 
-                    break;
+                        break;
 
-                case CheckOptions.GreaterThanOrEqualTo:
-                    if (currentAccuracy >= currentCaller.RequiredAccuracy)
-                    {
-                        return true;
-                    }
+                    case CheckOptions.GreaterThanOrEqualTo:
+                        if (!(currentAccuracy >= accuracyType.RequiredAccuracy))
+                        {
+                            return false;
+                        }
 
-                    break;
+                        break;
 
-                case CheckOptions.LessThanOrEqualTo:
-                    if (currentAccuracy <= currentCaller.RequiredAccuracy)
-                    {
-                        return true;
-                    }
+                    case CheckOptions.LessThanOrEqualTo:
+                        if (!(currentAccuracy <= accuracyType.RequiredAccuracy))
+                        {
+                            return false;
+                        }
 
-                    break;
+                        break;
+                    
+                    case CheckOptions.NotEqualTo:
+                        if (Mathf.Approximately(currentAccuracy, accuracyType.RequiredAccuracy))
+                        {
+                            return false;
+                        }
 
-                case CheckOptions.NoneSet:
-                    return true;
+                        break;
+
+                    case CheckOptions.NoneSet:
+                        break;
+                }
             }
             
-            return false;
+            #if DEBUG
+            MelonLogger.Msg("DEBUG: Accuracy checks finished." +
+                            $" All checks were true for caller '{currentCaller.CallerName}' " +
+                            $"with '{currentCaller.AccuracyChecks.Count}' checks.");
+            #endif
+            
+            // No check failed, we return true.
+            return true;
         }
 
         /// <summary>
-        /// Picks the correct accuracy from the caller settings.
+        /// Picks the correct accuracy that is needed.
         /// </summary>
-        /// <param name="currentCaller">Current caller and it's chosen accuracy.</param>
+        /// <param name="useTotalAccuracy">What accuracy to get.</param>
         /// <returns>Accuracy that the caller chose.</returns>
-        public static float GetCorrectAccuracy(CustomCCaller currentCaller)
+        public static float GetCorrectAccuracy(bool useTotalAccuracy)
         {
-            if (currentCaller.UseTotalAccuracy)
+            if (useTotalAccuracy)
             {
                 return ComputeTotalCampaignAccuracy();
             }

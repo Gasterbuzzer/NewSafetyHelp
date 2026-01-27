@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign.Abstract;
+using NewSafetyHelp.CustomCampaign.Helper;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -113,7 +113,7 @@ namespace NewSafetyHelp.JSONParsing
                 yield return MelonCoroutines.Start(
                     AudioImport.LoadAudio
                     (
-                        (myReturnValue) => { monsterSoundClip = myReturnValue; },
+                        myReturnValue => { monsterSoundClip = myReturnValue; },
                         audioPath, audioType)
                 );
             }
@@ -194,7 +194,7 @@ namespace NewSafetyHelp.JSONParsing
             if (string.IsNullOrEmpty(imagePath))
             {
                 MelonLogger.Error(
-                    $"ERROR: Invalid file name given for '{imagePath}'." +
+                    $"ERROR: Invalid file name given for '{imagePath}' for key {key}." +
                     $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
             }
             else
@@ -228,7 +228,7 @@ namespace NewSafetyHelp.JSONParsing
                 if (!File.Exists(usermodFolderPath + "\\" + audioPath))
                 {
                     MelonLogger.Warning(
-                        "WARNING: Could not find provided audio file for custom caller at " +
+                        $"WARNING: Could not find provided audio file for key '{key}' at " +
                         $"'{jsonFolderPath}'" +
                         $" {(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"for {customCallerName}" : "")}.");
                 }
@@ -246,55 +246,219 @@ namespace NewSafetyHelp.JSONParsing
         /// <summary>
         /// Attempts to parse the check option provided.
         /// </summary>
-        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
-        /// <param name="key">Key to be found.</param>
-        /// <param name="target">Target to write the value to.</param>
-        public static void TryAssignAccuracyType(JObject jObjectParsed, string key, ref CheckOptions target)
+        /// <param name="accuracyCheckTypeString">String describing the accuracy tape.</param>
+        private static AccuracyHelper.CheckOptions TryAssignSingleAccuracyType(string accuracyCheckTypeString)
         {
-            if (!jObjectParsed.TryGetValue(key, out var token))
-            {
-                return;
-            }
-            
-            string accuracyCheckTypeString = token.Value<string>();
-
             if (!string.IsNullOrEmpty(accuracyCheckTypeString))
             {
-                switch (accuracyCheckTypeString.ToLower())
+                switch (accuracyCheckTypeString.ToLowerInvariant())
                 {
                     case "equal":
                     case "eq": // Equal
-                        target = CheckOptions.EqualTo;
-                        break;
+                        return AccuracyHelper.CheckOptions.EqualTo;
                         
                     case "no":
                     case "n":
                     case "none": // None
-                        target = CheckOptions.NoneSet;
-                        break;
+                        return AccuracyHelper.CheckOptions.NoneSet;
                         
                     case "greaterorequal":
                     case "geq": // Greater than or equal to
-                        target = CheckOptions.GreaterThanOrEqualTo;
-                        break;
+                        return AccuracyHelper.CheckOptions.GreaterThanOrEqualTo;
                         
                     case "lesserorequal":
                     case "lessorequal":
                     case "leq": // Less than or equal to
-                        target = CheckOptions.LessThanOrEqualTo;
-                        break;
+                        return AccuracyHelper.CheckOptions.LessThanOrEqualTo;
+                    
+                    case "nequal":
+                    case "notequal":
+                    case "!equal":
+                    case "!eq":
+                    case "noteq":
+                    case "neq": // Not equal to
+                        return AccuracyHelper.CheckOptions.NotEqualTo;
                         
                     default:
                         MelonLogger.Warning("WARNING: Provided accuracy check type" +
                                             $" '{accuracyCheckTypeString}' is not in any known format." +
                                             " Please double check.");
-                        break;
+                        return AccuracyHelper.CheckOptions.NoneSet;
+                }
+            }
+
+            MelonLogger.Warning("WARNING: Unable of parsing accuracy check type. Possible syntax problem?");
+            return AccuracyHelper.CheckOptions.NoneSet;
+        }
+
+        /*
+         * Const strings for assign list. This ensures more consistency.
+         */
+        
+        private const string AccuracyCheckTypeString = "accuracy_check_type";
+        private const string AccuracyRequiredString = "accuracy_required";
+        private const string TotalAccuracyString = "use_total_accuracy";
+        
+        /// <summary>
+        /// Attempts to parse the check option provided.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        public static void TryAssignListAccuracyType(JObject jObjectParsed, ref List<AccuracyType> target)
+        {
+            if (!jObjectParsed.TryGetValue(AccuracyCheckTypeString, out _))
+            {
+                return;
+            }
+            
+            if (target == null)
+            {
+                target = new List<AccuracyType>();
+            }
+            
+            List<bool> isTotalAccuracyList = new List<bool>();
+            bool? providedSingleValueTA = TryAssignListOrSingleElement(jObjectParsed, TotalAccuracyString, 
+                ref isTotalAccuracyList);
+            
+            List<float> accuracyRequiredList = new List<float>();
+            TryAssignListOrSingleElement(jObjectParsed, AccuracyRequiredString, ref accuracyRequiredList);
+            
+            List<string> accuracyCheckType = new List<string>();
+            TryAssignListOrSingleElement(jObjectParsed, AccuracyCheckTypeString, ref accuracyCheckType);
+
+            // It means we have no elements, or we simply failed parsing any. 
+            // The error printed by the helper function will inform the user what was the cause. 
+            // So here we simply need to return.
+            if (accuracyCheckType.Count < 1)
+            {
+                MelonLogger.Error("ERROR: Provided accuracy lists are empty or could not be parsed. " +
+                                  "Unable of parsing accuracy checks.");
+                return;
+            }
+
+            if (accuracyRequiredList.Count != accuracyCheckType.Count)
+            {
+                MelonLogger.Error("ERROR: Provided accuracy lists must all have equal length. " +
+                                  "Unable of parsing accuracy checks.");
+                return;
+            }
+
+            if (isTotalAccuracyList.Count > accuracyCheckType.Count)
+            {
+                MelonLogger.Error("ERROR: Provided list of total accuracy is larger than available accuracy checks. " +
+                                  "Unable of parsing accuracy checks.");
+                return;
+            }
+            
+            for (int i = 0; i < accuracyCheckType.Count; i++)
+            {
+                AccuracyType newAccuracyType = new AccuracyType();
+
+                if (!string.IsNullOrEmpty(accuracyCheckType[i]))
+                {
+                    newAccuracyType.AccuracyCheck = TryAssignSingleAccuracyType(accuracyCheckType[i]);
+                }
+                else
+                {
+                    MelonLogger.Warning("WARNING: Provided accuracy type is invalid. Defaulting to 'none'.");
+                }
+
+                if (providedSingleValueTA != null)
+                {
+                    if ((bool) providedSingleValueTA)
+                    {
+                        newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[0];
+                    }
+                    else if (i < isTotalAccuracyList.Count)
+                    {
+                        newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[i];
+                    }
+                }
+                
+                newAccuracyType.RequiredAccuracy = accuracyRequiredList[i];
+
+                target.Add(newAccuracyType);
+            }
+        }
+        
+        /// <summary>
+        /// Attempts to parse the key for a list.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        /// <returns>(Bool) If the parsed value was an array or a single element. Null if we failed parsing.</returns>
+        private static bool? TryAssignListOrSingleElement<T>(JObject jObjectParsed, string key, ref List<T> target)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return null;
+            }
+
+            if (target == null)
+            {
+                target = new List<T>();
+            }
+            
+            if (token.Type == JTokenType.Array)
+            {
+                foreach (JToken element in token)
+                {
+                    T value = element.Value<T>();
+                    target.Add(value);
+                }
+
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    T value = token.Value<T>();
+                    target.Add(value);
+                
+                    return true;
+                }
+                catch
+                {
+                    MelonLogger.Error($"ERROR: For provided key '{key}' " +
+                                      "we were unable of assigning any value, as the wrong value was given.");
+                    return null;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Attempts to parse the key for a list.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        public static void TryAssignList<T>(JObject jObjectParsed, string key, ref List<T> target)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return;
+            }
+
+            if (target == null)
+            {
+                target = new List<T>();
+            }
+            
+            if (token.Type == JTokenType.Array)
+            {
+                foreach (JToken element in token)
+                {
+                    T value = element.Value<T>();
+                    target.Add(value);
                 }
             }
             else
             {
-                MelonLogger.Warning("WARNING: Unable of parsing accuracy check type. Possible syntax problem?");
+                MelonLogger.Error($"ERROR: Provided key '{key}' does not contain a list.");
             }
+            
         }
         
         /// <summary>
@@ -338,7 +502,8 @@ namespace NewSafetyHelp.JSONParsing
         }
         
         /// <summary>
-        /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
+        /// Adds any pending elements (elements that were parsed before the campaign was parsed)
+        /// to the provided campaign list.
         /// </summary>
         /// <param name="pendingList">List of pending to be added.</param>
         /// <param name="listToBeAddedTo">List where to add the pending elements.</param>
