@@ -184,6 +184,8 @@ namespace NewSafetyHelp.CallerPatches.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
+                EndDayRoutinePatch.IsDayEnding = false; // Reset it, if not reset yet.
+                
                 __result = StartSoftwareRoutine(__instance);
                 
                 return false; // Skip function with false.
@@ -349,7 +351,7 @@ namespace NewSafetyHelp.CallerPatches.UI
         public static class EndDayRoutinePatch
         {
             // To avoid duplicate day ending.
-            private static bool isDayEnding;
+            public static bool IsDayEnding;
 
             /// <summary>
             /// Patches the EndDayRoutine coroutine to work better with custom campaigns.
@@ -370,7 +372,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             
             private static IEnumerator EndDayRoutineChanged(MainCanvasBehavior __instance)
             {
-                if (isDayEnding)
+                if (IsDayEnding)
                 {
                     #if DEBUG
                         MelonLogger.Msg("DEBUG: Skipping EndDayRoutine.");
@@ -379,7 +381,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     yield break;
                 }
 
-                isDayEnding = true;
+                IsDayEnding = true;
                 
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 mainCanvasBehavior.clockedOut = false;
@@ -397,7 +399,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 mainCanvasBehavior.clockOutButton.SetActive(true);
                 mainCanvasBehavior.clockInElements.SetActive(false);
                 
-                isDayEnding = false;
+                IsDayEnding = false;
                 while (!mainCanvasBehavior.clockedOut)
                 {
                     yield return null;
