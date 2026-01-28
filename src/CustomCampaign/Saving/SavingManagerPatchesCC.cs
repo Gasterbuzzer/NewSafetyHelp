@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -101,15 +100,15 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
             {
-                if (CustomCampaignGlobal.InCustomCampaign)
+                // We are loading now.
+                __instance.hasLoaded = false;
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    __instance.hasLoaded = false;
-
                     // Load custom campaign values.
                     CustomCampaignSaving.LoadFromFileCustomCampaignInfo();
-                    
                 }
-                else if (GlobalVariables.isXmasDLC)
+                else if (GlobalVariables.isXmasDLC) // DLC
                 {
                     MethodInfo _loadXmas = typeof(SaveManagerBehavior).GetMethod("LoadXmas",
                         BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -122,143 +121,129 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     _loadXmas.Invoke(__instance, null); // __instance.LoadXmas();
                 }
-                else
+                else // Main Game
                 {
-                    __instance.hasLoaded = false;
-
-                    if (PlayerPrefs.HasKey("SavedDay"))
+                    if (!CustomCampaignGlobal.InCustomCampaign)
                     {
-                        __instance.savedDay = PlayerPrefs.GetInt("SavedDay");
+                        if (PlayerPrefs.HasKey("SavedDay"))
+                        {
+                            __instance.savedDay = PlayerPrefs.GetInt("SavedDay");
+                        }
+
+                        GlobalVariables.currentDay = __instance.savedDay;
+
+                        if (PlayerPrefs.HasKey("SavedCurrentCaller"))
+                        {
+                            __instance.savedCurrentCaller = PlayerPrefs.GetInt("SavedCurrentCaller");
+                        }
+
+                        if (PlayerPrefs.HasKey("SavedEntryTier"))
+                        {
+                            __instance.savedEntryTier = PlayerPrefs.GetInt("SavedEntryTier");
+                        }
+
+                        if (PlayerPrefs.HasKey("SavedCallerArrayLength"))
+                        {
+                            __instance.savedCallerArrayLength = PlayerPrefs.GetInt("SavedCallerArrayLength");
+                        }
+
+                        __instance.savedCallerCorrectAnswers = __instance.LoadBoolArray("SavedCallerCorrectAnswer",
+                            __instance.savedCallerArrayLength);
                     }
 
-                    GlobalVariables.currentDay = __instance.savedDay;
-
-                    if (PlayerPrefs.HasKey("SavedCurrentCaller"))
+                    // Options
+                    // These are allowed to be loaded without checking if in a custom campaign or not.
+                    if (PlayerPrefs.HasKey("SavedSpiderToggle"))
                     {
-                        __instance.savedCurrentCaller = PlayerPrefs.GetInt("SavedCurrentCaller");
+                        __instance.savedSpiderToggle = PlayerPrefs.GetInt("SavedSpiderToggle");
                     }
 
-                    if (PlayerPrefs.HasKey("SavedEntryTier"))
+                    if (PlayerPrefs.HasKey("SavedInsectToggle"))
                     {
-                        __instance.savedEntryTier = PlayerPrefs.GetInt("SavedEntryTier");
+                        __instance.savedInsectToggle = PlayerPrefs.GetInt("SavedInsectToggle");
                     }
 
-                    if (PlayerPrefs.HasKey("SavedCallerArrayLength"))
+                    if (PlayerPrefs.HasKey("SavedDarkToggle"))
                     {
-                        __instance.savedCallerArrayLength = PlayerPrefs.GetInt("SavedCallerArrayLength");
+                        __instance.savedDarkToggle = PlayerPrefs.GetInt("SavedDarkToggle");
                     }
 
-                    __instance.savedCallerCorrectAnswers = __instance.LoadBoolArray("SavedCallerCorrectAnswer",
-                        __instance.savedCallerArrayLength);
-                    
-                                    // Options
-                // These are allowed to be loaded without checking if in a custom campaign or not.
-                if (PlayerPrefs.HasKey("SavedSpiderToggle"))
-                {
-                    __instance.savedSpiderToggle = PlayerPrefs.GetInt("SavedSpiderToggle");
-                }
+                    if (PlayerPrefs.HasKey("SavedHoleToggle"))
+                    {
+                        __instance.savedHoleToggle = PlayerPrefs.GetInt("SavedHoleToggle");
+                    }
 
-                if (PlayerPrefs.HasKey("SavedInsectToggle"))
-                {
-                    __instance.savedInsectToggle = PlayerPrefs.GetInt("SavedInsectToggle");
-                }
+                    if (PlayerPrefs.HasKey("SavedWatchToggle"))
+                    {
+                        __instance.savedWatchToggle = PlayerPrefs.GetInt("SavedWatchToggle");
+                    }
 
-                if (PlayerPrefs.HasKey("SavedDarkToggle"))
-                {
-                    __instance.savedDarkToggle = PlayerPrefs.GetInt("SavedDarkToggle");
-                }
+                    if (PlayerPrefs.HasKey("SavedDogToggle"))
+                    {
+                        __instance.savedDogToggle = PlayerPrefs.GetInt("SavedDogToggle");
+                    }
 
-                if (PlayerPrefs.HasKey("SavedHoleToggle"))
-                {
-                    __instance.savedHoleToggle = PlayerPrefs.GetInt("SavedHoleToggle");
-                }
+                    if (PlayerPrefs.HasKey("SavedDyslexiaToggle"))
+                    {
+                        __instance.savedDyslexiaToggle = PlayerPrefs.GetInt("SavedDyslexiaToggle");
+                    }
 
-                if (PlayerPrefs.HasKey("SavedWatchToggle"))
-                {
-                    __instance.savedWatchToggle = PlayerPrefs.GetInt("SavedWatchToggle");
-                }
+                    GlobalVariables.dyslexiaMode = __instance.IntToBool(__instance.savedDyslexiaToggle);
 
-                if (PlayerPrefs.HasKey("SavedDogToggle"))
-                {
-                    __instance.savedDogToggle = PlayerPrefs.GetInt("SavedDogToggle");
-                }
+                    if (PlayerPrefs.HasKey("SavedCRTToggle"))
+                    {
+                        __instance.savedCRTToggle = PlayerPrefs.GetInt("SavedCRTToggle", 1);
+                    }
 
-                if (PlayerPrefs.HasKey("SavedDyslexiaToggle"))
-                {
-                    __instance.savedDyslexiaToggle = PlayerPrefs.GetInt("SavedDyslexiaToggle");
-                }
+                    if (PlayerPrefs.HasKey("SavedTextSizeMultiplier"))
+                    {
+                        __instance.savedTextSizeMultiplier = PlayerPrefs.GetFloat("SavedTextSizeMultiplier");
+                    }
 
-                GlobalVariables.dyslexiaMode = __instance.IntToBool(__instance.savedDyslexiaToggle);
+                    GlobalVariables.textSizeMultiplier = __instance.savedTextSizeMultiplier;
 
-                if (PlayerPrefs.HasKey("SavedCRTToggle"))
-                {
-                    __instance.savedCRTToggle = PlayerPrefs.GetInt("SavedCRTToggle", 1);
-                }
+                    if (PlayerPrefs.HasKey("SavedFullScreenToggle"))
+                    {
+                        __instance.savedFullScreenToggle = PlayerPrefs.GetInt("SavedFullScreenToggle");
+                    }
 
-                if (PlayerPrefs.HasKey("SavedMusicVolume"))
-                {
-                    __instance.savedMusicVolume = PlayerPrefs.GetFloat("SavedMusicVolume");
-                }
+                    GlobalVariables.isFullScreen = __instance.IntToBool(__instance.savedFullScreenToggle);
 
-                if (PlayerPrefs.HasKey("SavedSFXVolume"))
-                {
-                    __instance.savedSFXVolume = PlayerPrefs.GetFloat("SavedSFXVolume");
-                }
+                    if (PlayerPrefs.HasKey("SavedScreenHeight"))
+                    {
+                        __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
+                    }
 
-                if (PlayerPrefs.HasKey("SavedAmbienceVolume"))
-                {
-                    __instance.savedAmbienceVolume = PlayerPrefs.GetFloat("SavedAmbienceVolume");
-                }
+                    GlobalVariables.screenHeightSetting = __instance.savedScreenHeight;
 
-                if (PlayerPrefs.HasKey("SavedTextSizeMultiplier"))
-                {
-                    __instance.savedTextSizeMultiplier = PlayerPrefs.GetFloat("SavedTextSizeMultiplier");
-                }
+                    if (PlayerPrefs.HasKey("SavedScreenWidth"))
+                    {
+                        __instance.savedScreenWidth = PlayerPrefs.GetInt("SavedScreenWidth");
+                    }
 
-                GlobalVariables.textSizeMultiplier = __instance.savedTextSizeMultiplier;
+                    GlobalVariables.screenWidthSetting = __instance.savedScreenWidth;
 
-                if (PlayerPrefs.HasKey("SavedFullScreenToggle"))
-                {
-                    __instance.savedFullScreenToggle = PlayerPrefs.GetInt("SavedFullScreenToggle");
-                }
+                    if (PlayerPrefs.HasKey("SavedImmunityToggle"))
+                    {
+                        __instance.savedImmunityToggle = PlayerPrefs.GetInt("SavedImmunityToggle", 0);
+                    }
 
-                GlobalVariables.isFullScreen = __instance.IntToBool(__instance.savedFullScreenToggle);
+                    if (PlayerPrefs.HasKey("SavedAccuracyToggle"))
+                    {
+                        __instance.savedAccuracyToggle = PlayerPrefs.GetInt("SavedAccuracyToggle", 0);
+                    }
 
-                if (PlayerPrefs.HasKey("SavedScreenHeight"))
-                {
-                    __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
-                }
+                    if (PlayerPrefs.HasKey("SavedCallSkipToggle"))
+                    {
+                        __instance.savedCallSkipToggle = PlayerPrefs.GetInt("SavedCallSkipToggle", 0);
+                    }
 
-                GlobalVariables.screenHeightSetting = __instance.savedScreenHeight;
+                    if (PlayerPrefs.HasKey("SavedRefreshRate"))
+                    {
+                        __instance.savedRefreshRate = PlayerPrefs.GetInt("SavedRefreshRate");
+                    }
 
-                if (PlayerPrefs.HasKey("SavedScreenWidth"))
-                {
-                    __instance.savedScreenWidth = PlayerPrefs.GetInt("SavedScreenWidth");
-                }
-
-                GlobalVariables.screenWidthSetting = __instance.savedScreenWidth;
-                
-                if (PlayerPrefs.HasKey("SavedImmunityToggle"))
-                {
-                    __instance.savedImmunityToggle = PlayerPrefs.GetInt("SavedImmunityToggle", 0);
-                }
-
-                if (PlayerPrefs.HasKey("SavedAccuracyToggle"))
-                {
-                    __instance.savedAccuracyToggle = PlayerPrefs.GetInt("SavedAccuracyToggle", 0);
-                }
-
-                if (PlayerPrefs.HasKey("SavedCallSkipToggle"))
-                {
-                    __instance.savedCallSkipToggle = PlayerPrefs.GetInt("SavedCallSkipToggle", 0);
-                }
-
-                if (PlayerPrefs.HasKey("SavedRefreshRate"))
-                {
-                    __instance.savedRefreshRate = PlayerPrefs.GetInt("SavedRefreshRate");
-                }
-                
-                GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
+                    GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
 
                     // Custom Campaign Magic. The values for custom campaigns are loaded beforehand. So no need for else.
                     if (!CustomCampaignGlobal.InCustomCampaign)
@@ -308,7 +293,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                             __instance.savedDayScore7 = PlayerPrefs.GetFloat("SavedDayScore7");
                         }
                     }
-                    
+
                     if (PlayerPrefs.HasKey("SavedArcadeScore"))
                     {
                         __instance.savedArcadeScore = PlayerPrefs.GetFloat("SavedArcadeScore");
@@ -321,19 +306,33 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignSaving.LoadCustomCampaignOptions();
+                    CustomCampaignOptionSaving.LoadCustomCampaignOptions();
+                }
+                else if (!GlobalVariables.isXmasDLC) // Everything else, except for DLC, since the DLC handles itself.
+                {
+                    /*
+                     * Volume
+                     */
                     
-                    __instance.hasLoaded = true;
-
-                    if (__instance.PostLoadEvent == null)
+                    if (PlayerPrefs.HasKey("SavedMusicVolume"))
                     {
-                        return false;
+                        __instance.savedMusicVolume = PlayerPrefs.GetFloat("SavedMusicVolume");
                     }
 
-                    __instance.PostLoadEvent();
-                }
-                else // Everything else
-                {
+                    if (PlayerPrefs.HasKey("SavedSFXVolume"))
+                    {
+                        __instance.savedSFXVolume = PlayerPrefs.GetFloat("SavedSFXVolume");
+                    }
+
+                    if (PlayerPrefs.HasKey("SavedAmbienceVolume"))
+                    {
+                        __instance.savedAmbienceVolume = PlayerPrefs.GetFloat("SavedAmbienceVolume");
+                    }
+                    
+                    /*
+                     * Theme
+                     */
+                    
                     if (PlayerPrefs.HasKey("SavedColorTheme"))
                     {
                         __instance.savedColorTheme = PlayerPrefs.GetInt("SavedColorTheme");
@@ -343,16 +342,18 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     {
                         GlobalVariables.colorPaletteController.UpdateColorTheme();
                     }
-                    
-                    __instance.hasLoaded = true;
-                    
-                    if (__instance.PostLoadEvent == null)
-                    {
-                        return false;
-                    }
-
-                    __instance.PostLoadEvent();
                 }
+                
+                // Finished Loading
+                
+                __instance.hasLoaded = true;
+
+                if (__instance.PostLoadEvent == null)
+                {
+                    return false;
+                }
+
+                __instance.PostLoadEvent();
 
                 return false; // Skip the original function
             }
@@ -434,7 +435,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
             {
-                
                 PlayerPrefs.SetInt("SavedSpiderToggle", __instance.savedSpiderToggle);
                 PlayerPrefs.SetInt("SavedInsectToggle", __instance.savedInsectToggle);
                 PlayerPrefs.SetInt("SavedDarkToggle", __instance.savedDarkToggle);
@@ -493,7 +493,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignSaving.SaveCustomCampaignOptions();
+                    CustomCampaignOptionSaving.SaveCustomCampaignOptions();
                 }
 
                 PlayerPrefs.Save();
@@ -501,9 +501,9 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return false; // Skip the original function
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "LoadSavedValues", new Type[] { })]
-        public static class SaveResolutionInfoPatch
+        public static class LoadSavedValuesPatch
         {
             /// <summary>
             /// Patches the "LoadSaveValues" function to not use the save managers values and instead the custom campaigns ones.
@@ -516,30 +516,43 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                  * Default values to always be loaded.
                  *
                  */
-                
+
                 if (!GlobalVariables.saveManagerScript.hasLoaded)
                 {
                     return false;
                 }
-                
-                __instance.spiderToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedSpiderToggle);
-                __instance.insectToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedInsectToggle);
-                __instance.darkToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDarkToggle);
-                __instance.holeToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedHoleToggle);
-                __instance.watchToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedWatchToggle);
-                __instance.tightToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedTightToggle);
-                __instance.dogToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDogToggle);
-                __instance.dyslexiaToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDyslexiaToggle);
-                __instance.crtToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCRTToggle);
-                __instance.immunityToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
-                __instance.xmasImmunityToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
-                __instance.accuracyToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedAccuracyToggle);
-                __instance.callSkipToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCallSkipToggle);
+
+                __instance.spiderToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedSpiderToggle);
+                __instance.insectToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedInsectToggle);
+                __instance.darkToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDarkToggle);
+                __instance.holeToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedHoleToggle);
+                __instance.watchToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedWatchToggle);
+                __instance.tightToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedTightToggle);
+                __instance.dogToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDogToggle);
+                __instance.dyslexiaToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDyslexiaToggle);
+                __instance.crtToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCRTToggle);
+                __instance.immunityToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
+                __instance.xmasImmunityToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
+                __instance.accuracyToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedAccuracyToggle);
+                __instance.callSkipToggle.isOn =
+                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCallSkipToggle);
                 __instance.musicSlider.value = GlobalVariables.saveManagerScript.savedMusicVolume;
                 __instance.sfxSlider.value = GlobalVariables.saveManagerScript.savedSFXVolume;
                 __instance.masterSlider.value = GlobalVariables.saveManagerScript.savedAmbienceVolume;
                 __instance.textSizeSlider.value = GlobalVariables.saveManagerScript.savedTextSizeMultiplier;
-                
+
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
                     __instance.colorDropdown.value = GlobalVariables.saveManagerScript.savedColorTheme;
@@ -559,7 +572,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     __instance.colorDropdown.value = customCampaign.ActiveTheme;
                     __instance.ColorThemeChanged();
                 }
-                
+
                 return false; // Skip the original function
             }
         }
