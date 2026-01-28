@@ -111,11 +111,33 @@ namespace NewSafetyHelp.EntryManager.EntryListing
 
                     if (entryFound != null)
                     {
-                        if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile) 
-                            && GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel)
+                        // If the current entry is unlocked.
+                        if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile))
                         {
-                            hasClicked.SetValue(__instance, true);
+                            // Our permission tier is 1 larger than the current permission.
+                            if (GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel)
+                            {
+                                hasClicked.SetValue(__instance, true);
+                            }
+
+                            // If our current day is one later than the out tier + 1.
+                            // Example: Our current day is "1",
+                            // our current tier came from the previous day, which is "0".
+                            // As such, our current day is equal 1, and as such, we hide the NEW tag.
+                            if (GlobalVariables.currentDay >= GlobalVariables.entryUnlockScript.currentTier + 1)
+                            {
+                                hasClicked.SetValue(__instance, true);
+                            }
                         }
+                        
+                        #if DEBUG
+                        /*MelonLogger.Msg(ConsoleColor.Blue, "DEBUG: " +
+                                                           $"Entry Name: '{__instance.myProfile.monsterName}'. " +
+                                                           $"Is Unlocked? '{GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile)}'. " +
+                                                           "Current Tier - 1 > Entry Permission Level : " +
+                                                           $"'{GlobalVariables.entryUnlockScript.currentTier}' - 1 > '{entryFound.permissionLevel}' = '{GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel}'.");
+                        */
+                        #endif
                     }
                     else // Main Campaign Entries, for now we just default.
                     {
