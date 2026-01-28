@@ -99,6 +99,10 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         
         // Screen Options
         public bool SavedFullScreenToggle = true; // If fullscreen is enabled.
+        
+        // Text Settings
+        public bool SavedDyslexiaToggle = false;
+        public float SavedTextSizeMultiplier = 1.0f;
 
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.

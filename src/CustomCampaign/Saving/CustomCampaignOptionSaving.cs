@@ -24,6 +24,20 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             }
             
             /*
+             * Text options
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDyslexiaToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedDyslexiaToggle",false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedTextSizeMultiplier") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedTextSizeMultiplier",1.0f);
+            }
+            
+            /*
              * Fullscreen Option
              */
             
@@ -107,6 +121,31 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
+            
+            /*
+             * Text options
+             */
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDyslexiaToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedDyslexiaToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedDyslexiaToggle",false);
+                
+                savedDyslexiaToggle.Value = currentCampaign.SavedDyslexiaToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDyslexiaToggle").Value = currentCampaign.SavedDyslexiaToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedTextSizeMultiplier") == null)
+            {
+                MelonPreferences_Entry<float> savedTextSizeMultiplier = currentCampaign.CampaignSaveCategory.CreateEntry("savedTextSizeMultiplier",1.0f);
+
+                savedTextSizeMultiplier.Value = currentCampaign.SavedTextSizeMultiplier;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<float>("savedTextSizeMultiplier").Value = currentCampaign.SavedTextSizeMultiplier;
+            }
             
             /*
              * Fullscreen Option
@@ -246,6 +285,12 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Load all values first into the currentCampaign instance.
             
             /*
+             * Text Options
+             */
+            currentCampaign.SavedDyslexiaToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDyslexiaToggle").Value;
+            currentCampaign.SavedTextSizeMultiplier = currentCampaign.CampaignSaveCategory.GetEntry<float>("savedTextSizeMultiplier").Value;
+            
+            /*
              * Fullscreen Option
              */
             currentCampaign.SavedFullScreenToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedFullScreenToggle").Value;
@@ -275,9 +320,19 @@ namespace NewSafetyHelp.CustomCampaign.Saving
              */
             
             /*
+             * Text Options
+             */
+            GlobalVariables.saveManagerScript.savedDyslexiaToggle = currentCampaign.SavedDyslexiaToggle ? 1 : 0;
+            GlobalVariables.dyslexiaMode = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDyslexiaToggle);
+
+            GlobalVariables.saveManagerScript.savedTextSizeMultiplier = currentCampaign.SavedTextSizeMultiplier;
+            GlobalVariables.textSizeMultiplier = GlobalVariables.saveManagerScript.savedTextSizeMultiplier;
+            
+            /*
              * Fullscreen Option
              */
             GlobalVariables.saveManagerScript.savedFullScreenToggle = currentCampaign.SavedFullScreenToggle ? 1 : 0;
+            GlobalVariables.isFullScreen = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedFullScreenToggle);
             
             /*
              * Screen Effects

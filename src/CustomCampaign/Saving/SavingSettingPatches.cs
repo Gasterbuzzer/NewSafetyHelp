@@ -22,8 +22,12 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 PlayerPrefs.SetInt("SavedHoleToggle", __instance.savedHoleToggle);
                 PlayerPrefs.SetInt("SavedWatchToggle", __instance.savedWatchToggle);
                 PlayerPrefs.SetInt("SavedDogToggle", __instance.savedDogToggle);
-                PlayerPrefs.SetInt("SavedDyslexiaToggle", __instance.savedDyslexiaToggle);
 
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
+                {
+                    PlayerPrefs.SetInt("SavedDyslexiaToggle", __instance.savedDyslexiaToggle);
+                }
+                
                 if (GlobalVariables.isXmasDLC)
                 {
                     MethodInfo saveXmasOptions = typeof(SaveManagerBehavior).GetMethod("SaveXmasOptions",
@@ -52,15 +56,12 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 __instance.savedRefreshRate = GlobalVariables.refreshRateSetting;
                 PlayerPrefs.SetInt("SavedRefreshRate", __instance.savedRefreshRate);
 
-                __instance.savedTextSizeMultiplier = GlobalVariables.textSizeMultiplier;
-                PlayerPrefs.SetFloat("SavedTextSizeMultiplier", __instance.savedTextSizeMultiplier);
-
-                /*
-                 * Specially handled settings.
-                 */
-
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Text Settings
+                    __instance.savedTextSizeMultiplier = GlobalVariables.textSizeMultiplier;
+                    PlayerPrefs.SetFloat("SavedTextSizeMultiplier", __instance.savedTextSizeMultiplier);
+                    
                     // Fullscreen
                     __instance.savedFullScreenToggle = __instance.BoolToInt(GlobalVariables.isFullScreen);
                     PlayerPrefs.SetInt("SavedFullScreenToggle", __instance.savedFullScreenToggle);
@@ -121,8 +122,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedTightToggle);
                 __instance.dogToggle.isOn =
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDogToggle);
-                __instance.dyslexiaToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDyslexiaToggle);
                 __instance.immunityToggle.isOn =
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
                 __instance.xmasImmunityToggle.isOn =
@@ -131,10 +130,14 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedAccuracyToggle);
                 __instance.callSkipToggle.isOn =
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCallSkipToggle);
-                __instance.textSizeSlider.value = GlobalVariables.saveManagerScript.savedTextSizeMultiplier;
+               
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Text Options
+                    __instance.dyslexiaToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDyslexiaToggle);
+                    __instance.textSizeSlider.value = GlobalVariables.saveManagerScript.savedTextSizeMultiplier;
+                    
                     // Screen Effects
                     __instance.crtToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCRTToggle);
                     
@@ -157,6 +160,10 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                                           " Calling original function.");
                         return false;
                     }
+                    
+                    // Text Options
+                    __instance.dyslexiaToggle.isOn = customCampaign.SavedDyslexiaToggle;
+                    __instance.textSizeSlider.value = customCampaign.SavedTextSizeMultiplier;
                     
                     // Screen Effects
                     __instance.crtToggle.isOn = customCampaign.SavedCRTToggle;

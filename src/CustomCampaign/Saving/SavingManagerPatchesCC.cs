@@ -154,20 +154,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                         __instance.savedDogToggle = PlayerPrefs.GetInt("SavedDogToggle");
                     }
 
-                    if (PlayerPrefs.HasKey("SavedDyslexiaToggle"))
-                    {
-                        __instance.savedDyslexiaToggle = PlayerPrefs.GetInt("SavedDyslexiaToggle");
-                    }
-
-                    GlobalVariables.dyslexiaMode = __instance.IntToBool(__instance.savedDyslexiaToggle);
-
-                    if (PlayerPrefs.HasKey("SavedTextSizeMultiplier"))
-                    {
-                        __instance.savedTextSizeMultiplier = PlayerPrefs.GetFloat("SavedTextSizeMultiplier");
-                    }
-
-                    GlobalVariables.textSizeMultiplier = __instance.savedTextSizeMultiplier;
-
                     if (PlayerPrefs.HasKey("SavedScreenHeight"))
                     {
                         __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
@@ -243,6 +229,24 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     __instance.savedCallerCorrectAnswers = __instance.LoadBoolArray("SavedCallerCorrectAnswer",
                         __instance.savedCallerArrayLength);
+                    
+                    /*
+                     * Text options
+                     */
+                    
+                    if (PlayerPrefs.HasKey("SavedDyslexiaToggle"))
+                    {
+                        __instance.savedDyslexiaToggle = PlayerPrefs.GetInt("SavedDyslexiaToggle");
+                    }
+
+                    GlobalVariables.dyslexiaMode = __instance.IntToBool(__instance.savedDyslexiaToggle);
+
+                    if (PlayerPrefs.HasKey("SavedTextSizeMultiplier"))
+                    {
+                        __instance.savedTextSizeMultiplier = PlayerPrefs.GetFloat("SavedTextSizeMultiplier");
+                    }
+
+                    GlobalVariables.textSizeMultiplier = __instance.savedTextSizeMultiplier;
                     
                     /*
                      * Fullscreen Option

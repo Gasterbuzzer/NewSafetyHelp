@@ -148,7 +148,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving volume. " +
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving CRT toggle. " +
                                           "Calling original function.");
                         return true;
                     }
@@ -186,7 +186,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving volume. " +
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving fullscreen. " +
                                           "Calling original function.");
                         return true;
                     }
@@ -268,6 +268,68 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 setSteamDeckResolution.Invoke(__instance, null); // __instance.SetSteamDeckResolution();
                 
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "DyslexiaToggle", typeof(bool))]
+        public static class DyslexiaTogglePatch
+        {
+            /// <summary>
+            /// DyslexiaToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Value of the checkbox</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedDyslexiaToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving dyslexia toggle. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedDyslexiaToggle = value;
+                }
+                
+                GlobalVariables.dyslexiaMode = value;
+                
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnTextSizeSliderChange")]
+        public static class OnTextSizeSliderChangePatch
+        {
+            /// <summary>
+            /// OnTextSizeSliderChange patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="__instance">Instance of the class.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(OptionsMenuBehavior __instance)
+            {
+                GlobalVariables.textSizeMultiplier = __instance.textSizeSlider.value;
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving text size. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedTextSizeMultiplier = __instance.textSizeSlider.value;
+                }
+
                 return false; // Skip original function.
             }
         }
