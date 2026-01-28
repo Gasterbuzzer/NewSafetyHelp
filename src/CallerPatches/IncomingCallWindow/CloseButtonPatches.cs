@@ -112,7 +112,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     // 3. Is a consequence caller that will be shown.
                     
                     #if DEBUG
-                    if (NewSafetyHelpMainClass.showSkippedCallerDebugLog.Value)
+                    if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
                     {
                         MelonLogger.Msg(ConsoleColor.DarkMagenta,
                             $"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
@@ -122,7 +122,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     #endif
 
                     #if DEBUG
-                    if (NewSafetyHelpMainClass.showSkippedCallerDebugLog.Value)
+                    if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
                     {
                         MelonLogger.Msg(ConsoleColor.DarkMagenta,
                             "DEBUG: Is ConsequenceProfile not null? (Meaning it's this current caller is a consequence caller):" +

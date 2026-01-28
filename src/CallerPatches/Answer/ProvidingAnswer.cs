@@ -162,7 +162,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
                 #if DEBUG
-                if (NewSafetyHelpMainClass.showSkippedCallerDebugLog.Value)
+                if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
                 {
                     MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: SubmitAnswer Called.");
                 }

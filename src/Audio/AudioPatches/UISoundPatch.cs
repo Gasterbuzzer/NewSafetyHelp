@@ -102,11 +102,14 @@ namespace NewSafetyHelp.Audio.AudioPatches
                         int chosenPhoneCall = Random.Range(0, maxExclusive);
 
                         #if DEBUG
+                        if (NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value)
+                        {
                             MelonLogger.Msg($"DEBUG: ChosenPhoneCall: '{chosenPhoneCall}'.\n" +
-                                              $"maxExclusive: '{maxExclusive}'.\n" +
-                                              $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
-                                              $"validRingtones.Any(r => r.AppendRingtone): '{validRingtones.Any(r => r.AppendRingtone)}'.\n" +
-                                              $"validRingtones.Count '{validRingtones.Count}'.\n");
+                                            $"maxExclusive: '{maxExclusive}'.\n" +
+                                            $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
+                                            $"validRingtones.Any(r => r.AppendRingtone): '{validRingtones.Any(r => r.AppendRingtone)}'.\n" +
+                                            $"validRingtones.Count '{validRingtones.Count}'.\n");
+                        }
                         #endif
 
                         if (doNotAccountDefaultRingtone)

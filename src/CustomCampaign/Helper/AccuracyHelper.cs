@@ -60,7 +60,7 @@ namespace NewSafetyHelp.CustomCampaign.Helper
                 float currentAccuracy = GetCorrectAccuracy(accuracyType.UseTotalAccuracy);
                 
                 #if DEBUG
-                if (NewSafetyHelpMainClass.showSkippedCallerDebugLog.Value)
+                if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
                 {
                     MelonLogger.Msg("DEBUG: Found" +
                                     $"Accuracy caller with current check '{accuracyType.AccuracyCheck.ToString()}' " +

@@ -567,10 +567,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             
             // Create Theme Saving
             
-            #if DEBUG
-                MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.ActiveTheme}).");
-            #endif
-            
             if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
             {
                 MelonPreferences_Entry<int> savedColorTheme = currentCampaign.CampaignSaveCategory.CreateEntry(

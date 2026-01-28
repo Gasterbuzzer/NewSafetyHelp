@@ -112,8 +112,11 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     }
                     
                     #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
-                                    $"and custom campaign activeTheme: {customCampaign.ActiveTheme}.");
+                    if (NewSafetyHelpMainClass.ShowThemeDebugLog.Value)
+                    {
+                        MelonLogger.Msg($"DEBUG: Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
+                                        $"and custom campaign activeTheme: {customCampaign.ActiveTheme}.");
+                    }
                     #endif
                     
                     // Now if we have not loaded in the default theme ever, we do it now.
@@ -254,7 +257,10 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
 
                 #if DEBUG
+                if (NewSafetyHelpMainClass.ShowThemeDebugLog.Value)
+                {
                     MelonLogger.Msg($"DEBUG: Color Palette change called with ID: {__instance.colorDropdown.value}");
+                }
                 #endif
                 
                 GlobalVariables.colorPaletteController.UpdateColorTheme();
