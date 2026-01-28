@@ -143,6 +143,7 @@
     <Compile Include="src\CustomCampaign\Helper\AccuracyType.cs" />
     <Compile Include="src\CustomCampaign\Saving\CustomCampaignOptionSaving.cs" />
     <Compile Include="src\CustomCampaign\Saving\CustomCampaignSaving.cs" />
+    <Compile Include="src\CustomCampaign\Saving\OptionUpdatePatches.cs" />
     <Compile Include="src\CustomCampaign\Saving\SavingSettingPatches.cs" />
     <Compile Include="src\CustomCampaign\Themes\ThemePatches.cs" />
     <Compile Include="src\CustomCampaign\Themes\CustomTheme.cs" />

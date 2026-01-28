@@ -222,7 +222,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "ColorThemeChanged", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "ColorThemeChanged")]
         public static class ColorThemeChangedPatch
         {
             /// <summary>
