@@ -161,11 +161,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     GlobalVariables.dyslexiaMode = __instance.IntToBool(__instance.savedDyslexiaToggle);
 
-                    if (PlayerPrefs.HasKey("SavedCRTToggle"))
-                    {
-                        __instance.savedCRTToggle = PlayerPrefs.GetInt("SavedCRTToggle", 1);
-                    }
-
                     if (PlayerPrefs.HasKey("SavedTextSizeMultiplier"))
                     {
                         __instance.savedTextSizeMultiplier = PlayerPrefs.GetFloat("SavedTextSizeMultiplier");
@@ -260,6 +255,15 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     __instance.savedCallerCorrectAnswers = __instance.LoadBoolArray("SavedCallerCorrectAnswer",
                         __instance.savedCallerArrayLength);
+                    
+                    /*
+                     * Screen Effects
+                     */
+                    
+                    if (PlayerPrefs.HasKey("SavedCRTToggle"))
+                    {
+                        __instance.savedCRTToggle = PlayerPrefs.GetInt("SavedCRTToggle", 1);
+                    }
                     
                     /*
                      * Volume

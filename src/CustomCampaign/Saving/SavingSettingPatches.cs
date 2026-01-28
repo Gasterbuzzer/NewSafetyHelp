@@ -44,9 +44,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     PlayerPrefs.SetInt("SavedCallSkipToggle", __instance.savedCallSkipToggle);
                 }
 
-                __instance.savedFullScreenToggle = __instance.BoolToInt(GlobalVariables.isFullScreen);
-                PlayerPrefs.SetInt("SavedFullScreenToggle", __instance.savedFullScreenToggle);
-
                 __instance.savedScreenHeight = GlobalVariables.screenHeightSetting;
                 __instance.savedScreenWidth = GlobalVariables.screenWidthSetting;
                 PlayerPrefs.SetInt("SavedScreenHeight", __instance.savedScreenHeight);
@@ -57,8 +54,9 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 __instance.savedTextSizeMultiplier = GlobalVariables.textSizeMultiplier;
                 PlayerPrefs.SetFloat("SavedTextSizeMultiplier", __instance.savedTextSizeMultiplier);
-
-                PlayerPrefs.SetInt("SavedCRTToggle", __instance.savedCRTToggle);
+                
+                __instance.savedFullScreenToggle = __instance.BoolToInt(GlobalVariables.isFullScreen);
+                PlayerPrefs.SetInt("SavedFullScreenToggle", __instance.savedFullScreenToggle);
 
                 /*
                  * Specially handled settings.
@@ -66,6 +64,9 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Screen effects
+                    PlayerPrefs.SetInt("SavedCRTToggle", __instance.savedCRTToggle);
+                    
                     // Volume
                     PlayerPrefs.SetFloat("SavedMusicVolume", __instance.savedMusicVolume);
                     PlayerPrefs.SetFloat("SavedSFXVolume", __instance.savedSFXVolume);
@@ -121,8 +122,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDogToggle);
                 __instance.dyslexiaToggle.isOn =
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDyslexiaToggle);
-                __instance.crtToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCRTToggle);
                 __instance.immunityToggle.isOn =
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
                 __instance.xmasImmunityToggle.isOn =
@@ -135,6 +134,9 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Screen Effects
+                    __instance.crtToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCRTToggle);
+                    
                     // Volume
                     __instance.musicSlider.value = GlobalVariables.saveManagerScript.savedMusicVolume;
                     __instance.sfxSlider.value = GlobalVariables.saveManagerScript.savedSFXVolume;
@@ -154,6 +156,9 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                                           " Calling original function.");
                         return false;
                     }
+                    
+                    // Screen Effects
+                    __instance.crtToggle.isOn = customCampaign.SavedCRTToggle;
 
                     // Volume
                     __instance.musicSlider.value = customCampaign.SavedMusicVolume;

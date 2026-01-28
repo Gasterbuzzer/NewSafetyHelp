@@ -23,7 +23,18 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
             
-            // Volume
+            /*
+             * Screen Effects
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCRTToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedCRTToggle",true);
+            }
+            
+            /*
+             * Volume
+             */
             
             if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedMusicVolume") == null)
             {
@@ -40,7 +51,9 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 currentCampaign.CampaignSaveCategory.CreateEntry("savedAmbienceVolume",1.0f);
             }
             
-            // Theme
+            /*
+             * Theme
+             */
             
             if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
             {
@@ -85,6 +98,21 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
+            
+            /*
+             * Screen Effects
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCRTToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedCRTToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedCRTToggle",true);
+
+                savedCRTToggle.Value = currentCampaign.SavedCRTToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCRTToggle").Value = currentCampaign.SavedCRTToggle;
+            }
             
             /*
              * Volume
@@ -194,9 +222,13 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Load all values first into the currentCampaign instance.
             
             /*
+             * Screen Effects
+             */
+            currentCampaign.SavedCRTToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCRTToggle").Value;
+            
+            /*
              * Volume
              */
-            
             currentCampaign.SavedMusicVolume = currentCampaign.CampaignSaveCategory.GetEntry<float>("savedMusicVolume").Value;
             currentCampaign.SavedSFXVolume = currentCampaign.CampaignSaveCategory.GetEntry<float>("savedSFXVolume").Value;
             currentCampaign.SavedAmbienceVolume = currentCampaign.CampaignSaveCategory.GetEntry<float>("savedAmbienceVolume").Value;
@@ -212,6 +244,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /*
              * Load the values into actual game values now.
              */
+            
+            /*
+             * Screen Effects
+             */
+            GlobalVariables.saveManagerScript.savedCRTToggle = currentCampaign.SavedCRTToggle ? 1 : 0;
             
             /*
              * Volume

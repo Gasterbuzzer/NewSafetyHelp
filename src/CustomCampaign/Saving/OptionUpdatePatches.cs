@@ -127,5 +127,43 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return false; // Skip original function.
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "CRTToggle", typeof(bool))]
+        public static class CRTTogglePatch
+        {
+            /// <summary>
+            /// CRTToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Value of the checkbox</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedCRTToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving volume. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedCRTToggle = value;
+                }
+                
+                // Applying the value.
+                if (GlobalVariables.crtShader == null)
+                {
+                    return false;
+                }
+
+                GlobalVariables.crtShader.scanlineIntensity = value ? 8f : 0.0f;
+                
+                return false; // Skip original function.
+            }
+        }
     }
 }

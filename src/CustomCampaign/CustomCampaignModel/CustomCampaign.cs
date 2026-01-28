@@ -85,11 +85,17 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public int SavedGameFinished = 0;
         public int SavedGameFinishedDisplay = 0;
         
-        // Options Saved
+        /*
+         * Options Saved
+         */
 
+        // Volume
         public float SavedMusicVolume = 1.0f;
         public float SavedSFXVolume = 1.0f;
         public float SavedAmbienceVolume = 1.0f;
+
+        // Screen Effects
+        public bool SavedCRTToggle = true; // If to use the CRT Screen effect.
 
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.
