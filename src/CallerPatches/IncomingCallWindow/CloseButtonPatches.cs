@@ -112,21 +112,27 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     // 3. Is a consequence caller that will be shown.
                     
                     #if DEBUG
-                    MelonLogger.Msg(ConsoleColor.DarkMagenta,
-                        $"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
-                        $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'." +
-                        $" Is a accuracy caller?: '{customCCallerFound.IsAccuracyCaller}'.");
+                    if (NewSafetyHelpMainClass.showSkippedCallerDebugLog.Value)
+                    {
+                        MelonLogger.Msg(ConsoleColor.DarkMagenta,
+                            $"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
+                            $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'." +
+                            $" Is a accuracy caller?: '{customCCallerFound.IsAccuracyCaller}'.");
+                    }
                     #endif
 
                     #if DEBUG
-                    MelonLogger.Msg(ConsoleColor.DarkMagenta,
-                        "DEBUG: Is ConsequenceProfile not null? (Meaning it's this current caller is a consequence caller):" +
-                        $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
-                        ".\n" +
-                        " Is this caller allowed to be called? (Meaning we got the answer wrong from the previous caller): " +
-                        $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
-                        ".\n " +
-                        $"Is this caller the last one of the day? '{customCCallerFound.LastDayCaller}'.");
+                    if (NewSafetyHelpMainClass.showSkippedCallerDebugLog.Value)
+                    {
+                        MelonLogger.Msg(ConsoleColor.DarkMagenta,
+                            "DEBUG: Is ConsequenceProfile not null? (Meaning it's this current caller is a consequence caller):" +
+                            $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
+                            ".\n" +
+                            " Is this caller allowed to be called? (Meaning we got the answer wrong from the previous caller): " +
+                            $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
+                            ".\n " +
+                            $"Is this caller the last one of the day? '{customCCallerFound.LastDayCaller}'.");
+                    }
                     #endif
 
                     // Consequence caller

@@ -161,9 +161,11 @@ namespace NewSafetyHelp.CallerPatches.Answer
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
-                
                 #if DEBUG
+                if (NewSafetyHelpMainClass.showSkippedCallerDebugLog.Value)
+                {
                     MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: SubmitAnswer Called.");
+                }
                 #endif
                 
                 FieldInfo onCallConcluded = typeof(CallerController).GetField("OnCallConcluded",

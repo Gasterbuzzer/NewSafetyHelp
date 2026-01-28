@@ -18,6 +18,7 @@ namespace NewSafetyHelp
         
         private static MelonPreferences_Category mainModSettings;
         private static MelonPreferences_Entry<bool> skipComputerScene; // If to skip the initial computer scene.
+        public static MelonPreferences_Entry<bool> showSkippedCallerDebugLog; // If to show the skipped callers debug log.
 
         public override void OnInitializeMelon()
         {
@@ -27,6 +28,7 @@ namespace NewSafetyHelp
             // Settings
             mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
             skipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
+            showSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);
             
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;

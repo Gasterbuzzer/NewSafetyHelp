@@ -74,7 +74,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                 return false; // Skip original function.
             }
 
-            public static IEnumerator DelayedStartCoroutine(EntryListingBehavior __instance)
+            private static IEnumerator DelayedStartCoroutine(EntryListingBehavior __instance)
             {
                 yield return null;
 
