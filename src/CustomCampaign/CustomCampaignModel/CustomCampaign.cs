@@ -96,6 +96,9 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
 
         // Screen Effects
         public bool SavedCRTToggle = true; // If to use the CRT Screen effect.
+        
+        // Screen Options
+        public bool SavedFullScreenToggle = true; // If fullscreen is enabled.
 
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.

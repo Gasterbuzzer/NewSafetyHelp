@@ -24,6 +24,15 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             }
             
             /*
+             * Fullscreen Option
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedFullScreenToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedFullScreenToggle",true);
+            }
+            
+            /*
              * Screen Effects
              */
             
@@ -98,6 +107,21 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
+            
+            /*
+             * Fullscreen Option
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedFullScreenToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedFullScreenToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedFullScreenToggle",true);
+
+                savedFullScreenToggle.Value = currentCampaign.SavedFullScreenToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedFullScreenToggle").Value = currentCampaign.SavedFullScreenToggle;
+            }
             
             /*
              * Screen Effects
@@ -222,6 +246,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Load all values first into the currentCampaign instance.
             
             /*
+             * Fullscreen Option
+             */
+            currentCampaign.SavedFullScreenToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedFullScreenToggle").Value;
+            
+            /*
              * Screen Effects
              */
             currentCampaign.SavedCRTToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCRTToggle").Value;
@@ -244,6 +273,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /*
              * Load the values into actual game values now.
              */
+            
+            /*
+             * Fullscreen Option
+             */
+            GlobalVariables.saveManagerScript.savedFullScreenToggle = currentCampaign.SavedFullScreenToggle ? 1 : 0;
             
             /*
              * Screen Effects

@@ -26,16 +26,16 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
                 else if (GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo _saveXmasGameProgress = typeof(SaveManagerBehavior).GetMethod("SaveXmasGameProgress",
+                    MethodInfo saveXmasGameProgress = typeof(SaveManagerBehavior).GetMethod("SaveXmasGameProgress",
                         BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                    if (_saveXmasGameProgress == null)
+                    if (saveXmasGameProgress == null)
                     {
                         MelonLogger.Error("ERROR: Method 'SaveXmasGameProgress' was null. Calling normal function.");
                         return true;
                     }
 
-                    _saveXmasGameProgress.Invoke(__instance, null); // __instance.SaveXmasGameProgress();
+                    saveXmasGameProgress.Invoke(__instance, null); // __instance.SaveXmasGameProgress();
                 }
                 else
                 {
@@ -67,16 +67,16 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
                 else if (GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo _saveXmasGameFinished = typeof(SaveManagerBehavior).GetMethod("SaveXmasGameFinished",
+                    MethodInfo saveXmasGameFinished = typeof(SaveManagerBehavior).GetMethod("SaveXmasGameFinished",
                         BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                    if (_saveXmasGameFinished == null)
+                    if (saveXmasGameFinished == null)
                     {
                         MelonLogger.Error("ERROR: Method 'SaveXmasGameFinished' was null. Calling normal function.");
                         return true;
                     }
 
-                    _saveXmasGameFinished.Invoke(__instance, null); // __instance.SaveXmasGameFinished();
+                    saveXmasGameFinished.Invoke(__instance, null); // __instance.SaveXmasGameFinished();
                 }
                 else
                 {
@@ -168,13 +168,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     GlobalVariables.textSizeMultiplier = __instance.savedTextSizeMultiplier;
 
-                    if (PlayerPrefs.HasKey("SavedFullScreenToggle"))
-                    {
-                        __instance.savedFullScreenToggle = PlayerPrefs.GetInt("SavedFullScreenToggle");
-                    }
-
-                    GlobalVariables.isFullScreen = __instance.IntToBool(__instance.savedFullScreenToggle);
-
                     if (PlayerPrefs.HasKey("SavedScreenHeight"))
                     {
                         __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
@@ -210,11 +203,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     }
 
                     GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
-
-                    if (PlayerPrefs.HasKey("SavedArcadeScore"))
-                    {
-                        __instance.savedArcadeScore = PlayerPrefs.GetFloat("SavedArcadeScore");
-                    }
                 }
 
                 /*
@@ -255,6 +243,17 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     __instance.savedCallerCorrectAnswers = __instance.LoadBoolArray("SavedCallerCorrectAnswer",
                         __instance.savedCallerArrayLength);
+                    
+                    /*
+                     * Fullscreen Option
+                     */
+                    
+                    if (PlayerPrefs.HasKey("SavedFullScreenToggle"))
+                    {
+                        __instance.savedFullScreenToggle = PlayerPrefs.GetInt("SavedFullScreenToggle");
+                    }
+
+                    GlobalVariables.isFullScreen = __instance.IntToBool(__instance.savedFullScreenToggle);
                     
                     /*
                      * Screen Effects
@@ -345,6 +344,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     if (PlayerPrefs.HasKey("SavedDayScore7"))
                     {
                         __instance.savedDayScore7 = PlayerPrefs.GetFloat("SavedDayScore7");
+                    }
+                    
+                    if (PlayerPrefs.HasKey("SavedArcadeScore"))
+                    {
+                        __instance.savedArcadeScore = PlayerPrefs.GetFloat("SavedArcadeScore");
                     }
                 }
 

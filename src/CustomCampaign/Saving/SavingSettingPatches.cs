@@ -54,9 +54,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 __instance.savedTextSizeMultiplier = GlobalVariables.textSizeMultiplier;
                 PlayerPrefs.SetFloat("SavedTextSizeMultiplier", __instance.savedTextSizeMultiplier);
-                
-                __instance.savedFullScreenToggle = __instance.BoolToInt(GlobalVariables.isFullScreen);
-                PlayerPrefs.SetInt("SavedFullScreenToggle", __instance.savedFullScreenToggle);
 
                 /*
                  * Specially handled settings.
@@ -64,6 +61,10 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Fullscreen
+                    __instance.savedFullScreenToggle = __instance.BoolToInt(GlobalVariables.isFullScreen);
+                    PlayerPrefs.SetInt("SavedFullScreenToggle", __instance.savedFullScreenToggle);
+                    
                     // Screen effects
                     PlayerPrefs.SetInt("SavedCRTToggle", __instance.savedCRTToggle);
                     
@@ -171,6 +172,45 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
 
                 return false; // Skip the original function
+            }
+        }
+
+        [HarmonyLib.HarmonyPatch(typeof(LogoManager), "LoadVideoSettings")]
+        public static class LoadVideoSettingsPatch
+        {
+            /// <summary>
+            /// Patches the "LoadVideoSettings" function to not use the save managers values and instead the custom campaigns ones.
+            /// </summary>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix()
+            {
+                if (GlobalVariables.saveManagerScript.savedScreenHeight == 0)
+                {
+                    return false;
+                }
+
+                if (!CustomCampaignGlobal.InCustomCampaign)
+                {
+                    Screen.SetResolution(GlobalVariables.saveManagerScript.savedScreenHeight,
+                        GlobalVariables.saveManagerScript.savedScreenWidth,
+                        GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedFullScreenToggle));
+                }
+                else
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign is null. Unable to loading video settings. Calling original function.");
+                        return true;
+                    }
+                    
+                    Screen.SetResolution(GlobalVariables.saveManagerScript.savedScreenHeight,
+                        GlobalVariables.saveManagerScript.savedScreenWidth,
+                        customCampaign.SavedFullScreenToggle);
+                }
+                
+                return false;
             }
         }
     }

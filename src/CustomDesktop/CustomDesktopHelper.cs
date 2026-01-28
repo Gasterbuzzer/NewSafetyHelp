@@ -203,16 +203,16 @@ namespace NewSafetyHelp.CustomDesktop
 
                 // Mark the email as not read.
 
-                FieldInfo _hasClicked = typeof(EmailListingBehavior).GetField("hasClicked",
+                FieldInfo hasClicked = typeof(EmailListingBehavior).GetField("hasClicked",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-                if (_hasClicked == null)
+                if (hasClicked == null)
                 {
                     MelonLogger.Warning("WARNING: HasClicked Field could not be found (null).");
                 }
                 else
                 {
-                    _hasClicked.SetValue(emailListing, false); // emailListing.hasClicked = false;
+                    hasClicked.SetValue(emailListing, false); // emailListing.hasClicked = false;
                 }
 
                 return newEmail;
