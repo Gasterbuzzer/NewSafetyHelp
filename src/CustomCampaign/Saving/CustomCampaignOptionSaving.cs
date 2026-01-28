@@ -24,6 +24,45 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             }
             
             /*
+             * Phobias
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedSpiderToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedSpiderToggle",false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedInsectToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedInsectToggle",false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDarkToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedDarkToggle",false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedHoleToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedHoleToggle",false);
+            }
+
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedWatchToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedWatchToggle",false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDogToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedDogToggle",false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedTightToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedTightToggle",false);
+            }
+            
+            /*
              * Text options
              */
             
@@ -121,6 +160,87 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
+            
+            /*
+             * Phobias
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedSpiderToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedSpiderToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedSpiderToggle",false);
+                
+                savedSpiderToggle.Value = currentCampaign.SavedSpiderToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedSpiderToggle").Value = currentCampaign.SavedSpiderToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedInsectToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedInsectToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedInsectToggle",false);
+                
+                savedInsectToggle.Value = currentCampaign.SavedInsectToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedInsectToggle").Value = currentCampaign.SavedInsectToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDarkToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedDarkToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedDarkToggle",false);
+                
+                savedDarkToggle.Value = currentCampaign.SavedDarkToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDarkToggle").Value = currentCampaign.SavedDarkToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedHoleToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedHoleToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedHoleToggle",false);
+                
+                savedHoleToggle.Value = currentCampaign.SavedHoleToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedHoleToggle").Value = currentCampaign.SavedHoleToggle;
+            }
+
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedWatchToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedWatchToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedWatchToggle",false);
+                
+                savedWatchToggle.Value = currentCampaign.SavedWatchToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedWatchToggle").Value = currentCampaign.SavedWatchToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDogToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedDogToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedDogToggle",false);
+                
+                savedDogToggle.Value = currentCampaign.SavedDogToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDogToggle").Value = currentCampaign.SavedDogToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedTightToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedTightToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedTightToggle",false);
+                
+                savedTightToggle.Value = currentCampaign.SavedTightToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedTightToggle").Value = currentCampaign.SavedTightToggle;
+            }
             
             /*
              * Text options
@@ -285,6 +405,17 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Load all values first into the currentCampaign instance.
             
             /*
+             * Phobia Options
+             */
+            currentCampaign.SavedSpiderToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedSpiderToggle").Value;
+            currentCampaign.SavedInsectToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedInsectToggle").Value;
+            currentCampaign.SavedDarkToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDarkToggle").Value;
+            currentCampaign.SavedDogToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDogToggle").Value;
+            currentCampaign.SavedWatchToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedWatchToggle").Value;
+            currentCampaign.SavedHoleToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedHoleToggle").Value;
+            currentCampaign.SavedTightToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedTightToggle").Value;
+            
+            /*
              * Text Options
              */
             currentCampaign.SavedDyslexiaToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedDyslexiaToggle").Value;
@@ -318,6 +449,17 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /*
              * Load the values into actual game values now.
              */
+            
+            /*
+             * Phobia Options
+             */
+            GlobalVariables.saveManagerScript.savedSpiderToggle = currentCampaign.SavedSpiderToggle ? 1 : 0;
+            GlobalVariables.saveManagerScript.savedInsectToggle = currentCampaign.SavedInsectToggle ? 1 : 0;
+            GlobalVariables.saveManagerScript.savedDarkToggle = currentCampaign.SavedDarkToggle ? 1 : 0;
+            GlobalVariables.saveManagerScript.savedDogToggle = currentCampaign.SavedDogToggle ? 1 : 0;
+            GlobalVariables.saveManagerScript.savedWatchToggle = currentCampaign.SavedWatchToggle ? 1 : 0;
+            GlobalVariables.saveManagerScript.savedHoleToggle = currentCampaign.SavedHoleToggle ? 1 : 0;
+            GlobalVariables.saveManagerScript.savedTightToggle = currentCampaign.SavedTightToggle ? 1 : 0;
             
             /*
              * Text Options

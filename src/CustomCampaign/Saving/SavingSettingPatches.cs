@@ -16,15 +16,18 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(SaveManagerBehavior __instance)
             {
-                PlayerPrefs.SetInt("SavedSpiderToggle", __instance.savedSpiderToggle);
-                PlayerPrefs.SetInt("SavedInsectToggle", __instance.savedInsectToggle);
-                PlayerPrefs.SetInt("SavedDarkToggle", __instance.savedDarkToggle);
-                PlayerPrefs.SetInt("SavedHoleToggle", __instance.savedHoleToggle);
-                PlayerPrefs.SetInt("SavedWatchToggle", __instance.savedWatchToggle);
-                PlayerPrefs.SetInt("SavedDogToggle", __instance.savedDogToggle);
-
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Phobia Options
+                    PlayerPrefs.SetInt("SavedSpiderToggle", __instance.savedSpiderToggle);
+                    PlayerPrefs.SetInt("SavedInsectToggle", __instance.savedInsectToggle);
+                    PlayerPrefs.SetInt("SavedDarkToggle", __instance.savedDarkToggle);
+                    PlayerPrefs.SetInt("SavedHoleToggle", __instance.savedHoleToggle);
+                    PlayerPrefs.SetInt("SavedWatchToggle", __instance.savedWatchToggle);
+                    PlayerPrefs.SetInt("SavedDogToggle", __instance.savedDogToggle);
+                    PlayerPrefs.SetInt("SavedTightToggle", __instance.savedTightToggle);
+                    
+                    // Dyslexia
                     PlayerPrefs.SetInt("SavedDyslexiaToggle", __instance.savedDyslexiaToggle);
                 }
                 
@@ -107,21 +110,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 {
                     return false;
                 }
-
-                __instance.spiderToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedSpiderToggle);
-                __instance.insectToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedInsectToggle);
-                __instance.darkToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDarkToggle);
-                __instance.holeToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedHoleToggle);
-                __instance.watchToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedWatchToggle);
-                __instance.tightToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedTightToggle);
-                __instance.dogToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDogToggle);
+                
                 __instance.immunityToggle.isOn =
                     GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
                 __instance.xmasImmunityToggle.isOn =
@@ -134,6 +123,15 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Phobia Options
+                    __instance.spiderToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedSpiderToggle);
+                    __instance.insectToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedInsectToggle);
+                    __instance.darkToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDarkToggle);
+                    __instance.holeToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedHoleToggle);
+                    __instance.watchToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedWatchToggle);
+                    __instance.tightToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedTightToggle);
+                    __instance.dogToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDogToggle);
+                    
                     // Text Options
                     __instance.dyslexiaToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedDyslexiaToggle);
                     __instance.textSizeSlider.value = GlobalVariables.saveManagerScript.savedTextSizeMultiplier;
@@ -160,6 +158,15 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                                           " Calling original function.");
                         return false;
                     }
+                    
+                    // Phobia Options
+                    __instance.spiderToggle.isOn = customCampaign.SavedSpiderToggle;
+                    __instance.insectToggle.isOn = customCampaign.SavedInsectToggle;
+                    __instance.darkToggle.isOn = customCampaign.SavedDarkToggle;
+                    __instance.holeToggle.isOn = customCampaign.SavedHoleToggle;
+                    __instance.watchToggle.isOn = customCampaign.SavedWatchToggle;
+                    __instance.tightToggle.isOn = customCampaign.SavedTightToggle;
+                    __instance.dogToggle.isOn = customCampaign.SavedDogToggle;
                     
                     // Text Options
                     __instance.dyslexiaToggle.isOn = customCampaign.SavedDyslexiaToggle;

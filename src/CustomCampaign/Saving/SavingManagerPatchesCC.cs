@@ -124,6 +124,58 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 {
                     // Options
                     // These are allowed to be loaded without checking if in a custom campaign or not.
+
+                    if (PlayerPrefs.HasKey("SavedScreenHeight"))
+                    {
+                        __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
+                    }
+
+                    GlobalVariables.screenHeightSetting = __instance.savedScreenHeight;
+
+                    if (PlayerPrefs.HasKey("SavedScreenWidth"))
+                    {
+                        __instance.savedScreenWidth = PlayerPrefs.GetInt("SavedScreenWidth");
+                    }
+
+                    GlobalVariables.screenWidthSetting = __instance.savedScreenWidth;
+                    
+                    if (PlayerPrefs.HasKey("SavedRefreshRate"))
+                    {
+                        __instance.savedRefreshRate = PlayerPrefs.GetInt("SavedRefreshRate");
+                    }
+
+                    GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
+
+                    if (PlayerPrefs.HasKey("SavedImmunityToggle"))
+                    {
+                        __instance.savedImmunityToggle = PlayerPrefs.GetInt("SavedImmunityToggle", 0);
+                    }
+
+                    if (PlayerPrefs.HasKey("SavedAccuracyToggle"))
+                    {
+                        __instance.savedAccuracyToggle = PlayerPrefs.GetInt("SavedAccuracyToggle", 0);
+                    }
+
+                    if (PlayerPrefs.HasKey("SavedCallSkipToggle"))
+                    {
+                        __instance.savedCallSkipToggle = PlayerPrefs.GetInt("SavedCallSkipToggle", 0);
+                    }
+                }
+
+                /*
+                 * Special loading. (Options that are saved differently)
+                 */
+
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                {
+                    CustomCampaignOptionSaving.LoadCustomCampaignOptions();
+                }
+                else if (!GlobalVariables.isXmasDLC) // Everything else, except for DLC, since the DLC handles itself.
+                {
+                    /*
+                     * Phobias
+                     */
+                    
                     if (PlayerPrefs.HasKey("SavedSpiderToggle"))
                     {
                         __instance.savedSpiderToggle = PlayerPrefs.GetInt("SavedSpiderToggle");
@@ -153,54 +205,12 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     {
                         __instance.savedDogToggle = PlayerPrefs.GetInt("SavedDogToggle");
                     }
-
-                    if (PlayerPrefs.HasKey("SavedScreenHeight"))
+                    
+                    if (PlayerPrefs.HasKey("SavedTightToggle"))
                     {
-                        __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
+                        __instance.savedTightToggle = PlayerPrefs.GetInt("SavedTightToggle");
                     }
-
-                    GlobalVariables.screenHeightSetting = __instance.savedScreenHeight;
-
-                    if (PlayerPrefs.HasKey("SavedScreenWidth"))
-                    {
-                        __instance.savedScreenWidth = PlayerPrefs.GetInt("SavedScreenWidth");
-                    }
-
-                    GlobalVariables.screenWidthSetting = __instance.savedScreenWidth;
-
-                    if (PlayerPrefs.HasKey("SavedImmunityToggle"))
-                    {
-                        __instance.savedImmunityToggle = PlayerPrefs.GetInt("SavedImmunityToggle", 0);
-                    }
-
-                    if (PlayerPrefs.HasKey("SavedAccuracyToggle"))
-                    {
-                        __instance.savedAccuracyToggle = PlayerPrefs.GetInt("SavedAccuracyToggle", 0);
-                    }
-
-                    if (PlayerPrefs.HasKey("SavedCallSkipToggle"))
-                    {
-                        __instance.savedCallSkipToggle = PlayerPrefs.GetInt("SavedCallSkipToggle", 0);
-                    }
-
-                    if (PlayerPrefs.HasKey("SavedRefreshRate"))
-                    {
-                        __instance.savedRefreshRate = PlayerPrefs.GetInt("SavedRefreshRate");
-                    }
-
-                    GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
-                }
-
-                /*
-                 * Special loading. (Options that are saved differently)
-                 */
-
-                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
-                {
-                    CustomCampaignOptionSaving.LoadCustomCampaignOptions();
-                }
-                else if (!GlobalVariables.isXmasDLC) // Everything else, except for DLC, since the DLC handles itself.
-                {
+                    
                     /*
                      * Saved Values
                      */

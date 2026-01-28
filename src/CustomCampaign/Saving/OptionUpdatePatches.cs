@@ -333,5 +333,215 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return false; // Skip original function.
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "SpiderToggle", typeof(bool))]
+        public static class SpiderTogglePatch
+        {
+            /// <summary>
+            /// SpiderToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedSpiderToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedSpiderToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "InsectToggle", typeof(bool))]
+        public static class InsectTogglePatch
+        {
+            /// <summary>
+            /// InsectToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedInsectToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedInsectToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "DarkToggle", typeof(bool))]
+        public static class DarkTogglePatch
+        {
+            /// <summary>
+            /// DarkToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedDarkToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedDarkToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "HoleToggle", typeof(bool))]
+        public static class HoleTogglePatch
+        {
+            /// <summary>
+            /// HoleToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedHoleToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedHoleToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "WatchToggle", typeof(bool))]
+        public static class WatchTogglePatch
+        {
+            /// <summary>
+            /// WatchToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedWatchToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedWatchToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "TightToggle", typeof(bool))]
+        public static class TightTogglePatch
+        {
+            /// <summary>
+            /// TightToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedTightToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedTightToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "DogToggle", typeof(bool))]
+        public static class DogTogglePatch
+        {
+            /// <summary>
+            /// DogToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedDogToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedDogToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
     }
 }

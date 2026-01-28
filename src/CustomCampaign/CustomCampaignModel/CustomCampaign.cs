@@ -103,6 +103,15 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         // Text Settings
         public bool SavedDyslexiaToggle = false;
         public float SavedTextSizeMultiplier = 1.0f;
+        
+        // Phobias
+        public bool SavedSpiderToggle = false;
+        public bool SavedInsectToggle = false;
+        public bool SavedDarkToggle = false;
+        public bool SavedHoleToggle = false;
+        public bool SavedWatchToggle = false;
+        public bool SavedDogToggle = false;
+        public bool SavedTightToggle = false;
 
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.
