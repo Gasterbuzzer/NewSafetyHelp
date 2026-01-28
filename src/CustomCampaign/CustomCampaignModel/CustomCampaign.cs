@@ -84,6 +84,12 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         // Special Saves
         public int SavedGameFinished = 0;
         public int SavedGameFinishedDisplay = 0;
+        
+        // Options Saved
+
+        public float SavedMusicVolume = 1.0f;
+        public float SavedSFXVolume = 1.0f;
+        public float SavedAmbienceVolume = 1.0f;
 
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.

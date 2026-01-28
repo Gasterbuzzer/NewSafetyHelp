@@ -23,6 +23,25 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
             
+            // Volume
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedMusicVolume") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedMusicVolume",1.0f);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedSFXVolume") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedSFXVolume",1.0f);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedAmbienceVolume") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedAmbienceVolume",1.0f);
+            }
+            
+            // Theme
+            
             if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
             {
                 currentCampaign.CampaignSaveCategory.CreateEntry("savedColorTheme", 0);
@@ -67,7 +86,46 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
             
-            // Create Theme Saving
+            /*
+             * Volume
+             */
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedMusicVolume") == null)
+            {
+                MelonPreferences_Entry<float> savedMusicVolume = 
+                    currentCampaign.CampaignSaveCategory.CreateEntry("savedMusicVolume",1.0f);
+
+                savedMusicVolume.Value = currentCampaign.SavedMusicVolume;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<float>("savedMusicVolume").Value = currentCampaign.SavedMusicVolume;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedSFXVolume") == null)
+            {
+                MelonPreferences_Entry<float> savedSFXVolume = currentCampaign.CampaignSaveCategory.CreateEntry("savedSFXVolume",1.0f);
+                
+                savedSFXVolume.Value = currentCampaign.SavedSFXVolume;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<float>("savedSFXVolume").Value = currentCampaign.SavedSFXVolume;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<float>("savedAmbienceVolume") == null)
+            {
+                MelonPreferences_Entry<float> savedAmbienceVolume = currentCampaign.CampaignSaveCategory.CreateEntry("savedAmbienceVolume",1.0f);
+                
+                savedAmbienceVolume.Value = currentCampaign.SavedAmbienceVolume;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<float>("savedAmbienceVolume").Value = currentCampaign.SavedAmbienceVolume;
+            }
+            
+            /*
+             * Theme
+             */
             if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme") == null)
             {
                 MelonPreferences_Entry<int> savedColorTheme = currentCampaign.CampaignSaveCategory.CreateEntry(
@@ -133,7 +191,19 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
             #endif
             
-            // Load all values first into the currentCampaign Object.
+            // Load all values first into the currentCampaign instance.
+            
+            /*
+             * Volume
+             */
+            
+            currentCampaign.SavedMusicVolume = currentCampaign.CampaignSaveCategory.GetEntry<float>("savedMusicVolume").Value;
+            currentCampaign.SavedSFXVolume = currentCampaign.CampaignSaveCategory.GetEntry<float>("savedSFXVolume").Value;
+            currentCampaign.SavedAmbienceVolume = currentCampaign.CampaignSaveCategory.GetEntry<float>("savedAmbienceVolume").Value;
+            
+            /*
+             * Theme
+             */
             currentCampaign.ActiveTheme = currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value;
             
             // If we have applied the default theme at least once.
@@ -142,7 +212,17 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /*
              * Load the values into actual game values now.
              */
-
+            
+            /*
+             * Volume
+             */
+            GlobalVariables.saveManagerScript.savedMusicVolume = currentCampaign.SavedMusicVolume;
+            GlobalVariables.saveManagerScript.savedSFXVolume = currentCampaign.SavedSFXVolume;
+            GlobalVariables.saveManagerScript.savedAmbienceVolume = currentCampaign.SavedAmbienceVolume;
+            
+            /*
+             * Theme
+             */
             GlobalVariables.saveManagerScript.savedColorTheme = currentCampaign.ActiveTheme;
             
             if ((bool)GlobalVariables.colorPaletteController)
