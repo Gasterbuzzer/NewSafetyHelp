@@ -125,27 +125,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     // Options
                     // These are allowed to be loaded without checking if in a custom campaign or not.
 
-                    if (PlayerPrefs.HasKey("SavedScreenHeight"))
-                    {
-                        __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
-                    }
-
-                    GlobalVariables.screenHeightSetting = __instance.savedScreenHeight;
-
-                    if (PlayerPrefs.HasKey("SavedScreenWidth"))
-                    {
-                        __instance.savedScreenWidth = PlayerPrefs.GetInt("SavedScreenWidth");
-                    }
-
-                    GlobalVariables.screenWidthSetting = __instance.savedScreenWidth;
-                    
-                    if (PlayerPrefs.HasKey("SavedRefreshRate"))
-                    {
-                        __instance.savedRefreshRate = PlayerPrefs.GetInt("SavedRefreshRate");
-                    }
-
-                    GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
-
                     if (PlayerPrefs.HasKey("SavedImmunityToggle"))
                     {
                         __instance.savedImmunityToggle = PlayerPrefs.GetInt("SavedImmunityToggle", 0);
@@ -172,6 +151,30 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 }
                 else if (!GlobalVariables.isXmasDLC) // Everything else, except for DLC, since the DLC handles itself.
                 {
+                    /*
+                     * Screen Settings
+                     */
+                    
+                    if (PlayerPrefs.HasKey("SavedScreenHeight"))
+                    {
+                        __instance.savedScreenHeight = PlayerPrefs.GetInt("SavedScreenHeight");
+                    }
+
+                    GlobalVariables.screenHeightSetting = __instance.savedScreenHeight;
+
+                    if (PlayerPrefs.HasKey("SavedScreenWidth"))
+                    {
+                        __instance.savedScreenWidth = PlayerPrefs.GetInt("SavedScreenWidth");
+                    }
+
+                    GlobalVariables.screenWidthSetting = __instance.savedScreenWidth;
+                    
+                    if (PlayerPrefs.HasKey("SavedRefreshRate"))
+                    {
+                        __instance.savedRefreshRate = PlayerPrefs.GetInt("SavedRefreshRate");
+                    }
+                    GlobalVariables.refreshRateSetting = __instance.savedRefreshRate;
+                    
                     /*
                      * Phobias
                      */

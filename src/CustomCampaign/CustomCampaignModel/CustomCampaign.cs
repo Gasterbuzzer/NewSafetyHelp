@@ -99,6 +99,9 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         
         // Screen Options
         public bool SavedFullScreenToggle = true; // If fullscreen is enabled.
+        public int SavedScreenHeight = 1080; // Screen Height
+        public int SavedScreenWidth = 1920; // Screen Width
+        public int SavedRefreshRate = 180; // Screen Refresh Rate
         
         // Text Settings
         public bool SavedDyslexiaToggle = false;

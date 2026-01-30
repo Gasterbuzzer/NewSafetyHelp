@@ -51,16 +51,17 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     PlayerPrefs.SetInt("SavedCallSkipToggle", __instance.savedCallSkipToggle);
                 }
 
-                __instance.savedScreenHeight = GlobalVariables.screenHeightSetting;
-                __instance.savedScreenWidth = GlobalVariables.screenWidthSetting;
-                PlayerPrefs.SetInt("SavedScreenHeight", __instance.savedScreenHeight);
-                PlayerPrefs.SetInt("SavedScreenWidth", __instance.savedScreenWidth);
-
-                __instance.savedRefreshRate = GlobalVariables.refreshRateSetting;
-                PlayerPrefs.SetInt("SavedRefreshRate", __instance.savedRefreshRate);
-
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Screen Settings
+                    __instance.savedScreenHeight = GlobalVariables.screenHeightSetting;
+                    __instance.savedScreenWidth = GlobalVariables.screenWidthSetting;
+                    PlayerPrefs.SetInt("SavedScreenHeight", __instance.savedScreenHeight);
+                    PlayerPrefs.SetInt("SavedScreenWidth", __instance.savedScreenWidth);
+
+                    __instance.savedRefreshRate = GlobalVariables.refreshRateSetting;
+                    PlayerPrefs.SetInt("SavedRefreshRate", __instance.savedRefreshRate);
+                    
                     // Text Settings
                     __instance.savedTextSizeMultiplier = GlobalVariables.textSizeMultiplier;
                     PlayerPrefs.SetFloat("SavedTextSizeMultiplier", __instance.savedTextSizeMultiplier);
@@ -205,9 +206,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
-                    Screen.SetResolution(GlobalVariables.saveManagerScript.savedScreenHeight,
-                        GlobalVariables.saveManagerScript.savedScreenWidth,
+                    Screen.SetResolution(GlobalVariables.saveManagerScript.savedScreenWidth,
+                        GlobalVariables.saveManagerScript.savedScreenHeight,
                         GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedFullScreenToggle));
+                    
+                    Application.targetFrameRate = GlobalVariables.refreshRateSetting;
                 }
                 else
                 {
@@ -219,9 +222,26 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                         return true;
                     }
                     
-                    Screen.SetResolution(GlobalVariables.saveManagerScript.savedScreenHeight,
-                        GlobalVariables.saveManagerScript.savedScreenWidth,
-                        customCampaign.SavedFullScreenToggle);
+                    Screen.SetResolution(customCampaign.SavedScreenWidth, customCampaign.SavedScreenHeight,
+                        customCampaign.SavedFullScreenToggle, customCampaign.SavedRefreshRate);
+                    
+                    QualitySettings.vSyncCount = 0;
+                    Application.targetFrameRate = customCampaign.SavedRefreshRate;
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG LoadVideoSettings: {customCampaign.SavedScreenHeight} and {customCampaign.SavedScreenWidth} and {customCampaign.SavedFullScreenToggle}.");
+                        
+                        var cur = Screen.currentResolution;
+                        
+                        MelonLogger.Msg(
+                            $"[Resolution DEBUG] Unity currentResolution: " +
+                            $"{cur.width}x{cur.height}@{cur.refreshRate}"
+                        );
+
+                        MelonLogger.Msg(
+                            $"[Resolution DEBUG] TargetFrameRate: {Application.targetFrameRate}"
+                        );
+                    #endif
                 }
                 
                 return false;

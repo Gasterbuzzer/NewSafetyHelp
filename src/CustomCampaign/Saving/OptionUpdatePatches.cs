@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using MelonLoader;
-using TMPro;
+﻿using MelonLoader;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.Saving
@@ -196,77 +194,6 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 Screen.fullScreen = GlobalVariables.isFullScreen;
                 __instance.SaveResolutionInfo();
-                
-                return false; // Skip original function.
-            }
-        }
-        
-        [HarmonyLib.HarmonyPatch(typeof(ScreenResolutions), "Start")]
-        public static class ScreenResolutionsStartPatch
-        {
-            /// <summary>
-            /// ScreenResolutions start patch to allow the options to also affect the custom campaign stored values.
-            /// </summary>
-            /// <param name="__instance">Instance of the class.</param>
-            // ReSharper disable once UnusedMember.Local
-            private static bool Prefix(ScreenResolutions __instance)
-            {
-                FieldInfo resolutionsField = typeof(ScreenResolutions).GetField("resolutions", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                MethodInfo resToString = typeof(ScreenResolutions).GetMethod("ResToString", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static);
-                MethodInfo setSteamDeckResolution = typeof(ScreenResolutions).GetMethod("SetSteamDeckResolution", BindingFlags.NonPublic | BindingFlags.Instance);
-                FieldInfo justStarted = typeof(ScreenResolutions).GetField("justStarted", BindingFlags.NonPublic | BindingFlags.Static);
-
-                if (resolutionsField == null || resToString == null || justStarted == null || setSteamDeckResolution == null)
-                {
-                    MelonLogger.Error("ERROR: " +
-                                      "Field 'resolutions' or Method 'ResToString' or Field 'justStarted' or Method 'setSteamDeckResolution' was null. Calling normal function.");
-                    return true;
-                }
-                
-                Resolution[] resolutions = (Resolution[]) resolutionsField.GetValue(__instance);
-                
-                __instance.dropdownMenu.onValueChanged.AddListener(_ => 
-                    __instance.SetDropdownResolution(resolutions[__instance.dropdownMenu.value].width,
-                        resolutions[__instance.dropdownMenu.value].height,
-                        resolutions[__instance.dropdownMenu.value].refreshRate));
-                
-                __instance.dropdownMenu.options.Clear();
-                
-                for (int index = 0; index < resolutions.Length; ++index)
-                {
-                    // OLD:  __instance.ResToString()
-                    string label = (string) resToString.Invoke(__instance, new object[] { resolutions[index] });
-                    
-                    __instance.dropdownMenu.options.Add(new TMP_Dropdown.OptionData(label)); 
-                    
-                    if (resolutions[index].width == GlobalVariables.screenWidthSetting 
-                        && resolutions[index].height == GlobalVariables.screenHeightSetting 
-                        && resolutions[index].refreshRate == GlobalVariables.refreshRateSetting)
-                    {
-                        __instance.dropdownMenu.value = index;
-                    }
-                }
-
-                if (!CustomCampaignGlobal.InCustomCampaign) // Main game
-                {
-                    __instance.fullScreenToggle.isOn = GlobalVariables.isFullScreen;
-                }
-                else // Custom Campaign
-                {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-
-                    if (customCampaign == null)
-                    {
-                        MelonLogger.Error("ERROR: Called custom campaign part while no active custom campaign is available! Calling original function.");
-                        return true;
-                    }
-
-                    __instance.fullScreenToggle.isOn = customCampaign.SavedFullScreenToggle;
-                }
-                
-                justStarted.SetValue(__instance, false); // ScreenResolutions.justStarted = false;
-                
-                setSteamDeckResolution.Invoke(__instance, null); // __instance.SetSteamDeckResolution();
                 
                 return false; // Skip original function.
             }

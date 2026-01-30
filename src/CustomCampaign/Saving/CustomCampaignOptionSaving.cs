@@ -24,6 +24,25 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             }
             
             /*
+             * Screen Settings
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenHeight") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedScreenHeight", 1080);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenWidth") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedScreenWidth", 1920);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedRefreshRate") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedRefreshRate", 180);
+            }
+            
+            /*
              * Phobias
              */
             
@@ -160,6 +179,41 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
+            
+            /*
+             * Screen Settings
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenHeight") == null)
+            {
+                MelonPreferences_Entry<int> savedScreenHeight = currentCampaign.CampaignSaveCategory.CreateEntry("savedScreenHeight", 1080);
+                
+                savedScreenHeight.Value = currentCampaign.SavedScreenHeight;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenHeight").Value = currentCampaign.SavedScreenHeight;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenWidth") == null)
+            {
+                MelonPreferences_Entry<int> savedScreenWidth = currentCampaign.CampaignSaveCategory.CreateEntry("savedScreenWidth", 1920);
+                savedScreenWidth.Value = currentCampaign.SavedScreenWidth;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenWidth").Value = currentCampaign.SavedScreenWidth;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedRefreshRate") == null)
+            {
+                MelonPreferences_Entry<int> savedRefreshRate = currentCampaign.CampaignSaveCategory.CreateEntry("savedRefreshRate", 60);
+                savedRefreshRate.Value = currentCampaign.SavedRefreshRate;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedRefreshRate").Value = currentCampaign.SavedRefreshRate;
+            }
             
             /*
              * Phobias
@@ -405,6 +459,13 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             // Load all values first into the currentCampaign instance.
             
             /*
+             * Screen Settings
+             */
+            currentCampaign.SavedScreenHeight = currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenHeight").Value;
+            currentCampaign.SavedScreenWidth = currentCampaign.CampaignSaveCategory.GetEntry<int>("savedScreenWidth").Value;
+            currentCampaign.SavedRefreshRate = currentCampaign.CampaignSaveCategory.GetEntry<int>("savedRefreshRate").Value;
+            
+            /*
              * Phobia Options
              */
             currentCampaign.SavedSpiderToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedSpiderToggle").Value;
@@ -449,6 +510,18 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             /*
              * Load the values into actual game values now.
              */
+            
+            /*
+             * Screen Settings
+             */
+            GlobalVariables.saveManagerScript.savedScreenHeight = currentCampaign.SavedScreenHeight;
+            GlobalVariables.screenHeightSetting = currentCampaign.SavedScreenHeight;
+            
+            GlobalVariables.saveManagerScript.savedScreenWidth = currentCampaign.SavedScreenWidth;
+            GlobalVariables.screenWidthSetting = currentCampaign.SavedScreenWidth;
+            
+            GlobalVariables.saveManagerScript.savedRefreshRate = currentCampaign.SavedRefreshRate;
+            GlobalVariables.refreshRateSetting = currentCampaign.SavedRefreshRate;
             
             /*
              * Phobia Options

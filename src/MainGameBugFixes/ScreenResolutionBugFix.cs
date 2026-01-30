@@ -28,17 +28,17 @@ namespace NewSafetyHelp.MainGameBugFixes
                     return true; // Call normal function instead.
                 }
                 
-                Resolution[] _resolution = (Resolution[]) resolutionField.GetValue(__instance);
+                Resolution[] resolutions = (Resolution[]) resolutionField.GetValue(__instance);
 
-                if (_resolution.Length <= 0)
+                if (resolutions.Length <= 0)
                 {
                     MelonLogger.Error("ERROR: ScreenResolutions field was empty. Unable of patching out bug. Defaulting to normal function.");
                     return true; // Call normal function instead.
                 }
                 
-                for (int i = 0; i < _resolution.Length; i++)
+                for (int i = 0; i < resolutions.Length; i++)
                 {
-                    Resolution resolution = _resolution[i];
+                    Resolution resolution = resolutions[i];
                     if (resolution.width == width && resolution.height == height && resolution.refreshRate == refresh)
                     {
                         if (i >= __instance.dropdownMenu.options.Count) // "i" is larger than the amount of options. We default to i only.
