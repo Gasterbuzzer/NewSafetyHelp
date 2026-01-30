@@ -115,6 +115,11 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public bool SavedWatchToggle = false;
         public bool SavedDogToggle = false;
         public bool SavedTightToggle = false;
+        
+        // Saved Cheat Options
+        public bool SavedImmunityToggle = false;
+        public bool SavedAccuracyToggle = false;
+        public bool SavedCallSkipToggle = false;
 
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.

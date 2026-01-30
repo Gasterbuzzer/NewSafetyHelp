@@ -31,7 +31,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     PlayerPrefs.SetInt("SavedDyslexiaToggle", __instance.savedDyslexiaToggle);
                 }
                 
-                if (GlobalVariables.isXmasDLC)
+                if (GlobalVariables.isXmasDLC) // DLC
                 {
                     MethodInfo saveXmasOptions = typeof(SaveManagerBehavior).GetMethod("SaveXmasOptions",
                         BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -44,15 +44,14 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     saveXmasOptions.Invoke(__instance, null); //__instance.SaveXmasOptions();
                 }
-                else
-                {
-                    PlayerPrefs.SetInt("SavedImmunityToggle", __instance.savedImmunityToggle);
-                    PlayerPrefs.SetInt("SavedAccuracyToggle", __instance.savedAccuracyToggle);
-                    PlayerPrefs.SetInt("SavedCallSkipToggle", __instance.savedCallSkipToggle);
-                }
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Cheat Options
+                    PlayerPrefs.SetInt("SavedImmunityToggle", __instance.savedImmunityToggle);
+                    PlayerPrefs.SetInt("SavedAccuracyToggle", __instance.savedAccuracyToggle);
+                    PlayerPrefs.SetInt("SavedCallSkipToggle", __instance.savedCallSkipToggle);
+                    
                     // Screen Settings
                     __instance.savedScreenHeight = GlobalVariables.screenHeightSetting;
                     __instance.savedScreenWidth = GlobalVariables.screenWidthSetting;
@@ -112,18 +111,16 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     return false;
                 }
                 
-                __instance.immunityToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
-                __instance.xmasImmunityToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
-                __instance.accuracyToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedAccuracyToggle);
-                __instance.callSkipToggle.isOn =
-                    GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCallSkipToggle);
-               
+                // XMas Option
+                __instance.xmasImmunityToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
+                    // Cheat Options
+                    __instance.immunityToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedImmunityToggle);
+                    __instance.accuracyToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedAccuracyToggle);
+                    __instance.callSkipToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedCallSkipToggle);
+                    
                     // Phobia Options
                     __instance.spiderToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedSpiderToggle);
                     __instance.insectToggle.isOn = GlobalVariables.saveManagerScript.IntToBool(GlobalVariables.saveManagerScript.savedInsectToggle);
@@ -159,6 +156,11 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                                           " Calling original function.");
                         return false;
                     }
+                    
+                    // Cheat Options
+                    __instance.immunityToggle.isOn = customCampaign.SavedImmunityToggle;
+                    __instance.accuracyToggle.isOn = customCampaign.SavedAccuracyToggle;
+                    __instance.callSkipToggle.isOn = customCampaign.SavedCallSkipToggle;
                     
                     // Phobia Options
                     __instance.spiderToggle.isOn = customCampaign.SavedSpiderToggle;

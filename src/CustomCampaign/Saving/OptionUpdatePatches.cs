@@ -470,5 +470,111 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return false; // Skip original function.
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "CallSkipToggle", typeof(bool))]
+        public static class CallSkipTogglePatch
+        {
+            /// <summary>
+            /// CallSkipToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="__instance">Instance of the class.</param>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(OptionsMenuBehavior __instance, ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedCallSkipToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving call skip setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedCallSkipToggle = value;
+                }
+                
+                if (__instance.callSkipButton == null)
+                {
+                    return false;
+                }
+                
+                __instance.callSkipButton.SetActive(value);
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "ImmunityToggle", typeof(bool))]
+        public static class ImmunityTogglePatch
+        {
+            /// <summary>
+            /// ImmunityToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedImmunityToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving immunity setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedImmunityToggle = value;
+                }
+
+                return false; // Skip original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "AccuracyToggle", typeof(bool))]
+        public static class AccuracyTogglePatch
+        {
+            /// <summary>
+            /// AccuracyToggle patch to allow the options to also affect the custom campaign stored values.
+            /// </summary>
+            /// <param name="__instance">Instance of the class.</param>
+            /// <param name="value">Boolean value of the toggle.</param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(OptionsMenuBehavior __instance, ref bool value)
+            {
+                GlobalVariables.saveManagerScript.savedAccuracyToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
+                
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
+                {
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving accuracy setting. " +
+                                          "Calling original function.");
+                        return true;
+                    }
+                    
+                    customCampaign.SavedAccuracyToggle = value;
+                }
+                
+                if (__instance.accuracyText != null)
+                {
+                    return false;
+                }
+                
+                __instance.accuracyText.gameObject.SetActive(value);
+
+                return false; // Skip original function.
+            }
+        }
     }
 }

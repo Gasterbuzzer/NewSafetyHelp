@@ -120,11 +120,21 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
                     _loadXmas.Invoke(__instance, null); // __instance.LoadXmas();
                 }
-                else // Main Game
-                {
-                    // Options
-                    // These are allowed to be loaded without checking if in a custom campaign or not.
 
+                /*
+                 * Special loading. (Options that are saved differently)
+                 */
+
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                {
+                    CustomCampaignOptionSaving.LoadCustomCampaignOptions();
+                }
+                else if (!GlobalVariables.isXmasDLC) // Everything else, except for DLC, since the DLC handles itself.
+                {
+                    /*
+                     * Cheat Options
+                     */
+                    
                     if (PlayerPrefs.HasKey("SavedImmunityToggle"))
                     {
                         __instance.savedImmunityToggle = PlayerPrefs.GetInt("SavedImmunityToggle", 0);
@@ -139,18 +149,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                     {
                         __instance.savedCallSkipToggle = PlayerPrefs.GetInt("SavedCallSkipToggle", 0);
                     }
-                }
-
-                /*
-                 * Special loading. (Options that are saved differently)
-                 */
-
-                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
-                {
-                    CustomCampaignOptionSaving.LoadCustomCampaignOptions();
-                }
-                else if (!GlobalVariables.isXmasDLC) // Everything else, except for DLC, since the DLC handles itself.
-                {
+                    
                     /*
                      * Screen Settings
                      */

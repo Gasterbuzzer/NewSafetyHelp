@@ -24,6 +24,25 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             }
             
             /*
+             * Cheat Options
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedImmunityToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedImmunityToggle", false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedAccuracyToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedAccuracyToggle", false);
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCallSkipToggle") == null)
+            {
+                currentCampaign.CampaignSaveCategory.CreateEntry("savedCallSkipToggle", false);
+            }
+            
+            /*
              * Screen Settings
              */
             
@@ -179,6 +198,43 @@ namespace NewSafetyHelp.CustomCampaign.Saving
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
+            
+            /*
+             * Cheat Options
+             */
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedImmunityToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedImmunityToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedImmunityToggle", false);
+                
+                savedImmunityToggle.Value = currentCampaign.SavedImmunityToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedImmunityToggle").Value = currentCampaign.SavedImmunityToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedAccuracyToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedAccuracyToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedAccuracyToggle", false);
+                
+                savedAccuracyToggle.Value = currentCampaign.SavedAccuracyToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedAccuracyToggle").Value = currentCampaign.SavedAccuracyToggle;
+            }
+            
+            if (currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCallSkipToggle") == null)
+            {
+                MelonPreferences_Entry<bool> savedCallSkipToggle = currentCampaign.CampaignSaveCategory.CreateEntry("savedCallSkipToggle", false);
+                
+                savedCallSkipToggle.Value = currentCampaign.SavedCallSkipToggle;
+            }
+            else
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCallSkipToggle").Value = currentCampaign.SavedCallSkipToggle;
+            }
             
             /*
              * Screen Settings
@@ -457,6 +513,14 @@ namespace NewSafetyHelp.CustomCampaign.Saving
             #endif
             
             // Load all values first into the currentCampaign instance.
+            
+            /*
+             * Cheat Options
+             */
+            
+            currentCampaign.SavedImmunityToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedImmunityToggle").Value;
+            currentCampaign.SavedAccuracyToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedAccuracyToggle").Value;
+            currentCampaign.SavedCallSkipToggle = currentCampaign.CampaignSaveCategory.GetEntry<bool>("savedCallSkipToggle").Value;
             
             /*
              * Screen Settings
