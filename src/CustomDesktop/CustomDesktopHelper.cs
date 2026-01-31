@@ -21,7 +21,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Finds the main menu canvas.
         /// </summary>
         /// <returns>GameObject for the main menu canvas. </returns>
-        private static GameObject GetMainMenuCanvas()
+        public static GameObject GetMainMenuCanvas()
         {
             GameObject foundGameObject = GameObject.Find("MainMenuCanvas");
 

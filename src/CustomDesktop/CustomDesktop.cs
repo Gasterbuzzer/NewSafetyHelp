@@ -12,6 +12,7 @@ using NewSafetyHelp.VersionChecker;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -34,6 +35,29 @@ namespace NewSafetyHelp.CustomDesktop
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Start of Main Menu Canvas Behavior.");
                 #endif
+                
+                // Credits Double Close Button Fix:
+                GameObject mainMenuCanvas = CustomDesktopHelper.GetMainMenuCanvas().gameObject;
+
+                if (mainMenuCanvas != null)
+                {
+                    GameObject textPopup = mainMenuCanvas.transform.Find("TextPopup").gameObject;
+
+                    if (textPopup != null)
+                    {
+                        GameObject creditsWindowsBar = textPopup.transform.Find("WindowsBar").gameObject;
+                            
+                        if (creditsWindowsBar != null)
+                        {
+                            GameObject closeButton = creditsWindowsBar.transform.Find("CloseButton").gameObject;
+                        
+                            if (closeButton.GetComponents<Button>().Length >= 2)
+                            {
+                                Object.Destroy(closeButton.GetComponent<Button>());
+                            }
+                        }
+                    }
+                }
 
                 // If in custom campaign, we replace it with custom text.
                 if (CustomCampaignGlobal.InCustomCampaign)
