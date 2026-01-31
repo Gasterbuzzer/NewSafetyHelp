@@ -183,6 +183,7 @@
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\MainGameBugFixes\CloseErrorPopupFix.cs" />
+    <Compile Include="src\MainGameBugFixes\EntryLoadingBuxFix.cs" />
     <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs" />
     <Compile Include="src\MainGameBugFixes\UISoundBugFix.cs" />
     <Compile Include="src\VersionChecker\AsyncVersionChecker.cs" />
