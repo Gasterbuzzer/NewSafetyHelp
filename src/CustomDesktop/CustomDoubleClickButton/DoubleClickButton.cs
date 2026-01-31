@@ -13,7 +13,7 @@ namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
 
             if (timeSinceLastClick <= DoubleClickThreshold)
             {
-                CustomDesktopHelper.changeToCustomCampaignSettings(customCampaignName);
+                CustomDesktopHelper.ChangeToCustomCampaignSettings(customCampaignName);
             }
             
             lastClickTime = Time.time;
@@ -25,7 +25,7 @@ namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
 
             if (timeSinceLastClick <= DoubleClickThreshold)
             {
-                CustomDesktopHelper.backToMainGame();
+                CustomDesktopHelper.BackToMainGame();
             }
             
             lastClickTime = Time.time;

@@ -78,7 +78,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (customCampaign.DisablePickingThemeOption)
                     {
-                        CustomDesktopHelper.disableThemeDropdownDesktop();
+                        CustomDesktopHelper.DisableThemeDropdownDesktop();
                     }
                 }
 
@@ -89,7 +89,7 @@ namespace NewSafetyHelp.CustomDesktop
                 {
                     foreach (CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
                     {
-                        CustomDesktopHelper.createCustomProgramIcon(customCampaign.CampaignDesktopName, customCampaign.CampaignName, customCampaign.CampaignIcon);
+                        CustomDesktopHelper.CreateCustomProgramIcon(customCampaign.CampaignDesktopName, customCampaign.CampaignName, customCampaign.CampaignIcon);
                     }
                     
                     if (GlobalParsingVariables.MainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
@@ -98,21 +98,21 @@ namespace NewSafetyHelp.CustomDesktop
                         {
                             if (emailExtra.InMainCampaign)
                             {
-                                CustomDesktopHelper.createEmail(emailExtra);
+                                CustomDesktopHelper.CreateEmail(emailExtra);
                             }
                         }
                     }
                     
                     // Enable DLC Button if DLC is installed.
                     // Hide DLC Button
-                    CustomDesktopHelper.enableWinterDLCProgram();
+                    CustomDesktopHelper.EnableWinterDlcProgram();
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Custom Campaign
                 {
-                    CustomDesktopHelper.createBackToMainGameButton();
+                    CustomDesktopHelper.CreateBackToMainGameButton();
                     
                     // Hide DLC Button
-                    CustomDesktopHelper.disableWinterDLCProgram();
+                    CustomDesktopHelper.DisableWinterDlcProgram();
                 }
                 
                 // Change username text if available
@@ -146,7 +146,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (usernameTextProvided && !string.IsNullOrEmpty(username))
                     {
-                        CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = username;
+                        CustomDesktopHelper.GetUsernameObject().GetComponent<TextMeshProUGUI>().text = username;
                     }
                     
                     // Add custom emails.
@@ -154,14 +154,14 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         foreach (CustomEmail emailExtra in customCampaign.Emails)
                         {
-                            CustomDesktopHelper.createEmail(emailExtra);
+                            CustomDesktopHelper.CreateEmail(emailExtra);
                         }
                     }
                     
                     // Remove all emails from the main game.
                     if (customCampaign.RemoveDefaultEmails)
                     {
-                        CustomDesktopHelper.removeMainGameEmails();
+                        CustomDesktopHelper.RemoveMainGameEmails();
                     }
                     
                     // Hide Logo
@@ -200,11 +200,11 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (disableLogo && !modifierPreventsDisablingOfLogo)
                     {
-                        CustomDesktopHelper.getLogo().SetActive(false);
+                        CustomDesktopHelper.GetLogo().SetActive(false);
                     }
                     else if (desktopLogo != null) // We have a desktop logo to show.
                     {
-                        CustomDesktopHelper.getLogo().GetComponent<Image>().sprite = desktopLogo;
+                        CustomDesktopHelper.GetLogo().GetComponent<Image>().sprite = desktopLogo;
                     }
                     
                     // Adjust Logo
@@ -228,10 +228,10 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (!logoTransparency.Equals(0.2627f))
                     {
-                        Color tempColorCopy = CustomDesktopHelper.getLogo().GetComponent<Image>().color;
+                        Color tempColorCopy = CustomDesktopHelper.GetLogo().GetComponent<Image>().color;
                         tempColorCopy.a = logoTransparency;
                         
-                        CustomDesktopHelper.getLogo().GetComponent<Image>().color = tempColorCopy;
+                        CustomDesktopHelper.GetLogo().GetComponent<Image>().color = tempColorCopy;
                     }
                     
                     // Rename main program if wanted
@@ -255,7 +255,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (!string.IsNullOrEmpty(renamedMainGameDesktopIcon))
                     {
-                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
+                        CustomDesktopHelper.GetMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
                     }
                     
                     // Desktop icons
@@ -330,7 +330,7 @@ namespace NewSafetyHelp.CustomDesktop
                     if (desktopCreditsFound 
                         && !string.IsNullOrEmpty(desktopCredits))
                     {
-                        CustomDesktopHelper.getCreditsGameObject().GetComponent<TextFileExecutable>().myContent = desktopCredits;
+                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<TextFileExecutable>().myContent = desktopCredits;
                     }
                     
                     bool desktopCreditsIconFound = false;
@@ -340,7 +340,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (desktopCreditsIconFound)
                     {
-                        CustomDesktopHelper.getCreditsGameObject().GetComponent<Image>().sprite = desktopCreditsIcon;
+                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite = desktopCreditsIcon;
                     }
                     
                     // Discord Icon
@@ -376,20 +376,20 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (mainProgramIcon != null)
                     {
-                        CustomDesktopHelper.getMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
+                        CustomDesktopHelper.GetMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
                     }
                     
                     // Disable default videos.
                     if (customCampaign.DisableAllDefaultVideos)
                     {
-                        CustomDesktopHelper.disableDefaultVideos();
+                        CustomDesktopHelper.DisableDefaultVideos();
                     }
 
                     if (customCampaign.AllDesktopVideos.Count > 0)
                     {
                         foreach (CustomVideo customVideo in customCampaign.AllDesktopVideos)
                         {
-                            CustomDesktopHelper.createCustomVideoFileProgram(customVideo);
+                            CustomDesktopHelper.CreateCustomVideoFileProgram(customVideo);
                         }
                     }
                 }

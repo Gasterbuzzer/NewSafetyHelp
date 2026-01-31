@@ -21,7 +21,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Finds the main menu canvas.
         /// </summary>
         /// <returns>GameObject for the main menu canvas. </returns>
-        private static GameObject getMainMenuCanvas()
+        private static GameObject GetMainMenuCanvas()
         {
             GameObject foundGameObject = GameObject.Find("MainMenuCanvas");
 
@@ -40,9 +40,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the desktop GameObject from the main menu canvas.
         /// </summary>
         /// <returns>Desktop GameObject</returns>
-        private static GameObject getDesktop()
+        private static GameObject GetDesktop()
         {
-            GameObject foundGameObject = getMainMenuCanvas().transform.Find("Desktop").gameObject;
+            GameObject foundGameObject = GetMainMenuCanvas().transform.Find("Desktop").gameObject;
 
             if (foundGameObject != null)
             {
@@ -60,9 +60,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the desktop logo GameObject.
         /// </summary>
         /// <returns>Logo GameObject</returns>
-        public static GameObject getLogo()
+        public static GameObject GetLogo()
         {
-            GameObject foundGameObject = getDesktop().transform.Find("Logo").gameObject;
+            GameObject foundGameObject = GetDesktop().transform.Find("Logo").gameObject;
 
             if (foundGameObject != null)
             {
@@ -80,9 +80,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the desktop GameObject which contains all emails.
         /// </summary>
         /// <returns>Email List GameObject</returns>
-        private static GameObject getEmailList()
+        private static GameObject GetEmailList()
         {
-            GameObject foundGameObject = getMainMenuCanvas().transform.Find("EmailPopup").Find("EmailsScrollview")
+            GameObject foundGameObject = GetMainMenuCanvas().transform.Find("EmailPopup").Find("EmailsScrollview")
                 .Find("Viewport").Find("Content").gameObject;
 
             if (foundGameObject != null)
@@ -100,9 +100,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// <summary>
         /// Removes all emails from the main campaign.
         /// </summary>
-        public static void removeMainGameEmails()
+        public static void RemoveMainGameEmails()
         {
-            GameObject foundGameObject = getEmailList();
+            GameObject foundGameObject = GetEmailList();
 
             if (foundGameObject != null)
             {
@@ -125,9 +125,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Creates an email and returns a reference.
         /// </summary>
         /// <returns>New Email reference.</returns>
-        public static GameObject createEmail(CustomEmail emailToCreate)
+        public static GameObject CreateEmail(CustomEmail emailToCreate)
         {
-            GameObject originalEmail = getEmailList().transform.Find("EmailListing (14)").gameObject;
+            GameObject originalEmail = GetEmailList().transform.Find("EmailListing (14)").gameObject;
 
             if (originalEmail != null)
             {
@@ -229,9 +229,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the windows bar GameObject from the desktop.
         /// </summary>
         /// <returns>Window Bar GameObject</returns>
-        private static GameObject getWindowsBar()
+        private static GameObject GetWindowsBar()
         {
-            GameObject foundGameObject = getDesktop().transform.Find("WindowsBar (1)").gameObject;
+            GameObject foundGameObject = GetDesktop().transform.Find("WindowsBar (1)").gameObject;
 
             if (foundGameObject != null)
             {
@@ -239,7 +239,7 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else // Try again with a different name.
             {
-                foundGameObject = getDesktop().transform.Find("WindowsBar").gameObject;
+                foundGameObject = GetDesktop().transform.Find("WindowsBar").gameObject;
 
                 if (foundGameObject != null)
                 {
@@ -256,9 +256,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the credits GameObject from the programs list.
         /// </summary>
         /// <returns>Credits GameObject</returns>
-        public static GameObject getCreditsGameObject()
+        public static GameObject GetCreditsGameObject()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("Readme").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("Readme").gameObject;
 
             if (foundGameObject != null)
             {
@@ -278,7 +278,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Mailbox GameObject</returns>
         public static GameObject GetMailboxGameObject()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("Email-Executable").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("Email-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -298,7 +298,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Options GameObject</returns>
         public static GameObject GetOptionsGameObject()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("Options-Executable").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("Options-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -318,7 +318,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>EntryBrowser GameObject</returns>
         public static GameObject GetEntryBrowserGameObject()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("EntryBrowser-Executable").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("EntryBrowser-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -338,7 +338,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Artbook GameObject</returns>
         public static GameObject GetArtbookGameObject()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("Artbook-Executable").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("Artbook-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -358,7 +358,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Arcade GameObject</returns>
         public static GameObject GetArcadeGameObject()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("Arcade-Executable").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("Arcade-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -378,7 +378,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Scorecard GameObject</returns>
         public static GameObject GetScorecardGameObject()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("Scorecard").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("Scorecard").gameObject;
 
             if (foundGameObject != null)
             {
@@ -396,9 +396,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the username GameObject from the windows bar.
         /// </summary>
         /// <returns>Username GameObject</returns>
-        public static GameObject getUsernameObject()
+        public static GameObject GetUsernameObject()
         {
-            GameObject foundUsername = getWindowsBar().transform.Find("Username").gameObject;
+            GameObject foundUsername = GetWindowsBar().transform.Find("Username").gameObject;
 
             if (foundUsername != null)
             {
@@ -416,7 +416,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the skip call wait time button.
         /// </summary>
         /// <returns>Next Call Button GameObject</returns>
-        public static GameObject getCallSkipButton()
+        public static GameObject GetCallSkipButton()
         {
             GameObject foundGameObject = GameObject.Find("MainCanvas").transform.Find("Panel").transform
                 .Find("CallWindow").transform.Find("LargeCallerPortrait").transform.Find("CallSkipButton").gameObject;
@@ -436,9 +436,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the Program icons on the left side on the Desktop.
         /// </summary>
         /// <returns> GameObject for the programs on the left. </returns>
-        private static GameObject getLeftPrograms()
+        private static GameObject GetLeftPrograms()
         {
-            GameObject foundGameObject = getDesktop().transform.Find("Programs").gameObject;
+            GameObject foundGameObject = GetDesktop().transform.Find("Programs").gameObject;
 
             if (foundGameObject != null)
             {
@@ -456,9 +456,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the Program icons on the right side on the Desktop.
         /// </summary>
         /// <returns> GameObject for the programs on the right. </returns>
-        private static GameObject getRightPrograms()
+        private static GameObject GetRightPrograms()
         {
-            GameObject foundGameObject = getDesktop().transform.Find("RightHandPrograms").gameObject;
+            GameObject foundGameObject = GetDesktop().transform.Find("RightHandPrograms").gameObject;
 
             if (foundGameObject != null)
             {
@@ -476,9 +476,9 @@ namespace NewSafetyHelp.CustomDesktop
         /// Gets the GameObject for the Winter DLC program. Used for creating copies to modify.
         /// </summary>
         /// <returns> GameObject for the winter dlc program on the left. </returns>
-        private static GameObject getWinterDLCProgram()
+        private static GameObject GetWinterDlcProgram()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("DLC-Executable").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("DLC-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -499,20 +499,20 @@ namespace NewSafetyHelp.CustomDesktop
         /// <summary>
         /// Disables all default video programs on the desktop.
         /// </summary>
-        public static void disableDefaultVideos()
+        public static void DisableDefaultVideos()
         {
-            getLeftPrograms().transform.Find("TrailerFile").gameObject.SetActive(false);
-            getLeftPrograms().transform.Find("RealEstateVideo").gameObject.SetActive(false);
-            getLeftPrograms().transform.Find("ScienceVideo").gameObject.SetActive(false);
-            getLeftPrograms().transform.Find("HikingVideo").gameObject.SetActive(false);
+            GetLeftPrograms().transform.Find("TrailerFile").gameObject.SetActive(false);
+            GetLeftPrograms().transform.Find("RealEstateVideo").gameObject.SetActive(false);
+            GetLeftPrograms().transform.Find("ScienceVideo").gameObject.SetActive(false);
+            GetLeftPrograms().transform.Find("HikingVideo").gameObject.SetActive(false);
         }
 
         /// <summary>
         /// Disables all default video programs on the desktop.
         /// </summary>
-        public static GameObject createCustomVideoFileProgram(CustomVideo customVideo)
+        public static GameObject CreateCustomVideoFileProgram(CustomVideo customVideo)
         {
-            GameObject trailerFileOriginal = getLeftPrograms().transform.Find("TrailerFile").gameObject;
+            GameObject trailerFileOriginal = GetLeftPrograms().transform.Find("TrailerFile").gameObject;
 
             GameObject newCustomVideo = Object.Instantiate(trailerFileOriginal, trailerFileOriginal.transform.parent);
 
@@ -564,15 +564,15 @@ namespace NewSafetyHelp.CustomDesktop
         /// <summary>
         /// Disables the Winter DLC Program to avoid switching to DLC while custom campaign is active.
         /// </summary>
-        public static void disableWinterDLCProgram()
+        public static void DisableWinterDlcProgram()
         {
-            getWinterDLCProgram().SetActive(false);
+            GetWinterDlcProgram().SetActive(false);
         }
 
         /// <summary>
         /// Reenable the Winter DLC Program to avoid switching to DLC while custom campaign is active.
         /// </summary>
-        public static void enableWinterDLCProgram()
+        public static void EnableWinterDlcProgram()
         {
             if (!SteamManager.Initialized ||
                 !SteamApps.BIsDlcInstalled(new AppId_t(2914730U))) // No DLC, we don't activate.
@@ -582,7 +582,7 @@ namespace NewSafetyHelp.CustomDesktop
                 #endif
 
                 // To make sure the DLC isn't enabled by accident.
-                disableWinterDLCProgram();
+                DisableWinterDlcProgram();
 
                 return;
             }
@@ -591,16 +591,16 @@ namespace NewSafetyHelp.CustomDesktop
                 MelonLogger.Msg($"DEBUG: DLC is installed. Activating DLC!");
             #endif
 
-            getWinterDLCProgram().SetActive(true);
+            GetWinterDlcProgram().SetActive(true);
         }
 
         /// <summary>
         /// Gets the GameObject for the main game program. Used for creating copies to modify.
         /// </summary>
         /// <returns> GameObject for the main game program on the left. </returns>
-        public static GameObject getMainGameProgram()
+        public static GameObject GetMainGameProgram()
         {
-            GameObject foundGameObject = getLeftPrograms().transform.Find("HSH-Executable").gameObject;
+            GameObject foundGameObject = GetLeftPrograms().transform.Find("HSH-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -620,7 +620,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns> GameObject for the NSE Discord program on the right. </returns>
         public static GameObject GetNSEDiscordProgram()
         {
-            GameObject foundGameObject = getRightPrograms().transform.Find("Discord-Executable").gameObject;
+            GameObject foundGameObject = GetRightPrograms().transform.Find("Discord-Executable").gameObject;
 
             if (foundGameObject != null)
             {
@@ -635,10 +635,10 @@ namespace NewSafetyHelp.CustomDesktop
         }
 
 
-        public static void createCustomProgramIcon(string customProgramName, string customCampaignName,
+        public static void CreateCustomProgramIcon(string customProgramName, string customCampaignName,
             Sprite customIcon = null)
         {
-            GameObject customProgramIcon = Object.Instantiate(getWinterDLCProgram(), getLeftPrograms().transform);
+            GameObject customProgramIcon = Object.Instantiate(GetWinterDlcProgram(), GetLeftPrograms().transform);
 
             Object.Destroy(customProgramIcon.GetComponent<HSHExecutableBehavior>()); // Remove old Executable Behavior.
 
@@ -674,10 +674,10 @@ namespace NewSafetyHelp.CustomDesktop
             customProgramIcon.SetActive(true);
         }
 
-        public static void createBackToMainGameButton()
+        public static void CreateBackToMainGameButton()
         {
             GameObject backToMainMenuGameButton =
-                Object.Instantiate(GetNSEDiscordProgram(), getRightPrograms().transform);
+                Object.Instantiate(GetNSEDiscordProgram(), GetRightPrograms().transform);
 
             Object.Destroy(backToMainMenuGameButton.GetComponent<LinkExecutable>()); // Remove old executable Behavior.
 
@@ -686,7 +686,7 @@ namespace NewSafetyHelp.CustomDesktop
                 .GetComponent<TextMeshProUGUI>().text = "Back to Main Game.";
 
             // Change Program Icon 
-            backToMainMenuGameButton.GetComponent<Image>().sprite = getMainGameProgram().GetComponent<Image>().sprite;
+            backToMainMenuGameButton.GetComponent<Image>().sprite = GetMainGameProgram().GetComponent<Image>().sprite;
             // Reset Color
             backToMainMenuGameButton.GetComponent<Image>().color = Color.white;
 
@@ -703,7 +703,7 @@ namespace NewSafetyHelp.CustomDesktop
             backToMainMenuGameButton.name = "BackToMainGameButton";
         }
 
-        public static void changeToCustomCampaignSettings(string customCampaignName)
+        public static void ChangeToCustomCampaignSettings(string customCampaignName)
         {
             MelonLogger.Msg(ConsoleColor.Green, $"INFO: Changing to custom campaign: {customCampaignName}.");
 
@@ -717,7 +717,7 @@ namespace NewSafetyHelp.CustomDesktop
             SceneManager.LoadScene("MainMenuScene");
         }
 
-        public static void backToMainGame(bool alsoLoadMainMenu = true)
+        public static void BackToMainGame(bool alsoLoadMainMenu = true)
         {
             MelonLogger.Msg(ConsoleColor.Green, "INFO: Going back to the main game.");
 
@@ -737,7 +737,7 @@ namespace NewSafetyHelp.CustomDesktop
             }
         }
 
-        public static void disableThemeDropdownDesktop()
+        public static void DisableThemeDropdownDesktop()
         {
             GameObject videoOptions = GameObject.Find("MainMenuCanvas").transform.Find("OptionsPopup").transform
                 .Find("OptionsScrollRect").transform.Find("Viewport").transform.Find("Content").transform
@@ -762,7 +762,7 @@ namespace NewSafetyHelp.CustomDesktop
             }
         }
         
-        public static void disableThemeDropdownInGame()
+        public static void DisableThemeDropdownInGame()
         {
             GameObject mainCanvas = GameObject.Find("MainCanvas");
             if (mainCanvas == null)

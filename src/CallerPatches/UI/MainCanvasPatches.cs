@@ -338,7 +338,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                     else if (customCampaign.AlwaysSkipCallButton)
                     {
-                        CustomDesktopHelper.getCallSkipButton().SetActive(true);
+                        CustomDesktopHelper.GetCallSkipButton().SetActive(true);
                     }
                 }
                 
@@ -679,7 +679,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         }
                         
                         // Afterward we load all main game values.
-                        CustomDesktopHelper.backToMainGame(false);
+                        CustomDesktopHelper.BackToMainGame(false);
                     }
                     else // If not, we show the default one.
                     {

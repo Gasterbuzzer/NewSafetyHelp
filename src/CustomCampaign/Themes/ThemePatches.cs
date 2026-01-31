@@ -60,7 +60,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     
                     if (customCampaign.DisablePickingThemeOption)
                     {
-                        CustomDesktopHelper.disableThemeDropdownInGame();
+                        CustomDesktopHelper.DisableThemeDropdownInGame();
                     }
                 }
                 
