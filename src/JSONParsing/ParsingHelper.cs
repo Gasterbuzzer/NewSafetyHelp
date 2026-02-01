@@ -487,16 +487,20 @@ namespace NewSafetyHelp.JSONParsing
                 MelonLogger.Warning("WARNING: Provided video path but name is empty. Unable to show show video.");
                 target = "";
             }
-            else if (!File.Exists(videoFilePath))
+            else
             {
-                if (!File.Exists(videoFileAlternativePath))
+                if (File.Exists(videoFilePath))
                 {
-                    MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
-                    target = "";
+                    target = videoFilePath;
+                }
+                else if (File.Exists(videoFileAlternativePath))
+                {
+                    target = videoFileAlternativePath;
                 }
                 else
                 {
-                    target = videoFileAlternativePath;
+                    MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
+                    target = "";
                 }
             }
         }
