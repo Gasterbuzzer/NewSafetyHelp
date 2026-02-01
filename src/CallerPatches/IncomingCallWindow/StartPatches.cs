@@ -1,8 +1,5 @@
-﻿using System.Reflection;
-using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
+﻿using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
@@ -14,17 +11,16 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             /// <summary>
             /// Patches the OnEnable to consider custom Campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
             // ReSharper disable once UnusedParameter.Local
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance)
+            private static bool Prefix(CallWindowBehavior __instance)
             {
                 __instance.answerButton.SetActive(true);
                 __instance.loadingText.SetActive(false);
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
@@ -63,9 +59,9 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                             .xmasPhoneCall);
                     }
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -75,21 +71,21 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
+                        CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
                         
-                        if (customCaller == null)
+                        if (customCCaller == null)
                         {
                             MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
                             return true;
                         }
                         
-                        if (!GlobalVariables.isXmasDLC && customCaller.downedNetworkCaller)
+                        if (!GlobalVariables.isXmasDLC && customCCaller.DownedNetworkCaller)
                         {
 
                             #if DEBUG
                                 MelonLogger.Msg($"DEBUG: Custom caller is set to play warped phone call sound" +
-                                                $" (INFO: Downed Network? {customCaller.downedNetworkCaller};" +
-                                                $" Caller Name: {customCaller.callerName}" +
+                                                $" (INFO: Downed Network? {customCCaller.DownedNetworkCaller};" +
+                                                $" Caller Name: {customCCaller.CallerName}" +
                                                 ").");
                             #endif
                             

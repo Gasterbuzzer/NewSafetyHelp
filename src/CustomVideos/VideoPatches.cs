@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -11,19 +9,18 @@ namespace NewSafetyHelp.CustomVideos
 {
     public static class VideoPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(VideoExecutableFile), "PlayVideoRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(VideoExecutableFile), "PlayVideoRoutine")]
         public static class PlayVideoRoutinePatch
         {
             /// <summary>
             /// This functions plays the video. It was changed to also support URL plays.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to be called. </param>
             // ReSharper disable once RedundantAssignment
             // ReSharper disable once UnusedMember.Local
             // ReSharper disable once UnusedParameter.Local
-            private static bool Prefix(MethodBase __originalMethod, VideoExecutableFile __instance, ref IEnumerator __result)
+            private static bool Prefix(VideoExecutableFile __instance, ref IEnumerator __result)
             {
 
                 __result = PlayVideoRoutineCoroutine(__instance);
@@ -31,25 +28,25 @@ namespace NewSafetyHelp.CustomVideos
                 return false; // Skip the original function
             }
 
-            public static IEnumerator PlayVideoRoutineCoroutine(VideoExecutableFile __instance)
+            private static IEnumerator PlayVideoRoutineCoroutine(VideoExecutableFile __instance)
             {
                 __instance.notification.SetActive(false);
 
-                if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("CustomCampaignExtraInfo is null. Critical error.");
+                        MelonLogger.Error("CustomCampaign is null. Critical error.");
                         yield break;
                     }
 
-                    CustomVideoExtraInfo correctVideo;
+                    CustomVideo correctVideo;
                     
-                    if (customCampaign.allDesktopVideos.Exists(video => video.desktopName + video.videoURL == __instance.gameObject.name))
+                    if (customCampaign.AllDesktopVideos.Exists(video => video.DesktopName + video.VideoURL == __instance.gameObject.name))
                     {
-                        correctVideo = customCampaign.allDesktopVideos.Find(video => video.desktopName + video.videoURL == __instance.gameObject.name);
+                        correctVideo = customCampaign.AllDesktopVideos.Find(video => video.DesktopName + video.VideoURL == __instance.gameObject.name);
                     }
                     else
                     {
@@ -59,7 +56,7 @@ namespace NewSafetyHelp.CustomVideos
 
                     if (correctVideo != null)
                     {
-                        __instance.videoPlayer.url = correctVideo.videoURL;
+                        __instance.videoPlayer.url = correctVideo.VideoURL;
                     }
                 }
                 else // Main Campaign
@@ -101,7 +98,7 @@ namespace NewSafetyHelp.CustomVideos
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(AudioSamplePlayer), "PlayOrPauseVideo", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(AudioSamplePlayer), "PlayOrPauseVideo")]
         public static class PlayOrPauseVideoPatch
         {
             /// <summary>
@@ -200,20 +197,21 @@ namespace NewSafetyHelp.CustomVideos
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(AudioSamplePlayer), "Update", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(AudioSamplePlayer), "Update")]
         public static class UpdatePatch
         {
             /// <summary>
             /// This functions handles multiple functionality for the player. It is patched to work with URLs.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once RedundantAssignment
             // ReSharper disable once UnusedMember.Local
             // ReSharper disable once UnusedParameter.Local
-            private static bool Prefix(MethodBase __originalMethod, AudioSamplePlayer __instance)
+            private static bool Prefix(AudioSamplePlayer __instance)
             {
-                if ((bool) __instance.myAudioSource && __instance.myAudioSource.isPlaying || (bool) __instance.myVideoPlayer && __instance.myVideoPlayer.isPlaying)
+                if ((bool) __instance.myAudioSource 
+                    && __instance.myAudioSource.isPlaying || (bool) __instance.myVideoPlayer 
+                    && __instance.myVideoPlayer.isPlaying)
                 {
                     __instance.myImage.sprite = __instance.stopSprite;
                     __instance.audioLabelText.SetActive(false);
@@ -283,7 +281,8 @@ namespace NewSafetyHelp.CustomVideos
                 return false; // Skip the original function
             }
 
-            public static IEnumerator handleURLVideoBetter(AudioSamplePlayer __instance, FieldInfo _playerCurrentPosition, float num)
+            private static IEnumerator handleURLVideoBetter(AudioSamplePlayer __instance,
+                FieldInfo _playerCurrentPosition, float num)
             {
                 if (__instance.myVideoPlayer.clip != null)
                 {
@@ -306,12 +305,14 @@ namespace NewSafetyHelp.CustomVideos
                 _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); //__instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
             }
             
-            public static IEnumerator WaitForPrepare(VideoPlayer vp)
+            private static IEnumerator WaitForPrepare(VideoPlayer vp)
             {
                 vp.Prepare();
 
                 while (!vp.isPrepared)
+                {
                     yield return null;
+                }
             }
         }
     }

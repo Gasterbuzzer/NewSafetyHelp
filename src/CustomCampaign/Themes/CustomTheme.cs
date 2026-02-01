@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaign.Abstract;
 
 namespace NewSafetyHelp.CustomCampaign.Themes
 {
-    public class ThemesExtraInfo
+    public class CustomTheme : CustomCampaignElementBase
     {
-        public string themeName = "NO THEME NAME SET"; // Name of which this theme is displayed.
+        public string ThemeName = "NO THEME NAME SET"; // Name of which this theme is displayed.
         
-        public string customCampaignName = null; // If in a custom campaign, this is the name of custom campaign.
-        
-        public bool inMainCampaign = false; // If available in main campaign.
+        public bool InMainCampaign = false; // If available in main campaign.
         
         /*
          * Conditional Theme Values
          */
         
-        public string attachedToTheme = null; // If a conditional theme, what theme is it attached to?
-        public List<int> unlockDays = null; // Days this theme is allowed to be shown.
+        public string AttachedToTheme = null; // If a conditional theme, what theme is it attached to?
+        public List<int> UnlockDays = null; // Days this theme is allowed to be shown.
                                             // Please note, this is only possible for attached themes.
                                             
         /*
@@ -27,6 +26,6 @@ namespace NewSafetyHelp.CustomCampaign.Themes
         // Third Color (Index 2) is unknown. No idea.
         // Fourth Color (Index 3) is the main window color. Meaning what is behind the buttons, the window.
         
-        public ColorPalette customThemePalette = null; // Theme of color palette. If null, it means not set.
+        public ColorPalette CustomThemePalette = null; // Theme of color palette. If null, it means not set.
     }
 }

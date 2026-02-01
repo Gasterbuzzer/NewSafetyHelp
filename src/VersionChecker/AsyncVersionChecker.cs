@@ -15,7 +15,7 @@ namespace NewSafetyHelp.VersionChecker
         /// Gets the current mod version.
         /// </summary>
         /// <returns>Version of the mod.</returns>
-        private static Version getCurrentVersion()
+        private static Version GetCurrentVersion()
         {
             return Assembly.GetExecutingAssembly().GetName().Version;
         }
@@ -26,7 +26,7 @@ namespace NewSafetyHelp.VersionChecker
         /// <param name="currentVersion"> Current version. </param>
         /// <param name="newVersion"> New version to check against. </param>
         /// <returns>If the newer version is newer.</returns>
-        private static bool isOutDatedVersion(Version currentVersion, Version newVersion)
+        private static bool IsOutDatedVersion(Version currentVersion, Version newVersion)
         {
             #if DEBUG
             MelonLogger.Msg(
@@ -43,7 +43,7 @@ namespace NewSafetyHelp.VersionChecker
         /// <param name="tag">Tag to convert to version.</param>
         /// <returns></returns>
         [CanBeNull]
-        private static Version parseVersionTag(string tag)
+        private static Version ParseVersionTag(string tag)
         {
             if (string.IsNullOrEmpty(tag) || string.IsNullOrWhiteSpace(tag) || tag == "NO_VERSION_FOUND")
             {
@@ -75,7 +75,7 @@ namespace NewSafetyHelp.VersionChecker
             {
                 // Provide flags.
                 http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("NewSafetyHelp-Mod",
-                    getCurrentVersion().ToString()));
+                    GetCurrentVersion().ToString()));
                 http.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 
@@ -105,7 +105,7 @@ namespace NewSafetyHelp.VersionChecker
                     tag = (string)jsonObjectParsed["name"];
                 }
 
-                Version parsedVersion = parseVersionTag(tag);
+                Version parsedVersion = ParseVersionTag(tag);
 
                 if (parsedVersion == null)
                 {
@@ -120,7 +120,7 @@ namespace NewSafetyHelp.VersionChecker
         /// <summary>
         /// Shows the update message in the console.
         /// </summary>
-        public static void showUpdateMessage()
+        public static void ShowUpdateMessage()
         {
             string updateMessage = "NEW VERSION AVAILABLE! Download through your preferred method.";
 
@@ -144,7 +144,7 @@ namespace NewSafetyHelp.VersionChecker
         /// <summary>
         /// Checks if there are any updates available for the mod.
         /// </summary>
-        public static async Task checkForUpdates()
+        public static async Task CheckForUpdates()
         {
             Version newestVersion = await GetLatestReleaseVersionAsync();
 
@@ -155,12 +155,12 @@ namespace NewSafetyHelp.VersionChecker
             }
             else
             {
-                bool newerVersionAvailable = isOutDatedVersion(getCurrentVersion(), newestVersion);
+                bool newerVersionAvailable = IsOutDatedVersion(GetCurrentVersion(), newestVersion);
 
                 if (newerVersionAvailable)
                 {
-                    MainClassForMonsterEntries._showUpdateMessage = true; // Show the message after loading in.
-                    showUpdateMessage();
+                    MainClassForMonsterEntries.ShowUpdateMessage = true; // Show the message after loading in.
+                    ShowUpdateMessage();
                 }
             }
         }

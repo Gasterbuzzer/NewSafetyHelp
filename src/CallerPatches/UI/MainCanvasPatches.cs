@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using Steamworks;
 using UnityEngine;
@@ -21,23 +19,20 @@ namespace NewSafetyHelp.CallerPatches.UI
         private static readonly int Glitch = Animator.StringToHash("glitch");
         private static readonly int Shake = Animator.StringToHash("shake");
 
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "WriteDayString", new Type[] { })]
-        public static class ScorecardPatch
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "WriteDayString")]
+        public static class WriteDayStringPatch
         {
-
             /// <summary>
             /// Patches the main canvas day string function to use custom day strings.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param> 
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref string __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref string __result)
             {
-                
                 List<string> defaultDayNames = new List<string>() {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
                 
-                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign)
+                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.arcadeMode)
                     {
@@ -47,7 +42,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     __result = defaultDayNames[GlobalVariables.currentDay - 1];
 
                 }
-                else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign)
+                else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     switch (GlobalVariables.currentDay)
                     {
@@ -68,26 +63,26 @@ namespace NewSafetyHelp.CallerPatches.UI
                             break;
                     }
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign Values
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Values
                 {
-                    CustomCampaignExtraInfo currentCustomCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (currentCustomCampaign != null)
                     {
                         string dayString;
                         
                         // Campaign find campaign.
-                        if (currentCustomCampaign.campaignDayStrings.Count > 0)
+                        if (currentCustomCampaign.CampaignDayStrings.Count > 0)
                         {
-                            if (GlobalVariables.currentDay > currentCustomCampaign.campaignDayStrings.Count 
-                                || currentCustomCampaign.campaignDays > currentCustomCampaign.campaignDayStrings.Count)
+                            if (GlobalVariables.currentDay > currentCustomCampaign.CampaignDayStrings.Count 
+                                || currentCustomCampaign.CampaignDays > currentCustomCampaign.CampaignDayStrings.Count)
                             {
                                 MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
                                 dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                             }
                             else
                             {
-                                dayString = currentCustomCampaign.campaignDayStrings[(GlobalVariables.currentDay - 1) % currentCustomCampaign.campaignDayStrings.Count];
+                                dayString = currentCustomCampaign.CampaignDayStrings[(GlobalVariables.currentDay - 1) % currentCustomCampaign.CampaignDayStrings.Count];
                             }
                         }
                         else
@@ -96,13 +91,13 @@ namespace NewSafetyHelp.CallerPatches.UI
                         }
                         
                         bool foundDayStrings = false;
-                        List<string> daysStrings = CustomCampaignGlobal.getActiveModifierValue(
-                            c => c.dayTitleStrings, ref foundDayStrings,
+                        List<string> daysStrings = CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.DayTitleStrings, ref foundDayStrings,
                             v => v != null && v.Count > 0);
                         
                         bool foundUnlockDays = false;
-                        List<int> unlockDays = CustomCampaignGlobal.getActiveModifierValue(
-                            c => c.unlockDays, ref foundUnlockDays,
+                        List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.UnlockDays, ref foundUnlockDays,
                             v => v != null && v.Count > 0);
                         
                         // Modifier
@@ -121,7 +116,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                                 {
                                     if (unlockDays == null) // General Days, we simply display what we can.
                                     {
-                                        if (currentCustomCampaign.campaignDays > daysStrings.Count)
+                                        if (currentCustomCampaign.CampaignDays > daysStrings.Count)
                                         {
                                             MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using modulated values. ");
                                         }
@@ -178,19 +173,19 @@ namespace NewSafetyHelp.CallerPatches.UI
         }
         
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "StartSoftwareRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "StartSoftwareRoutine")]
         public static class SoftwareRoutinePatches
         {
-
             /// <summary>
             /// Patches start software routine to work better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine of function to be called after wards </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
+                EndDayRoutinePatch.IsDayEnding = false; // Reset it, if not reset yet.
+                
                 __result = StartSoftwareRoutine(__instance);
                 
                 return false; // Skip function with false.
@@ -218,12 +213,12 @@ namespace NewSafetyHelp.CallerPatches.UI
                 loadVarsMethod.Invoke(mainCanvasBehavior, null);
                 populateEntriesListMethod.Invoke(mainCanvasBehavior, null);
                 
-                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign)
+                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                 {
                   mainCanvasBehavior.trialScreen.SetActive(true);
                   mainCanvasBehavior.postProcessVolume.profile = mainCanvasBehavior.scaryProcessProfile;
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign Last Day
+                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Last Day
                 {
                     // Currently just skips it.
                 }
@@ -267,7 +262,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                   
                   GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
                   
-                  if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign)
+                  if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                   {
                     mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
                     GlobalVariables.fade.FadeIn();
@@ -276,7 +271,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     
                     GlobalVariables.fade.FadeOut();
                   }
-                  else if (CustomCampaignGlobal.inCustomCampaign) // Just Skip
+                  else if (CustomCampaignGlobal.InCustomCampaign) // Just Skip
                   {
                       // Skip
                   }
@@ -305,7 +300,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 mainCanvasBehavior.softwareStartupPanel.SetActive(false);
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
                 
-                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.inCustomCampaign)
+                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                 {
                   yield return new WaitForSeconds(0.4f);
                   
@@ -317,7 +312,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                   GlobalVariables.fade.FadeOut();
                   GlobalVariables.musicControllerScript.StartTrialMusic();
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign)
+                else if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     // Skip
                 }
@@ -332,18 +327,18 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 
                 // Custom Enables
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null! Unable of enabling skip call button.");
+                        MelonLogger.Error("ERROR: CustomCampaign is null! Unable of enabling skip call button.");
                     }
-                    else if (customCampaign.alwaysSkipCallButton)
+                    else if (customCampaign.AlwaysSkipCallButton)
                     {
-                        CustomDesktopHelper.getCallSkipButton().SetActive(true);
+                        CustomDesktopHelper.GetCallSkipButton().SetActive(true);
                     }
                 }
                 
@@ -352,34 +347,48 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndDayRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndDayRoutine")]
         public static class EndDayRoutinePatch
         {
+            // To avoid duplicate day ending.
+            public static bool IsDayEnding;
 
             /// <summary>
             /// Patches the EndDayRoutine coroutine to work better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to be called after wards. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Calling EndDayRoutine.");
+                    MelonLogger.Msg("DEBUG: Calling EndDayRoutine.");
                 #endif
                 
-                __result = endDayRoutineChanged(__instance);
+                __result = EndDayRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
             }
             
-            private static IEnumerator endDayRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator EndDayRoutineChanged(MainCanvasBehavior __instance)
             {
+                if (IsDayEnding)
+                {
+                    #if DEBUG
+                        MelonLogger.Msg("DEBUG: Skipping EndDayRoutine.");
+                    #endif
+                    
+                    yield break;
+                }
+
+                IsDayEnding = true;
+                
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 mainCanvasBehavior.clockedOut = false;
                 
                 yield return new WaitForSeconds(5f);
+                
+                mainCanvasBehavior.inputBlocker.SetActive(false);
                 
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
                 GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
@@ -390,6 +399,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 mainCanvasBehavior.clockOutButton.SetActive(true);
                 mainCanvasBehavior.clockInElements.SetActive(false);
                 
+                IsDayEnding = false;
                 while (!mainCanvasBehavior.clockedOut)
                 {
                     yield return null;
@@ -399,7 +409,6 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 if (!GlobalVariables.isXmasDLC)
                 {
-                    
                     MethodInfo _unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod("UnlockDailySteamAchievement", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                     if (_unlockDailySteamAchievement == null)
@@ -416,13 +425,13 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 yield return new WaitForSeconds(2f);
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(), GlobalVariables.callerControllerScript.GetScore());
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -430,7 +439,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
 
-                    customCampaign.savedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
+                    customCampaign.SavedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
                 }
                 
                 FieldInfo _progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -447,7 +456,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     _progressDay.SetValue(mainCanvasBehavior, true); // mainCanvasBehavior.progressDay = true;
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     GlobalVariables.saveManagerScript.savedDay = GlobalVariables.currentDay;
                     GlobalVariables.saveManagerScript.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
@@ -466,7 +475,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 else // Custom Campaign
                 {
                     
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -474,9 +483,9 @@ namespace NewSafetyHelp.CallerPatches.UI
                         yield break;
                     }
                     
-                    customCampaign.currentDay = GlobalVariables.currentDay;
-                    customCampaign.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
-                    customCampaign.currentPermissionTier  = GlobalVariables.entryUnlockScript.currentTier;
+                    customCampaign.CurrentDay = GlobalVariables.currentDay;
+                    customCampaign.SavedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
+                    customCampaign.CurrentPermissionTier  = GlobalVariables.entryUnlockScript.currentTier;
                     
                     List<bool> flagArray = new List<bool>();
                     
@@ -494,13 +503,17 @@ namespace NewSafetyHelp.CallerPatches.UI
                         }
                     }
                     
-                    customCampaign.savedCallersCorrectAnswer = flagArray;
-                    customCampaign.savedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
+                    customCampaign.SavedCallersCorrectAnswer = flagArray;
+                    customCampaign.SavedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
                 }
                 
                 GlobalVariables.saveManagerScript.SaveGameProgress();
                 
                 yield return null;
+                
+                #if DEBUG
+                    MelonLogger.Msg("DEBUG: Ending the EndDayRoutine.");
+                #endif
                 
                 mainCanvasBehavior.ExitToMenu();
                 
@@ -508,20 +521,17 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine")]
         public static class EndingCutsceneRoutinePatch
         {
-
             /// <summary>
             /// Patches the EndingCutsceneRoutine coroutine to work better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to be called after wards. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-
                 __result = endingCutsceneRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
@@ -555,7 +565,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     GlobalVariables.musicControllerScript.StopTrialMusic();
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     GlobalVariables.saveManagerScript.savedGameFinished = 1;
                     GlobalVariables.saveManagerScript.savedGameFinishedDisplay = 1;
@@ -572,16 +582,16 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
                     
-                    customCampaign.savedGameFinished = 1;
-                    customCampaign.savedGameFinishedDisplay = 1;
+                    customCampaign.SavedGameFinished = 1;
+                    customCampaign.SavedGameFinishedDisplay = 1;
                     
                     List<bool> flagArray = new List<bool>();
                     
@@ -596,8 +606,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                         flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
                     }
                     
-                    customCampaign.savedCallersCorrectAnswer = flagArray;
-                    customCampaign.savedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
+                    customCampaign.SavedCallersCorrectAnswer = flagArray;
+                    customCampaign.SavedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
                 }
                 
                 // Works for both custom campaigns and main campaign.
@@ -614,7 +624,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 yield return new WaitForSeconds(0.5f);
                 
                 // Inject custom end clip here.
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
                     if (GlobalVariables.isXmasDLC)
@@ -624,17 +634,17 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
 
-                    if (!string.IsNullOrEmpty(customCampaign.endCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) // If provided
                     {
-                        mainCanvasBehavior.videoPlayer.url = customCampaign.endCutsceneVideoName;
+                        mainCanvasBehavior.videoPlayer.url = customCampaign.EndCutsceneVideoName;
                     }
                     else // If not, we show the default one.
                     {
@@ -644,21 +654,21 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 mainCanvasBehavior.videoPlayer.Play();
 
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
                     
-                    if (!string.IsNullOrEmpty(customCampaign.endCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) // If provided
                     {
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();
@@ -669,7 +679,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         }
                         
                         // Afterward we load all main game values.
-                        CustomDesktopHelper.backToMainGame(false);
+                        CustomDesktopHelper.BackToMainGame(false);
                     }
                     else // If not, we show the default one.
                     {
@@ -677,7 +687,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                 }
                 
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&!CustomCampaignGlobal.inCustomCampaign) // Disable Achievement in Custom Campaign
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&!CustomCampaignGlobal.InCustomCampaign) // Disable Achievement in Custom Campaign
                 {
                     SteamUserStats.SetAchievement("GameFinished");
                     
@@ -703,17 +713,16 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "IsNetworkDown", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "IsNetworkDown")]
         public static class IsNetworkDownPatch
         {
             /// <summary>
             /// Patches the network down patch to also check for custom callers.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> If to down the network. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref bool __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref bool __result)
             {
 
                 if (GlobalVariables.arcadeMode)
@@ -726,7 +735,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else
                 {
-                    if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign, could be main or DLC.
+                    if (!CustomCampaignGlobal.InCustomCampaign) // Not in custom campaign, could be main or DLC.
                     {
                         foreach (int downedNetworkCall in GlobalVariables.callerControllerScript.downedNetworkCalls)
                         {
@@ -739,15 +748,15 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                     else // Custom Campaign
                     {
-                        CustomCallerExtraInfo customCaller = CustomCampaignGlobal.getCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                        CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         
-                        if (customCaller == null)
+                        if (customCCaller == null)
                         {
                             MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
                             return true;
                         }
 
-                        if (customCaller.downedNetworkCaller) // This is set to true if the caller is allowed to down the network.
+                        if (customCCaller.DownedNetworkCaller) // This is set to true if the caller is allowed to down the network.
                         {
                             __result = true;
                             return false;
@@ -760,25 +769,23 @@ namespace NewSafetyHelp.CallerPatches.UI
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine")]
         public static class GameOverCutsceneRoutinePatch
         {
             /// <summary>
             /// Patches the game over cutscene coroutine to also be able to play custom game over cutscenes.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to run. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance, ref IEnumerator __result)
+            private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-
-                __result = gameOverCutsceneRoutineChanged(__instance);
+                __result = GameOverCutsceneRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
             }
 
-            private static IEnumerator gameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator GameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 
@@ -810,7 +817,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 mainCanvasBehavior.cutsceneCanvas.SetActive(true);
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Not in custom campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) // Not in custom campaign
                 {
                     mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
                 
@@ -821,17 +828,17 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
 
-                    if (!string.IsNullOrEmpty(customCampaign.gameOverCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.GameOverCutsceneVideoName)) // If provided
                     {
-                        mainCanvasBehavior.videoPlayer.url = customCampaign.gameOverCutsceneVideoName;
+                        mainCanvasBehavior.videoPlayer.url = customCampaign.GameOverCutsceneVideoName;
                     }
                     else // If not, we show the default one.
                     {
@@ -845,21 +852,21 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 GlobalVariables.fade.FadeOut(3f);
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
                     yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaignExtraInfo was null. Catastrophic failure!");
+                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
                         yield break;
                     }
                     
-                    if (!string.IsNullOrEmpty(customCampaign.gameOverCutsceneVideoName)) // If provided
+                    if (!string.IsNullOrEmpty(customCampaign.GameOverCutsceneVideoName)) // If provided
                     {
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();
@@ -875,7 +882,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                 }
                 
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign) // Don't show fired achievement in custom campaign.
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Don't show fired achievement in custom campaign.
                 {
                     SteamUserStats.SetAchievement("Fired");
                     SteamUserStats.StoreStats();
@@ -890,16 +897,15 @@ namespace NewSafetyHelp.CallerPatches.UI
         }
         
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "LoadCallerAnswers", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "LoadCallerAnswers")]
         public static class LoadCallerAnswersPatch
         {
             /// <summary>
             /// Patches the load caller answers to gracefully accept null values.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, MainCanvasBehavior __instance)
+            private static bool Prefix(MainCanvasBehavior __instance)
             {
                 if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length != GlobalVariables.callerControllerScript.callers.Length)
                 {

@@ -4,8 +4,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
-using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.CustomCampaign.Helper;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -14,7 +13,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
     public static class CustomCallerParsing
     {
         /// <summary>
-        /// Creates a custom caller from a provided json file.
+        /// Creates a custom caller from a provided JSON file.
         /// </summary>
         /// <param name="jObjectParsed"></param>
         /// <param name="usermodFolderPath"></param>
@@ -43,15 +42,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Audio
             string customCallerAudioPath = "";
 
-            // First create a CustomCallerExtraInfo to assign audio later for it later automatically.
-            CustomCallerExtraInfo _customCaller = ParseCustomCaller(ref jObjectParsed,
+            // First create a CustomCCaller to assign audio later for it later automatically.
+            CustomCCaller customCCaller = ParseCustomCaller(ref jObjectParsed,
                 ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign,
                 ref customCallerMonsterName, ref customCallerAudioPath,
-                ref orderInCampaign, ParseJSONFiles.mainCampaignCallAmount, ref ParseJSONFiles.customCallerMainGame);
+                ref orderInCampaign, GlobalParsingVariables.MainCampaignCallAmount,
+                ref GlobalParsingVariables.CustomCallersMainGame);
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
-                _customCaller.monsterNameAttached = customCallerMonsterName;
+                customCCaller.MonsterNameAttached = customCallerMonsterName;
             }
 
             // Custom Caller Audio Path (Later gets added with coroutine)
@@ -70,20 +70,20 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
                 else // Valid location, so we load in the value.
                 {
-                    MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
+                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    _customCaller.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    _customCaller.isCallerClipLoaded = true;
+                                    customCCaller.CallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    customCCaller.IsCallerClipLoaded = true;
 
-                                    if (AudioImport.currentLoadingAudios.Count <= 0)
+                                    if (AudioImport.CurrentLoadingAudios.Count <= 0)
                                     {
                                         // We finished loading all audios. We call the start function again.
-                                        AudioImport.reCallCallerListStart();
+                                        AudioImport.ReCallCallerListStart();
                                     }
                                 }
                                 else
@@ -102,28 +102,28 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (inMainCampaign)
             {
                 MelonLogger.Msg("INFO: Found entry to add to the main game.");
-                ParseJSONFiles.customCallerMainGame.Add(orderInCampaign, _customCaller);
+                GlobalParsingVariables.CustomCallersMainGame.Add(orderInCampaign, customCCaller);
             }
             else
             {
                 // Add to correct campaign.
-                CustomCampaignExtraInfo foundCustomCampaign =
-                    CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                        customCampaignSearch.campaignName == customCampaignName);
+                CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+                    CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
+                        customCampaignSearch.CampaignName == customCampaignName);
 
                 if (foundCustomCampaign != null)
                 {
-                    if (_customCaller.isGameOverCaller)
+                    if (customCCaller.IsGameOverCaller)
                     {
-                        foundCustomCampaign.customGameOverCallersInCampaign.Add(_customCaller);
+                        foundCustomCampaign.CustomGameOverCallersInCampaign.Add(customCCaller);
                     }
-                    else if (_customCaller.isWarningCaller)
+                    else if (customCCaller.IsWarningCaller)
                     {
-                        foundCustomCampaign.customWarningCallersInCampaign.Add(_customCaller);
+                        foundCustomCampaign.CustomWarningCallersInCampaign.Add(customCCaller);
                     }
                     else
                     {
-                        foundCustomCampaign.customCallersInCampaign.Add(_customCaller);
+                        foundCustomCampaign.CustomCallersInCampaign.Add(customCCaller);
                     }
                 }
                 else
@@ -132,7 +132,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
                     #endif
 
-                    ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Add(_customCaller);
+                    GlobalParsingVariables.PendingCustomCampaignCustomCallers.Add(customCCaller);
                 }
             }
 
@@ -141,10 +141,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             #endif
         }
 
-        public static CustomCallerExtraInfo ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomCCaller ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign,
             ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,
-            int mainCampaignCallAmount, ref Dictionary<int, CustomCallerExtraInfo> customCallerMainGame)
+            int mainCampaignCallAmount, ref Dictionary<int, CustomCCaller> customCallerMainGame)
         {
             // Caller Information
             string customCallerName = "NO_CUSTOM_CALLER_NAME";
@@ -164,7 +164,6 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
 
             // Warning Call
-
             bool isWarningCaller = false;
             int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
 
@@ -172,7 +171,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool isGameOverCaller = false;
             int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
 
-
+            // Accuracy Caller
+            bool isAccuracyCaller = false; // If this caller is an accuracy caller.
+            List<AccuracyType> accuracyChecks = new List<AccuracyType>(); // How it should be checked for.
+            
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
                 customCampaignName = (string)customCampaignAttachedValue;
@@ -187,116 +189,37 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     "ERROR: Provided custom caller is not attached to either custom campaign or main campaign?");
             }
 
-            if (jObjectParsed.TryGetValue("custom_caller_name", out var customCallerNameValue))
-            {
-                customCallerName = (string)customCallerNameValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_transcript", ref customCallerTranscript);
 
-            if (jObjectParsed.TryGetValue("custom_caller_transcript", out var customCallerTranscriptValue))
-            {
-                customCallerTranscript = (string)customCallerTranscriptValue;
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_caller_image_name", ref customCallerImage, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            if (jObjectParsed.TryGetValue("custom_caller_image_name", out var customCallerImageNameValue))
-            {
-                string customCallerImageLocation = (string)customCallerImageNameValue;
+            ParsingHelper.TryAssign(jObjectParsed, "order_in_campaign", ref orderInCampaign);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_monster_name", ref customCallerMonsterName);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_monster_id", ref customCallerMonsterID);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_increases_tier", ref increasesTier);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_last_caller_day", ref isLastCallerOfDay);
 
-                if (string.IsNullOrEmpty(customCallerImageLocation))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{usermodFolderPath}'. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
-                }
-                else
-                {
-                    customCallerImage = ImageImport.LoadImage(jsonFolderPath + "\\" + customCallerImageLocation,
-                        usermodFolderPath + "\\" + customCallerImageLocation);
-                }
-            }
-            else
-            {
-                MelonLogger.Warning(
-                    $"WARNING: No custom caller portrait given for file in {usermodFolderPath}. No image will be shown {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
-            }
+            ParsingHelper.TryAssignAudioPath(jObjectParsed, "custom_caller_audio_clip_name",
+                ref customCallerAudioPath,  jsonFolderPath, usermodFolderPath, customCallerName);
 
-            if (jObjectParsed.TryGetValue("order_in_campaign", out var orderInCampaignValue))
-            {
-                orderInCampaign = (int)orderInCampaignValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_caller_monster_name", out var customCallerMonsterNameValue))
-            {
-                customCallerMonsterName = (string)customCallerMonsterNameValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_caller_monster_id", out var customCallerMonsterIDValue))
-            {
-                customCallerMonsterID = (int)customCallerMonsterIDValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_caller_increases_tier", out var customCallerIncreaseTierValue))
-            {
-                increasesTier = (bool)customCallerIncreaseTierValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_caller_last_caller_day", out var customCallerLastCallerDayValue))
-            {
-                isLastCallerOfDay = (bool)customCallerLastCallerDayValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_caller_audio_clip_name", out var customCallerAudioClipNameValue))
-            {
-                if (!File.Exists(jsonFolderPath + "\\" + customCallerAudioClipNameValue))
-                {
-                    if (!File.Exists(usermodFolderPath + "\\" + customCallerAudioClipNameValue))
-                    {
-                        MelonLogger.Warning(
-                            $"WARNING: Could not find provided audio file for custom caller at '{jsonFolderPath}' {((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"for {customCallerName}" : "")}.");
-                    }
-                    else
-                    {
-                        customCallerAudioPath = usermodFolderPath + "\\" + customCallerAudioClipNameValue;
-                    }
-                }
-                else
-                {
-                    customCallerAudioPath = jsonFolderPath + "\\" + customCallerAudioClipNameValue;
-                }
-            }
-
-            if (jObjectParsed.TryGetValue("custom_caller_consequence_caller_id",
-                    out var customCallerConsequenceCallerIDValue))
-            {
-                customCallerConsequenceCallerID = (int)customCallerConsequenceCallerIDValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_caller_downed_network", out var customCallerDownedNetworkValue))
-            {
-                downedCall = (bool)customCallerDownedNetworkValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_consequence_caller_id", ref customCallerConsequenceCallerID);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_downed_network", ref downedCall);
 
             // Warning Caller Section
 
-            if (jObjectParsed.TryGetValue("is_warning_caller", out var isWarningCallerValue))
-            {
-                isWarningCaller = (bool)isWarningCallerValue;
-            }
-
-            if (isWarningCaller && jObjectParsed.TryGetValue("warning_caller_day", out var warningCallerDayValue))
-            {
-                warningCallDay = (int)warningCallerDayValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "is_warning_caller", ref isWarningCaller);
+            ParsingHelper.TryAssign(jObjectParsed, "warning_caller_day", ref warningCallDay);
 
             // GameOver Caller Section
 
-            if (jObjectParsed.TryGetValue("is_gameover_caller", out var isGameOverCallerValue))
-            {
-                isGameOverCaller = (bool)isGameOverCallerValue;
-            }
-
-            if (isGameOverCaller && jObjectParsed.TryGetValue("gameover_caller_day", out var gameOverCallerDayValue))
-            {
-                gameOverCallDay = (int)gameOverCallerDayValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "is_gameover_caller", ref isGameOverCaller);
+            ParsingHelper.TryAssign(jObjectParsed, "gameover_caller_day", ref gameOverCallDay);
+            
+            // Accuracy Caller Section
+            
+            ParsingHelper.TryAssign(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller);
+            ParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
 
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
@@ -308,25 +231,28 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
             }
 
-            return new CustomCallerExtraInfo(orderInCampaign)
+            return new CustomCCaller(orderInCampaign)
             {
-                callerName = customCallerName,
-                callerImage = customCallerImage,
-                callTranscript = customCallerTranscript,
-                monsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
-                inCustomCampaign = !inMainCampaign,
-                callerIncreasesTier = increasesTier,
-                callerClipPath = customCallerAudioPath,
-                consequenceCallerID = customCallerConsequenceCallerID,
-                belongsToCustomCampaign = customCampaignName,
-                lastDayCaller = isLastCallerOfDay,
-                downedNetworkCaller = downedCall,
+                CallerName = customCallerName,
+                CallerImage = customCallerImage,
+                CallTranscript = customCallerTranscript,
+                MonsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
+                InCustomCampaign = !inMainCampaign,
+                CallerIncreasesTier = increasesTier,
+                CallerClipPath = customCallerAudioPath,
+                ConsequenceCallerID = customCallerConsequenceCallerID,
+                CustomCampaignName = customCampaignName,
+                LastDayCaller = isLastCallerOfDay,
+                DownedNetworkCaller = downedCall,
 
-                isWarningCaller = isWarningCaller,
-                warningCallDay = warningCallDay,
+                IsWarningCaller = isWarningCaller,
+                WarningCallDay = warningCallDay,
 
-                isGameOverCaller = isGameOverCaller,
-                gameOverCallDay = gameOverCallDay
+                IsGameOverCaller = isGameOverCaller,
+                GameOverCallDay = gameOverCallDay,
+                
+                IsAccuracyCaller = isAccuracyCaller,
+                AccuracyChecks = accuracyChecks
             };
         }
     }

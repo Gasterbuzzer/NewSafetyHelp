@@ -1,13 +1,15 @@
-﻿namespace NewSafetyHelp.EntryManager.EntryData
+﻿using NewSafetyHelp.CustomCampaign.Abstract;
+
+namespace NewSafetyHelp.EntryManager.EntryData
 {
-    public class EntryExtraInfo
+    public class EntryMetadata : CustomCampaignElementBase
     {
         public int? ID;
         public string Name { get; }
         
         // Since it's useful to store values outside
         // Entry Values
-        public string entryDescription;
+        public string EntryDescription;
         
         // Extra Info Caller
         public RichAudioClip callerClip = null; // Caller Clip
@@ -42,12 +44,11 @@
         public UnityEngine.Sprite consequenceCallerImage = null; // Consequence Caller Image
         
         // Custom Campaign
-        public bool onlyCustomCampaign = false;
-        public string customCampaignName = "NO_CUSTOM_CAMPAIGN_NAME";
-        public bool deleteEntry = false; // If to delete the entry (Only works in replacing mode)
+        public bool OnlyCustomCampaign = false;
+        public bool DeleteEntry = false; // If to delete the entry (Only works in replacing mode)
 
         // Constructor
-        public EntryExtraInfo(string _name, int _id) { Name = _name; ID = _id; }
+        public EntryMetadata(string _name, int _id) { Name = _name; ID = _id; }
 
         /// <summary>
         /// Overloaded equals function for comparing this object to another.
@@ -55,7 +56,7 @@
         /// <param name="obj"> Object to compare to. </param>
         public override bool Equals(object obj)
         {
-            if (obj is EntryExtraInfo other)
+            if (obj is EntryMetadata other)
             {
                 return ID == other.ID && Name == other.Name;
             }

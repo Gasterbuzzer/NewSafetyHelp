@@ -1,15 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using MelonLoader;
-using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
-using NewSafetyHelp.CustomVideos;
-using NewSafetyHelp.Emails;
-using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -35,206 +28,132 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
             
-            CustomCampaignExtraInfo _customCampaign = parseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
+            CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = ParseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
                     ref jsonFolderPath, ref customCampaignName);
             
             // Check if any callers have to be added to this campaign.
-            if (ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Count > 0)
+            if (GlobalParsingVariables.PendingCustomCampaignCustomCallers.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<CustomCallerExtraInfo> tempList =
-                    new List<CustomCallerExtraInfo>(ParseJSONFiles.missingCustomCallerCallersCustomCampaign);
+                List<CallerPatches.CallerModel.CustomCCaller> tempList =
+                    new List<CallerPatches.CallerModel.CustomCCaller>(GlobalParsingVariables.PendingCustomCampaignCustomCallers);
 
-                foreach (CustomCallerExtraInfo customCallerCC in tempList)
+                foreach (CallerPatches.CallerModel.CustomCCaller customCallerCC in tempList)
                 {
-                    if (customCallerCC.belongsToCustomCampaign == customCampaignName)
+                    if (customCallerCC.CustomCampaignName == customCampaignName)
                     {
                         #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.callerName} to the custom campaign: {customCampaignName}.");
+                            MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        if (customCallerCC.isGameOverCaller)
+                        if (customCallerCC.IsGameOverCaller)
                         {
-                            _customCampaign.customGameOverCallersInCampaign.Add(customCallerCC);
+                            customCampaign.CustomGameOverCallersInCampaign.Add(customCallerCC);
                         }
-                        else if (customCallerCC.isWarningCaller)
+                        else if (customCallerCC.IsWarningCaller)
                         {
-                            _customCampaign.customWarningCallersInCampaign.Add(customCallerCC);
+                            customCampaign.CustomWarningCallersInCampaign.Add(customCallerCC);
                         }
                         else
                         {
-                            _customCampaign.customCallersInCampaign.Add(customCallerCC);
+                            customCampaign.CustomCallersInCampaign.Add(customCallerCC);
                         }
 
-                        ParseJSONFiles.missingCustomCallerCallersCustomCampaign.Remove(customCallerCC);
+                        GlobalParsingVariables.PendingCustomCampaignCustomCallers.Remove(customCallerCC);
                     }
                 }
             }
+            
 
             // Check if any entries have to be added to this campaign.
-            if (ParseJSONFiles.missingEntriesCustomCampaign.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(ParseJSONFiles.missingEntriesCustomCampaign);
-
-                foreach (EntryExtraInfo missingEntry in tempList)
-                {
-                    if (missingEntry.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing entry to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.entriesOnlyInCampaign.Add(missingEntry);
-
-                        ParseJSONFiles.missingEntriesCustomCampaign.Remove(missingEntry);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEntries,
+                ref customCampaign.EntriesOnlyInCampaign, customCampaignName, "entries");
 
             // Check if any entries have to be added to this campaign.
-            if (ParseJSONFiles.missingReplaceEntriesCustomCampaign.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EntryExtraInfo> tempList = new List<EntryExtraInfo>(ParseJSONFiles.missingReplaceEntriesCustomCampaign);
-
-                foreach (EntryExtraInfo missingEntry in tempList)
-                {
-                    if (missingEntry.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding 'replace' missing entry to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.entryReplaceOnlyInCampaign.Add(missingEntry);
-                        ParseJSONFiles.missingReplaceEntriesCustomCampaign.Remove(missingEntry);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignReplaceEntries,
+                ref customCampaign.EntryReplaceOnlyInCampaign, customCampaignName, "replace-entries");
 
             // Check if any emails have to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignEmails.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<EmailExtraInfo> tempList = new List<EmailExtraInfo>(ParseJSONFiles.missingCustomCampaignEmails);
-
-                foreach (EmailExtraInfo missingEmail in tempList)
-                {
-                    if (missingEmail.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing email to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.emails.Add(missingEmail);
-                        ParseJSONFiles.missingCustomCampaignEmails.Remove(missingEmail);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEmails,
+                ref customCampaign.Emails, customCampaignName, "emails");
+            
+            // Sort by unlock day. This is to prevent some oddities where some emails that appear later, appear in the list sooner.
+            customCampaign.Emails.Sort((emailOne, emailTwo) => emailOne.UnlockDay.CompareTo(emailTwo.UnlockDay));
 
             // Check if any videos have to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignVideo.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<CustomVideoExtraInfo> tempList = new List<CustomVideoExtraInfo>(ParseJSONFiles.missingCustomCampaignVideo);
-
-                foreach (CustomVideoExtraInfo missingVideo in tempList)
-                {
-                    if (missingVideo.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing video to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.allDesktopVideos.Add(missingVideo);
-                        ParseJSONFiles.missingCustomCampaignVideo.Remove(missingVideo);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
+                ref customCampaign.AllDesktopVideos, customCampaignName, "videos");
             
             // Check if any music has to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignMusic.Count > 0)
-            {
-                // Create a copy of the list to iterate over
-                List<MusicExtraInfo> tempList = new List<MusicExtraInfo>(ParseJSONFiles.missingCustomCampaignMusic);
-
-                foreach (MusicExtraInfo missingMusic in tempList)
-                {
-                    if (missingMusic.customCampaignName == customCampaignName)
-                    {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
-                        #endif
-
-                        _customCampaign.customMusic.Add(missingMusic);
-                        ParseJSONFiles.missingCustomCampaignMusic.Remove(missingMusic);
-                    }
-                }
-            }
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignMusic,
+                ref customCampaign.CustomMusic, customCampaignName, "music");
             
             // Check if any modifier has to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignModifier.Count > 0)
+            if (GlobalParsingVariables.PendingCustomCampaignModifiers.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<ModifierExtraInfo> tempList = new List<ModifierExtraInfo>(ParseJSONFiles.missingCustomCampaignModifier);
+                List<CustomModifier> tempList = new List<CustomModifier>(GlobalParsingVariables.PendingCustomCampaignModifiers);
 
-                foreach (ModifierExtraInfo missingModifier in tempList)
+                foreach (CustomModifier missingModifier in tempList)
                 {
-                    if (missingModifier.customCampaignName == customCampaignName)
+                    if (missingModifier.CustomCampaignName == customCampaignName)
                     {
                         #if DEBUG
                             MelonLogger.Msg($"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        if (missingModifier.unlockDays == null)
+                        if (missingModifier.UnlockDays == null)
                         {
-                            _customCampaign.customModifiersGeneral.Add(missingModifier);
+                            customCampaign.CustomModifiersGeneral.Add(missingModifier);
                         }
                         else
                         {
-                            _customCampaign.customModifiersDays.Add(missingModifier);
+                            customCampaign.CustomModifiersDays.Add(missingModifier);
                         }
                         
-                        ParseJSONFiles.missingCustomCampaignModifier.Remove(missingModifier);
+                        GlobalParsingVariables.PendingCustomCampaignModifiers.Remove(missingModifier);
                     }
                 }
             }
             
             // Check if any theme has to be added to a custom campaign.
-            if (ParseJSONFiles.missingCustomCampaignTheme.Count > 0)
+            if (GlobalParsingVariables.PendingCustomCampaignThemes.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<ThemesExtraInfo> tempList = new List<ThemesExtraInfo>(ParseJSONFiles.missingCustomCampaignTheme);
+                List<CustomTheme> tempList = new List<CustomTheme>(GlobalParsingVariables.PendingCustomCampaignThemes);
 
-                foreach (ThemesExtraInfo missingTheme in tempList)
+                foreach (CustomTheme missingTheme in tempList)
                 {
-                    if (missingTheme.customCampaignName == customCampaignName)
+                    if (missingTheme.CustomCampaignName == customCampaignName)
                     {
                         #if DEBUG
                         MelonLogger.Msg($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
                         #endif
 
-                        if (missingTheme.unlockDays == null)
+                        if (missingTheme.UnlockDays == null)
                         {
-                            _customCampaign.customThemesGeneral.Add(missingTheme);
+                            customCampaign.CustomThemesGeneral.Add(missingTheme);
                         }
                         else
                         {
-                            _customCampaign.customThemesDays.Add(missingTheme);
+                            customCampaign.CustomThemesDays.Add(missingTheme);
                         }
                         
-                        ParseJSONFiles.missingCustomCampaignTheme.Remove(missingTheme);
+                        GlobalParsingVariables.PendingCustomCampaignThemes.Remove(missingTheme);
                     }
                 }
             }
             
+            // Check if any ringtone has to be added to a custom campaign.
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignRingtones,
+                ref customCampaign.CustomRingtones, customCampaignName, "ringtone");
+            
             // We finished adding all missing values and now add the campaign as available.
-            CustomCampaignGlobal.customCampaignsAvailable.Add(_customCampaign);
+            CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }
         
-        private static CustomCampaignExtraInfo parseCampaignFile(ref JObject jObjectParsed, ref string usermodFolderPath,
-            ref string jsonFolderPath,
-            ref string customCampaignName)
+        private static CustomCampaign.CustomCampaignModel.CustomCampaign ParseCampaignFile(ref JObject jObjectParsed,
+            ref string usermodFolderPath, ref string jsonFolderPath, ref string customCampaignName)
         {
             // Desktop
             string customCampaignDesktopName = "NO_NAME\nPROVIDED";
@@ -315,63 +234,29 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             string defaultTheme = null;
             
+            // Ringtone
+
+            bool doNotAccountDefaultRingtone = true;
+            
             /*
              * Parsing the JSON File
              */
             
-            if (jObjectParsed.TryGetValue("custom_campaign_name", out var customCampaignNameValue))
-            {
-                customCampaignName = (string) customCampaignNameValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_campaign_desktop_name", out var customCampaignDesktopNameValue))
-            {
-                customCampaignDesktopName = (string) customCampaignDesktopNameValue;
-            }
-
-            if (jObjectParsed.TryGetValue("desktop_username_text", out var desktopUsernameTextValue))
-            {
-                desktopUsernameText = (string) desktopUsernameTextValue;
-            }
-
-            if (jObjectParsed.TryGetValue("start_year", out var startYearValue))
-            {
-                desktopDateStartYear = (int) startYearValue;
-            }
-
-            if (jObjectParsed.TryGetValue("start_month", out var startMonthValue))
-            {
-                desktopDateStartMonth = (int) startMonthValue;
-            }
-
-            if (jObjectParsed.TryGetValue("start_day", out var startDayValue))
-            {
-                desktopDateStartDay = (int) startDayValue;
-            }
-
-            if (jObjectParsed.TryGetValue("use_europe_date_format", out var useEuropeanDateFormatValue))
-            {
-                useEuropeDateFormat = (bool) useEuropeanDateFormatValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("custom_campaign_days", out var customCampaignDaysValue))
-            {
-                customCampaignDays = (int) customCampaignDaysValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("custom_campaign_remove_main_entries", out var customCampaignRemoveMainEntriesValue))
-            {
-                removeAllExistingEntries = (bool) customCampaignRemoveMainEntriesValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_name", ref customCampaignName);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_desktop_name", ref customCampaignDesktopName);
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref desktopUsernameText);
+            ParsingHelper.TryAssign(jObjectParsed, "start_year", ref desktopDateStartYear);
+            ParsingHelper.TryAssign(jObjectParsed, "start_month", ref desktopDateStartMonth);
+            ParsingHelper.TryAssign(jObjectParsed, "start_day", ref desktopDateStartDay);
+            ParsingHelper.TryAssign(jObjectParsed, "use_europe_date_format", ref useEuropeDateFormat);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_days", ref customCampaignDays);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_remove_main_entries", ref removeAllExistingEntries);
             
             if (jObjectParsed.TryGetValue("custom_campaign_empty_main_entries_permission", out var customCampaignEmptyMainEntriesPermissionValue))
             {
-                resetDefaultEntriesPermission = (bool) customCampaignEmptyMainEntriesPermissionValue;
+                resetDefaultEntriesPermission = customCampaignEmptyMainEntriesPermissionValue.Value<bool>();
 
-                if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out JToken resultNewTag))
-                {
-                    doShowNewTagForMainGameEntries = (bool) resultNewTag;
-                }
+                ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_show_new_tag_for_main_entries", ref doShowNewTagForMainGameEntries);
             }
             
             // Sanity check in case it was passed but no entries have been reset to 0th permission.
@@ -380,15 +265,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Warning("WARNING: Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_gameover_threshold", out var customCampaignGameoverThresholdValue))
-            {
-                gameOverThreshold = (int) customCampaignGameoverThresholdValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_campaign_warning_threshold", out var customCampaignWarningThresholdValue))
-            {
-                warningThreshold = (int) customCampaignWarningThresholdValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_gameover_threshold", ref gameOverThreshold);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_warning_threshold", ref warningThreshold);
             
             if (jObjectParsed.TryGetValue("custom_campaign_days_names", out var customCampaignDaysNamesValue))
             {
@@ -400,25 +278,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_icon_image_name", out var customCampaignIconImageNameValue))
-            {
-                string customCampaignImagePath = (string) customCampaignIconImageNameValue;
-
-                if (string.IsNullOrEmpty(customCampaignImagePath))
-                {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{usermodFolderPath}'. Default icon will be shown.");
-                }
-                else
-                {
-                    customCampaignSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customCampaignImagePath,
-                        usermodFolderPath + "\\" + customCampaignImagePath);
-                }
-            }
-            else
-            {
-                MelonLogger.Warning(
-                    $"WARNING: No custom campaign icon given for file in {usermodFolderPath}. Default icon will be shown.");
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_icon_image_name", ref customCampaignSprite, jsonFolderPath,
+                usermodFolderPath, customCampaignName);
             
             if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text1", out var customCampaignLoadingDesktopText1Value))
             {
@@ -454,129 +315,25 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
-            if (jObjectParsed.TryGetValue("custom_campaign_end_cutscene_video_name", out var customCampaignEndCutsceneVideoNameValue))
-            {
-                endCutscenePath = jsonFolderPath + "\\" + (string) customCampaignEndCutsceneVideoNameValue;
-                string endCutsceneAlternativePath = usermodFolderPath + "\\" + (string) customCampaignEndCutsceneVideoNameValue;
-
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: End cutscene video found: '{(string) customCampaignEndCutsceneVideoNameValue}'");
-                #endif
-
-                if (string.IsNullOrEmpty((string) customCampaignEndCutsceneVideoNameValue))
-                {
-                    MelonLogger.Warning(
-                        "WARNING: Provided video cutscene name but name is empty. Unable to show custom end cutscene.");
-                    endCutscenePath = "";
-                }
-                else if (!File.Exists(endCutscenePath))
-                {
-                    if (!File.Exists(endCutsceneAlternativePath))
-                    {
-                        MelonLogger.Warning($"WARNING: Provided video cutscene {endCutscenePath} does not exist.");
-                        endCutscenePath = "";
-                    }
-                    else
-                    {
-                        endCutscenePath = endCutsceneAlternativePath;
-                    }
-                }
-            }
-
-            if (jObjectParsed.TryGetValue("custom_campaign_gameover_cutscene_video_name", out var customCampaignGameoverCutsceneVideoNameValue))
-            {
-                gameOverCutscenePath = jsonFolderPath + "\\" + (string) customCampaignGameoverCutsceneVideoNameValue;
-                string gameOverCutsceneAlternativePath = usermodFolderPath + "\\" + (string) customCampaignGameoverCutsceneVideoNameValue;
-
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Game Over video found: '{gameOverCutscenePath}'");
-                #endif
-
-                if (string.IsNullOrEmpty((string) customCampaignGameoverCutsceneVideoNameValue))
-                {
-                    MelonLogger.Warning(
-                        "WARNING: Provided video cutscene name but name is empty. Unable to show custom game over cutscene.");
-                    gameOverCutscenePath = "";
-                }
-                else if (!File.Exists(gameOverCutscenePath))
-                {
-                    if (!File.Exists(gameOverCutsceneAlternativePath))
-                    {
-                        MelonLogger.Warning($"WARNING: Provided video cutscene {gameOverCutscenePath} does not exist.");
-                        gameOverCutscenePath = "";
-                    }
-                    else
-                    {
-                        gameOverCutscenePath = gameOverCutsceneAlternativePath;
-                    }
-                }
-            }
+            ParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_end_cutscene_video_name",
+                ref endCutscenePath, jsonFolderPath, usermodFolderPath);
             
-            if (jObjectParsed.TryGetValue("always_randomize_music", out JToken alwaysRandomizeMusicValue))
-            {
-                useRandomMusic = (bool) alwaysRandomizeMusicValue;
-            }
+            ParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_gameover_cutscene_video_name",
+                ref gameOverCutscenePath, jsonFolderPath, usermodFolderPath);
             
-            if (jObjectParsed.TryGetValue("remove_default_music", out JToken removeDefaultMusicValue))
-            {
-                removeDefaultMusic = (bool) removeDefaultMusicValue;
-            }
-
-            if (jObjectParsed.TryGetValue("entry_browser_always_active", out var entryBrowserAlwaysActiveValue))
-            {
-                entryBrowserAlwaysActive = (bool) entryBrowserAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("scorecard_always_active", out var scorecardAlwaysActiveValue))
-            {
-                scorecardAlwaysActive = (bool) scorecardAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("artbook_always_active", out var artbookAlwaysActiveValue))
-            {
-                artbookAlwaysActive = (bool) artbookAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("arcade_always_active", out var arcadeAlwaysActiveValue))
-            {
-                arcadeAlwaysActive = (bool) arcadeAlwaysActiveValue;
-            }
-
-            if (jObjectParsed.TryGetValue("always_show_skip_call_wait_time", out var alwaysShowSkipCallWaitTimeValue))
-            {
-                alwaysSkipCallButton = (bool) alwaysShowSkipCallWaitTimeValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "always_randomize_music", ref useRandomMusic);
+            ParsingHelper.TryAssign(jObjectParsed, "remove_default_music", ref removeDefaultMusic);
+            ParsingHelper.TryAssign(jObjectParsed, "entry_browser_always_active", ref entryBrowserAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "scorecard_always_active", ref scorecardAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "artbook_always_active", ref artbookAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "arcade_always_active", ref arcadeAlwaysActive);
+            ParsingHelper.TryAssign(jObjectParsed, "always_show_skip_call_wait_time", ref alwaysSkipCallButton);
+            ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon", ref renameMainProgram);
+            ParsingHelper.TryAssign(jObjectParsed, "disable_main_campaign_videos", ref disableDefaultVideos);
+            ParsingHelper.TryAssign(jObjectParsed, "remove_default_emails", ref removeAllDefaultEmails);
             
-            if (jObjectParsed.TryGetValue("rename_main_game_desktop_icon", out var renameMainGameDesktopIconValue))
-            {
-                renameMainProgram = (string) renameMainGameDesktopIconValue;
-            }
-
-            if (jObjectParsed.TryGetValue("disable_main_campaign_videos", out var disableMainCampaignVideosValue))
-            {
-                disableDefaultVideos = (bool) disableMainCampaignVideosValue;
-            }
-
-            if (jObjectParsed.TryGetValue("remove_default_emails", out var removeDefaultEmailsValue))
-            {
-                removeAllDefaultEmails = (bool) removeDefaultEmailsValue;
-            }
-            
-            if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out var mainGameDesktopIconPathValue))
-            {
-                string customMainGameDesktopIcon = (string) mainGameDesktopIconPathValue;
-
-                if (string.IsNullOrEmpty(customMainGameDesktopIcon))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{customMainGameDesktopIcon}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    changeMainProgramSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customMainGameDesktopIcon,
-                        usermodFolderPath + "\\" + customMainGameDesktopIcon);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref changeMainProgramSprite,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
             
             if (jObjectParsed.TryGetValue("custom_campaign_desktop_backgrounds", out var customCampaignDesktopBackgrounds))
             {
@@ -597,125 +354,80 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_desktop_game_finished_background", out var customCampaignDesktopGameFinishedBackground))
-            {
-                string gameFinishedBackgroundPath = (string) customCampaignDesktopGameFinishedBackground;
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_desktop_game_finished_background", ref backgroundFinishedGameSprite,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
-                if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    backgroundFinishedGameSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + gameFinishedBackgroundPath,
-                        usermodFolderPath + "\\" + gameFinishedBackgroundPath);
-                }
-            }
-
-            if (jObjectParsed.TryGetValue("disable_desktop_logo", out var disableDesktopLogoValue))
-            {
-                disableDesktopLogo = (bool) disableDesktopLogoValue;
-            }
-
-            if (jObjectParsed.TryGetValue("disable_green_color_on_desktop", out var disableGreenColorOnDesktopValue))
-            {
-                disableGreenColorBackground = (bool) disableGreenColorOnDesktopValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_desktop_logo_transparency", out var customDesktopLogoTransparencyValue))
-            {
-                customDesktopLogoTransparency = (float) customDesktopLogoTransparencyValue;
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableDesktopLogo);
+            ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_desktop_logo_transparency", ref customDesktopLogoTransparency);
+            ParsingHelper.TryAssign(jObjectParsed, "skip_callers_correctly", ref skipCallersCorrectly);
             
-            if (jObjectParsed.TryGetValue("skip_callers_correctly", out var skipCallersCorrectlyValue))
-            {
-                skipCallersCorrectly = (bool) skipCallersCorrectlyValue;
-            }
-
-            if (jObjectParsed.TryGetValue("custom_desktop_logo_name", out var customDesktopLogoNameValue))
-            {
-                string customDesktopLogoPath = (string) customDesktopLogoNameValue;
-
-                if (string.IsNullOrEmpty(customDesktopLogoPath))
-                {
-                    MelonLogger.Error($"ERROR: Invalid file name given for '{customDesktopLogoPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    customDesktopLogo = ImageImport.LoadImage(jsonFolderPath + "\\" + customDesktopLogoPath,
-                        usermodFolderPath + "\\" + customDesktopLogoPath);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_desktop_logo_name", ref customDesktopLogo,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
             
-            if (jObjectParsed.TryGetValue("defaultTheme", out JToken defaultThemeValue))
-            {
-                defaultTheme = defaultThemeValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "defaultTheme", ref defaultTheme);
+            ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
+            ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
             
-            if (jObjectParsed.TryGetValue("disable_theme_dropdown", out var disableThemeDropdownValue))
+            return new CustomCampaign.CustomCampaignModel.CustomCampaign
             {
-                disablePickingThemeOption = (bool) disableThemeDropdownValue;
-            }
-            
-            // Create
-            return new CustomCampaignExtraInfo
-            {
-                campaignName = customCampaignName,
-                campaignDays = customCampaignDays,
-                campaignIcon = customCampaignSprite,
-                campaignDayStrings = customCampaignDaysNames,
-                campaignDesktopName = customCampaignDesktopName,
+                CampaignName = customCampaignName,
+                CampaignDays = customCampaignDays,
+                CampaignIcon = customCampaignSprite,
+                CampaignDayStrings = customCampaignDaysNames,
+                CampaignDesktopName = customCampaignDesktopName,
 
-                removeExistingEntries = removeAllExistingEntries,
-                resetDefaultEntriesPermission = resetDefaultEntriesPermission,
-                doShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
+                RemoveExistingEntries = removeAllExistingEntries,
+                ResetDefaultEntriesPermission = resetDefaultEntriesPermission,
+                DoShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
                 
-                skipCallersCorrectly = skipCallersCorrectly,
+                SkipCallersCorrectly = skipCallersCorrectly,
 
-                loadingTexts = loadingTexts,
+                LoadingTexts = loadingTexts,
 
-                desktopUsernameText = desktopUsernameText,
-                desktopDateStartYear = desktopDateStartYear,
-                desktopDateStartMonth = desktopDateStartMonth,
-                desktopDateStartDay = desktopDateStartDay,
-                useEuropeDateFormat = useEuropeDateFormat,
+                DesktopUsernameText = desktopUsernameText,
+                DesktopDateStartYear = desktopDateStartYear,
+                DesktopDateStartMonth = desktopDateStartMonth,
+                DesktopDateStartDay = desktopDateStartDay,
+                UseEuropeDateFormat = useEuropeDateFormat,
 
-                gameOverThreshold = gameOverThreshold,
-                warningThreshold = warningThreshold,
-                warningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
+                GameOverThreshold = gameOverThreshold,
+                WarningThreshold = warningThreshold,
+                WarningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
 
-                endCutsceneVideoName = endCutscenePath,
-                gameOverCutsceneVideoName = gameOverCutscenePath,
+                EndCutsceneVideoName = endCutscenePath,
+                GameOverCutsceneVideoName = gameOverCutscenePath,
                 
-                alwaysRandomMusic = useRandomMusic,
-                removeDefaultMusic = removeDefaultMusic,
+                AlwaysRandomMusic = useRandomMusic,
+                RemoveDefaultMusic = removeDefaultMusic,
 
-                entryBrowserAlwaysActive = entryBrowserAlwaysActive,
-                scorecardAlwaysActive = scorecardAlwaysActive,
-                artbookAlwaysActive = artbookAlwaysActive,
-                arcadeAlwaysActive = arcadeAlwaysActive,
+                EntryBrowserAlwaysActive = entryBrowserAlwaysActive,
+                ScorecardAlwaysActive = scorecardAlwaysActive,
+                ArtbookAlwaysActive = artbookAlwaysActive,
+                ArcadeAlwaysActive = arcadeAlwaysActive,
 
-                disableAllDefaultVideos = disableDefaultVideos,
+                DisableAllDefaultVideos = disableDefaultVideos,
 
-                renameMainGameDesktopIcon = renameMainProgram,
-                changeMainGameDesktopIcon = changeMainProgramSprite,
+                RenameMainGameDesktopIcon = renameMainProgram,
+                ChangeMainGameDesktopIcon = changeMainProgramSprite,
 
-                alwaysSkipCallButton = alwaysSkipCallButton,
+                AlwaysSkipCallButton = alwaysSkipCallButton,
 
-                removeDefaultEmails = removeAllDefaultEmails,
+                RemoveDefaultEmails = removeAllDefaultEmails,
 
-                backgroundSprites = backgroundSprites,
-                gameFinishedBackground = backgroundFinishedGameSprite,
+                BackgroundSprites = backgroundSprites,
+                GameFinishedBackground = backgroundFinishedGameSprite,
 
-                disableDesktopLogo = disableDesktopLogo,
-                customDesktopLogo = customDesktopLogo,
-                customDesktopLogoTransparency = customDesktopLogoTransparency,
+                DisableDesktopLogo = disableDesktopLogo,
+                CustomDesktopLogo = customDesktopLogo,
+                CustomDesktopLogoTransparency = customDesktopLogoTransparency,
 
-                disableGreenColorBackground = disableGreenColorBackground,
+                DisableGreenColorBackground = disableGreenColorBackground,
                 
-                defaultTheme = defaultTheme,
-                disablePickingThemeOption = disablePickingThemeOption
+                DefaultTheme = defaultTheme,
+                DisablePickingThemeOption = disablePickingThemeOption,
+                
+                DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone
             };
         }
     }

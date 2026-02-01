@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -18,7 +17,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         /// <param name="jObjectParsed"> JObject parsed. </param>
         /// <param name="usermodFolderPath">Path to JSON file.</param>
         /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateModifier(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
+        public static void CreateModifier(JObject jObjectParsed, string usermodFolderPath = "",
+            string jsonFolderPath = "")
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
@@ -30,23 +30,23 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            ModifierExtraInfo customModifier = ParseModifier(ref jObjectParsed, ref usermodFolderPath,
+            CustomModifier customModifier = ParseModifier(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
-            CustomCampaignExtraInfo foundCustomCampaign =
-                CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.campaignName == customCampaignName);
+            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+                CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
+                    customCampaignSearch.CampaignName == customCampaignName);
 
             if (foundCustomCampaign != null)
             {
-                if (customModifier.unlockDays == null)
+                if (customModifier.UnlockDays == null)
                 {
-                    foundCustomCampaign.customModifiersGeneral.Add(customModifier);
+                    foundCustomCampaign.CustomModifiersGeneral.Add(customModifier);
                 }
                 else
                 {
-                    foundCustomCampaign.customModifiersDays.Add(customModifier);
+                    foundCustomCampaign.CustomModifiersDays.Add(customModifier);
                 }
             }
             else
@@ -55,15 +55,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Msg("DEBUG: Found modifier file before the custom campaign was found / does not exist.");
                 #endif
 
-                ParseJSONFiles.missingCustomCampaignModifier.Add(customModifier);
+                GlobalParsingVariables.PendingCustomCampaignModifiers.Add(customModifier);
             }
         }
 
-        private static ModifierExtraInfo ParseModifier(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomModifier ParseModifier(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             // When the modifier is unlocked. If null, it is a general modifier.
-            List<int> unlockDays = null; 
+            List<int> unlockDays = null;
 
             /*
              * Desktop Settings
@@ -84,28 +84,45 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool disableBackgroundLogo = false;
             float backgroundLogoTransparency = 0.2627f;
             
+            // Icons
+            Sprite mailBoxIcon = null; // Mail Box Icon on Desktop
+            Sprite entryBrowserIcon = null; // Entry Browser Icon on Desktop
+            Sprite optionsIcon = null; // Options Icon on Desktop
+            Sprite artbookIcon = null; // Artbook Icon on Desktop
+            Sprite arcadeIcon = null; // Arcade Icon on Desktop
+            Sprite scorecardIcon = null; // Weekly Report Icon on Desktop
+
+            // Credits
+            string desktopCredits = null;
+            Sprite creditsIcon = null; // Credits Icon on Desktop
+
             // Desktop settings
             bool entryBrowserActive = false;
             // If this setting was changed at all. Is used when checking.
             // If this is true and the "active" is false, it will disable the entry browser for example.
-            bool entryBrowserChanged = false; 
-        
+            bool entryBrowserChanged = false;
+
             bool scorecardActive = false;
             bool scorecardChanged = false; // See entryBrowserChanged for explanation.
-        
+
             bool artbookActive = false;
             bool artbookChanged = false; // See entryBrowserChanged for explanation.
-        
+
             bool arcadeActive = false;
             bool arcadeChanged = false; // See entryBrowserChanged for explanation.
+            
+            bool hideDiscordProgramChanged = false;
+            bool hideDiscordProgram = false; // For those who want more immersion. Should not be recommended.
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
 
-            if (jObjectParsed.TryGetValue("modifier_custom_campaign_attached", out JToken customCampaignNameValue))
-            {
-                customCampaignName = customCampaignNameValue.Value<string>();
-            }
+            /*
+             * Modifier Parsing
+             */
+
+            ParsingHelper.TryAssign(jObjectParsed, "modifier_custom_campaign_attached",
+                ref customCampaignName);
 
             if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
             {
@@ -117,39 +134,20 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     unlockDays = new List<int>();
 
-                    foreach (JToken unlockDayToken in (JArray) unlockDayValue)
+                    foreach (JToken unlockDayToken in (JArray)unlockDayValue)
                     {
                         unlockDays.Add(unlockDayToken.Value<int>());
                     }
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_username_text", out JToken desktopUsernameTextValue))
-            {
-                username = desktopUsernameTextValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref username);
 
-            if (jObjectParsed.TryGetValue("rename_main_game_desktop_icon", out JToken renameMainGameDesktopIconValue))
-            {
-                renameMainGameDesktopIcon = renameMainGameDesktopIconValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon",
+                ref renameMainGameDesktopIcon);
 
-            if (jObjectParsed.TryGetValue("main_game_desktop_icon_path", out JToken mainGameDesktopIconPathValue))
-            {
-                string customMainGameDesktopIcon = mainGameDesktopIconPathValue.Value<string>();
-
-                if (string.IsNullOrEmpty(customMainGameDesktopIcon))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given in theme for '{customMainGameDesktopIcon}'." +
-                        $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    mainGameDesktopIconSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + customMainGameDesktopIcon,
-                        usermodFolderPath + "\\" + customMainGameDesktopIcon);
-                }
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref mainGameDesktopIconSprite,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("desktop_backgrounds", out JToken customCampaignDesktopBackgrounds))
             {
@@ -167,31 +165,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     {
                         backgroundSprites.Add(
                             ImageImport.LoadImage(jsonFolderPath + "\\" + backgroundName.Value<string>(),
-                            usermodFolderPath + "\\" + backgroundName.Value<string>()));
+                                usermodFolderPath + "\\" + backgroundName.Value<string>()));
                     }
                 }
             }
             
-            if (jObjectParsed.TryGetValue("game_finished_desktop_background", out JToken gameFinishedDesktopBackground))
-            {
-                string gameFinishedBackgroundPath = (string) gameFinishedDesktopBackground;
-
-                if (string.IsNullOrEmpty(gameFinishedBackgroundPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given for '{gameFinishedBackgroundPath}'. Not updating modifier for campaign: {(!string.IsNullOrEmpty(customCampaignName) ? $"{customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    gameFinishedBackgroundSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + gameFinishedBackgroundPath,
-                        usermodFolderPath + "\\" + gameFinishedBackgroundPath);
-                }
-            }
-
-            if (jObjectParsed.TryGetValue("disable_green_color_on_desktop", out JToken disableGreenColorOnDesktopValue))
-            {
-                disableGreenColorBackground = disableGreenColorOnDesktopValue.Value<bool>();
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "game_finished_desktop_background",
+                ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
             {
@@ -199,7 +181,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     List<float> desktopBackgroundColorList = new List<float>();
 
-                    foreach (JToken desktopBackgroundColorToken in (JArray) _desktopBackgroundColor)
+                    foreach (JToken desktopBackgroundColorToken in (JArray)_desktopBackgroundColor)
                     {
                         desktopBackgroundColorList.Add(desktopBackgroundColorToken.Value<float>());
                     }
@@ -208,12 +190,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     {
                         case 3:
                             desktopBackgroundColor = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
-                                GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]));
+                                GetConvertedColorFloat(desktopBackgroundColorList[1]),
+                                GetConvertedColorFloat(desktopBackgroundColorList[2]));
                             break;
 
                         case 4:
                             desktopBackgroundColor = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
-                                GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]), 
+                                GetConvertedColorFloat(desktopBackgroundColorList[1]),
+                                GetConvertedColorFloat(desktopBackgroundColorList[2]),
                                 GetConvertedColorFloat(desktopBackgroundColorList[3]));
                             break;
 
@@ -226,100 +210,105 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            if (jObjectParsed.TryGetValue("desktop_logo_image_name", out JToken customDesktopLogoNameValue))
-            {
-                string customDesktopLogoPath = customDesktopLogoNameValue.Value<string>();
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_logo_image_name", ref backgroundLogo,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
-                if (string.IsNullOrEmpty(customDesktopLogoPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Invalid file name given in theme for '{customDesktopLogoPath}'. Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-                }
-                else
-                {
-                    backgroundLogo = ImageImport.LoadImage(jsonFolderPath + "\\" + customDesktopLogoPath,
-                        usermodFolderPath + "\\" + customDesktopLogoPath);
-                }
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
+            
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram,
+                ref hideDiscordProgramChanged);
 
-            if (jObjectParsed.TryGetValue("disable_desktop_logo", out JToken disableDesktopLogoValue))
-            {
-                disableBackgroundLogo = disableDesktopLogoValue.Value<bool>();
-            }
-
-            if (jObjectParsed.TryGetValue("desktop_logo_transparency",
-                    out JToken customDesktopLogoTransparencyValue))
-            {
-                backgroundLogoTransparency = customDesktopLogoTransparencyValue.Value<float>();
-            }
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_credits_image_name", ref creditsIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_mailbox_image_name", ref mailBoxIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_entry_browser_image_name", ref entryBrowserIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_options_image_name", ref optionsIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_artbook_image_name", ref artbookIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_arcade_image_name", ref arcadeIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_scorecard_image_name", ref scorecardIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
-                JArray _customCampaignDays = (JArray)customCampaignDaysNamesValue;
+                JArray customCampaignDays = (JArray)customCampaignDaysNamesValue;
 
-                foreach (JToken campaignDay in _customCampaignDays)
+                foreach (JToken campaignDay in customCampaignDays)
                 {
                     dayTitleStrings.Add(campaignDay.Value<string>());
                 }
             }
+
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive,
+                ref entryBrowserChanged);
             
-            if (jObjectParsed.TryGetValue("entry_browser_state", out var entryBrowserAlwaysActiveValue))
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "scorecard_state", ref scorecardActive,
+                ref scorecardChanged);
+            
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "artbook_state", ref artbookActive,
+                ref artbookChanged);
+            
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "arcade_state", ref arcadeActive,
+                ref arcadeChanged);
+
+            return new CustomModifier
             {
-                entryBrowserActive = (bool) entryBrowserAlwaysActiveValue;
-                entryBrowserChanged = true;
-            }
+                CustomCampaignName = customCampaignName,
 
-            if (jObjectParsed.TryGetValue("scorecard_state", out var scorecardAlwaysActiveValue))
-            {
-                scorecardActive = (bool) scorecardAlwaysActiveValue;
-                scorecardChanged = true;
-            }
+                UnlockDays = unlockDays,
 
-            if (jObjectParsed.TryGetValue("artbook_state", out var artbookAlwaysActiveValue))
-            {
-                artbookActive = (bool) artbookAlwaysActiveValue;
-                artbookChanged = true;
-            }
+                UsernameText = username,
 
-            if (jObjectParsed.TryGetValue("arcade_state", out var arcadeAlwaysActiveValue))
-            {
-                arcadeActive = (bool) arcadeAlwaysActiveValue;
-                arcadeChanged = true;
-            }
+                RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
+                MainGameDesktopIcon = mainGameDesktopIconSprite,
 
-            return new ModifierExtraInfo
-            {
-                customCampaignName = customCampaignName,
+                DesktopBackgrounds = backgroundSprites,
+                GameFinishedBackground = gameFinishedBackgroundSprite,
+                DisableColorBackground = disableGreenColorBackground,
+                DesktopBackgroundColor = desktopBackgroundColor,
 
-                unlockDays = unlockDays,
-
-                usernameText = username,
-
-                renameMainGameDesktopIcon = renameMainGameDesktopIcon,
-                mainGameDesktopIcon = mainGameDesktopIconSprite,
-
-                desktopBackgrounds = backgroundSprites,
-                gameFinishedBackground = gameFinishedBackgroundSprite,
-                disableColorBackground = disableGreenColorBackground,
-                desktopBackgroundColor = desktopBackgroundColor,
-
-                customBackgroundLogo = backgroundLogo,
-                disableDesktopLogo = disableBackgroundLogo,
-                backgroundLogoTransparency = backgroundLogoTransparency,
-
-                dayTitleStrings = dayTitleStrings,
+                CustomBackgroundLogo = backgroundLogo,
+                DisableDesktopLogo = disableBackgroundLogo,
+                BackgroundLogoTransparency = backgroundLogoTransparency,
                 
-                entryBrowserActive = entryBrowserActive,
-                entryBrowserChanged = entryBrowserChanged,
+                HideDiscordProgramChanged = hideDiscordProgramChanged,
+                HideDiscordProgram = hideDiscordProgram,
                 
-                scorecardActive = scorecardActive,
-                scorecardChanged = scorecardChanged,
-                
-                artbookActive = artbookActive,
-                artbookChanged = artbookChanged,
-                
-                arcadeActive = arcadeActive,
-                arcadeChanged = arcadeChanged
+                MailBoxIcon = mailBoxIcon,
+                EntryBrowserIcon = entryBrowserIcon,
+                OptionsIcon = optionsIcon,
+                ArtbookIcon = artbookIcon,
+                ArcadeIcon = arcadeIcon,
+                ScorecardIcon = scorecardIcon,
+
+                DesktopCredits = desktopCredits,
+                CreditsIcon = creditsIcon,
+
+                DayTitleStrings = dayTitleStrings,
+
+                EntryBrowserActive = entryBrowserActive,
+                EntryBrowserChanged = entryBrowserChanged,
+
+                ScorecardActive = scorecardActive,
+                ScorecardChanged = scorecardChanged,
+
+                ArtbookActive = artbookActive,
+                ArtbookChanged = artbookChanged,
+
+                ArcadeActive = arcadeActive,
+                ArcadeChanged = arcadeChanged
             };
         }
     }

@@ -30,8 +30,8 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 return false; // Skip function with false.
             }
 
-            public static IEnumerator TypeTextCoroutine(CallWindowBehavior __instance,
-                CallerProfile profile, bool skip)
+            public static IEnumerator TypeTextCoroutine(CallWindowBehavior __instance, CallerProfile profile,
+                bool skip)
             {
                 yield return null;
 

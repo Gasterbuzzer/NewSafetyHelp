@@ -1,36 +1,36 @@
 ﻿using System.Collections;
-using System.Reflection;
+using HarmonyLib;
 using MelonLoader;
 using UnityEngine;
+// ReSharper disable InconsistentNaming
 
 namespace NewSafetyHelp.MainGameBugFixes
 {
     public static class UISoundBugFix
     {
-        [HarmonyLib.HarmonyPatch(typeof(UISoundController), "FadeInLoopingSound", new[] { typeof(RichAudioClip),  typeof(AudioSource), typeof(float) })]
+        [HarmonyPatch(typeof(UISoundController), "FadeInLoopingSound", typeof(RichAudioClip), typeof(AudioSource), typeof(float))]
         public static class FadeInLoopingSoundBugFix
         {
             /// <summary>
             /// Fixes an audio bug when switching back to main menu.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of function </param>
             /// <param name="myRichClip"> Clip to play in fadein. </param>
             /// <param name="mySource"> Source to play the clip in </param>
             /// <param name="interpolaterScalar"> Scalar interpolate.</param>
             // ReSharper disable once UnusedMember.Local
-            // ReSharper disable once UnusedParameter.Local
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, UISoundController __instance, ref IEnumerator __result, ref RichAudioClip myRichClip, ref AudioSource mySource, ref float interpolaterScalar)
+            private static bool Prefix(UISoundController __instance, ref IEnumerator __result,
+                ref RichAudioClip myRichClip, ref AudioSource mySource, ref float interpolaterScalar)
             {
-
-                __result = fadeInLoopingSoundChanged(__instance, myRichClip, mySource, interpolaterScalar);
+                __result = FadeInLoopingSoundChanged(__instance, myRichClip, mySource, interpolaterScalar);
                 
                 return false; // Skip the original function
             }
 
-            public static IEnumerator fadeInLoopingSoundChanged(UISoundController __instance,  RichAudioClip myRichClip, AudioSource mySource, float interpolaterScalar)
+            private static IEnumerator FadeInLoopingSoundChanged(UISoundController __instance,
+                RichAudioClip myRichClip, AudioSource mySource, float interpolaterScalar)
             {
                 float interpolater;
 

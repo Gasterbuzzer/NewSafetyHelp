@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 
 namespace NewSafetyHelp.EntryManager.EntryUnlocker
 {
@@ -15,19 +13,19 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
     public static class FixPermissionOverride
     {
         // List of entire permissions
-        public static List<MonsterProfile> entriesReaddTierOne = new List<MonsterProfile>();
-        public static List<MonsterProfile> entriesReaddTierTwo = new List<MonsterProfile>();
-        public static List<MonsterProfile> entriesReaddTierThree = new List<MonsterProfile>();
-        public static List<MonsterProfile> entriesReaddTierFour = new List<MonsterProfile>();
-        public static List<MonsterProfile> entriesReaddTierFive = new List<MonsterProfile>();
-        public static List<MonsterProfile> entriesReaddTierSix = new List<MonsterProfile>();
+        public static List<MonsterProfile> EntriesReaddTierOne = new List<MonsterProfile>();
+        public static List<MonsterProfile> EntriesReaddTierTwo = new List<MonsterProfile>();
+        public static List<MonsterProfile> EntriesReaddTierThree = new List<MonsterProfile>();
+        public static List<MonsterProfile> EntriesReaddTierFour = new List<MonsterProfile>();
+        public static List<MonsterProfile> EntriesReaddTierFive = new List<MonsterProfile>();
+        public static List<MonsterProfile> EntriesReaddTierSix = new List<MonsterProfile>();
 
         /// <summary>
         /// Re adds entries that were removed upon reload of the EntryUnlocker Object.
         /// </summary>
-        /// <param name="__originalMethod"> Method Caller </param>
         /// <param name="__instance"> Caller of function instance </param>
-        private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance)
+        // ReSharper disable once UnusedMember.Local
+        private static void Postfix(EntryUnlockController __instance)
         {
             // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
 
@@ -35,51 +33,51 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                 MelonLogger.Msg("DEBUG: If tier/permission levels for extra entries were lost, they will now be readded.");
             #endif
 
-            for (int i = 0; i < entriesReaddTierOne.Count; i++)
+            for (int i = 0; i < EntriesReaddTierOne.Count; i++)
             {
-                if (!__instance.firstTierUnlocks.monsterProfiles.Contains(entriesReaddTierOne[i])) // Avoid duplicate adding.
+                if (!__instance.firstTierUnlocks.monsterProfiles.Contains(EntriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
-            for (int i = 0; i < entriesReaddTierTwo.Count; i++)
+            for (int i = 0; i < EntriesReaddTierTwo.Count; i++)
             {
-                if (!__instance.secondTierUnlocks.monsterProfiles.Contains(entriesReaddTierTwo[i])) // Avoid duplicate adding.
+                if (!__instance.secondTierUnlocks.monsterProfiles.Contains(EntriesReaddTierTwo[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
-            for (int i = 0; i < entriesReaddTierThree.Count; i++)
+            for (int i = 0; i < EntriesReaddTierThree.Count; i++)
             {
-                if (!__instance.thirdTierUnlocks.monsterProfiles.Contains(entriesReaddTierThree[i])) // Avoid duplicate adding.
+                if (!__instance.thirdTierUnlocks.monsterProfiles.Contains(EntriesReaddTierThree[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
-            for (int i = 0; i < entriesReaddTierFour.Count; i++)
+            for (int i = 0; i < EntriesReaddTierFour.Count; i++)
             {
-                if (!__instance.fourthTierUnlocks.monsterProfiles.Contains(entriesReaddTierFour[i])) // Avoid duplicate adding.
+                if (!__instance.fourthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierFour[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
-            for (int i = 0; i < entriesReaddTierFive.Count; i++)
+            for (int i = 0; i < EntriesReaddTierFive.Count; i++)
             {
-                if (!__instance.fifthTierUnlocks.monsterProfiles.Contains(entriesReaddTierFive[i])) // Avoid duplicate adding.
+                if (!__instance.fifthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierFive[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
-            for (int i = 0; i < entriesReaddTierSix.Count; i++)
+            for (int i = 0; i < EntriesReaddTierSix.Count; i++)
             {
-                if (!__instance.sixthTierUnlocks.monsterProfiles.Contains(entriesReaddTierSix[i])) // Avoid duplicate adding.
+                if (!__instance.sixthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierSix[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(entriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
         }
@@ -92,16 +90,15 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
         /// <summary>
         /// If the current custom campaign is active, and we have the option enabled to show all default at 0 permission tier. We show them.
         /// </summary>
-        /// <param name="__originalMethod"> Method Caller </param>
-        /// <param name="__instance"> Caller of function instance </param>
         /// <param name="profileToCheck"> Profile to check. </param>
         /// <param name="__result"> Result if to show it or not. </param>
-        private static void Postfix(MethodBase __originalMethod, EntryUnlockController __instance, ref MonsterProfile profileToCheck, ref bool __result)
+        // ReSharper disable once UnusedMember.Local
+        private static void Postfix(ref MonsterProfile profileToCheck, ref bool __result)
         {
             // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
             
             // Custom Campaign to reset default entry permission.
-            if (CustomCampaignGlobal.inCustomCampaign)
+            if (CustomCampaignGlobal.InCustomCampaign)
             {
                 if (profileToCheck == null)
                 {
@@ -109,7 +106,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     return;
                 }
                 
-                CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                 
                 if (customCampaign == null)
                 {
@@ -117,12 +114,12 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     return;
                 }
 
-                if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission)
+                if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission)
                 {
-                    if (MainClassForMonsterEntries.copyMonsterProfiles != null)
+                    if (MainClassForMonsterEntries.CopyMonsterProfiles != null)
                     {
                         // We have the copies. So we can check if to enable it.
-                        if (MainClassForMonsterEntries.copyMonsterProfiles.Contains(profileToCheck)) // A default entry to show. We return true.
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(profileToCheck)) // A default entry to show. We return true.
                         {
                             __result = true;
                         }

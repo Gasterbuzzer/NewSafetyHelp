@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -30,24 +29,24 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string customCampaignName = "";
             bool inMainCampaign = false;
 
-            EmailExtraInfo _customEmail = ParseEmail(ref jObjectParsed, ref usermodFolderPath,
+            CustomEmail customEmail = ParseEmail(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath,
                 ref customCampaignName, ref inMainCampaign);
 
             if (inMainCampaign)
             {
-                ParseJSONFiles.mainCampaignEmails.Add(_customEmail);
+                GlobalParsingVariables.MainCampaignEmails.Add(customEmail);
             }
             else
             {
                 // Add to correct campaign.
-                CustomCampaignExtraInfo foundCustomCampaign =
-                    CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                        customCampaignSearch.campaignName == customCampaignName);
+                CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+                    CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
+                        customCampaignSearch.CampaignName == customCampaignName);
 
                 if (foundCustomCampaign != null)
                 {
-                    foundCustomCampaign.emails.Add(_customEmail);
+                    foundCustomCampaign.Emails.Add(customEmail);
                 }
                 else
                 {
@@ -55,12 +54,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
                     #endif
 
-                    ParseJSONFiles.missingCustomCampaignEmails.Add(_customEmail);
+                    GlobalParsingVariables.PendingCustomCampaignEmails.Add(customEmail);
                 }
             }
         }
 
-        public static EmailExtraInfo ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomEmail ParseEmail(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign)
         {
             // Main
@@ -75,78 +74,29 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             int emailUnlockDay = 0;
             int emailUnlockThreshold = 0;
 
-            if (jObjectParsed.TryGetValue("email_in_main_campaign", out var emailInMainCampaignValue))
+            ParsingHelper.TryAssign(jObjectParsed, "email_in_main_campaign", ref inMainCampaign);
+            ParsingHelper.TryAssign(jObjectParsed, "email_custom_campaign_name", ref customCampaignName);
+            ParsingHelper.TryAssign(jObjectParsed, "email_subject", ref emailSubject);
+            ParsingHelper.TryAssign(jObjectParsed, "email_sender", ref emailSender);
+            ParsingHelper.TryAssign(jObjectParsed, "email_body", ref emailBody);
+            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
+            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref emailUnlockThreshold);
+
+            ParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
+                usermodFolderPath, customCampaignName);
+
+            return new CustomEmail
             {
-                inMainCampaign = (bool)emailInMainCampaignValue;
-            }
+                InMainCampaign = inMainCampaign,
+                CustomCampaignName = customCampaignName,
+                EmailSubject = emailSubject,
+                SenderName = emailSender,
+                EmailBody = emailBody,
 
-            if (jObjectParsed.TryGetValue("email_custom_campaign_name", out var emailCustomCampaignNameValue))
-            {
-                customCampaignName = (string)emailCustomCampaignNameValue;
-            }
+                UnlockDay = emailUnlockDay,
+                UnlockThreshold = emailUnlockThreshold,
 
-            if (jObjectParsed.TryGetValue("email_subject", out var emailSubjectValue))
-            {
-                emailSubject = (string)emailSubjectValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_sender", out var emailSenderValue))
-            {
-                emailSender = (string)emailSenderValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_body", out var emailBodyValue))
-            {
-                emailBody = (string)emailBodyValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_unlock_day", out var emailUnlockDayValue))
-            {
-                emailUnlockDay = (int)emailUnlockDayValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_unlock_threshold", out var emailUnlockThresholdValue))
-            {
-                emailUnlockThreshold = (int)emailUnlockThresholdValue;
-            }
-
-            if (jObjectParsed.TryGetValue("email_image", out var emailImageValue))
-            {
-                string emailImagePath = (string)emailImageValue;
-
-                if (!string.IsNullOrEmpty(emailImagePath))
-                {
-                    if (File.Exists(jsonFolderPath + "\\" + emailImagePath) ||
-                        File.Exists(usermodFolderPath + "\\" + emailImagePath))
-                    {
-                        emailImage = ImageImport.LoadImage(jsonFolderPath + "\\" + emailImagePath,
-                            usermodFolderPath + "\\" + emailImagePath);
-                    }
-                    else
-                    {
-                        MelonLogger.Warning(
-                            $"WARNING: Email {emailImagePath} has image option provided but it could not be found! Not showing any image.");
-                    }
-                }
-                else
-                {
-                    MelonLogger.Warning(
-                        $"WARNING: Email at {jsonFolderPath} has image provided but it is empty! Not showing any image, if you don't want an image, do not use 'email_image'.");
-                }
-            }
-
-            return new EmailExtraInfo
-            {
-                inMainCampaign = inMainCampaign,
-                customCampaignName = customCampaignName,
-                emailSubject = emailSubject,
-                senderName = emailSender,
-                emailBody = emailBody,
-
-                unlockDay = emailUnlockDay,
-                unlockThreshold = emailUnlockThreshold,
-
-                emailImage = emailImage
+                EmailImage = emailImage
             };
         }
     }

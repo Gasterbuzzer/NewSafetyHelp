@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
@@ -13,6 +12,7 @@ using NewSafetyHelp.VersionChecker;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -35,11 +35,34 @@ namespace NewSafetyHelp.CustomDesktop
                 #if DEBUG
                     MelonLogger.Msg($"DEBUG: Start of Main Menu Canvas Behavior.");
                 #endif
+                
+                // Credits Double Close Button Fix:
+                GameObject mainMenuCanvas = CustomDesktopHelper.GetMainMenuCanvas().gameObject;
+
+                if (mainMenuCanvas != null)
+                {
+                    GameObject textPopup = mainMenuCanvas.transform.Find("TextPopup").gameObject;
+
+                    if (textPopup != null)
+                    {
+                        GameObject creditsWindowsBar = textPopup.transform.Find("WindowsBar").gameObject;
+                            
+                        if (creditsWindowsBar != null)
+                        {
+                            GameObject closeButton = creditsWindowsBar.transform.Find("CloseButton").gameObject;
+                        
+                            if (closeButton.GetComponents<Button>().Length >= 2)
+                            {
+                                Object.Destroy(closeButton.GetComponent<Button>());
+                            }
+                        }
+                    }
+                }
 
                 // If in custom campaign, we replace it with custom text.
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -47,79 +70,79 @@ namespace NewSafetyHelp.CustomDesktop
                         return true;
                     }
 
-                    if (customCampaign.loadingTexts[0].Count > 0 && !string.IsNullOrEmpty(customCampaign.loadingTexts[0][0]))
+                    if (customCampaign.LoadingTexts[0].Count > 0 && !string.IsNullOrEmpty(customCampaign.LoadingTexts[0][0]))
                     {
-                        __instance.loginText.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[0][0];
+                        __instance.loginText.GetComponent<TextMeshProUGUI>().text = customCampaign.LoadingTexts[0][0];
 
                         // Set animated texts to provided texts. (Even if just 1)
                         AnimatedText loginText01 = __instance.loginText.GetComponent<AnimatedText>();
                             
-                        loginText01.textFrames = new string[customCampaign.loadingTexts[0].Count];
+                        loginText01.textFrames = new string[customCampaign.LoadingTexts[0].Count];
 
-                        for (int i = 0; i < customCampaign.loadingTexts[0].Count; i++)
+                        for (int i = 0; i < customCampaign.LoadingTexts[0].Count; i++)
                         {
-                            loginText01.textFrames[i] = customCampaign.loadingTexts[0][i];
+                            loginText01.textFrames[i] = customCampaign.LoadingTexts[0][i];
                         }
                     }
                     
-                    if (customCampaign.loadingTexts[1].Count > 0 && !string.IsNullOrEmpty(customCampaign.loadingTexts[1][0]))
+                    if (customCampaign.LoadingTexts[1].Count > 0 && !string.IsNullOrEmpty(customCampaign.LoadingTexts[1][0]))
                     {
-                        __instance.loginText2.GetComponent<TextMeshProUGUI>().text = customCampaign.loadingTexts[1][0];
+                        __instance.loginText2.GetComponent<TextMeshProUGUI>().text = customCampaign.LoadingTexts[1][0];
                         
                         // Set animated texts to provided texts. (Even if just 1)
                         AnimatedText loginText02 = __instance.loginText2.GetComponent<AnimatedText>();
                         
-                        loginText02.textFrames = new string[customCampaign.loadingTexts[1].Count];
+                        loginText02.textFrames = new string[customCampaign.LoadingTexts[1].Count];
 
-                        for (int i = 0; i < customCampaign.loadingTexts[1].Count; i++)
+                        for (int i = 0; i < customCampaign.LoadingTexts[1].Count; i++)
                         {
-                            loginText02.textFrames[i] = customCampaign.loadingTexts[1][i];
+                            loginText02.textFrames[i] = customCampaign.LoadingTexts[1][i];
                         }
                     }
 
-                    if (customCampaign.disablePickingThemeOption)
+                    if (customCampaign.DisablePickingThemeOption)
                     {
-                        CustomDesktopHelper.disableThemeDropdownDesktop();
+                        CustomDesktopHelper.DisableThemeDropdownDesktop();
                     }
                 }
 
                 // Plays beginning segment to desktop.
                 __instance.StartCoroutine(StartupRoutine(__instance));
 
-                if (!CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.isXmasDLC) // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Main Campaign
                 {
-                    foreach (CustomCampaignExtraInfo customCampaign in CustomCampaignGlobal.customCampaignsAvailable)
+                    foreach (CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
                     {
-                        CustomDesktopHelper.createCustomProgramIcon(customCampaign.campaignDesktopName, customCampaign.campaignName, customCampaign.campaignIcon);
+                        CustomDesktopHelper.CreateCustomProgramIcon(customCampaign.CampaignDesktopName, customCampaign.CampaignName, customCampaign.CampaignIcon);
                     }
                     
-                    if (ParseJSONFiles.mainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
+                    if (GlobalParsingVariables.MainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
                     {
-                        foreach (EmailExtraInfo emailExtra in ParseJSONFiles.mainCampaignEmails)
+                        foreach (CustomEmail emailExtra in GlobalParsingVariables.MainCampaignEmails)
                         {
-                            if (emailExtra.inMainCampaign)
+                            if (emailExtra.InMainCampaign)
                             {
-                                CustomDesktopHelper.createEmail(emailExtra);
+                                CustomDesktopHelper.CreateEmail(emailExtra);
                             }
                         }
                     }
                     
                     // Enable DLC Button if DLC is installed.
                     // Hide DLC Button
-                    CustomDesktopHelper.enableWinterDLCProgram();
+                    CustomDesktopHelper.EnableWinterDlcProgram();
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign && !GlobalVariables.isXmasDLC) // Custom Campaign
+                else if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Custom Campaign
                 {
-                    CustomDesktopHelper.createBackToMainGameButton();
+                    CustomDesktopHelper.CreateBackToMainGameButton();
                     
                     // Hide DLC Button
-                    CustomDesktopHelper.disableWinterDLCProgram();
+                    CustomDesktopHelper.DisableWinterDlcProgram();
                 }
                 
                 // Change username text if available
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -130,14 +153,14 @@ namespace NewSafetyHelp.CustomDesktop
                     // Setting username
                     string username = null;
                     
-                    if (!string.IsNullOrEmpty(customCampaign.desktopUsernameText)) // First we apply the campaign value.
+                    if (!string.IsNullOrEmpty(customCampaign.DesktopUsernameText)) // First we apply the campaign value.
                     {
-                        username = customCampaign.desktopUsernameText;
+                        username = customCampaign.DesktopUsernameText;
                     }
 
                     bool usernameTextProvided = false;
-                    string usernameText = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.usernameText, ref usernameTextProvided,
+                    string usernameText = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.UsernameText, ref usernameTextProvided,
                         v => !string.IsNullOrEmpty(v));
                     
                     if (!string.IsNullOrEmpty(usernameText)) // Modifier username is provided.
@@ -147,22 +170,22 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (usernameTextProvided && !string.IsNullOrEmpty(username))
                     {
-                        CustomDesktopHelper.getUsernameObject().GetComponent<TextMeshProUGUI>().text = username;
+                        CustomDesktopHelper.GetUsernameObject().GetComponent<TextMeshProUGUI>().text = username;
                     }
                     
                     // Add custom emails.
-                    if (customCampaign.emails.Count > 0) // If we have custom emails.
+                    if (customCampaign.Emails.Count > 0) // If we have custom emails.
                     {
-                        foreach (EmailExtraInfo emailExtra in customCampaign.emails)
+                        foreach (CustomEmail emailExtra in customCampaign.Emails)
                         {
-                            CustomDesktopHelper.createEmail(emailExtra);
+                            CustomDesktopHelper.CreateEmail(emailExtra);
                         }
                     }
                     
                     // Remove all emails from the main game.
-                    if (customCampaign.removeDefaultEmails)
+                    if (customCampaign.RemoveDefaultEmails)
                     {
-                        CustomDesktopHelper.removeMainGameEmails();
+                        CustomDesktopHelper.RemoveMainGameEmails();
                     }
                     
                     // Hide Logo
@@ -171,22 +194,22 @@ namespace NewSafetyHelp.CustomDesktop
                     bool modifierPreventsDisablingOfLogo = false;
                     Sprite desktopLogo = null;
                     
-                    if (customCampaign.disableDesktopLogo)
+                    if (customCampaign.DisableDesktopLogo)
                     {
                         disableLogo = true;
                     }
-                    else if (customCampaign.customDesktopLogo != null) // We have a desktop logo to show.
+                    else if (customCampaign.CustomDesktopLogo != null) // We have a desktop logo to show.
                     {
-                        desktopLogo = customCampaign.customDesktopLogo;
+                        desktopLogo = customCampaign.CustomDesktopLogo;
                     }
 
                     bool disableDesktopLogoFound = false;
-                    bool disableDesktopLogo = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.disableDesktopLogo, ref disableDesktopLogoFound);
+                    bool disableDesktopLogo = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DisableDesktopLogo, ref disableDesktopLogoFound);
 
                     bool customBackgroundLogoFound = false;
-                    Sprite customBackgroundLogo = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.customBackgroundLogo, ref customBackgroundLogoFound,
+                    Sprite customBackgroundLogo = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.CustomBackgroundLogo, ref customBackgroundLogoFound,
                         v => v != null);
 
                     if (disableDesktopLogoFound && disableDesktopLogo)
@@ -201,25 +224,25 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (disableLogo && !modifierPreventsDisablingOfLogo)
                     {
-                        CustomDesktopHelper.getLogo().SetActive(false);
+                        CustomDesktopHelper.GetLogo().SetActive(false);
                     }
                     else if (desktopLogo != null) // We have a desktop logo to show.
                     {
-                        CustomDesktopHelper.getLogo().GetComponent<Image>().sprite = desktopLogo;
+                        CustomDesktopHelper.GetLogo().GetComponent<Image>().sprite = desktopLogo;
                     }
                     
                     // Adjust Logo
 
                     float logoTransparency = 0.2627f;
                     
-                    if (!customCampaign.customDesktopLogoTransparency.Equals(0.2627f)) // If we have a Custom Transparency
+                    if (!customCampaign.CustomDesktopLogoTransparency.Equals(0.2627f)) // If we have a Custom Transparency
                     {
-                        logoTransparency = customCampaign.customDesktopLogoTransparency;
+                        logoTransparency = customCampaign.CustomDesktopLogoTransparency;
                     }
 
                     bool backgroundLogoTransparencyFound = false;
-                    float backgroundLogoTransparency = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.backgroundLogoTransparency, ref backgroundLogoTransparencyFound,
+                    float backgroundLogoTransparency = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.BackgroundLogoTransparency, ref backgroundLogoTransparencyFound,
                         v => !v.Equals(0.2627f));
 
                     if (backgroundLogoTransparencyFound) // Modifier
@@ -229,24 +252,24 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (!logoTransparency.Equals(0.2627f))
                     {
-                        Color tempColorCopy = CustomDesktopHelper.getLogo().GetComponent<Image>().color;
+                        Color tempColorCopy = CustomDesktopHelper.GetLogo().GetComponent<Image>().color;
                         tempColorCopy.a = logoTransparency;
                         
-                        CustomDesktopHelper.getLogo().GetComponent<Image>().color = tempColorCopy;
+                        CustomDesktopHelper.GetLogo().GetComponent<Image>().color = tempColorCopy;
                     }
                     
                     // Rename main program if wanted
 
                     string renamedMainGameDesktopIcon = String.Empty;
                     
-                    if (!string.IsNullOrEmpty(customCampaign.renameMainGameDesktopIcon))
+                    if (!string.IsNullOrEmpty(customCampaign.RenameMainGameDesktopIcon))
                     {
-                        renamedMainGameDesktopIcon = customCampaign.renameMainGameDesktopIcon;
+                        renamedMainGameDesktopIcon = customCampaign.RenameMainGameDesktopIcon;
                     }
                     
                     bool renameMainGameDesktopIconFound = false;
-                    string renameMainGameDesktopIcon = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.renameMainGameDesktopIcon, ref renameMainGameDesktopIconFound,
+                    string renameMainGameDesktopIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.RenameMainGameDesktopIcon, ref renameMainGameDesktopIconFound,
                         v => !string.IsNullOrEmpty(v));
                     
                     if (renameMainGameDesktopIconFound)
@@ -256,21 +279,118 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (!string.IsNullOrEmpty(renamedMainGameDesktopIcon))
                     {
-                        CustomDesktopHelper.getMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
+                        CustomDesktopHelper.GetMainGameProgram().transform.Find("TextBackground").transform.Find("ExecutableName").GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
+                    }
+                    
+                    // Desktop icons
+                    
+                    bool entryBrowserIconFound = false;
+                    Sprite entryBrowserIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.EntryBrowserIcon, ref entryBrowserIconFound,
+                        v => v != null);
+
+                    if (entryBrowserIconFound)
+                    {
+                        CustomDesktopHelper.GetEntryBrowserGameObject().GetComponent<Image>().sprite = entryBrowserIcon;
+                    }
+                    
+                    bool mailBoxIconFound = false;
+                    Sprite mailBoxIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.MailBoxIcon, ref mailBoxIconFound,
+                        v => v != null);
+
+                    if (mailBoxIconFound)
+                    {
+                        CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite = mailBoxIcon;
+                    }
+                    
+                    bool optionsIconFound = false;
+                    Sprite optionsIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.OptionsIcon, ref optionsIconFound,
+                        v => v != null);
+
+                    if (optionsIconFound)
+                    {
+                        CustomDesktopHelper.GetOptionsGameObject().GetComponent<Image>().sprite = optionsIcon;
+                    }
+                    
+                    bool artbookIconFound = false;
+                    Sprite artbookIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArtbookIcon, ref artbookIconFound,
+                        v => v != null);
+
+                    if (artbookIconFound)
+                    {
+                        CustomDesktopHelper.GetArtbookGameObject().GetComponent<Image>().sprite = artbookIcon;
+                    }
+                    
+                    bool scorecardIconFound = false;
+                    Sprite scorecardIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ScorecardIcon, ref scorecardIconFound,
+                        v => v != null);
+
+                    if (scorecardIconFound)
+                    {
+                        CustomDesktopHelper.GetScorecardGameObject().GetComponent<Image>().sprite = scorecardIcon;
+                    }
+                    
+                    bool arcadeIconFound = false;
+                    Sprite arcadeIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArcadeIcon, ref arcadeIconFound,
+                        v => v != null);
+
+                    if (arcadeIconFound)
+                    {
+                        CustomDesktopHelper.GetArcadeGameObject().GetComponent<Image>().sprite = arcadeIcon;
+                    }
+                    
+                    // Credits
+                    
+                    bool desktopCreditsFound = false;
+                    string desktopCredits = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DesktopCredits, ref desktopCreditsFound,
+                        v => !string.IsNullOrEmpty(v));
+
+                    if (desktopCreditsFound 
+                        && !string.IsNullOrEmpty(desktopCredits))
+                    {
+                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<TextFileExecutable>().myContent = desktopCredits;
+                    }
+                    
+                    bool desktopCreditsIconFound = false;
+                    Sprite desktopCreditsIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.CreditsIcon, ref desktopCreditsIconFound,
+                        v => v != null);
+
+                    if (desktopCreditsIconFound)
+                    {
+                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite = desktopCreditsIcon;
+                    }
+                    
+                    // Discord Icon
+                    
+                    bool hideDiscordProgramFound = false;
+                    bool hideDiscordProgram = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.HideDiscordProgram, ref hideDiscordProgramFound,
+                        specialPredicate: v => v.HideDiscordProgramChanged);
+
+                    if (hideDiscordProgramFound)
+                    {
+                        CustomDesktopHelper.GetNSEDiscordProgram().SetActive(!hideDiscordProgram);
                     }
                     
                     // Change main program icon if wanted.
 
                     Sprite mainProgramIcon = null;
                     
-                    if (customCampaign.changeMainGameDesktopIcon != null)
+                    if (customCampaign.ChangeMainGameDesktopIcon != null)
                     {
-                        mainProgramIcon = customCampaign.changeMainGameDesktopIcon;
+                        mainProgramIcon = customCampaign.ChangeMainGameDesktopIcon;
                     }
                     
                     bool mainGameDesktopIconFound = false;
-                    Sprite mainGameDesktopIcon = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.mainGameDesktopIcon, ref mainGameDesktopIconFound,
+                    Sprite mainGameDesktopIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.MainGameDesktopIcon, ref mainGameDesktopIconFound,
                         v => v != null);
                     
                     if (mainGameDesktopIconFound)
@@ -280,28 +400,28 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (mainProgramIcon != null)
                     {
-                        CustomDesktopHelper.getMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
+                        CustomDesktopHelper.GetMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
                     }
                     
                     // Disable default videos.
-                    if (customCampaign.disableAllDefaultVideos)
+                    if (customCampaign.DisableAllDefaultVideos)
                     {
-                        CustomDesktopHelper.disableDefaultVideos();
+                        CustomDesktopHelper.DisableDefaultVideos();
                     }
 
-                    if (customCampaign.allDesktopVideos.Count > 0)
+                    if (customCampaign.AllDesktopVideos.Count > 0)
                     {
-                        foreach (CustomVideoExtraInfo customVideo in customCampaign.allDesktopVideos)
+                        foreach (CustomVideo customVideo in customCampaign.AllDesktopVideos)
                         {
-                            CustomDesktopHelper.createCustomVideoFileProgram(customVideo);
+                            CustomDesktopHelper.CreateCustomVideoFileProgram(customVideo);
                         }
                     }
                 }
 
-                if (MainClassForMonsterEntries._showUpdateMessage)
+                if (MainClassForMonsterEntries.ShowUpdateMessage)
                 {
-                    MainClassForMonsterEntries._showUpdateMessage = false;
-                    AsyncVersionChecker.showUpdateMessage();
+                    MainClassForMonsterEntries.ShowUpdateMessage = false;
+                    AsyncVersionChecker.ShowUpdateMessage();
                 }
                 
                 return false; // Skip original function.
@@ -346,7 +466,6 @@ namespace NewSafetyHelp.CustomDesktop
         [HarmonyLib.HarmonyPatch(typeof(DateTextController), "Start", new Type[] { })]
         public static class StartDateTextPatch
         {
-
             /// <summary>
             /// Hooks into the Start function of the date function to allow for more robust days in custom campaigns.
             /// </summary>
@@ -354,7 +473,6 @@ namespace NewSafetyHelp.CustomDesktop
             /// <param name="__instance"> Caller of function. </param>
             private static bool Prefix(MethodBase __originalMethod, DateTextController __instance)
             {
-                
                 #if DEBUG
                     MelonLogger.Msg("DEBUG: Handling day format.");
                 #endif
@@ -369,7 +487,7 @@ namespace NewSafetyHelp.CustomDesktop
                 
                 _myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
                 
-                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
                     TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
                     
@@ -397,7 +515,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     text.text = str;
                 }
-                else if (!CustomCampaignGlobal.inCustomCampaign) // XMAS DLC
+                else if (!CustomCampaignGlobal.InCustomCampaign) // XMAS DLC
                 {
                     TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
                     
@@ -435,7 +553,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     // Get our stored values
 
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -446,26 +564,26 @@ namespace NewSafetyHelp.CustomDesktop
                     // Handle the dates
                     List<int> dateList = new List<int>() {4, 23, 1996};
 
-                    if (customCampaign.desktopDateStartDay != -1)
+                    if (customCampaign.DesktopDateStartDay != -1)
                     {
-                        dateList[0] = customCampaign.desktopDateStartDay;
+                        dateList[0] = customCampaign.DesktopDateStartDay;
                     }
 
-                    if (customCampaign.desktopDateStartMonth != -1)
+                    if (customCampaign.DesktopDateStartMonth != -1)
                     {
-                        dateList[1] = customCampaign.desktopDateStartMonth;
+                        dateList[1] = customCampaign.DesktopDateStartMonth;
                     }
 
-                    if (customCampaign.desktopDateStartYear != -1)
+                    if (customCampaign.DesktopDateStartYear != -1)
                     {
-                        dateList[2] = customCampaign.desktopDateStartYear;
+                        dateList[2] = customCampaign.DesktopDateStartYear;
                     }
                     
                     #if DEBUG
                         MelonLogger.Msg($"DEBUG: Current day format: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
                     #endif
                     
-                    dateList = DateUtil.fixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
+                    dateList = DateUtil.FixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
                     
                     #if DEBUG
                         MelonLogger.Msg($"DEBUG: Day format after fix: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
@@ -473,8 +591,8 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     string[] strArray = new string[5];
 
-                    int monthIndex = customCampaign.useEuropeDateFormat ? 2 : 0;
-                    int dayIndex = customCampaign.useEuropeDateFormat ? 0 : 2;
+                    int monthIndex = customCampaign.UseEuropeDateFormat ? 2 : 0;
+                    int dayIndex = customCampaign.UseEuropeDateFormat ? 0 : 2;
                     
                     // Month
                     strArray[monthIndex] = dateList[1].ToString();

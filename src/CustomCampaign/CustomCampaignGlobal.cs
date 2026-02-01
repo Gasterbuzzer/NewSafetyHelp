@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using MelonLoader;
-using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -12,61 +10,68 @@ namespace NewSafetyHelp.CustomCampaign
 {
     public static class CustomCampaignGlobal
     {
-        public static List<CustomCampaignExtraInfo> customCampaignsAvailable = new List<CustomCampaignExtraInfo>();
+        public static readonly List<CustomCampaignModel.CustomCampaign> CustomCampaignsAvailable = new List<CustomCampaignModel.CustomCampaign>();
 
         // ReSharper disable once RedundantDefaultMemberInitializer
-        public static bool inCustomCampaign = false;
+        public static bool InCustomCampaign = false;
 
-        public static string currentCustomCampaignName = "";
+        public static string CurrentCustomCampaignName = "";
 
         /// <summary>
         /// Activates the custom campaign values.
         /// </summary>
         /// <param name="customCampaignName">Name of the custom campaign to set as the current one.</param>
-        public static void activateCustomCampaign(string customCampaignName)
+        public static void ActivateCustomCampaign(string customCampaignName)
         {
-            inCustomCampaign = true;
-            currentCustomCampaignName = customCampaignName;
+            InCustomCampaign = true;
+            CurrentCustomCampaignName = customCampaignName;
         }
 
         /// <summary>
         /// Deactivates the custom campaign and sets values as if it were the main campaign.
         /// </summary>
-        public static void deactivateCustomCampaign()
+        public static void DeactivateCustomCampaign()
         {
-            inCustomCampaign = false;
-            currentCustomCampaignName = "";
+            InCustomCampaign = false;
+            CurrentCustomCampaignName = "";
         }
 
         /// <summary>
-        /// Returns the current campaign as CustomCampaignExtraInfo.
+        /// Returns the current campaign as CustomCampaign.
         /// </summary>
-        /// <returns>CustomCampaignExtraInfo Object of the current activate custom campaign.</returns>
-        public static CustomCampaignExtraInfo getActiveCustomCampaign()
+        /// <returns>CustomCampaign Object of the current activate custom campaign.</returns>
+        public static CustomCampaignModel.CustomCampaign GetActiveCustomCampaign()
         {
-            return customCampaignsAvailable.Find(scannedCampaign =>
-                scannedCampaign.campaignName == currentCustomCampaignName);
+            return CustomCampaignsAvailable.Find(scannedCampaign =>
+                scannedCampaign.CampaignName == CurrentCustomCampaignName);
         }
 
         /// <summary>
         /// Gets the custom caller by its order id provided. 
         /// </summary>
         /// <param name="orderID">Order number in the current custom campaign.</param>
-        /// <returns>CustomCallerExtraInfo Object with the returned object. If not found, default. </returns>
-        public static CustomCallerExtraInfo getCustomCallerFromActiveCampaign(int orderID)
+        /// <returns>CustomCCaller Object with the returned object. If not found, default. </returns>
+        [CanBeNull]
+        public static CallerPatches.CallerModel.CustomCCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
-            return getActiveCustomCampaign().customCallersInCampaign
-                .Find(customCaller => customCaller.orderInCampaign == orderID);
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            
+            if (customCampaign == null)
+            {
+                return null;
+            }
+            
+            return customCampaign.CustomCallersInCampaign.Find(customCaller => customCaller.OrderInCampaign == orderID);
         }
 
         /// <summary>
         /// Gets the custom entry by its name.
         /// </summary>
         /// <param name="entryName"> Name of the entry to find. </param>
-        /// <returns>EntryExtraInfo Object with the returned object. If not found, default. </returns>
-        public static EntryExtraInfo getEntryFromActiveCampaign(string entryName)
+        /// <returns>EntryMetadata Object with the returned object. If not found, default. </returns>
+        public static EntryMetadata GetEntryFromActiveCampaign(string entryName)
         {
-            return getActiveCustomCampaign().entriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
+            return GetActiveCustomCampaign().EntriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
         }
 
         /// <summary>
@@ -74,9 +79,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <param name="theme">Theme to get the ID from.</param>
         /// <returns>ID of the theme if found. -1 if not found or if something went wrong.</returns>
-        private static int getThemeID(ThemesExtraInfo theme)
+        private static int GetThemeID(CustomTheme theme)
         {
-            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -84,23 +89,23 @@ namespace NewSafetyHelp.CustomCampaign
                 return -1;
             }
 
-            if (customCampaign.customThemesGeneral != null)
+            if (customCampaign.CustomThemesGeneral != null)
             {
-                int generalIDSearch = customCampaign.customThemesGeneral.IndexOf(theme);
+                int generalIDSearch = customCampaign.CustomThemesGeneral.IndexOf(theme);
                 if (generalIDSearch != -1)
                 {
                     return generalIDSearch + 4;
                 }
             }
 
-            if (customCampaign.customThemesDays != null)
+            if (customCampaign.CustomThemesDays != null)
             {
-                int conditionalIDSearch = customCampaign.customThemesDays.IndexOf(theme);
+                int conditionalIDSearch = customCampaign.CustomThemesDays.IndexOf(theme);
                 if (conditionalIDSearch != -1)
                 {
-                    if (customCampaign.customThemesGeneral != null)
+                    if (customCampaign.CustomThemesGeneral != null)
                     {
-                        conditionalIDSearch += customCampaign.customThemesGeneral.Count;
+                        conditionalIDSearch += customCampaign.CustomThemesGeneral.Count;
                     }
                     
                     return conditionalIDSearch + 4;
@@ -115,9 +120,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>(Int) null = No valid theme found for the given ID; Otherwise: Theme with the given ID.</returns>
         [CanBeNull]
-        public static ThemesExtraInfo getThemeFromID(int themeID)
+        public static CustomTheme GetThemeFromID(int themeID)
         {
-            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -133,9 +138,9 @@ namespace NewSafetyHelp.CustomCampaign
 
             int currentThemeID = 3;
 
-            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
                 {
                     currentThemeID++;
 
@@ -146,9 +151,9 @@ namespace NewSafetyHelp.CustomCampaign
                 }
             }
 
-            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.CustomThemesDays)
                 {
                     currentThemeID++;
 
@@ -166,9 +171,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// Gets the theme's ID from the theme's name.
         /// </summary>
         /// <returns>(Int) -1 = No theme found; Otherwise: ID of Theme.</returns>
-        public static int getThemeIDFromName(string themeName)
+        public static int GetThemeIDFromName(string themeName)
         {
-            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -178,26 +183,26 @@ namespace NewSafetyHelp.CustomCampaign
 
             int currentThemeID = 3;
 
-            if (customCampaign.customThemesGeneral != null && customCampaign.customThemesGeneral.Count > 0)
+            if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
                 {
                     currentThemeID++;
 
-                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    if (theme != null && theme.ThemeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
                     {
                         return currentThemeID;
                     }
                 }
             }
 
-            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.CustomThemesDays)
                 {
                     currentThemeID++;
 
-                    if (theme != null && theme.themeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                    if (theme != null && theme.ThemeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
                     {
                         return currentThemeID;
                     }
@@ -211,9 +216,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// Checks if for the current day there is supposed to be a conditional theme active.
         /// </summary>
         /// <returns>(Int) -1 = No theme to be activated; Otherwise: ID of Theme to be activated.</returns>
-        public static int checkIfConditionalTheme()
+        public static int CheckIfConditionalTheme()
         {
-            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -222,22 +227,22 @@ namespace NewSafetyHelp.CustomCampaign
             }
 
             bool themeFound = false;
-            ThemesExtraInfo currentTheme = getActiveTheme(ref themeFound);
+            CustomTheme currentTheme = GetActiveTheme(ref themeFound);
 
             if (currentTheme == null) // Theme is default or not set. No conditional theme can be applied.
             {
                 return -1;
             }
 
-            if (customCampaign.customThemesDays != null && customCampaign.customThemesDays.Count > 0)
+            if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
             {
-                foreach (ThemesExtraInfo theme in customCampaign.customThemesDays)
+                foreach (CustomTheme theme in customCampaign.CustomThemesDays)
                 {
-                    if (theme != null && theme.attachedToTheme.Equals(currentTheme.themeName))
+                    if (theme != null && theme.AttachedToTheme.Equals(currentTheme.ThemeName))
                     {
-                        if (theme.unlockDays.Contains(GlobalVariables.currentDay))
+                        if (theme.UnlockDays.Contains(GlobalVariables.currentDay))
                         {
-                            int foundThemeID = getThemeID(theme);
+                            int foundThemeID = GetThemeID(theme);
 
                             if (foundThemeID >= 0)
                             {
@@ -256,9 +261,9 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>Returns the actual active theme. Null if we failed or the theme is a default theme from the game.</returns>
         [CanBeNull]
-        public static ThemesExtraInfo getActiveTheme(ref bool isCustomTheme)
+        public static CustomTheme GetActiveTheme(ref bool isCustomTheme)
         {
-            CustomCampaignExtraInfo customCampaign = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -268,34 +273,34 @@ namespace NewSafetyHelp.CustomCampaign
             
             isCustomTheme = false;
 
-            if (customCampaign.activeTheme <= 3) // Default Theme
+            if (customCampaign.ActiveTheme <= 3) // Default Theme
             {
                 return null;
             }
 
-            int indexAsGeneral = customCampaign.activeTheme - 4;
+            int indexAsGeneral = customCampaign.ActiveTheme - 4;
 
             if (indexAsGeneral >= 0 
-                && customCampaign.customThemesGeneral != null
-                && indexAsGeneral < customCampaign.customThemesGeneral.Count) // We have a general theme.
+                && customCampaign.CustomThemesGeneral != null
+                && indexAsGeneral < customCampaign.CustomThemesGeneral.Count) // We have a general theme.
             {
                 isCustomTheme = true;
-                return customCampaign.customThemesGeneral[indexAsGeneral];
+                return customCampaign.CustomThemesGeneral[indexAsGeneral];
             }
 
-            int indexAsDays = customCampaign.activeTheme - 4;
+            int indexAsDays = customCampaign.ActiveTheme - 4;
 
-            if (customCampaign.customThemesGeneral != null)
+            if (customCampaign.CustomThemesGeneral != null)
             {
-                indexAsDays -= customCampaign.customThemesGeneral.Count;
+                indexAsDays -= customCampaign.CustomThemesGeneral.Count;
             }
 
             if (indexAsDays >= 0
-                && customCampaign.customThemesDays != null
-                && indexAsDays < customCampaign.customThemesDays.Count) // We have a (conditional) days theme.
+                && customCampaign.CustomThemesDays != null
+                && indexAsDays < customCampaign.CustomThemesDays.Count) // We have a (conditional) days theme.
             {
                 isCustomTheme = true;
-                return customCampaign.customThemesDays[indexAsDays];
+                return customCampaign.CustomThemesDays[indexAsDays];
             }
 
             return null;
@@ -306,15 +311,15 @@ namespace NewSafetyHelp.CustomCampaign
         /// </summary>
         /// <returns>Returns default value if we no value is set. If set, it returns the requested value.</returns>
         [CanBeNull]
-        public static TValue getActiveModifierValue<TValue>(Func<ModifierExtraInfo, TValue> selector,
+        public static TValue GetActiveModifierValue<TValue>(Func<CustomModifier, TValue> selector,
             ref bool foundModifier, Func<TValue, bool> predicate = null,
-            Func<ModifierExtraInfo, bool> specialPredicate = null)
+            Func<CustomModifier, bool> specialPredicate = null)
         {
-            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
-            if (customCampaignExtraInfo == null)
+            if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting modifier!");
+                MelonLogger.Error("ERROR: customCampaign is null! Unable of getting modifier!");
                 return default;
             }
 
@@ -335,9 +340,9 @@ namespace NewSafetyHelp.CustomCampaign
             // We then pick the first in the list.
             // Note: General modifiers do not require to check for days, since they are always "valid", only the predicate.
 
-            if (customCampaignExtraInfo.customModifiersGeneral != null)
+            if (customCampaign.CustomModifiersGeneral != null)
             {
-                foreach (ModifierExtraInfo modifierGeneral in customCampaignExtraInfo.customModifiersGeneral)
+                foreach (CustomModifier modifierGeneral in customCampaign.CustomModifiersGeneral)
                 {
                     if (modifierGeneral == null)
                     {
@@ -358,9 +363,9 @@ namespace NewSafetyHelp.CustomCampaign
             // Now we check for conditional modifiers. Same work as with the general modifiers.
             // We only need to check if valid for the current day.
 
-            if (customCampaignExtraInfo.customModifiersDays != null)
+            if (customCampaign.CustomModifiersDays != null)
             {
-                foreach (ModifierExtraInfo modifierDay in customCampaignExtraInfo.customModifiersDays)
+                foreach (CustomModifier modifierDay in customCampaign.CustomModifiersDays)
                 {
                     if (modifierDay == null)
                     {
@@ -369,8 +374,8 @@ namespace NewSafetyHelp.CustomCampaign
 
                     TValue value = selector(modifierDay);
 
-                    if (predicate(value) && modifierDay.unlockDays != null
-                                         && modifierDay.unlockDays.Contains(GlobalVariables.currentDay)
+                    if (predicate(value) && modifierDay.UnlockDays != null
+                                         && modifierDay.UnlockDays.Contains(GlobalVariables.currentDay)
                                          && specialPredicate(modifierDay))
                     {
                         foundModifier = true;
@@ -385,55 +390,55 @@ namespace NewSafetyHelp.CustomCampaign
         /// <summary>
         /// Adds all entries of a custom campaign to the array of entries.
         /// </summary>
-        /// <param name="_monsterProfileList">MonsterProfileList to add the entries to.</param>
-        public static void addAllCustomCampaignEntriesToArray(ref MonsterProfileList _monsterProfileList)
+        /// <param name="monsterProfileList">MonsterProfileList to add the entries to.</param>
+        public static void AddAllCustomCampaignEntriesToArray(ref MonsterProfileList monsterProfileList)
         {
-            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
-            if (customCampaignExtraInfo == null)
+            if (customCampaign == null)
             {
                 MelonLogger.Error(
-                    "ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                    "ERROR: customCampaign is null! Unable of adding entries to custom campaign!");
                 return;
             }
 
             #if DEBUG
             MelonLogger.Msg(
-                $"DEBUG: Now adding all {customCampaignExtraInfo.entriesOnlyInCampaign.Count} entries to the custom campaign.");
+                $"DEBUG: Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
 
             // Add all entries.
-            foreach (EntryExtraInfo entryInCustomCampaign in customCampaignExtraInfo.entriesOnlyInCampaign)
+            foreach (EntryMetadata entryInCustomCampaign in customCampaign.EntriesOnlyInCampaign)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
                 #endif
 
                 EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry,
-                    ref _monsterProfileList.monsterProfiles, "allEntries");
+                    ref monsterProfileList.monsterProfiles, "allEntries");
             }
 
             // Sort afterward
-            EntryManager.EntryManager.SortMonsterProfiles(ref _monsterProfileList.monsterProfiles);
+            EntryManager.EntryManager.SortMonsterProfiles(ref monsterProfileList.monsterProfiles);
         }
 
-        public static void replaceAllProvidedCampaignEntries(ref MonsterProfileList _monsterProfileList)
+        public static void ReplaceAllProvidedCampaignEntries(ref MonsterProfileList monsterProfileList)
         {
-            CustomCampaignExtraInfo customCampaignExtraInfo = getActiveCustomCampaign();
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
 
-            if (customCampaignExtraInfo == null || !inCustomCampaign)
+            if (customCampaign == null || !InCustomCampaign)
             {
                 MelonLogger.Error(
-                    "ERROR: customCampaignExtraInfo is null! Unable of adding entries to custom campaign!");
+                    "ERROR: customCampaign is null! Unable of adding entries to custom campaign!");
                 return;
             }
 
             #if DEBUG
             MelonLogger.Msg(
-                $"DEBUG: Now replacing all {customCampaignExtraInfo.entryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
+                $"DEBUG: Now replacing all {customCampaign.EntryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
             #endif
 
-            if (_monsterProfileList.monsterProfiles.Length <= 0)
+            if (monsterProfileList.monsterProfiles.Length <= 0)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Monster Profile ");
@@ -441,9 +446,9 @@ namespace NewSafetyHelp.CustomCampaign
                 return;
             }
 
-            for (int i = 0; i < _monsterProfileList.monsterProfiles.Length; i++)
+            for (int i = 0; i < monsterProfileList.monsterProfiles.Length; i++)
             {
-                MonsterProfile realEntry = _monsterProfileList.monsterProfiles[i];
+                MonsterProfile realEntry = monsterProfileList.monsterProfiles[i];
 
                 if (realEntry == null)
                 {
@@ -452,12 +457,12 @@ namespace NewSafetyHelp.CustomCampaign
                 }
 
                 // Find matching entry to replace
-                EntryExtraInfo entryFound = customCampaignExtraInfo.entryReplaceOnlyInCampaign.Find(replaceEntry =>
+                EntryMetadata entryFound = customCampaign.EntryReplaceOnlyInCampaign.Find(replaceEntry =>
                     replaceEntry.Name.Equals(realEntry.monsterName) || replaceEntry.ID.Equals(realEntry.monsterID)
                 );
 
                 // If we delete the entry or replace it.
-                if (entryFound != null && entryFound.deleteEntry) // Delete
+                if (entryFound != null && entryFound.DeleteEntry) // Delete
                 {
                     if (string.IsNullOrEmpty(entryFound.Name))
                     {
@@ -466,7 +471,7 @@ namespace NewSafetyHelp.CustomCampaign
                     }
 
                     // Delete by name.
-                    EntryManager.EntryManager.DeleteMonsterProfile(ref _monsterProfileList.monsterProfiles, null,
+                    EntryManager.EntryManager.DeleteMonsterProfile(ref monsterProfileList.monsterProfiles, null,
                         entryFound.Name);
 
                     #if DEBUG
@@ -483,7 +488,7 @@ namespace NewSafetyHelp.CustomCampaign
                         continue;
                     }
 
-                    _monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
+                    monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
 
                     #if DEBUG
                     MelonLogger.Msg($"DEBUG: Replacing entry {entryFound.Name} with custom entry in custom campaign.");

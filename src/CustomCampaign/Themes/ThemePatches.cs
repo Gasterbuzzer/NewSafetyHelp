@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.JSONParsing;
 using TMPro;
@@ -18,28 +16,28 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             /// <summary>
             /// Patches the options menu to add our own options.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static void Prefix(MethodBase __originalMethod, OptionsMenuBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static void Prefix(OptionsMenuBehavior __instance)
             {
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
-                    foreach (ThemesExtraInfo theme in ParseJSONFiles.mainGameThemes)
+                    foreach (CustomTheme theme in GlobalParsingVariables.MainGameThemes)
                     {
                         if (theme != null)
                         {
-                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.themeName);
+                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.ThemeName);
                         
                             if (!alreadyPresent)
                             {
-                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
+                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.ThemeName));
                             }
                         }
                     }
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -47,22 +45,22 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         return;
                     }
 
-                    foreach (ThemesExtraInfo theme in customCampaign.customThemesGeneral)
+                    foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
                     {
                         if (theme != null)
                         {
-                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.themeName);
+                            bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.ThemeName);
                         
                             if (!alreadyPresent)
                             {
-                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.themeName));
+                                __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.ThemeName));
                             }
                         }
                     }
                     
-                    if (customCampaign.disablePickingThemeOption)
+                    if (customCampaign.DisablePickingThemeOption)
                     {
-                        CustomDesktopHelper.disableThemeDropdownInGame();
+                        CustomDesktopHelper.DisableThemeDropdownInGame();
                     }
                 }
                 
@@ -76,11 +74,11 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             /// <summary>
             /// Patches the color palette controller to also use custom themes.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, ColorPaletteController __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ColorPaletteController __instance)
             {
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.saveManagerScript.savedColorTheme <= 3)
                     {
@@ -88,15 +86,15 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     }
                     else // themeID >= 4
                     {
-                        for (int i = 0; i < ParseJSONFiles.mainGameThemes.Count; i++)
+                        for (int i = 0; i < GlobalParsingVariables.MainGameThemes.Count; i++)
                         {
                             if (GlobalVariables.saveManagerScript.savedColorTheme == i + 4)
                             {
-                                if (ParseJSONFiles.mainGameThemes[i] != null
-                                    && ParseJSONFiles.mainGameThemes[i].customThemePalette != null
-                                    && ParseJSONFiles.mainGameThemes[i].customThemePalette.colorSwatch != null)
+                                if (GlobalParsingVariables.MainGameThemes[i] != null
+                                    && GlobalParsingVariables.MainGameThemes[i].CustomThemePalette != null
+                                    && GlobalParsingVariables.MainGameThemes[i].CustomThemePalette.colorSwatch != null)
                                 {
-                                    __instance.colorPalette = ParseJSONFiles.mainGameThemes[i].customThemePalette;
+                                    __instance.colorPalette = GlobalParsingVariables.MainGameThemes[i].CustomThemePalette;
                                 }
                             }
                         }
@@ -104,7 +102,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -114,41 +112,44 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                     }
                     
                     #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
-                                    $"and custom campaign activeTheme: {customCampaign.activeTheme}.");
+                    if (NewSafetyHelpMainClass.ShowThemeDebugLog.Value)
+                    {
+                        MelonLogger.Msg($"DEBUG: Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
+                                        $"and custom campaign activeTheme: {customCampaign.ActiveTheme}.");
+                    }
                     #endif
                     
                     // Now if we have not loaded in the default theme ever, we do it now.
-                    if (!string.IsNullOrEmpty(customCampaign.defaultTheme) 
-                        && !customCampaign.defaultThemeAppliedOnce)
+                    if (!string.IsNullOrEmpty(customCampaign.DefaultTheme) 
+                        && !customCampaign.DefaultThemeAppliedOnce)
                     {
-                        int themeID = CustomCampaignGlobal.getThemeIDFromName(customCampaign.defaultTheme);
+                        int themeID = CustomCampaignGlobal.GetThemeIDFromName(customCampaign.DefaultTheme);
 
                         if (themeID > 0)
                         {
-                            customCampaign.defaultThemeAppliedOnce = true;
-                            customCampaign.activeTheme = themeID;
+                            customCampaign.DefaultThemeAppliedOnce = true;
+                            customCampaign.ActiveTheme = themeID;
                         }
                     }
 
-                    if (customCampaign.activeTheme <= 3)
+                    if (customCampaign.ActiveTheme <= 3)
                     {
                         normalPaletteUpdate(__instance);
                     }
                     else
                     {
-                        int conditionalTheme = CustomCampaignGlobal.checkIfConditionalTheme();
+                        int conditionalTheme = CustomCampaignGlobal.CheckIfConditionalTheme();
                         
                         if (conditionalTheme != -1) // We have a conditional theme that we need to apply.
                         {
-                            ThemesExtraInfo theme = CustomCampaignGlobal.getThemeFromID(conditionalTheme);
+                            CustomTheme theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme);
                             
                             if (theme != null
-                                && theme.customThemePalette != null
-                                && theme.customThemePalette.colorSwatch != null
-                                && theme.customThemePalette.colorSwatch.Length > 0)
+                                && theme.CustomThemePalette != null
+                                && theme.CustomThemePalette.colorSwatch != null
+                                && theme.CustomThemePalette.colorSwatch.Length > 0)
                             {
-                                __instance.colorPalette = theme.customThemePalette;
+                                __instance.colorPalette = theme.CustomThemePalette;
                             }
                             else
                             {
@@ -158,23 +159,23 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         else // We don't have a conditional theme to apply.
                         {
                             bool isCustomTheme = false;
-                            ThemesExtraInfo theme = CustomCampaignGlobal.getActiveTheme(ref isCustomTheme);
+                            CustomTheme theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme);
                         
                             #if DEBUG
                             MelonLogger.Msg($"DEBUG: Is the theme custom? '{isCustomTheme}'. " +
                                             $"Was theme invalid? '{theme != null}'. ");
                         
-                            MelonLogger.Msg($"DEBUG: How many general themes? '{customCampaign.customThemesGeneral.Count}'. " +
-                                            $"How many conditional themes? '{customCampaign.customThemesDays.Count}'.");
+                            MelonLogger.Msg($"DEBUG: How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
+                                            $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.");
                             #endif
 
                             if (isCustomTheme 
                                 && theme != null
-                                && theme.customThemePalette != null
-                                && theme.customThemePalette.colorSwatch != null
-                                && theme.customThemePalette.colorSwatch.Length > 0)
+                                && theme.CustomThemePalette != null
+                                && theme.CustomThemePalette.colorSwatch != null
+                                && theme.CustomThemePalette.colorSwatch.Length > 0)
                             {
-                                __instance.colorPalette = theme.customThemePalette;
+                                __instance.colorPalette = theme.CustomThemePalette;
                             }
                             else
                             {
@@ -221,23 +222,23 @@ namespace NewSafetyHelp.CustomCampaign.Themes
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "ColorThemeChanged", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "ColorThemeChanged")]
         public static class ColorThemeChangedPatch
         {
             /// <summary>
             /// Patches the theme option to use our saving system instead. And we also allow picking custom themes.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, OptionsMenuBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(OptionsMenuBehavior __instance)
             {
-                if (!CustomCampaignGlobal.inCustomCampaign)
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     GlobalVariables.saveManagerScript.savedColorTheme = __instance.colorDropdown.value;
                 }
                 else
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -246,7 +247,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                         return true;
                     }
                     
-                    customCampaign.activeTheme = __instance.colorDropdown.value;
+                    customCampaign.ActiveTheme = __instance.colorDropdown.value;
                     GlobalVariables.saveManagerScript.savedColorTheme = __instance.colorDropdown.value;
                 }
                 
@@ -256,7 +257,10 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
 
                 #if DEBUG
+                if (NewSafetyHelpMainClass.ShowThemeDebugLog.Value)
+                {
                     MelonLogger.Msg($"DEBUG: Color Palette change called with ID: {__instance.colorDropdown.value}");
+                }
                 #endif
                 
                 GlobalVariables.colorPaletteController.UpdateColorTheme();

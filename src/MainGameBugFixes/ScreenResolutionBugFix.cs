@@ -1,28 +1,25 @@
 ﻿using System.Reflection;
+using HarmonyLib;
 using MelonLoader;
 using UnityEngine;
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.MainGameBugFixes
 {
     public static class ScreenResolutionBugFix
     {
-        [HarmonyLib.HarmonyPatch(typeof(ScreenResolutions), "SetMenuValue", new [] { typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(ScreenResolutions), "SetMenuValue", typeof(int), typeof(int), typeof(int))]
         public static class FixScreenResolutionOptions
         {
-
             /// <summary>
             /// Fixes an out of range exception bug.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="width"> Width of screen. </param>
             /// <param name="height"> Height of screen. </param>
             /// <param name="refresh"> Refresh rate of screen. </param>
-            private static bool Prefix(MethodBase __originalMethod, ScreenResolutions __instance, ref int width, ref int height, ref int refresh)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ScreenResolutions __instance, ref int width, ref int height, ref int refresh)
             {
-
                 FieldInfo resolutionField = typeof(ScreenResolutions).GetField("resolutions", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 
                 if (resolutionField == null)
@@ -31,17 +28,17 @@ namespace NewSafetyHelp.MainGameBugFixes
                     return true; // Call normal function instead.
                 }
                 
-                Resolution[] _resolution = (Resolution[]) resolutionField.GetValue(__instance);
+                Resolution[] resolutions = (Resolution[]) resolutionField.GetValue(__instance);
 
-                if (_resolution.Length <= 0)
+                if (resolutions.Length <= 0)
                 {
                     MelonLogger.Error("ERROR: ScreenResolutions field was empty. Unable of patching out bug. Defaulting to normal function.");
                     return true; // Call normal function instead.
                 }
                 
-                for (int i = 0; i < _resolution.Length; i++)
+                for (int i = 0; i < resolutions.Length; i++)
                 {
-                    Resolution resolution = _resolution[i];
+                    Resolution resolution = resolutions[i];
                     if (resolution.width == width && resolution.height == height && resolution.refreshRate == refresh)
                     {
                         if (i >= __instance.dropdownMenu.options.Count) // "i" is larger than the amount of options. We default to i only.

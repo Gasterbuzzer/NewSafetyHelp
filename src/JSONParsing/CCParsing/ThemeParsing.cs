@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaign.Themes;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -29,29 +28,29 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            ThemesExtraInfo customTheme = ParseTheme(ref jObjectParsed, ref usermodFolderPath,
+            CustomTheme customTheme = ParseTheme(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
-            CustomCampaignExtraInfo foundCustomCampaign =
-                CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.campaignName == customCampaignName);
+            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+                CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
+                    customCampaignSearch.CampaignName == customCampaignName);
             
-            if (customTheme.inMainCampaign)
+            if (customTheme.InMainCampaign)
             {
-                ParseJSONFiles.mainGameThemes.Add(customTheme);
+                GlobalParsingVariables.MainGameThemes.Add(customTheme);
             }
             else
             {
                 if (foundCustomCampaign != null)
                 {
-                    if (customTheme.unlockDays == null)
+                    if (customTheme.UnlockDays == null)
                     {
-                        foundCustomCampaign.customThemesGeneral.Add(customTheme);
+                        foundCustomCampaign.CustomThemesGeneral.Add(customTheme);
                     }
                     else
                     {
-                        foundCustomCampaign.customThemesDays.Add(customTheme);
+                        foundCustomCampaign.CustomThemesDays.Add(customTheme);
                     }
                 }
                 else
@@ -60,12 +59,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     MelonLogger.Msg("DEBUG: Found theme file before the custom campaign was found / does not exist.");
                     #endif
 
-                    ParseJSONFiles.missingCustomCampaignTheme.Add(customTheme);
+                    GlobalParsingVariables.PendingCustomCampaignThemes.Add(customTheme);
                 }
             }
         }
 
-        private static ThemesExtraInfo ParseTheme(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomTheme ParseTheme(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             bool inMainCampaign = false; // If available in main campaign.
@@ -96,15 +95,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 inMainCampaign = themeInMainCampaignValue.Value<bool>();
             }
             
-            if (jObjectParsed.TryGetValue("theme_name", out JToken themeNameValue))
-            {
-                themeName = themeNameValue.Value<string>();
-            }
-            
-            if (jObjectParsed.TryGetValue("attached_to_theme", out JToken attachedToThemeValue))
-            {
-                attachedToTheme = attachedToThemeValue.Value<string>();
-            }
+            ParsingHelper.TryAssign(jObjectParsed, "theme_name", ref themeName);
+            ParsingHelper.TryAssign(jObjectParsed, "attached_to_theme", ref attachedToTheme);
 
             if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
             {
@@ -125,45 +117,45 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (jObjectParsed.TryGetValue("title_bar_color", out JToken titleBarColorValue))
             {
-                setColor(ref titleBarColorValue, ref themeColorPalette, 0);
+                SetColor(ref titleBarColorValue, ref themeColorPalette, 0);
             }
             
             if (jObjectParsed.TryGetValue("menu_color", out JToken menuColorValue))
             {
-                setColor(ref menuColorValue, ref themeColorPalette, 1);
+                SetColor(ref menuColorValue, ref themeColorPalette, 1);
             }
             
             if (jObjectParsed.TryGetValue("third_color", out JToken thirdColorValue))
             {
-                setColor(ref thirdColorValue, ref themeColorPalette, 2);
+                SetColor(ref thirdColorValue, ref themeColorPalette, 2);
             }
             
             if (jObjectParsed.TryGetValue("entry_font_color", out JToken entryFontColorValue))
             {
-                setColor(ref entryFontColorValue, ref themeColorPalette, 2);
+                SetColor(ref entryFontColorValue, ref themeColorPalette, 2);
             }
             
             if (jObjectParsed.TryGetValue("main_window_color", out JToken mainWindowColorValue))
             {
-                setColor(ref mainWindowColorValue, ref themeColorPalette, 3);
+                SetColor(ref mainWindowColorValue, ref themeColorPalette, 3);
             }
             
-            return new ThemesExtraInfo()
+            return new CustomTheme()
             {
-                inMainCampaign = inMainCampaign,
+                InMainCampaign = inMainCampaign,
                 
-                themeName = themeName,
-                customCampaignName = customCampaignName,
+                ThemeName = themeName,
+                CustomCampaignName = customCampaignName,
                 
-                attachedToTheme = attachedToTheme,
+                AttachedToTheme = attachedToTheme,
                 
-                unlockDays = unlockDays,
+                UnlockDays = unlockDays,
                 
-                customThemePalette = themeColorPalette
+                CustomThemePalette = themeColorPalette
             };
         }
 
-        private static void setColor(ref JToken jsonValue, ref ColorPalette themeColorPalette, int colorIndex)
+        private static void SetColor(ref JToken jsonValue, ref ColorPalette themeColorPalette, int colorIndex)
         {
             if (jsonValue.Type == JTokenType.Array)
             {
@@ -193,7 +185,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     default:
                         MelonLogger.Error("ERROR: " +
                                           "Provided color for setting color is invalid! " +
-                                          "Make sure its 3 or 4 values.");
+                                          "Make sure it's 3 or 4 values.");
                         break;
                 }
             }

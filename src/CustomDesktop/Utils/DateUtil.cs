@@ -4,7 +4,6 @@ namespace NewSafetyHelp.CustomDesktop.Utils
 {
     public static class DateUtil
     {
-        
         /// <summary>
         /// Returns the next day given a specific day, month, and year.
         /// Handles month rollover, year rollover, and leap years for February.
@@ -13,7 +12,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
         /// <param name="month">The current month (1-12).</param>
         /// <param name="year">The current year.</param>
         /// <returns>A list with [day, month, year] representing the next date.</returns>
-        public static List<int> nextDay(int day, int month, int year)
+        public static List<int> NextDay(int day, int month, int year)
         {
             day++; // Increment day first
 
@@ -48,7 +47,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
         /// <param name="month">The current month (1-12).</param>
         /// <param name="year">The current year.</param>
         /// <returns>A list with [day, month, year] representing the next date.</returns>
-        public static List<int> fixDayMonthYear(int day, int month, int year)
+        public static List<int> FixDayMonthYear(int day, int month, int year)
         {
             while (true)
             {
@@ -80,7 +79,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
         /// <param name="month">The month (1-12).</param>
         /// <param name="year">The year.</param>
         /// <returns>The number of days in the month.</returns>
-        public static int DaysInMonth(int month, int year)
+        private static int DaysInMonth(int month, int year)
         {
             switch (month)
             {
@@ -126,7 +125,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
         /// </summary>
         /// <param name="year">The year to check.</param>
         /// <returns>True if leap year, else false.</returns>
-        public static bool IsLeapYear(int year)
+        private static bool IsLeapYear(int year)
         {
             // Leap year if divisible by 4,
             // but not by 100 unless also divisible by 400

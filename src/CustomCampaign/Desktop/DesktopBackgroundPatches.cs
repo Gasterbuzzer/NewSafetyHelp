@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaign.Desktop
@@ -21,9 +20,9 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(MethodBase __originalMethod, DayNumSpriteSwapper __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -36,19 +35,19 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     bool disableGreenColorBackground = false;
                     Color? desktopBackgroundColor = null;
                     
-                    if (customCampaign.disableGreenColorBackground)
+                    if (customCampaign.DisableGreenColorBackground)
                     {
                         disableGreenColorBackground = true;
                     }
                     
                     bool disableColorBackgroundFound = false;
-                    bool disableColorBackground = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.disableColorBackground,
+                    bool disableColorBackground = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DisableColorBackground,
                         ref disableColorBackgroundFound);
                     
                     bool desktopBackgroundColorFound = false;
-                    Color? modifierDesktopBackgroundColor = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.desktopBackgroundColor,
+                    Color? modifierDesktopBackgroundColor = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DesktopBackgroundColor,
                         ref desktopBackgroundColorFound,
                         v => v != null);
 
@@ -71,13 +70,13 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         __instance.myImage.color = (Color) desktopBackgroundColor;
                     }
                     
-                    Sprite setBackgroundSprite = null;
+                    Sprite setBackgroundSprite;
                     
-                    if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.savedGameFinishedDisplay == 1) // If we finished the campaign.
+                    if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.SavedGameFinishedDisplay == 1) // If we finished the campaign.
                     {
-                        if (customCampaign.gameFinishedBackground != null)
+                        if (customCampaign.GameFinishedBackground != null)
                         {
-                            setBackgroundSprite = customCampaign.gameFinishedBackground;
+                            setBackgroundSprite = customCampaign.GameFinishedBackground;
                         }
                         else
                         {
@@ -86,10 +85,10 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
                     else // Current Day Background instead.
                     {
-                        if (customCampaign.backgroundSprites.Count > 0 
-                            && GlobalVariables.currentDay <= customCampaign.backgroundSprites.Count) // We have backgrounds to replace.
+                        if (customCampaign.BackgroundSprites.Count > 0 
+                            && GlobalVariables.currentDay <= customCampaign.BackgroundSprites.Count) // We have backgrounds to replace.
                         {
-                            setBackgroundSprite = customCampaign.backgroundSprites[GlobalVariables.currentDay - 1];
+                            setBackgroundSprite = customCampaign.BackgroundSprites[GlobalVariables.currentDay - 1];
                         }
                         else
                         {
@@ -105,20 +104,20 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
 
                     bool desktopBackgroundsFound = false;
-                    List<Sprite> desktopBackgrounds = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.desktopBackgrounds,
+                    List<Sprite> desktopBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DesktopBackgrounds,
                         ref desktopBackgroundsFound,
                         v => v != null && v.Count > 0);
                     
                     bool gameFinishedBackgroundFound = false;
-                    Sprite gameFinishedBackground = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.gameFinishedBackground,
+                    Sprite gameFinishedBackground = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.GameFinishedBackground,
                         ref gameFinishedBackgroundFound,
                         v => v != null);
                     
                     bool unlockDaysFound = false;
-                    List<int> unlockDays = CustomCampaignGlobal.getActiveModifierValue(
-                        c => c.unlockDays,
+                    List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.UnlockDays,
                         ref unlockDaysFound,
                         v => v != null && v.Count > 0);
                     
@@ -127,7 +126,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     {
                         // Game Finished
                         if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 
-                            || customCampaign.savedGameFinishedDisplay == 1)
+                            || customCampaign.SavedGameFinishedDisplay == 1)
                         {
                             if (gameFinishedBackgroundFound && gameFinishedBackground != null)
                             {

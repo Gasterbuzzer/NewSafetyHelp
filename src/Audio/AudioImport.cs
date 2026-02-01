@@ -13,7 +13,7 @@ namespace NewSafetyHelp.Audio
     {
         
         // List containing all audios currently loading.
-        public static List<string> currentLoadingAudios = new List<string>();
+        public static List<string> CurrentLoadingAudios = new List<string>();
         
 
         // ReSharper disable once CommentTypo
@@ -29,7 +29,7 @@ namespace NewSafetyHelp.Audio
             
             Time.timeScale = 0;
             
-            currentLoadingAudios.Add($"{path}{_audioType.ToString()}");
+            CurrentLoadingAudios.Add($"{path}{_audioType.ToString()}");
 
             // First we check if the file exists
             if (!File.Exists(path))
@@ -37,10 +37,10 @@ namespace NewSafetyHelp.Audio
                 MelonLogger.Error($"ERROR: Given path to file {path} of type {_audioType.ToString()} does not exist.");
                 
                 // Fix for audio failing to load causing a freeze.
-                currentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
+                CurrentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
 
                 // If all audios finished loading we continue letting the game run.
-                if (currentLoadingAudios.Count <= 0)
+                if (CurrentLoadingAudios.Count <= 0)
                 {
                     Time.timeScale = 1.0f;
                 }
@@ -75,10 +75,10 @@ namespace NewSafetyHelp.Audio
                     MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. \n Results in the error: {www.error} and the response code is: {www.responseCode}. Was the process finished?: {www.isDone}");
                 }
                 
-                currentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
+                CurrentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
 
                 // If all audios finished loading we continue letting the game run.
-                if (currentLoadingAudios.Count <= 0)
+                if (CurrentLoadingAudios.Count <= 0)
                 {
                     Time.timeScale = 1.0f;
                 }
@@ -89,7 +89,7 @@ namespace NewSafetyHelp.Audio
         /// <summary>
         /// Calls the CallerController Start to reload audio / imports again.
         /// </summary>
-        public static void reCallCallerListStart()
+        public static void ReCallCallerListStart()
         {
             Type callerController = typeof(CallerController);
             

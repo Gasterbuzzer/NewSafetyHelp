@@ -3,7 +3,6 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
@@ -28,55 +27,54 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            MusicExtraInfo customMusic = ParseMusic(ref jObjectParsed, ref usermodFolderPath,
+            CustomMusic customMusic = ParseMusic(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add music clip
             if (jObjectParsed.ContainsKey("music_audio_clip_name"))
             {
-                if (string.IsNullOrEmpty(customMusic.musicClipPath))
+                if (string.IsNullOrEmpty(customMusic.MusicClipPath))
                 {
                     MelonLogger.Warning(
                         $"WARNING: No valid music file given for file in {jsonFolderPath}. No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customMusic.musicClipPath))
+                else if (!File.Exists(customMusic.MusicClipPath))
                 {
                     MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customMusic.musicClipPath}'." +
+                        $"ERROR: Location {jsonFolderPath} does not contain '{customMusic.MusicClipPath}'." +
                         " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
-                    MelonCoroutines.Start(ParseJSONFiles.UpdateAudioClip
+                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    customMusic.musicClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    customMusic.isAudioClipLoaded = true;
+                                    customMusic.MusicClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else
                                 {
                                     MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customMusic.musicClipPath} for custom caller.");
+                                        $"ERROR: Failed to load audio clip {customMusic.MusicClipPath} for custom caller.");
                                 }
                             },
-                            customMusic.musicClipPath)
+                            customMusic.MusicClipPath)
                     );
                 }
             }
 
             // Add to correct campaign.
-            CustomCampaignExtraInfo foundCustomCampaign =
-                CustomCampaignGlobal.customCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.campaignName == customCampaignName);
+            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+                CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
+                    customCampaignSearch.CampaignName == customCampaignName);
 
             if (foundCustomCampaign != null)
             {
-                foundCustomCampaign.customMusic.Add(customMusic);
+                foundCustomCampaign.CustomMusic.Add(customMusic);
             }
             else
             {
@@ -84,54 +82,31 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MelonLogger.Msg("DEBUG: Found Music File before the custom campaign was found / does not exist.");
                 #endif
 
-                ParseJSONFiles.missingCustomCampaignMusic.Add(customMusic);
+                GlobalParsingVariables.PendingCustomCampaignMusic.Add(customMusic);
             }
         }
 
-        private static MusicExtraInfo ParseMusic(ref JObject jObjectParsed, ref string usermodFolderPath,
+        private static CustomMusic ParseMusic(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
             int unlockDay = 0; // When the music is unlocked. Mostly used for default game logic.
 
             string musicAudioPath = ""; // Audio Path to load audio from.
 
-            if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignNameValue))
+            ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
+
+            ParsingHelper.TryAssignAudioPath(jObjectParsed, "music_audio_clip_name", ref musicAudioPath,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
+
+            return new CustomMusic
             {
-                customCampaignName = (string)customCampaignNameValue;
-            }
+                CustomCampaignName = customCampaignName,
 
-            if (jObjectParsed.TryGetValue("music_audio_clip_name", out var musicAudioClipName))
-            {
-                if (!File.Exists(jsonFolderPath + "\\" + musicAudioClipName))
-                {
-                    if (!File.Exists(usermodFolderPath + "\\" + musicAudioClipName))
-                    {
-                        MelonLogger.Warning("WARNING: " +
-                                            $"Could not find provided audio file for custom caller at '{jsonFolderPath}' for {musicAudioClipName}.");
-                    }
-                    else
-                    {
-                        musicAudioPath = usermodFolderPath + "\\" + musicAudioClipName;
-                    }
-                }
-                else
-                {
-                    musicAudioPath = jsonFolderPath + "\\" + musicAudioClipName;
-                }
-            }
+                MusicClipPath = musicAudioPath,
 
-            if (jObjectParsed.TryGetValue("unlock_day", out var unlockDayValue))
-            {
-                unlockDay = (int)unlockDayValue;
-            }
-
-            return new MusicExtraInfo
-            {
-                customCampaignName = customCampaignName,
-
-                musicClipPath = musicAudioPath,
-
-                unlockDay = unlockDay,
+                UnlockDay = unlockDay,
             };
         }
     }

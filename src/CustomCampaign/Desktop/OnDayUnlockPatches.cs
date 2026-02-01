@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
@@ -32,7 +31,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 {
                     
                     // Special cases / exceptions:
-                    if (CustomCampaignGlobal.inCustomCampaign)
+                    if (CustomCampaignGlobal.InCustomCampaign)
                     {
                         string gameObjectName = __instance.gameObject.name;
 
@@ -90,7 +89,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                     }
                     else
                     {
-                        if (!CustomCampaignGlobal.inCustomCampaign) // Main Campaign
+                        if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                         {
                             if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1).ToString()))
                             {
@@ -107,11 +106,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         }
                         else // Custom Campaign
                         {
-                            CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                             if (currentCampaign == null)
                             {
-                                MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                                MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                                 return true;
                             }
                             
@@ -123,16 +122,16 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                             }
                             
                             #if DEBUG
-                                MelonLogger.Msg($"DEBUG: This object unlock in day: {unlockDay} (Current Day is {GlobalVariables.currentDay}). The threshold is: {__instance.scoreThresholdToUnlock}. The current score for that day is {currentCampaign.savedDayScores[unlockDay]}. (For GameObject: '{__instance.gameObject.name}')");
+                                MelonLogger.Msg($"DEBUG: This object unlock in day: {unlockDay} (Current Day is {GlobalVariables.currentDay}). The threshold is: {__instance.scoreThresholdToUnlock}. The current score for that day is {currentCampaign.SavedDayScores[unlockDay]}. (For GameObject: '{__instance.gameObject.name}')");
                             #endif
                             
                             if (__instance.scoreThresholdToUnlock > 0.0f) // Has a set value other than the default.
                             {
-                                if (currentCampaign.savedDayScores[unlockDay] < (double) __instance.scoreThresholdToUnlock)
+                                if (currentCampaign.SavedDayScores[unlockDay] < (double) __instance.scoreThresholdToUnlock)
                                 {
 
                                     #if DEBUG
-                                        MelonLogger.Msg($"DEBUG: The score {currentCampaign.savedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject. Disabling this GameObject '{__instance.gameObject.name}'.\n");
+                                        MelonLogger.Msg($"DEBUG: The score {currentCampaign.SavedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject. Disabling this GameObject '{__instance.gameObject.name}'.\n");
                                     #endif
                                     
                                     __instance.gameObject.SetActive(false);
@@ -140,7 +139,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                                 else
                                 {
                                     MelonLogger.Msg($"UNITY LOG: Email unlocked: {__instance.gameObject.name}| Day Checked: {(unlockDay).ToString()}| Day Score: " +
-                                                    $"{currentCampaign.savedDayScores[unlockDay]}.\n");
+                                                    $"{currentCampaign.SavedDayScores[unlockDay]}.\n");
                                 }
                             }
                         }
@@ -155,7 +154,6 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         }
                         else // If not enabled by beating the game or unlocked by 
                         {
-                            
                             #if DEBUG
                                 MelonLogger.Msg($"DEBUG: Didn't beat the game to unlock this or not in winter DLC. Disabling the GameObject '{__instance.gameObject.name}'. BeatGameUnlock: '{__instance.beatGameUnlock}'. SaveManagerScript: '{(bool) GlobalVariables.saveManagerScript}'. SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
                             #endif
@@ -166,7 +164,6 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                 }
                 else
                 {
-                    
                     #if DEBUG
                         MelonLogger.Msg($"DEBUG: Disabling. GameObject made for Arcade.\n");
                     #endif
@@ -182,24 +179,24 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "EntryBrowser-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
                 
                 bool enableEntryBrowser = false;
             
                 bool entryBrowserFound = false;
-                bool entryBrowser = CustomCampaignGlobal.getActiveModifierValue(
-                    c => c.entryBrowserActive,
+                bool entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.EntryBrowserActive,
                     ref entryBrowserFound,
-                    specialPredicate: m => m.entryBrowserChanged);
+                    specialPredicate: m => m.EntryBrowserChanged);
             
                 // If always on. We just leave them on.
-                if (currentCampaign.entryBrowserAlwaysActive)
+                if (currentCampaign.EntryBrowserAlwaysActive)
                 {
                     enableEntryBrowser = true;
                 }
@@ -220,24 +217,24 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Scorecard")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
                 
                 bool enableScorecard = false;
             
                 bool scorecardFound = false;
-                bool scorecard = CustomCampaignGlobal.getActiveModifierValue(
-                    c => c.scorecardActive,
+                bool scorecard = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.ScorecardActive,
                     ref scorecardFound,
-                    specialPredicate: m => m.scorecardChanged);
+                    specialPredicate: m => m.ScorecardChanged);
                 
                 // If always on. We just leave them on.
-                if (currentCampaign.scorecardAlwaysActive)
+                if (currentCampaign.ScorecardAlwaysActive)
                 {
                     enableScorecard = true;
                 }
@@ -258,24 +255,24 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Artbook-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                    MelonLogger.Error("ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
                 
                 bool artBookEnabled = false;
             
                 bool artbookFound = false;
-                bool artbook = CustomCampaignGlobal.getActiveModifierValue(
-                    c => c.artbookActive,
+                bool artbook = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.ArtbookActive,
                     ref artbookFound,
-                    specialPredicate: m => m.artbookChanged);
+                    specialPredicate: m => m.ArtbookChanged);
                 
                 // If always on. We just leave them on.
-                if (currentCampaign.artbookAlwaysActive)
+                if (currentCampaign.ArtbookAlwaysActive)
                 {
                     artBookEnabled = true;
                 }
@@ -296,25 +293,25 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
         {
             if (__instance.gameObject.name == "Arcade-Executable")
             {
-                CustomCampaignExtraInfo currentCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
                     MelonLogger.Error(
-                        "ERROR: CustomCampaignExtraInfo is null in unlock script. This shouldn't happen as custom campaign is true.");
+                        "ERROR: CustomCampaign is null in unlock script. This shouldn't happen as custom campaign is true.");
                     return false;
                 }
 
                 bool arcadeEnabled = false;
             
                 bool arcadeFound = false;
-                bool arcade = CustomCampaignGlobal.getActiveModifierValue(
-                    c => c.arcadeActive,
+                bool arcade = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.ArcadeActive,
                     ref arcadeFound,
-                    specialPredicate: m => m.arcadeChanged);
+                    specialPredicate: m => m.ArcadeChanged);
                 
                 // If always on. We just leave them on.
-                if (currentCampaign.arcadeAlwaysActive)
+                if (currentCampaign.ArcadeAlwaysActive)
                 {
                     arcadeEnabled = true;
                 }

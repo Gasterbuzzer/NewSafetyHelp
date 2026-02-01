@@ -5,7 +5,6 @@ using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 
 namespace NewSafetyHelp.EntryManager.EntryListing
@@ -18,15 +17,14 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             /// <summary>
             /// Postfixes the show entry info to not show "NEW" on main campaign entries if in a custom campaign.
             /// </summary>
-            /// <param name="__originalMethod"> Method Caller </param>
             /// <param name="__instance"> Caller of function instance </param>
             // ReSharper disable once UnusedParameter.Local
             // ReSharper disable once UnusedMember.Local
-            private static void Postfix(MethodBase __originalMethod, EntryListingBehavior __instance)
+            private static void Postfix(EntryListingBehavior __instance)
             {
-                if (CustomCampaignGlobal.inCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -34,10 +32,10 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                         return;
                     }
 
-                    if (!customCampaign.removeExistingEntries && customCampaign.resetDefaultEntriesPermission &&
-                        !customCampaign.doShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
+                    if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission &&
+                        !customCampaign.DoShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
                     {
-                        if (MainClassForMonsterEntries.copyMonsterProfiles
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles
                             .Contains(__instance.myProfile)) // Contained in main campaign.
                         {
                             FieldInfo hasClickedField = typeof(EntryListingBehavior).GetField("hasClicked",
@@ -66,10 +64,9 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             /// <summary>
             /// Changes the DelayedStart function to consider custom campaign entries.
             /// </summary>
-            /// <param name="__originalMethod"> Method Caller </param>
             /// <param name="__instance"> Caller of function instance </param>
             /// <param name="__result"> Caller of function instance </param>
-            private static bool Prefix(MethodBase __originalMethod, EntryListingBehavior __instance,
+            private static bool Prefix(EntryListingBehavior __instance,
                 [UsedImplicitly] ref IEnumerator __result)
             {
                 __result = DelayedStartCoroutine(__instance);
@@ -77,7 +74,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                 return false; // Skip original function.
             }
 
-            public static IEnumerator DelayedStartCoroutine(EntryListingBehavior __instance)
+            private static IEnumerator DelayedStartCoroutine(EntryListingBehavior __instance)
             {
                 yield return null;
 
@@ -90,7 +87,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                     yield break;
                 }
 
-                if (!CustomCampaignGlobal.inCustomCampaign) // Main Game
+                if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
                     if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile) 
                         && GlobalVariables.currentDay >= GlobalVariables.entryUnlockScript.currentTier + 1)
@@ -100,9 +97,9 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                 
                     determineLocked.Invoke(__instance, null); // __instance.DetermineLocked();
                 }
-                else if (CustomCampaignGlobal.inCustomCampaign) // Custom Campaign
+                else // Custom Campaign
                 {
-                    CustomCampaignExtraInfo customCampaign = CustomCampaignGlobal.getActiveCustomCampaign();
+                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -110,15 +107,37 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                         yield break;
                     }
 
-                    EntryExtraInfo entryFound = CustomCampaignGlobal.getEntryFromActiveCampaign(__instance.myProfile.monsterName);
+                    EntryMetadata entryFound = CustomCampaignGlobal.GetEntryFromActiveCampaign(__instance.myProfile.monsterName);
 
                     if (entryFound != null)
                     {
-                        if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile) 
-                            && GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel)
+                        // If the current entry is unlocked.
+                        if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile))
                         {
-                            hasClicked.SetValue(__instance, true);
+                            // Our permission tier is 1 larger than the current permission.
+                            if (GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel)
+                            {
+                                hasClicked.SetValue(__instance, true);
+                            }
+
+                            // If our current day is one later than the out tier + 1.
+                            // Example: Our current day is "1",
+                            // our current tier came from the previous day, which is "0".
+                            // As such, our current day is equal 1, and as such, we hide the NEW tag.
+                            if (GlobalVariables.currentDay >= GlobalVariables.entryUnlockScript.currentTier + 1)
+                            {
+                                hasClicked.SetValue(__instance, true);
+                            }
                         }
+                        
+                        #if DEBUG
+                        /*MelonLogger.Msg(ConsoleColor.Blue, "DEBUG: " +
+                                                           $"Entry Name: '{__instance.myProfile.monsterName}'. " +
+                                                           $"Is Unlocked? '{GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile)}'. " +
+                                                           "Current Tier - 1 > Entry Permission Level : " +
+                                                           $"'{GlobalVariables.entryUnlockScript.currentTier}' - 1 > '{entryFound.permissionLevel}' = '{GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel}'.");
+                        */
+                        #endif
                     }
                     else // Main Campaign Entries, for now we just default.
                     {
