@@ -69,6 +69,8 @@ namespace NewSafetyHelp.CustomCampaign.Helper
                 }
                 #endif
                 
+                // The switch statements all look for the opposite of the current statement,
+                // since it only matters if we fail one of them and not if all check are true.
                 switch (accuracyType.AccuracyCheck)
                 {
                     case CheckOptions.EqualTo:

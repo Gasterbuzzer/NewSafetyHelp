@@ -59,7 +59,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                             .xmasPhoneCall);
                     }
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                else // Custom Campaign
                 {
                     CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 

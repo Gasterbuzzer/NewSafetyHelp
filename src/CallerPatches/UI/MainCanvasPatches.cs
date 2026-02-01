@@ -746,7 +746,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                             }
                         }
                     }
-                    else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                    else // Custom Campaign
                     {
                         CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MelonLoader;
@@ -74,7 +73,7 @@ namespace NewSafetyHelp.Audio.Music
                             chosenMusicIndex); // __instance.previousHoldMusicIndex = index1;
                     }
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Music. Ignores the day
+                else // Custom Campaign Music. Ignores the day
                 {
                     CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
@@ -112,7 +111,7 @@ namespace NewSafetyHelp.Audio.Music
                             chosenMusicIndex = Random.Range(0, amountOfClips);
                         }
 
-                        if (!customCampaign.RemoveDefaultMusic)
+                        if (!customCampaign.RemoveDefaultMusic) // Don't remove default music.
                         {
                             if (chosenMusicIndex >= __instance.onHoldMusicClips.Length)
                             {
@@ -120,7 +119,7 @@ namespace NewSafetyHelp.Audio.Music
                                 chosenMusicIndex -= __instance.onHoldMusicClips.Length;
                             }
                         }
-                        else if (customCampaign.RemoveDefaultMusic)
+                        else // Remove default music
                         {
                             playCustomMusic = true;
                         }
@@ -224,7 +223,7 @@ namespace NewSafetyHelp.Audio.Music
                 {
                     __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                else // Custom Campaign
                 {
                     CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 

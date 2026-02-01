@@ -29,7 +29,7 @@ namespace NewSafetyHelp.CallerPatches
             private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
             {
                 #if DEBUG
-                MelonLogger.Msg(ConsoleColor.Magenta, $"DEBUG: Called Start from the class CallerController.");
+                MelonLogger.Msg(ConsoleColor.Magenta, "DEBUG: Called Start from the class CallerController.");
                 #endif
 
                 Type callerController = typeof(CallerController);
@@ -411,7 +411,7 @@ namespace NewSafetyHelp.CallerPatches
                 if (lastDayNumField == null)
                 {
                     MelonLogger.Error(
-                        $"CallerController: lastDayNumField is null! Unable of checking if caller is last day.");
+                        "CallerController: lastDayNumField is null! Unable of checking if caller is last day.");
                     return true;
                 }
 
@@ -432,7 +432,7 @@ namespace NewSafetyHelp.CallerPatches
 
                     __result = mainCampaignResult;
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign)// Custom Campaign
+                else // Custom Campaign
                 {
                     CustomCCaller customCCallerFound =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
@@ -625,7 +625,7 @@ namespace NewSafetyHelp.CallerPatches
                         normalCallerAfterCheck = true;
                     }
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                else // Custom Campaign
                 {
                     #if DEBUG
                     MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");

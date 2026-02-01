@@ -57,7 +57,7 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                         }
                     }
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                else // Custom Campaign
                 {
                     int currentCallerIndex = 0;
                     

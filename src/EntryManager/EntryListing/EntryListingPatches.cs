@@ -97,7 +97,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                 
                     determineLocked.Invoke(__instance, null); // __instance.DetermineLocked();
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
+                else // Custom Campaign
                 {
                     CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
