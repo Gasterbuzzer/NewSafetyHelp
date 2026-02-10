@@ -9,6 +9,7 @@ using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.CallerPatches.Answer
 {
@@ -414,19 +415,6 @@ namespace NewSafetyHelp.CallerPatches.Answer
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false; // Skip original function.
                         }
-
-                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-
-                        if (customCampaign == null)
-                        {
-                            MelonLogger.Error("ERROR: CustomCampaign is null. Calling original function.");
-                            return true;
-                        }
-                        
-                        if (customCampaign.CustomIntermissionMusic.Count >= 0)
-                        {
-                            IntermissionMusicHelper.PlayIntermissionMusic(customCampaign.CustomIntermissionMusic[0]);
-                        }
                     }
 
                     // Next caller after providing an answer.
@@ -450,6 +438,78 @@ namespace NewSafetyHelp.CallerPatches.Answer
                 }
                 
                 return false; // Skip the original function
+            }
+        }
+
+        [HarmonyLib.HarmonyPatch(typeof(SubmitWindowBehavior), "SubmitRoutine")]
+        public static class SubmitRoutinePatch
+        {
+            /// <summary>
+            /// Changes the SubmitWindowBehavior to play intermission music after finishing.
+            /// </summary>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Coroutine to call </param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(SubmitWindowBehavior __instance, ref IEnumerator __result)
+            {
+                __result = SubmitRoutine(__instance);
+
+                return false; // Skip original function.
+            }
+
+            private static IEnumerator SubmitRoutine(SubmitWindowBehavior __instance)
+            {
+                SubmitWindowBehavior submitWindowBehavior = __instance;
+                
+                if (submitWindowBehavior.answerToSubmit == null)
+                {
+                    GlobalVariables.mainCanvasScript.CreateError("ERROR: INSUFFICIENT PERMISSIONS.");
+                }
+                else
+                {
+                    submitWindowBehavior.submitButton.SetActive(false);
+                    submitWindowBehavior.loadingText.SetActive(true);
+                    
+                    if (GlobalVariables.arcadeMode)
+                    {
+                        GlobalVariables.callerControllerScript.StopCoroutine(GlobalVariables.callerControllerScript
+                            .callTimerRoutine);
+                    }
+                    
+                    yield return new WaitForSeconds(Random.Range(4, 6));
+                    
+                    GlobalVariables.callerControllerScript.SubmitAnswer(submitWindowBehavior.answerToSubmit);
+                    
+                    if (!GlobalVariables.arcadeMode)
+                    {
+                        GlobalVariables.mainCanvasScript.CreateError("INFO SUCCESSFULLY SENT TO CLIENT. GOOD JOB!");
+                    }
+                    
+                    GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
+                    
+                    GlobalVariables.musicControllerScript.StopMusic();
+                    GlobalVariables.UISoundControllerScript.StopUISoundLooping();
+                    
+                    submitWindowBehavior.submitButton.SetActive(true);
+                    submitWindowBehavior.loadingText.SetActive(false);
+                    submitWindowBehavior.gameObject.SetActive(false);
+                }
+                
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: CustomCampaign is null. Critical error.");
+                        yield break;
+                    }
+                        
+                    if (customCampaign.CustomIntermissionMusic.Count >= 0)
+                    {
+                        IntermissionMusicHelper.PlayIntermissionMusic(customCampaign.CustomIntermissionMusic[0]);
+                    }
+                }
             }
         }
     }

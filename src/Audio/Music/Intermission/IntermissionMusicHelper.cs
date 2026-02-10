@@ -30,7 +30,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             }
 
             playIntermission = MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast,
-                7f, audioClip));
+                70f, audioClip));
         }
         
         public static void StopIntermissionMusic()

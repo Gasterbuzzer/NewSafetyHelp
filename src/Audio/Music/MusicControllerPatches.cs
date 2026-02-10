@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MelonLoader;
@@ -13,6 +14,9 @@ namespace NewSafetyHelp.Audio.Music
 {
     public static class MusicControllerPatches
     {
+        // Used for figuring out, what is playing, instead of guessing or searching.
+        private static RichAudioClip CurrentMusicClip;
+        
         [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartRandomMusic")]
         public static class StartRandomMusicPatch
         {
@@ -384,10 +388,67 @@ namespace NewSafetyHelp.Audio.Music
                         myMusicSourceCast.time = 19.6f;
                     }
                 }
+
+                // Store a reference to the clip for later checking or restoring.
+                CurrentMusicClip = myMusicClip;
                 
                 myMusicSourceCast.Play(); // __instance.myMusicSource.Play();
                 
                 return false; // Do not call original function.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MusicController), "TurnDownHoldMusicWhileHazardProfileSampleIsPlayingRoutine")]
+        public static class TurnDownHoldMusicWhileHazardProfileSampleIsPlayingRoutinePatch
+        {
+            /// <summary>
+            /// Patches the function to not crash if the provided music clip is not from the base game.
+            /// </summary>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__result"> Coroutine to play. </param>
+            // ReSharper disable once UnusedParameter.Local
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(MusicController __instance, ref IEnumerator __result)
+            {
+                FieldInfo myMusicSource = typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                if (myMusicSource == null)
+                {
+                    MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic." +
+                                      " Calling original function.");
+                    return true;
+                }
+                
+                AudioSource myMusicSourceCast = (AudioSource) myMusicSource.GetValue(__instance);
+
+                if (myMusicSourceCast == null)
+                {
+                    MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic." +
+                                      " Calling original function.");
+                    return true;
+                }
+                
+                __result = TurnDownMusicIfEntryIsPlaying(myMusicSourceCast);
+                
+                return false; // Do not call original function.
+            }
+
+            private static IEnumerator TurnDownMusicIfEntryIsPlaying(AudioSource myMusicSourceCast)
+            {
+                if (myMusicSourceCast.isPlaying)
+                {
+                    myMusicSourceCast.volume = 0.02f;
+                    
+                    while (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+
+                    if (CurrentMusicClip != null)
+                    {
+                        myMusicSourceCast.volume = CurrentMusicClip.volume; 
+                    }
+                }
             }
         }
     }
