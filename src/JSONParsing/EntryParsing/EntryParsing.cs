@@ -327,11 +327,11 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref watchingPhobia, ref watchingPhobiaIncluded, ref tightSpacePhobia, ref tightSpacePhobiaIncluded);
 
             // Parse Default Caller
-            CallerParsing.ParseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref callerName,
+            MainCampaignCallerParsing.ParseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref callerName,
                 ref callerTranscript, ref callerImageLocation, ref callerReplaceChance, ref callerRestartCallAgain,
                 ref callerPortrait);
 
-            CallerParsing.ParseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath,
+            MainCampaignCallerParsing.ParseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath,
                 ref consequenceCallerName, ref consequenceCallerTranscript, ref consequenceCallerImageLocation,
                 ref consequenceCallerPortrait);
 

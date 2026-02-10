@@ -89,7 +89,20 @@ namespace NewSafetyHelp.Audio.Music
                         int amountOfClips = 0;
 
                         int customMusicAmount = customCampaign.CustomMusic
-                            .Where(clip => clip.UnlockDay <= GlobalVariables.currentDay).ToList().Count;
+                            .Where(clip =>
+                                {
+                                    if (clip.OnlyPlayOnUnlockDay)
+                                    {
+                                        if (clip.UnlockDay <= 0)
+                                        {
+                                            return 1 == GlobalVariables.currentDay;
+                                        }
+                                        return clip.UnlockDay == GlobalVariables.currentDay;
+                                    }
+                                    
+                                    return clip.UnlockDay <= GlobalVariables.currentDay;
+                                }
+                            ).ToList().Count;
 
                         if (!customCampaign.RemoveDefaultMusic)
                         {
@@ -129,6 +142,7 @@ namespace NewSafetyHelp.Audio.Music
                                         $"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)_previousHoldMusicIndex.GetValue(__instance)}." +
                                         $" (From custom music? {playCustomMusic})" +
                                         $" (Amount of clips: {amountOfClips})" +
+                                        $" (Total clips: {customCampaign.CustomMusic.Count})" +
                                         $" (Remove default music? {customCampaign.RemoveDefaultMusic})" +
                                         $" (Current day: {GlobalVariables.currentDay})");
 
@@ -145,7 +159,20 @@ namespace NewSafetyHelp.Audio.Music
                         int amountOfClips = 0;
 
                         int customMusicAmount = customCampaign.CustomMusic
-                            .Where(clip => clip.UnlockDay <= GlobalVariables.currentDay).ToList().Count;
+                            .Where(clip => 
+                                {
+                                    if (clip.OnlyPlayOnUnlockDay)
+                                    {
+                                        if (clip.UnlockDay <= 0)
+                                        {
+                                            return 1 == GlobalVariables.currentDay;
+                                        }
+                                        return clip.UnlockDay == GlobalVariables.currentDay;
+                                    }
+                                    
+                                    return clip.UnlockDay <= GlobalVariables.currentDay;
+                                }
+                                ).ToList().Count;
 
                         if (!customCampaign.RemoveDefaultMusic)
                         {
@@ -221,7 +248,10 @@ namespace NewSafetyHelp.Audio.Music
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
-                    __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+                    if (GlobalVariables.musicControllerScript.onHoldMusicClips.Length >= chosenMusicIndex)
+                    {
+                        __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+                    }
                 }
                 else // Custom Campaign
                 {
@@ -237,9 +267,24 @@ namespace NewSafetyHelp.Audio.Music
                     if (playCustomMusic)
                     {
                         List<CustomMusic> customMusicList = customCampaign.CustomMusic
-                            .Where(clip => clip.UnlockDay <= GlobalVariables.currentDay).ToList();
+                            .Where(clip => 
+                            {
+                                if (clip.OnlyPlayOnUnlockDay)
+                                {
+                                    if (clip.UnlockDay <= 0)
+                                    {
+                                        return 1 == GlobalVariables.currentDay;
+                                    }
+                                    return clip.UnlockDay == GlobalVariables.currentDay;
+                                }
+                                    
+                                return clip.UnlockDay <= GlobalVariables.currentDay;
+                                
+                            }).ToList();
 
-                        if (customMusicList.Count > 0 && customMusicList[chosenMusicIndex].MusicClip != null)
+                        if (customMusicList.Count > 0 
+                            && customMusicList.Count >= chosenMusicIndex
+                            && customMusicList[chosenMusicIndex].MusicClip != null)
                         {
                             __instance.StartMusic(customMusicList[chosenMusicIndex].MusicClip);
                         }
@@ -250,7 +295,10 @@ namespace NewSafetyHelp.Audio.Music
                     }
                     else if (!customCampaign.RemoveDefaultMusic)
                     {
-                        __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+                        if (GlobalVariables.musicControllerScript.onHoldMusicClips.Length >= chosenMusicIndex)
+                        {
+                            __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+                        }
                     }
                 }
 

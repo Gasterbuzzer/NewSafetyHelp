@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
+using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaign;
 using NewSafetyHelp.CustomCampaign.Modifier.Data;
 using NewSafetyHelp.CustomCampaign.Themes;
@@ -85,8 +86,32 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref customCampaign.AllDesktopVideos, customCampaignName, "videos");
             
             // Check if any music has to be added to a custom campaign.
-            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignMusic,
-                ref customCampaign.CustomMusic, customCampaignName, "music");
+            if (GlobalParsingVariables.PendingCustomCampaignMusic.Count > 0)
+            {
+                // Create a copy of the list to iterate over
+                List<CustomMusic> tempList = new List<CustomMusic>(GlobalParsingVariables.PendingCustomCampaignMusic);
+
+                foreach (CustomMusic missingMusic in tempList)
+                {
+                    if (missingMusic.CustomCampaignName == customCampaignName)
+                    {
+                        #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
+                        #endif
+
+                        if (missingMusic.IsIntermissionMusic)
+                        {
+                            customCampaign.CustomIntermissionMusic.Add(missingMusic);
+                        }
+                        else
+                        {
+                            customCampaign.CustomMusic.Add(missingMusic);
+                        }
+                        
+                        GlobalParsingVariables.PendingCustomCampaignMusic.Remove(missingMusic);
+                    }
+                }
+            }
             
             // Check if any modifier has to be added to a custom campaign.
             if (GlobalParsingVariables.PendingCustomCampaignModifiers.Count > 0)

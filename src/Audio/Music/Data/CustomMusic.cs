@@ -9,5 +9,9 @@ namespace NewSafetyHelp.Audio.Music.Data
         public RichAudioClip MusicClip = null;
 
         public int UnlockDay = 0;
+        
+        public bool OnlyPlayOnUnlockDay = false;
+
+        public bool IsIntermissionMusic = false;
     }
 }

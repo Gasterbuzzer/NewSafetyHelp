@@ -175,7 +175,7 @@
     <Compile Include="src\JSONParsing\CCParsing\RingtoneParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
-    <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
+    <Compile Include="src\JSONParsing\EntryParsing\MainCampaignCallerParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\EntryParsing.cs" />
     <Compile Include="src\JSONParsing\GlobalParsingVariables.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />

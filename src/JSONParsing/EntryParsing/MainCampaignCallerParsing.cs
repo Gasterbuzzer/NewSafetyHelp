@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.EntryParsing
 {
-    public static class CallerParsing
+    public static class MainCampaignCallerParsing
     {
         public static void ParseCaller(ref JObject jsonObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string callerName, ref string callerTranscript,

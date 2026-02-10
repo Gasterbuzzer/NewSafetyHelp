@@ -131,6 +131,8 @@ namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
         public bool RemoveDefaultMusic = false; // If to remove the default music from the game.
 
         public List<CustomMusic> CustomMusic = new List<CustomMusic>(); // List of custom music.
+        
+        public List<CustomMusic> CustomIntermissionMusic = new List<CustomMusic>(); // List of intermission music.
 
         // Always enabled Programs on Desktop
         public bool EntryBrowserAlwaysActive = false;

@@ -92,6 +92,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             int unlockDay = 0; // When the music is unlocked. Mostly used for default game logic.
 
             string musicAudioPath = ""; // Audio Path to load audio from.
+            
+            bool onlyPlayOnUnlockDay = false;
+            
+            bool isIntermissionMusic = false;
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
@@ -99,6 +103,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "only_play_on_unlock_day", ref onlyPlayOnUnlockDay);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "is_intermission_music", ref isIntermissionMusic);
 
             return new CustomMusic
             {
@@ -107,6 +115,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MusicClipPath = musicAudioPath,
 
                 UnlockDay = unlockDay,
+                
+                OnlyPlayOnUnlockDay = onlyPlayOnUnlockDay,
+                
+                IsIntermissionMusic =  isIntermissionMusic
             };
         }
     }
