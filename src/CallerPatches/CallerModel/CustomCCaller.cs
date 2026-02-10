@@ -25,14 +25,16 @@ namespace NewSafetyHelp.CallerPatches.CallerModel
         public bool DownedNetworkCaller = false; // If the caller will down the network (Meaning entry information cannot be accessed)
         
         // Monster Profile
-        // Monster / Entry name to be attached for. (Used when the caller asks for help and to check if that name is valid).
+        // Monster / Entry name to be attached for.
+        // (Used when the caller asks for help and to check if that name is valid).
         public string MonsterNameAttached = "NO_MONSTER_NAME"; 
 
         public int MonsterIDAttached = -1; // Similar to name but allows also ID to work.
         
         // Call Order
         
-        // Order in campaign, used when creating the call list array. If two entries have the same order, the last one will replace it.
+        // Order in campaign, used when creating the call list array.
+        // If two entries have the same order, the last one will replace it.
         public readonly int OrderInCampaign; 
         
         // Custom Campaign Settings

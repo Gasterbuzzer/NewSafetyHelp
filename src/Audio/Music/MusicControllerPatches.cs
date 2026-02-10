@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using UnityEngine;
@@ -339,29 +340,49 @@ namespace NewSafetyHelp.Audio.Music
 
                 myMusicSourceCast.pitch = 1f; // __instance.myMusicSource.pitch = 1f;
                 
-                
-                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-                
-                foreach (int downedNetworkCall in GlobalVariables.callerControllerScript.downedNetworkCalls)
-                {
-                    if (downedNetworkCall == GlobalVariables.callerControllerScript.currentCallerID)
-                    {
-                        myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
-                    }
-                }
-
                 myMusicSourceCast.clip = myMusicClip.clip; // __instance.myMusicSource.clip = myMusicClip.clip;
                 
                 myMusicSourceCast.volume = myMusicClip.volume; // __instance.myMusicSource.volume = myMusicClip.volume;
 
-                // __instance.myMusicSource.time = !(myMusicClip == __instance.onHoldMusicClips[1]) ? 0.0f : 19.6f;
-                if (myMusicClip != __instance.onHoldMusicClips[1])
+                if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign is null. Unable of changing StartMusic." +
+                                          " Calling original.");
+                        return true;
+                    }
+
+                    CustomCCaller activeCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+
+                    if (activeCaller != null && activeCaller.DownedNetworkCaller)
+                    {
+                        myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
+                    }
+                    
                     myMusicSourceCast.time = 0.0f;
                 }
-                else
+                else // Main Campaign
                 {
-                    myMusicSourceCast.time = 19.6f;
+                    foreach (int downedNetworkCall in GlobalVariables.callerControllerScript.downedNetworkCalls)
+                    {
+                        if (downedNetworkCall == GlobalVariables.callerControllerScript.currentCallerID)
+                        {
+                            myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
+                        }
+                    }
+                    
+                    // __instance.myMusicSource.time = !(myMusicClip == __instance.onHoldMusicClips[1]) ? 0.0f : 19.6f;
+                    if (myMusicClip != __instance.onHoldMusicClips[1])
+                    {
+                        myMusicSourceCast.time = 0.0f;
+                    }
+                    else
+                    {
+                        myMusicSourceCast.time = 19.6f;
+                    }
                 }
                 
                 myMusicSourceCast.Play(); // __instance.myMusicSource.Play();

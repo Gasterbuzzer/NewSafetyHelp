@@ -161,14 +161,14 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                         var cur = Screen.currentResolution;
                         
                         MelonLogger.Msg(
-                            $"[Resolution DEBUG] Unity currentResolution: " +
+                            "DEBUG: Unity currentResolution: " +
                             $"{cur.width}x{cur.height}@{cur.refreshRate}"
                         );
 
                         MelonLogger.Msg(
-                            $"[Resolution DEBUG] TargetFrameRate: {Application.targetFrameRate}"
+                            $"DEBUG: TargetFrameRate: {Application.targetFrameRate}"
                         );
-                
+
                         #endif
                     }
                 }
@@ -198,12 +198,12 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                         var cur = Screen.currentResolution;
                         
                         MelonLogger.Msg(
-                            $"[Resolution DEBUG] Unity currentResolution: " +
+                            "DEBUG: Unity currentResolution: " +
                             $"{cur.width}x{cur.height}@{cur.refreshRate}"
                         );
 
                         MelonLogger.Msg(
-                            $"[Resolution DEBUG] TargetFrameRate: {Application.targetFrameRate}"
+                            $"DEBUG: TargetFrameRate: {Application.targetFrameRate}"
                         );
                 
                         #endif
