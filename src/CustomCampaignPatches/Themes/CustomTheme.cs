@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using NewSafetyHelp.CustomCampaign.Abstract;
+using NewSafetyHelp.CustomCampaignPatches.Abstract;
 
-namespace NewSafetyHelp.CustomCampaign.Themes
+namespace NewSafetyHelp.CustomCampaignPatches.Themes
 {
     public class CustomTheme : CustomCampaignElementBase
     {

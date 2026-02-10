@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
-namespace NewSafetyHelp.CustomCampaign.Saving
+namespace NewSafetyHelp.CustomCampaignPatches.Saving
 {
     public static class SavingManagerPatchesCC
     {

@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
@@ -61,7 +62,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

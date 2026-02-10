@@ -3,7 +3,8 @@ using System.Linq;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -75,7 +76,7 @@ namespace NewSafetyHelp.Audio.Music
                 }
                 else // Custom Campaign Music. Ignores the day
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -255,7 +256,7 @@ namespace NewSafetyHelp.Audio.Music
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -303,6 +304,69 @@ namespace NewSafetyHelp.Audio.Music
                 }
 
                 return false; // Skip function with false.
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartMusic", typeof(RichAudioClip))]
+        public static class StartMusicPatch
+        {
+            /// <summary>
+            /// Patches the play music to take into consideration the downed caller.
+            /// </summary>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="myMusicClip"> Music clip to play. </param>
+            // ReSharper disable once UnusedParameter.Local
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(MusicController __instance, ref RichAudioClip myMusicClip)
+            {
+                FieldInfo myMusicSource = typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                if (myMusicSource == null)
+                {
+                    MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic." +
+                                      " Calling original function.");
+                    return true;
+                }
+                
+                AudioSource myMusicSourceCast = (AudioSource) myMusicSource.GetValue(__instance);
+
+                if (myMusicSourceCast == null)
+                {
+                    MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic." +
+                                      " Calling original function.");
+                    return true;
+                }
+
+                myMusicSourceCast.pitch = 1f; // __instance.myMusicSource.pitch = 1f;
+                
+                
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                
+                foreach (int downedNetworkCall in GlobalVariables.callerControllerScript.downedNetworkCalls)
+                {
+                    if (downedNetworkCall == GlobalVariables.callerControllerScript.currentCallerID)
+                    {
+                        myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
+                    }
+                }
+
+                myMusicSourceCast.clip = myMusicClip.clip; // __instance.myMusicSource.clip = myMusicClip.clip;
+                
+                myMusicSourceCast.volume = myMusicClip.volume; // __instance.myMusicSource.volume = myMusicClip.volume;
+
+                // __instance.myMusicSource.time = !(myMusicClip == __instance.onHoldMusicClips[1]) ? 0.0f : 19.6f;
+                if (myMusicClip != __instance.onHoldMusicClips[1])
+                {
+                    myMusicSourceCast.time = 0.0f;
+                }
+                else
+                {
+                    myMusicSourceCast.time = 19.6f;
+                }
+                
+                myMusicSourceCast.Play(); // __instance.myMusicSource.Play();
+                
+                return false; // Do not call original function.
             }
         }
     }

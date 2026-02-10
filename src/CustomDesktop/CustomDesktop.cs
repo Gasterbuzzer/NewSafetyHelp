@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
@@ -62,7 +63,7 @@ namespace NewSafetyHelp.CustomDesktop
                 // If in custom campaign, we replace it with custom text.
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -111,7 +112,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                 if (!CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Main Campaign
                 {
-                    foreach (CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
+                    foreach (CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
                     {
                         CustomDesktopHelper.CreateCustomProgramIcon(customCampaign.CampaignDesktopName, customCampaign.CampaignName, customCampaign.CampaignIcon);
                     }
@@ -142,7 +143,7 @@ namespace NewSafetyHelp.CustomDesktop
                 // Change username text if available
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {
@@ -553,7 +554,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     // Get our stored values
 
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                     
                     if (customCampaign == null)
                     {

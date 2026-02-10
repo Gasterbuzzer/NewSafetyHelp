@@ -2,11 +2,12 @@
 using System.Globalization;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
 
-namespace NewSafetyHelp.CustomCampaign.Desktop
+namespace NewSafetyHelp.CustomCampaignPatches.Desktop
 {
     public static class OnDayUnlockPatches
     {
@@ -41,23 +42,23 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         switch (gameObjectName)
                         {
                             case "EntryBrowser-Executable":
-                                switchOutcome = handleEntryBrowserUnlocker(ref __instance, ref modifierApplied);
+                                switchOutcome = HandleEntryBrowserUnlocker(ref __instance, ref modifierApplied);
                                 break;
                             
                             case "Scorecard":
-                                switchOutcome = handleScorecardUnlocker(ref __instance, ref modifierApplied);
+                                switchOutcome = HandleScorecardUnlocker(ref __instance, ref modifierApplied);
                                 break;
                             
                             case "Artbook-Executable":
-                                switchOutcome = handleArtbookUnlocker(ref __instance, ref modifierApplied);
+                                switchOutcome = HandleArtbookUnlocker(ref __instance, ref modifierApplied);
                                 break;
                             
                             case "Arcade-Executable":
-                                switchOutcome = handleArcadeUnlocker(ref __instance, ref modifierApplied);
+                                switchOutcome = HandleArcadeUnlocker(ref __instance, ref modifierApplied);
                                 break;
                             
                             case "DLC-Executable(Clone)":
-                                switchOutcome = handleCustomCampaignIconsTooEarly(ref __instance);
+                                switchOutcome = HandleCustomCampaignIconsTooEarly(ref __instance);
                                 break;
                             
                         }
@@ -74,7 +75,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         }
                         
                     }
-                    else if (handleCustomCampaignIconsTooEarly(ref __instance))
+                    else if (HandleCustomCampaignIconsTooEarly(ref __instance))
                     {
                         return false;
                     }
@@ -106,7 +107,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
                         }
                         else // Custom Campaign
                         {
-                            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                            CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                             if (currentCampaign == null)
                             {
@@ -175,11 +176,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             }
         }
 
-        public static bool handleEntryBrowserUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
+        public static bool HandleEntryBrowserUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "EntryBrowser-Executable")
             {
-                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -213,11 +214,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             return false; // If not set to unlock.
         }
         
-        public static bool handleScorecardUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
+        public static bool HandleScorecardUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "Scorecard")
             {
-                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -251,11 +252,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             return false; // If not set to unlock.
         }
         
-        public static bool handleArtbookUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
+        public static bool HandleArtbookUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "Artbook-Executable")
             {
-                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -289,11 +290,11 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             return false; // If not set to unlock.
         }
         
-        public static bool handleArcadeUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
+        public static bool HandleArcadeUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "Arcade-Executable")
             {
-                CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (currentCampaign == null)
                 {
@@ -328,7 +329,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             return false; // If not set to unlock.
         }
         
-        public static bool handleCustomCampaignIconsTooEarly(ref OnDayUnlock __instance)
+        public static bool HandleCustomCampaignIconsTooEarly(ref OnDayUnlock __instance)
         {
             // If always on. We just leave them on.
             if (__instance.gameObject.name == "DLC-Executable(Clone)")

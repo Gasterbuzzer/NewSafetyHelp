@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.Helper;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {

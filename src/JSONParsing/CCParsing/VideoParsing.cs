@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using Newtonsoft.Json.Linq;
 
@@ -29,7 +30,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
-            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+            CustomCampaign foundCustomCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
 

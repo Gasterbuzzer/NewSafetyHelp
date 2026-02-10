@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.Saving;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.Saving;
 using NewSafetyHelp.CustomDesktop.CustomDoubleClickButton;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;

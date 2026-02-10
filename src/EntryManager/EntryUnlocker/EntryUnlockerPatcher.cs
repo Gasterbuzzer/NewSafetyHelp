@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 
 namespace NewSafetyHelp.EntryManager.EntryUnlocker
 {
@@ -106,7 +107,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     return;
                 }
                 
-                CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                 
                 if (customCampaign == null)
                 {

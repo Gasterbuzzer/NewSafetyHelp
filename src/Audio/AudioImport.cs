@@ -11,11 +11,9 @@ namespace NewSafetyHelp.Audio
 {
     public static class AudioImport
     {
-        
         // List containing all audios currently loading.
         public static List<string> CurrentLoadingAudios = new List<string>();
         
-
         // ReSharper disable once CommentTypo
         /// <summary>
         /// Coroutine that gets an audio clip from a specified path, please note to also provide an audio type, defaulted to MPEG.

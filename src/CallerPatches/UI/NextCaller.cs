@@ -1,7 +1,7 @@
 ﻿using System;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches.IncomingCallWindow;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
 
 namespace NewSafetyHelp.CallerPatches.UI
 {

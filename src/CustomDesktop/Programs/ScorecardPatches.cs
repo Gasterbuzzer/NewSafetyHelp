@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

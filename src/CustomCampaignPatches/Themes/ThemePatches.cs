@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 using MelonLoader;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.JSONParsing;
 using TMPro;
 using Object = UnityEngine.Object;
 
-namespace NewSafetyHelp.CustomCampaign.Themes
+namespace NewSafetyHelp.CustomCampaignPatches.Themes
 {
     public static class ThemePatches
     {
@@ -37,7 +38,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -102,7 +103,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -238,7 +239,7 @@ namespace NewSafetyHelp.CustomCampaign.Themes
                 }
                 else
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

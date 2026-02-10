@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.Modifier.Data;
-using NewSafetyHelp.CustomCampaign.Themes;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
+using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -29,7 +30,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
             
-            CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = ParseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
+            CustomCampaign customCampaign = ParseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
                     ref jsonFolderPath, ref customCampaignName);
             
             // Check if any callers have to be added to this campaign.
@@ -177,7 +178,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }
         
-        private static CustomCampaign.CustomCampaignModel.CustomCampaign ParseCampaignFile(ref JObject jObjectParsed,
+        private static CustomCampaign ParseCampaignFile(ref JObject jObjectParsed,
             ref string usermodFolderPath, ref string jsonFolderPath, ref string customCampaignName)
         {
             // Desktop
@@ -394,7 +395,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
             ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
             
-            return new CustomCampaign.CustomCampaignModel.CustomCampaign
+            return new CustomCampaign
             {
                 CampaignName = customCampaignName,
                 CampaignDays = customCampaignDays,

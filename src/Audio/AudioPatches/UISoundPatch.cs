@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomRingtone;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.CustomRingtone;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -37,7 +38,7 @@ namespace NewSafetyHelp.Audio.AudioPatches
                 
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

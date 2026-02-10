@@ -1,7 +1,8 @@
 ﻿using MelonLoader;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign.Saving
+namespace NewSafetyHelp.CustomCampaignPatches.Saving
 {
     public static class OptionUpdatePatches
     {
@@ -20,7 +21,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -61,7 +62,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -102,7 +103,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -142,7 +143,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -180,7 +181,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -213,7 +214,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -245,7 +246,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -275,7 +276,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -305,7 +306,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -335,7 +336,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -365,7 +366,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -395,7 +396,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -425,7 +426,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -455,7 +456,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -486,7 +487,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -523,7 +524,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -554,7 +555,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

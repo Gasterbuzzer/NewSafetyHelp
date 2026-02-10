@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using NewSafetyHelp.CustomCampaign.Abstract;
-using NewSafetyHelp.CustomCampaign.Helper;
+using NewSafetyHelp.CustomCampaignPatches.Abstract;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
 
 namespace NewSafetyHelp.CallerPatches.CallerModel
 {

@@ -3,7 +3,8 @@ using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CallerPatches.IncomingCallWindow;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
     public static class ProvidingAnswer
     {
         // Patches the caller to replace it with another with random chance.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", new[] { typeof(MonsterProfile) })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", typeof(MonsterProfile))]
         public static class ReplaceAnswerWithReplacedAnswer
         {
             /// <summary>
@@ -84,7 +85,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     {
                         if (CustomCampaignGlobal.InCustomCampaign)
                         {
-                            CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                             if (customCampaign == null)
                             {

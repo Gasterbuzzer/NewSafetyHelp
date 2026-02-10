@@ -1,4 +1,4 @@
-﻿namespace NewSafetyHelp.CustomCampaign.Abstract
+﻿namespace NewSafetyHelp.CustomCampaignPatches.Abstract
 {
     public abstract class CustomCampaignElementBase
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;

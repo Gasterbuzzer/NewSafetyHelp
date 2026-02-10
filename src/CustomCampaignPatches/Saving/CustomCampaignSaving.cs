@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign.Saving
+namespace NewSafetyHelp.CustomCampaignPatches.Saving
 {
     public static class CustomCampaignSaving
     {
@@ -11,7 +12,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
         /// </summary>
         private static void initializeCustomCampaignOnce()
         {
-            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -86,7 +87,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -266,7 +267,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
@@ -424,7 +425,7 @@ namespace NewSafetyHelp.CustomCampaign.Saving
                 return;
             }
 
-            CustomCampaignModel.CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {

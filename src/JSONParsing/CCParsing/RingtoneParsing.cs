@@ -1,8 +1,9 @@
 ﻿using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.CustomRingtone;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.CustomRingtone;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
@@ -69,7 +70,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
 
             // Add to correct campaign.
-            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+            CustomCampaign foundCustomCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
 

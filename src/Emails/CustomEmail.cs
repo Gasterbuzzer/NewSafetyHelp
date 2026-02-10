@@ -1,4 +1,4 @@
-﻿using NewSafetyHelp.CustomCampaign.Abstract;
+﻿using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using UnityEngine;
 
 namespace NewSafetyHelp.Emails

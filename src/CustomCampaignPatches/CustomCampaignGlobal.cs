@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign.Modifier.Data;
-using NewSafetyHelp.CustomCampaign.Themes;
+using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
+using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.EntryManager.EntryData;
 
-namespace NewSafetyHelp.CustomCampaign
+namespace NewSafetyHelp.CustomCampaignPatches
 {
     public static class CustomCampaignGlobal
     {

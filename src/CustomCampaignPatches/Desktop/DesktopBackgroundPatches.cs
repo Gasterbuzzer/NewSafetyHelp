@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign.Desktop
+namespace NewSafetyHelp.CustomCampaignPatches.Desktop
 {
     public static class DesktopBackgroundPatches
     {
@@ -22,7 +23,7 @@ namespace NewSafetyHelp.CustomCampaign.Desktop
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
-                    CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

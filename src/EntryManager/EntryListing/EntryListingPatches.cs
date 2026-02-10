@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 
 namespace NewSafetyHelp.EntryManager.EntryListing
@@ -24,7 +25,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -99,7 +100,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

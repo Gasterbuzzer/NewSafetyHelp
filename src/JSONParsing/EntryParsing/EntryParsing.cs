@@ -2,7 +2,8 @@
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using Newtonsoft.Json.Linq;
@@ -868,7 +869,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                         string customCampaignNameCopy = customCampaignName;
 
-                        CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign =
+                        CustomCampaign currentCustomCampaign =
                             CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                                 customCampaignSearch.CampaignName == customCampaignNameCopy);
 
@@ -940,7 +941,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 string customCampaignNameCopy = customCampaignName;
 
                 // Add to correct campaign.
-                CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+                CustomCampaign foundCustomCampaign =
                     CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                         customCampaignSearch.CampaignName == customCampaignNameCopy);
 

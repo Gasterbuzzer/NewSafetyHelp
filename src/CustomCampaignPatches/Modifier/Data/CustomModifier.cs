@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
-using NewSafetyHelp.CustomCampaign.Abstract;
+using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign.Modifier.Data
+namespace NewSafetyHelp.CustomCampaignPatches.Modifier.Data
 {
     public class CustomModifier : CustomCampaignElementBase
     {

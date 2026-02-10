@@ -1,4 +1,4 @@
-﻿namespace NewSafetyHelp.CustomCampaign.Helper
+﻿namespace NewSafetyHelp.CustomCampaignPatches.Helper
 {
     public class AccuracyType
     {

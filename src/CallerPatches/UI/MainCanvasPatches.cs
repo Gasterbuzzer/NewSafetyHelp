@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using Steamworks;
 using UnityEngine;
@@ -65,7 +66,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Values
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (currentCustomCampaign != null)
                     {
@@ -329,8 +330,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 // Custom Enables
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -431,7 +431,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -474,8 +474,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -582,7 +581,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -634,7 +633,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -660,7 +659,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -828,7 +827,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
@@ -858,7 +857,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

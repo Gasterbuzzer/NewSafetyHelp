@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomCampaign.Abstract;
+﻿using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaignPatches.Abstract;
 
 namespace NewSafetyHelp.Audio.Music.Data
 {
@@ -12,6 +13,9 @@ namespace NewSafetyHelp.Audio.Music.Data
         
         public bool OnlyPlayOnUnlockDay = false;
 
+        // Intermission Music Option
         public bool IsIntermissionMusic = false;
+
+        public List<int> StartEndRange = new List<int>(); // TODO: Implement
     }
 }

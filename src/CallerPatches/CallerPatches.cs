@@ -5,8 +5,9 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.Helper;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -218,7 +219,7 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    CustomCampaign.CustomCampaignModel.CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign currentCustomCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     // Clear callers array with amount of campaign callers.
                     __instance.callers = new Caller[currentCustomCampaign.CustomCallersInCampaign.Count];
@@ -631,7 +632,7 @@ namespace NewSafetyHelp.CallerPatches
                     MelonLogger.Msg($"DEBUG: Answering caller in custom campaign.");
                     #endif
 
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {

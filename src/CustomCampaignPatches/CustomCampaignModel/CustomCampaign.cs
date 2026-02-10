@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaign.Modifier.Data;
-using NewSafetyHelp.CustomCampaign.Themes;
+using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
+using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign.CustomCampaignModel
+namespace NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel
 {
     public class CustomCampaign
     {

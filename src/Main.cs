@@ -1,7 +1,8 @@
 ﻿using MelonLoader;
 using System;
 using System.Reflection;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
 using NewSafetyHelp.JSONParsing;
 using UnityEngine;
@@ -132,7 +133,7 @@ namespace NewSafetyHelp
                     return;
                 }
 
-                CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (customCampaign == null)
                 {

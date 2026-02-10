@@ -2,7 +2,7 @@
 using NewSafetyHelp.CallerPatches.CallerModel;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaign.Helper
+namespace NewSafetyHelp.CustomCampaignPatches.Helper
 {
     public static class AccuracyHelper
     {
