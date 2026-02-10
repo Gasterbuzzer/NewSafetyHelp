@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio;
+using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
@@ -640,7 +641,7 @@ namespace NewSafetyHelp.CallerPatches
                         return true;
                     }
 
-                    int[] callersTodayMainCampaign = new int[] { 3, 2, 3, 4, 5, 7 };
+                    int[] callersTodayMainCampaign = { 3, 2, 3, 4, 5, 7 };
 
                     // Not Arcade Mode, is last call of day?, not DLC, threshold correct, current day is after day 1 and no save immunity.
                     if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC &&

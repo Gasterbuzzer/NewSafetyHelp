@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CallerPatches.IncomingCallWindow;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
@@ -413,6 +414,19 @@ namespace NewSafetyHelp.CallerPatches.Answer
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false; // Skip original function.
                         }
+
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign == null)
+                        {
+                            MelonLogger.Error("ERROR: CustomCampaign is null. Calling original function.");
+                            return true;
+                        }
+                        
+                        if (customCampaign.CustomIntermissionMusic.Count >= 0)
+                        {
+                            IntermissionMusicHelper.PlayIntermissionMusic(customCampaign.CustomIntermissionMusic[0]);
+                        }
                     }
 
                     // Next caller after providing an answer.
@@ -434,7 +448,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         GlobalVariables.mainCanvasScript.cameraAnimator.SetBool("xmasTension", false);
                     }
                 }
-
+                
                 return false; // Skip the original function
             }
         }

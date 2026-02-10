@@ -1,10 +1,11 @@
 ﻿using MelonLoader;
+using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
-    public static class StartPatches
+    public static class CallWindowStartPatches
     {
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "OnEnable")]
         public static class OnEnablePatch
@@ -78,6 +79,12 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         {
                             MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
                             return true;
+                        }
+                        
+                        // In case the intermission music is playing, we stop it.
+                        if (CustomCampaignGlobal.InCustomCampaign)
+                        {
+                            IntermissionMusicHelper.StopIntermissionMusic();
                         }
                         
                         if (!GlobalVariables.isXmasDLC && customCCaller.DownedNetworkCaller)
