@@ -29,10 +29,10 @@ using System.Runtime.InteropServices;
 //      Minor Version
 //      Build Number
 //
-[assembly: AssemblyVersion("2.4.2")]
-[assembly: AssemblyFileVersion("2.4.2")]
+[assembly: AssemblyVersion("2.5.0")]
+[assembly: AssemblyFileVersion("2.5.0")]
 
-[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "2.4.2", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
+[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "2.5.0", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
 [assembly: MelonAuthorColor(1, 208, 12, 252)]
 [assembly: MelonGame("Night Signal Entertainment", "Home Safety Hotline")]
 [assembly: MelonPriority(99)]

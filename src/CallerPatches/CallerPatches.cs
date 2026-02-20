@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;

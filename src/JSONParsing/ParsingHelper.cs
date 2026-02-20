@@ -387,8 +387,9 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="key">Key to be found.</param>
         /// <param name="target">Targets to write the value to.</param>
-        /// <returns>(Bool) If the parsed value was an array or a single element. Null if we failed parsing.</returns>
-        private static bool? TryAssignListOrSingleElement<T>(JObject jObjectParsed, string key, ref List<T> target)
+        /// <returns>(Bool) If the parsed value was an array (false) or a single element (true).
+        /// Null if we failed parsing.</returns>
+        public static bool? TryAssignListOrSingleElement<T>(JObject jObjectParsed, string key, ref List<T> target)
         {
             if (!jObjectParsed.TryGetValue(key, out var token))
             {

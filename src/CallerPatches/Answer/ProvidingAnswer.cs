@@ -317,17 +317,17 @@ namespace NewSafetyHelp.CallerPatches.Answer
                 }
                 else // Not Arcade Mode
                 {
-                    MethodInfo _checkCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer",
+                    MethodInfo checkCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer",
                         BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
 
-                    if (_checkCallerAnswer == null)
+                    if (checkCallerAnswer == null)
                     {
                         MelonLogger.Error("ERROR: CheckCallerAnswer is null. Calling original function.");
                         return true;
                     }
 
-                    _checkCallerAnswer.Invoke(__instance,
-                        new object[] { monsterID }); // __instance.CheckCallerAnswer(monsterID);
+                    // OLD: __instance.CheckCallerAnswer(monsterID);
+                    checkCallerAnswer.Invoke(__instance, new object[] { monsterID }); 
 
                     // Before checking, it is the last call of the day, we check if we can increase the tier.
 
@@ -415,6 +415,23 @@ namespace NewSafetyHelp.CallerPatches.Answer
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false; // Skip original function.
                         }
+                        
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign == null)
+                        {
+                            MelonLogger.Error("ERROR: CustomCampaign is null. Calling original function.");
+                            return true;
+                        }
+    
+                        // A dynamic caller. We can play intermission music.
+                        if (monsterID == null)
+                        {
+                            if (customCampaign.CustomIntermissionMusic.Count >= 0)
+                            {
+                                IntermissionMusicHelper.PlayIntermissionMusic();
+                            }
+                        }
                     }
 
                     // Next caller after providing an answer.
@@ -450,6 +467,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to call </param>
             // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once RedundantAssignment
             private static bool Prefix(SubmitWindowBehavior __instance, ref IEnumerator __result)
             {
                 __result = SubmitRoutine(__instance);
@@ -507,7 +525,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         
                     if (customCampaign.CustomIntermissionMusic.Count >= 0)
                     {
-                        IntermissionMusicHelper.PlayIntermissionMusic(customCampaign.CustomIntermissionMusic[0]);
+                        IntermissionMusicHelper.PlayIntermissionMusic();
                     }
                 }
             }

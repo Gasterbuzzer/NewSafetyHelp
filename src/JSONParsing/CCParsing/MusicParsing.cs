@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Audio.Music.Data;
@@ -97,6 +98,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool onlyPlayOnUnlockDay = false;
             
             bool isIntermissionMusic = false;
+            
+            List<float> startRange = new List<float>(); 
+            List<float> endRange = new List<float>();
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
@@ -109,6 +113,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssign(jObjectParsed, "is_intermission_music", ref isIntermissionMusic);
 
+            ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "start_range", ref startRange);
+            
+            ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "end_range", ref endRange);
+            
             return new CustomMusic
             {
                 CustomCampaignName = customCampaignName,
@@ -119,7 +127,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 
                 OnlyPlayOnUnlockDay = onlyPlayOnUnlockDay,
                 
-                IsIntermissionMusic =  isIntermissionMusic
+                IsIntermissionMusic =  isIntermissionMusic,
+                
+                StartRange = startRange,
+                EndRange = endRange
             };
         }
     }

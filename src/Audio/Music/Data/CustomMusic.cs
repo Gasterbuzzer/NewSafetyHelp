@@ -16,6 +16,8 @@ namespace NewSafetyHelp.Audio.Music.Data
         // Intermission Music Option
         public bool IsIntermissionMusic = false;
 
-        public List<int> StartEndRange = new List<int>(); // TODO: Implement
+        // Start or End ranges for the Intermission music.
+        public List<float> StartRange = new List<float>(); 
+        public List<float> EndRange = new List<float>();
     }
 }
