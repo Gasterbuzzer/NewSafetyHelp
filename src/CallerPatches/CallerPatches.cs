@@ -12,9 +12,6 @@ using NewSafetyHelp.JSONParsing;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
-
 namespace NewSafetyHelp.CallerPatches
 {
     public static class CallerPatches
@@ -25,9 +22,9 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Patch the start function to inject custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Original Method Caller. </param>
             /// <param name="__instance"> Function Caller Instance </param>
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(CallerController __instance)
             {
                 #if DEBUG
                 MelonLogger.Msg(ConsoleColor.Magenta, "DEBUG: Called Start from the class CallerController.");
@@ -400,10 +397,10 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Changes the function to also return if the last caller of the day to check for custom callers.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of original function. </param>
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance, ref bool __result)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(CallerController __instance, ref bool __result)
             {
                 Type callerController = typeof(CallerController);
                 FieldInfo lastDayNumField = callerController.GetField("lastDayNum",
@@ -472,9 +469,9 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Changes the function increase tier patch to work with better with custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, EntryUnlockController __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(EntryUnlockController __instance)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Running increase tier!");
@@ -528,9 +525,9 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// Patches answer caller to have more features for custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(CallerController __instance)
             {
                 #if DEBUG
                 MelonLogger.Msg($"DEBUG: Called 'AnswerCaller' method.");
@@ -964,24 +961,53 @@ namespace NewSafetyHelp.CallerPatches
             /// <summary>
             /// The original function waits a bit before calling a new caller. It is patched to not error out after going back to the desktop.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param>
             /// <param name="minTime"> Minimum time to wait. </param>
             /// <param name="maxTime"> Maximum time to wait. </param>
+            /// 
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, CallerController __instance,
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedParameter.Local
+            private static bool Prefix(CallerController __instance,
                 // ReSharper disable once RedundantAssignment
                 ref IEnumerator __result, ref float minTime, ref float maxTime)
             {
-                __result = NewCallRoutine(__instance, minTime, maxTime);
+                __result = NewCallRoutine(minTime, maxTime);
 
                 return false; // Skip the original function
             }
 
-            private static IEnumerator NewCallRoutine(CallerController __instance, float minTime, float maxTime)
+            private static IEnumerator NewCallRoutine(float minTime, float maxTime)
             {
-                yield return new WaitForSeconds(Random.Range(minTime, maxTime));
+                float waitTimeBetweenCallers = Random.Range(minTime, maxTime);
+
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        MelonLogger.Error("ERROR: Custom Campaign is null. Critical error.");
+                        yield break;
+                    }
+
+                    if (customCampaign.EnableCustomWaitBetweenCallers)
+                    {
+                        float? waitTimeBetweenCallersCustomCampaign = RandomFromList.GetRandomFromList(customCampaign.WaitBetweenCallers);
+
+                        if (waitTimeBetweenCallersCustomCampaign != null)
+                        {
+                            waitTimeBetweenCallers = waitTimeBetweenCallersCustomCampaign.Value;
+                        } 
+                    }
+                    
+                    #if DEBUG
+                        MelonLogger.Msg($"DEBUG: Wait time has been chosen as: '{waitTimeBetweenCallers}'.");
+                    #endif
+                }
+                
+                yield return new WaitForSeconds(waitTimeBetweenCallers);
 
                 if (GlobalVariables.mainCanvasScript != null 
                     && GlobalVariables.mainCanvasScript.callWindow != null)

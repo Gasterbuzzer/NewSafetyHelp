@@ -142,6 +142,7 @@
     <Compile Include="src\CustomCampaignPatches\Helper\AccuracyHelper.cs" />
     <Compile Include="src\CustomCampaignPatches\Abstract\CustomCampaignElement.cs" />
     <Compile Include="src\CustomCampaignPatches\Helper\AccuracyType.cs" />
+    <Compile Include="src\CustomCampaignPatches\Helper\RandomFromList.cs" />
     <Compile Include="src\CustomCampaignPatches\Saving\CustomCampaignOptionSaving.cs" />
     <Compile Include="src\CustomCampaignPatches\Saving\CustomCampaignSaving.cs" />
     <Compile Include="src\CustomCampaignPatches\Saving\OptionUpdatePatches.cs" />

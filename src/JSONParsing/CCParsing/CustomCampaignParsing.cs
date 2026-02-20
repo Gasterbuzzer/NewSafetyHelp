@@ -226,6 +226,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool useRandomMusic = true;
             
             bool removeDefaultMusic = false; // If to remove the default music from the game.
+            
+            // Wait Time between callers
+            List<float> waitBetweenCallers = new List<float>();
+            bool enableCustomWaitBetweenCallers = false;
 
             // Enable Programs
             bool entryBrowserAlwaysActive = false;
@@ -394,6 +398,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "defaultTheme", ref defaultTheme);
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
             ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
+
+            ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "waiting_time", ref waitBetweenCallers);
+            if (waitBetweenCallers != null && waitBetweenCallers.Count > 0)
+            {
+                enableCustomWaitBetweenCallers = true;
+            }
             
             return new CustomCampaign
             {
@@ -453,7 +463,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DefaultTheme = defaultTheme,
                 DisablePickingThemeOption = disablePickingThemeOption,
                 
-                DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone
+                DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone,
+                
+                WaitBetweenCallers = waitBetweenCallers,
+                EnableCustomWaitBetweenCallers = enableCustomWaitBetweenCallers
             };
         }
     }

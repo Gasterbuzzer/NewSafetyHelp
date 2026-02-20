@@ -133,6 +133,13 @@ namespace NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel
         public List<CustomMusic> CustomMusic = new List<CustomMusic>(); // List of custom music.
         
         public List<CustomMusic> CustomIntermissionMusic = new List<CustomMusic>(); // List of intermission music.
+        
+        // Wait Time between callers
+        // (1 element => Always this wait time;
+        // 2 elements => Between those two times;
+        // 3+ => Pick any of the ones two chose from)
+        public List<float> WaitBetweenCallers = new List<float>();
+        public bool EnableCustomWaitBetweenCallers = false;
 
         // Always enabled Programs on Desktop
         public bool EntryBrowserAlwaysActive = false;
