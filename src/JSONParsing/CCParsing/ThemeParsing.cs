@@ -3,6 +3,7 @@ using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using static NewSafetyHelp.CustomThemes.ColorHelper;
@@ -22,7 +23,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a theme. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a theme. Possible syntax mistake?");
                 return;
             }
             
@@ -55,9 +56,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
                 else
                 {
-                    #if DEBUG
-                    MelonLogger.Msg("DEBUG: Found theme file before the custom campaign was found / does not exist.");
-                    #endif
+                    LoggingHelper.DebugLog("Found theme file before the custom campaign was found / does not exist.");
 
                     GlobalParsingVariables.PendingCustomCampaignThemes.Add(customTheme);
                 }
@@ -182,9 +181,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         break;
 
                     default:
-                        MelonLogger.Error("ERROR: " +
-                                          "Provided color for setting color is invalid! " +
-                                          "Make sure it's 3 or 4 values.");
+                        LoggingHelper.ErrorLog("Provided color for setting color is invalid! " +
+                                               "Make sure it's 3 or 4 values.");
                         break;
                 }
             }

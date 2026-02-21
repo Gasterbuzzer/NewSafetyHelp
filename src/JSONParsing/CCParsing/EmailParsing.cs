@@ -1,7 +1,7 @@
-﻿using MelonLoader;
-using NewSafetyHelp.CustomCampaignPatches;
+﻿using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.Emails;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -20,7 +20,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a email. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a email. Possible syntax mistake?");
                 return;
             }
 
@@ -49,9 +49,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
                 else
                 {
-                    #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
-                    #endif
+                    LoggingHelper.DebugLog("Found Email before the custom campaign was found / does not exist.");
 
                     GlobalParsingVariables.PendingCustomCampaignEmails.Add(customEmail);
                 }

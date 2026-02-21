@@ -2,6 +2,7 @@
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
@@ -19,7 +20,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a video. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a video. Possible syntax mistake?");
                 return;
             }
 
@@ -40,9 +41,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found Video before the custom campaign was found / does not exist.");
-                #endif
+                LoggingHelper.DebugLog("Found Video before the custom campaign was found / does not exist.");
 
                 GlobalParsingVariables.PendingCustomCampaignVideos.Add(customVideo);
             }

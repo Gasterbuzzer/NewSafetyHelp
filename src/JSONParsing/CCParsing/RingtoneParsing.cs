@@ -4,6 +4,7 @@ using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.CustomRingtone;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
@@ -21,7 +22,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as ringtone. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as ringtone. Possible syntax mistake?");
                 return;
             }
 
@@ -36,15 +37,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 if (string.IsNullOrEmpty(customCustomRingtone.RingtoneClipPath))
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: No valid ringtone file given for file in {jsonFolderPath}.");
+                    LoggingHelper.WarningLog($"No valid ringtone file given for file in {jsonFolderPath}.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(customCustomRingtone.RingtoneClipPath))
                 {
-                    MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customCustomRingtone.RingtoneClipPath}'." +
-                        " Unable to add audio.");
+                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain '{customCustomRingtone.RingtoneClipPath}'." +
+                                           " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -59,9 +58,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 }
                                 else
                                 {
-                                    MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customCustomRingtone.RingtoneClipPath}" +
-                                        " for custom caller.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip {customCustomRingtone.RingtoneClipPath}" +
+                                                           " for custom caller.");
                                 }
                             },
                             customCustomRingtone.RingtoneClipPath)
@@ -80,9 +78,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                #if DEBUG
-                MelonLogger.Msg("DEBUG: Found ringtone file before the custom campaign was found / does not exist.");
-                #endif
+                LoggingHelper.DebugLog("Found ringtone file before the custom campaign was found / does not exist.");
 
                 GlobalParsingVariables.PendingCustomCampaignRingtones.Add(customCustomRingtone);
             }

@@ -6,6 +6,7 @@ using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -25,8 +26,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error(
-                    "ERROR: Provided JSON could not be parsed as a custom caller. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a custom caller." +
+                                       " Possible syntax mistake?");
                 return;
             }
 
@@ -60,14 +61,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 if (string.IsNullOrEmpty(customCallerAudioPath))
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: No caller audio given for file in {jsonFolderPath}. No audio will be heard.");
+                    LoggingHelper.WarningLog($"No caller audio given for file in {jsonFolderPath}." +
+                                             " No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(customCallerAudioPath))
                 {
-                    MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customCallerAudioPath}'. Unable to add audio.");
+                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain '{customCallerAudioPath}'." +
+                                           " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -89,8 +90,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 }
                                 else
                                 {
-                                    MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customCallerAudioPath} for custom caller.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip {customCallerAudioPath} for custom caller.");
                                 }
                             },
                             customCallerAudioPath)
@@ -102,7 +102,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (inMainCampaign)
             {
-                MelonLogger.Msg("INFO: Found entry to add to the main game.");
+                LoggingHelper.InfoLog("Found entry to add to the main game.");
                 GlobalParsingVariables.CustomCallersMainGame.Add(orderInCampaign, customCCaller);
             }
             else
@@ -129,17 +129,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
                 else
                 {
-                    #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found entry before the custom campaign was found / does not exist.");
-                    #endif
+                    LoggingHelper.DebugLog("Found entry before the custom campaign was found / does not exist.");
 
                     GlobalParsingVariables.PendingCustomCampaignCustomCallers.Add(customCCaller);
                 }
             }
 
-            #if DEBUG
-            MelonLogger.Msg($"DEBUG: Finished adding this custom caller.");
-            #endif
+            LoggingHelper.DebugLog("Finished adding this custom caller.");
         }
 
         private static CustomCCaller ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
@@ -186,8 +182,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Provided custom caller is not attached to either custom campaign or main campaign?");
+                LoggingHelper.ErrorLog("Provided custom caller is not attached to either custom campaign or main campaign?");
             }
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
@@ -225,10 +220,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
             {
-                MelonLogger.Warning(
-                    $"WARNING: No order was provided for custom caller at '{jsonFolderPath}'. " +
-                    "This could accidentally replace a caller! Set to replace last caller! " +
-                    $"{((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"(Caller Name: {customCallerName})" : "")}");
+                LoggingHelper.WarningLog($"No order was provided for custom caller at '{jsonFolderPath}'. " +
+                                         "This could accidentally replace a caller! Set to replace last caller! " +
+                                         $"{((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"(Caller Name: {customCallerName})" : "")}");
                 orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
             }
 

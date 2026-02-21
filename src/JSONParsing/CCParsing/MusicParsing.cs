@@ -5,6 +5,7 @@ using NewSafetyHelp.Audio;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
@@ -22,7 +23,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as music. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as music. Possible syntax mistake?");
                 return;
             }
 
@@ -37,15 +38,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 if (string.IsNullOrEmpty(customMusic.MusicClipPath))
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: No valid music file given for file in {jsonFolderPath}. No audio will be heard.");
+                    LoggingHelper.WarningLog($"No valid music file given for file in {jsonFolderPath}." +
+                                             " No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(customMusic.MusicClipPath))
                 {
-                    MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customMusic.MusicClipPath}'." +
-                        " Unable to add audio.");
+                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain '{customMusic.MusicClipPath}'." +
+                                            " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -60,8 +60,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 }
                                 else
                                 {
-                                    MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customMusic.MusicClipPath} for custom caller.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip {customMusic.MusicClipPath} for custom caller.");
                                 }
                             },
                             customMusic.MusicClipPath)
@@ -87,9 +86,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                #if DEBUG
-                MelonLogger.Msg("DEBUG: Found Music File before the custom campaign was found / does not exist.");
-                #endif
+                LoggingHelper.DebugLog("Found Music File before the custom campaign was found / does not exist.");
 
                 GlobalParsingVariables.PendingCustomCampaignMusic.Add(customMusic);
             }

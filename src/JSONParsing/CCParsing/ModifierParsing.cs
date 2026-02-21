@@ -4,6 +4,7 @@ using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using static NewSafetyHelp.CustomThemes.ColorHelper;
@@ -24,7 +25,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a modifier. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a modifier. Possible syntax mistake?");
                 return;
             }
 
@@ -52,9 +53,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                #if DEBUG
-                MelonLogger.Msg("DEBUG: Found modifier file before the custom campaign was found / does not exist.");
-                #endif
+                LoggingHelper.DebugLog("Found modifier file before the custom campaign was found / does not exist.");
 
                 GlobalParsingVariables.PendingCustomCampaignModifiers.Add(customModifier);
             }
@@ -203,9 +202,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                             break;
 
                         default:
-                            MelonLogger.Error("ERROR: " +
-                                              "Provided color for desktop background is invalid! " +
-                                              "Make sure its 3 or 4 values.");
+                            LoggingHelper.ErrorLog("Provided color for desktop background is invalid! " +
+                                                   "Make sure its 3 or 4 values.");
                             break;
                     }
                 }
