@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
-using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.MainGameBugFixes
@@ -25,7 +25,7 @@ namespace NewSafetyHelp.MainGameBugFixes
 
                 if (updateLayoutGroupMethod == null)
                 {
-                    MelonLogger.Error("ERROR: Method 'UpdateLayoutGroup' was not found. Calling original function. ");
+                    LoggingHelper.ErrorLog("Method 'UpdateLayoutGroup' was not found. Calling original function.");
                     return true;
                 }
                 

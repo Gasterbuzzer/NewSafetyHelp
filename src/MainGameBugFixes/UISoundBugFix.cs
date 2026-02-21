@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using HarmonyLib;
 using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 // ReSharper disable InconsistentNaming
 
@@ -66,7 +67,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                 }
                 else
                 {
-                    MelonLogger.Msg($"UNITY LOG: {mySource} is fading in.");
+                    LoggingHelper.DebugLog($"[UNITY] {mySource} is fading in.");
                     
                     mySource.clip = myRichClip.clip;
                     mySource.volume = 0.0f;

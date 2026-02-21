@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.VersionChecker
@@ -28,11 +29,10 @@ namespace NewSafetyHelp.VersionChecker
         /// <returns>If the newer version is newer.</returns>
         private static bool IsOutDatedVersion(Version currentVersion, Version newVersion)
         {
-            #if DEBUG
-            MelonLogger.Msg(
-                $"Checking for outdated version with current version '{currentVersion}' and the new version '{newVersion}'. " +
-                $"(Equal?: {currentVersion == newVersion}) (Newer available? {currentVersion < newVersion}) (Current version newer?: {currentVersion > newVersion})");
-            #endif
+            LoggingHelper.DebugLog($"Checking for outdated version with current version '{currentVersion}' and the new version '{newVersion}'. " +
+                                   $"(Equal?: {currentVersion == newVersion}) " +
+                                   $"(Newer available? {currentVersion < newVersion}) " +
+                                   $"(Current version newer?: {currentVersion > newVersion})");
 
             return currentVersion < newVersion;
         }
@@ -84,8 +84,8 @@ namespace NewSafetyHelp.VersionChecker
 
                 if (!resp.IsSuccessStatusCode) // We failed connecting.
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: GitHub API returned error code {resp.StatusCode}. Could not check for updates.");
+                    LoggingHelper.WarningLog($"GitHub API returned error code {resp.StatusCode}. " +
+                                             "Could not check for updates.");
                     return null;
                 }
 
@@ -109,7 +109,7 @@ namespace NewSafetyHelp.VersionChecker
 
                 if (parsedVersion == null)
                 {
-                    MelonLogger.Warning($"WARNING: Was unable of parsing version number. Failed check.");
+                    LoggingHelper.WarningLog("Was unable of parsing version number. Failed check.");
                     return null;
                 }
 
@@ -150,8 +150,8 @@ namespace NewSafetyHelp.VersionChecker
 
             if (newestVersion == null)
             {
-                MelonLogger.Warning(
-                    "WARNING: Unable of checking if there is a new version available. Check your internet connection.");
+                LoggingHelper.WarningLog("Unable of checking if there is a new version available." +
+                                         " Check your internet connection.");
             }
             else
             {

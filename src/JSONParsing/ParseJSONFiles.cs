@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.CCParsing;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 
@@ -65,7 +65,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 try
                 {
-                    MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
+                    LoggingHelper.InfoLog($"Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
 
                     string jsonString = File.ReadAllText(jsonPathFile);
 
@@ -78,77 +78,66 @@ namespace NewSafetyHelp.JSONParsing
                     switch (jsonType)
                     {
                         case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
                             CustomCampaignParsing.CreateCustomCampaign(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Call: // The provided JSON is a standalone call.
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
                             CustomCallerParsing.CreateCustomCaller(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
-                            MelonLogger.Msg(
-                                "INFO: " +
-                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
                             EntryParsing.EntryParsing.CreateMonsterFromJSON(jObjectParse, usermodFolderPath: modFolderPath,
                                 jsonFolderPath: jsonFolderPath, entryUnlockerInstance: __instance);
                             break;
 
                         case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
                             EmailParsing.CreateEmail(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
                             VideoParsing.CreateVideo(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Music: // The provided JSON is a music file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a music file.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a music file.");
                             MusicParsing.CreateMusic(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Modifier: // The provided JSON is a modifier file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a modifier file.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a modifier file.");
                             ModifierParsing.CreateModifier(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
                         
                         case JSONParseTypes.Theme: // The provided JSON is a theme file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
                             ThemeParsing.CreateTheme(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
                         
                         case JSONParseTypes.Ringtone: // The provided JSON is a ringtone file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a ringtone file.");
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a ringtone file.");
                             RingtoneParsing.CreateRingtone(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
-                            MelonLogger.Error(
-                                "ERROR: Provided JSON file parsing failed or is not any known provided format." +
-                                "\n(If this intended, you can ignore this, if not, check if you have written your JSON correctly)." +
-                                "\nSkipping trying to read this file.");
+                            LoggingHelper.ErrorLog("ERROR: Provided JSON file parsing failed or is not any known provided format." +
+                                                   "\n(If this intended, you can ignore this, if not, check if you have written your JSON correctly)." +
+                                                   "\nSkipping trying to read this file.");
                             break;
 
                         default: // Unknown Error
-                            MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
+                            LoggingHelper.ErrorLog("This error should not happen. Possible file corruption.");
                             break;
                     }
                 }
                 catch (Exception e)
                 {
-                    MelonLogger.Error($"ERROR: Failed in reading file '{jsonPathFile}'. " +
-                                      $"Error message: '{e.Message};{e.StackTrace}'.");
+                    LoggingHelper.ErrorLog($"ERROR: Failed in reading file '{jsonPathFile}'. " +
+                                           $"Error message: '{e.Message};{e.StackTrace}'.");
                 }
             }
         }

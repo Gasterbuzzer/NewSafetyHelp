@@ -9,6 +9,7 @@ using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -58,9 +59,7 @@ namespace NewSafetyHelp.JSONParsing
                 int maxEntryIDMainCampaign = GetNewEntryID(entryUnlockerInstance);
                 int maxEntryIDMainDlc = GetNewEntryID(entryUnlockerInstance, 1);
 
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Entries in Main Campaign: {maxEntryIDMainCampaign} and entries in DLC: {maxEntryIDMainDlc}.");            
-                #endif
+                LoggingHelper.DebugLog($"Entries in Main Campaign: {maxEntryIDMainCampaign} and entries in DLC: {maxEntryIDMainDlc}.");
                 
                 if (onlyDlc) // Only DLC
                 {
@@ -90,8 +89,8 @@ namespace NewSafetyHelp.JSONParsing
 
             newExtra.ID = newID;
 
-            MelonLogger.Msg($"INFO: Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
-            MelonLogger.Msg("(This is the intended and recommended way of providing the ID.)");
+            LoggingHelper.InfoLog($"Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
+            LoggingHelper.InfoLog("(This is the intended and recommended way of providing the ID.)");
         }
         
         /// <summary>
@@ -193,9 +192,8 @@ namespace NewSafetyHelp.JSONParsing
 
             if (string.IsNullOrEmpty(imagePath))
             {
-                MelonLogger.Error(
-                    $"ERROR: Invalid file name given for '{imagePath}' for key {key}." +
-                    $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
+                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}." +
+                                       $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
             }
             else
             {
@@ -227,10 +225,9 @@ namespace NewSafetyHelp.JSONParsing
             {
                 if (!File.Exists(usermodFolderPath + "\\" + audioPath))
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: Could not find provided audio file for key '{key}' at " +
-                        $"'{jsonFolderPath}'" +
-                        $" {(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"for {customCallerName}" : "")}.");
+                    LoggingHelper.WarningLog($"Could not find provided audio file for key '{key}' at " +
+                                             $"'{jsonFolderPath}'" +
+                                             $" {(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"for {customCallerName}" : "")}.");
                 }
                 else
                 {
@@ -280,14 +277,14 @@ namespace NewSafetyHelp.JSONParsing
                         return AccuracyHelper.CheckOptions.NotEqualTo;
                         
                     default:
-                        MelonLogger.Warning("WARNING: Provided accuracy check type" +
-                                            $" '{accuracyCheckTypeString}' is not in any known format." +
-                                            " Please double check.");
+                        LoggingHelper.WarningLog("Provided accuracy check type" +
+                                                 $" '{accuracyCheckTypeString}' is not in any known format." +
+                                                 " Please double check.");
                         return AccuracyHelper.CheckOptions.NoneSet;
                 }
             }
 
-            MelonLogger.Warning("WARNING: Unable of parsing accuracy check type. Possible syntax problem?");
+            LoggingHelper.WarningLog("Unable of parsing accuracy check type. Possible syntax problem?");
             return AccuracyHelper.CheckOptions.NoneSet;
         }
 
@@ -331,22 +328,22 @@ namespace NewSafetyHelp.JSONParsing
             // So here we simply need to return.
             if (accuracyCheckType.Count < 1)
             {
-                MelonLogger.Error("ERROR: Provided accuracy lists are empty or could not be parsed. " +
-                                  "Unable of parsing accuracy checks.");
+                LoggingHelper.ErrorLog("Provided accuracy lists are empty or could not be parsed. " +
+                                       "Unable of parsing accuracy checks.");
                 return;
             }
 
             if (accuracyRequiredList.Count != accuracyCheckType.Count)
             {
-                MelonLogger.Error("ERROR: Provided accuracy lists must all have equal length. " +
-                                  "Unable of parsing accuracy checks.");
+                LoggingHelper.ErrorLog("Provided accuracy lists must all have equal length. " +
+                                       "Unable of parsing accuracy checks.");
                 return;
             }
 
             if (isTotalAccuracyList.Count > accuracyCheckType.Count)
             {
-                MelonLogger.Error("ERROR: Provided list of total accuracy is larger than available accuracy checks. " +
-                                  "Unable of parsing accuracy checks.");
+                LoggingHelper.ErrorLog("Provided list of total accuracy is larger than available accuracy checks. " +
+                                       "Unable of parsing accuracy checks.");
                 return;
             }
             
@@ -360,7 +357,7 @@ namespace NewSafetyHelp.JSONParsing
                 }
                 else
                 {
-                    MelonLogger.Warning("WARNING: Provided accuracy type is invalid. Defaulting to 'none'.");
+                    LoggingHelper.WarningLog("Provided accuracy type is invalid. Defaulting to 'none'.");
                 }
 
                 if (providedSingleValueTA != null)
@@ -422,8 +419,8 @@ namespace NewSafetyHelp.JSONParsing
                 }
                 catch
                 {
-                    MelonLogger.Error($"ERROR: For provided key '{key}' " +
-                                      "we were unable of assigning any value, as the wrong value was given.");
+                    LoggingHelper.ErrorLog($"For provided key '{key}' " +
+                                           "we were unable of assigning any value, as the wrong value was given.");
                     return null;
                 }
             }
@@ -457,7 +454,7 @@ namespace NewSafetyHelp.JSONParsing
             }
             else
             {
-                MelonLogger.Error($"ERROR: Provided key '{key}' does not contain a list.");
+                LoggingHelper.ErrorLog($"Provided key '{key}' does not contain a list.");
             }
             
         }
@@ -485,7 +482,7 @@ namespace NewSafetyHelp.JSONParsing
 
             if (string.IsNullOrEmpty(videoFilePath))
             {
-                MelonLogger.Warning("WARNING: Provided video path but name is empty. Unable to show show video.");
+                LoggingHelper.WarningLog("Provided video path but name is empty. Unable to show show video.");
                 target = "";
             }
             else
@@ -500,7 +497,7 @@ namespace NewSafetyHelp.JSONParsing
                 }
                 else
                 {
-                    MelonLogger.Warning($"WARNING: Provided video {videoFilePath} does not exist.");
+                    LoggingHelper.WarningLog($"Provided video {videoFilePath} does not exist.");
                     target = "";
                 }
             }
@@ -527,9 +524,7 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     if (missingElement.CustomCampaignName == customCampaignName)
                     {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing {elementName} to the custom campaign: {customCampaignName}.");
-                        #endif
+                        LoggingHelper.DebugLog($"Adding missing {elementName} to the custom campaign: {customCampaignName}.");
 
                         listToBeAddedTo.Add(missingElement);
 

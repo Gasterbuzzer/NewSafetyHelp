@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
-using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.MainGameBugFixes
@@ -28,7 +28,8 @@ namespace NewSafetyHelp.MainGameBugFixes
 
                 if (selectMonsterPortrait == null || isNetworkDown == null || updateLayoutGroup == null)
                 {
-                    MelonLogger.Error("ERROR: 'selectMonsterPortrait' or 'isNetworkDown' or 'updateLayoutGroup' method was not found. Calling original function.");
+                    LoggingHelper.ErrorLog("'selectMonsterPortrait' or 'isNetworkDown' or 'updateLayoutGroup' method was not found." +
+                                           " Calling original function.");
                     return true;
                 }
                 
@@ -111,7 +112,8 @@ namespace NewSafetyHelp.MainGameBugFixes
 
                 if (selectMonsterPortrait == null || updateLayoutGroup == null)
                 {
-                    MelonLogger.Error("ERROR: 'selectMonsterPortrait' or 'updateLayoutGroup' method was not found. Calling original function.");
+                    LoggingHelper.ErrorLog("'selectMonsterPortrait' or 'updateLayoutGroup' method was not found." +
+                                           " Calling original function.");
                     return true;
                 }
 
