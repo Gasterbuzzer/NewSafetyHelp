@@ -1,7 +1,8 @@
 ﻿using System;
-using MelonLoader;
 using NewSafetyHelp.EntryManager.EntryUnlocker;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
@@ -17,31 +18,34 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         /// <param name="profileName"> Name of the profile to be added, used for debugging. </param>
         /// <param name="isPermissionAdd"> If the current add is being added to a tier / permission array and not a normal add. </param>
-        public static void AddMonsterToTheProfile(MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles, string profileName, bool isPermissionAdd = false)
+        public static void AddMonsterToTheProfile(MonsterProfile newProfile, ref MonsterProfile[] monsterProfiles,
+            string profileName, bool isPermissionAdd = false)
         {
             if (monsterProfiles == null) // Empty MonsterProfile array, so we create a new one.
             {
-                monsterProfiles = new [] { newProfile }; // MonsterProfile array
+                monsterProfiles = new[] { newProfile }; // MonsterProfile array
             }
             else
             {
                 #if DEBUG
-                    if (profileName != "NO_PRINT")
-                    {
-                        MelonLogger.Msg($"DEBUG: Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
-                    }
+                if (profileName != "NO_PRINT")
+                {
+                    LoggingHelper.InfoLog(
+                        $"Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
+                }
                 #endif
 
                 // Before adding we check if the ID already exists. And if yes, we replace it.
                 int idToCheck = newProfile.monsterID;
 
                 #if DEBUG
-                    if (profileName != "NO_PRINT")
-                    {
-                        MelonLogger.Msg($"DEBUG: Checking IDS with monster profile array of size {monsterProfiles.Length}.");
-                    }
+                if (profileName != "NO_PRINT")
+                {
+                    LoggingHelper.DebugLog(
+                        $"Checking IDS with monster profile array of size {monsterProfiles.Length}.");
+                }
                 #endif
-    
+
                 // Check if it is a duplicate. Not done for permission adds.
                 if (!isPermissionAdd && monsterProfiles.Length > 0 && idToCheck != -1)
                 {
@@ -49,9 +53,16 @@ namespace NewSafetyHelp.EntryManager
                     {
                         if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
                         {
-                            if (profileName != "NONE" && profileName != "NO_PRINT") // Not display it if we are just readding things that are more than welcome to replace entries.
+                            if (profileName != "NONE" &&
+                                profileName !=
+                                "NO_PRINT") // Not display it if we are just readding things that are more than welcome to replace entries.
                             {
-                                MelonLogger.Warning($"WARNING: An existing entry was overriden (Old Name: {monsterProfiles[i].name}, Old ID: {monsterProfiles[i].monsterID}) (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}).\n If this was intentional, you can safely ignore it.");
+                                LoggingHelper.WarningLog(
+                                    "An existing entry was overriden (Old Name: {monsterProfiles[i].name}," +
+                                    " Old ID: {monsterProfiles[i].monsterID})" +
+                                    " (New Name: {newProfile.monsterName}, " +
+                                    "New ID: {newProfile.monsterID})." +
+                                    "\n If this was intentional, you can safely ignore it.");
                             }
 
                             monsterProfiles[i] = newProfile;
@@ -59,7 +70,7 @@ namespace NewSafetyHelp.EntryManager
                         }
                     }
                 }
-                
+
                 // Create a new array with an extra slot
                 MonsterProfile[] newArray = new MonsterProfile[monsterProfiles.Length + 1];
 
@@ -71,7 +82,7 @@ namespace NewSafetyHelp.EntryManager
 
                 // Add the new profile
                 newArray[newArray.Length - 1] = newProfile;
-                
+
                 // Replace the old array
                 monsterProfiles = newArray;
 
@@ -102,27 +113,27 @@ namespace NewSafetyHelp.EntryManager
                         EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierSix.Add(newProfile);
                         break;
                 }
-                
             }
         }
-        
+
         /// <summary>
         /// Deletes an entry that was provided from the list.
         /// </summary>
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         /// <param name="profileToDelete"> Entry to delete. </param>
         /// <param name="monsterName"> Entry to delete. (Search via name instead) </param>
-        public static void DeleteMonsterProfile(ref MonsterProfile[] monsterProfiles, MonsterProfile profileToDelete = null, string monsterName = "NOT_PROVIDED")
+        public static void DeleteMonsterProfile(ref MonsterProfile[] monsterProfiles,
+            MonsterProfile profileToDelete = null, string monsterName = "NOT_PROVIDED")
         {
             if (monsterProfiles == null) // Empty MonsterProfile array, we skip.
             {
-                MelonLogger.Warning("WARNING: Profile to be deleted was not found! Empty entry.");
+                LoggingHelper.WarningLog("Profile to be deleted was not found! Empty entry.");
             }
             else
             {
                 // Check if it exists and find the index of that entry.
                 int monsterProfileIndex;
-                
+
                 if (profileToDelete != null)
                 {
                     monsterProfileIndex = Array.FindIndex(monsterProfiles, p => p == profileToDelete);
@@ -133,31 +144,31 @@ namespace NewSafetyHelp.EntryManager
                 }
                 else
                 {
-                    MelonLogger.Warning("WARNING: No name and no profile provided. Unable of deleting.");
+                    LoggingHelper.WarningLog("No name and no profile provided. Unable of deleting.");
                     return;
                 }
-                
+
                 if (monsterProfileIndex < 0) // Not found.
                 {
-                    MelonLogger.Warning("WARNING: Profile to be deleted was not found! Unknown entry.");
+                    LoggingHelper.WarningLog("Profile to be deleted was not found! Unknown entry.");
                     return;
                 }
-                
+
                 // Create a new array with one less entry.
                 MonsterProfile[] newArray = new MonsterProfile[monsterProfiles.Length - 1];
 
                 // Copy existing profiles 
-                
+
                 // Copy: Before the index.
                 for (int i = 0; i < monsterProfileIndex; i++)
                 {
-                    newArray[i] = monsterProfiles[i]; 
+                    newArray[i] = monsterProfiles[i];
                 }
-                
+
                 // Copy: After the index.
                 for (int i = monsterProfileIndex + 1; i < monsterProfiles.Length; i++)
                 {
-                    newArray[i - 1] = monsterProfiles[i]; 
+                    newArray[i - 1] = monsterProfiles[i];
                 }
 
                 // Replace the old array
@@ -168,42 +179,45 @@ namespace NewSafetyHelp.EntryManager
         /// <summary>
         /// Creates a new Monster with the given parameters and returns it.
         /// </summary>
-        /// <param name="_monsterName"> Name of the monster to show. </param>
-        /// <param name="_monsterDescription"> Description of the monster, see examples to understand formatting. ("<b>Works</b>") </param>
-        /// <param name="_monsterID"> ID of the monster, if provided an already existing, it will replace it. To make sure no duplicate exist it is best to use the length of the monsters size. </param>
-        /// <param name="_monsterPortrait"> Sprite image of the monster to show. </param>
-        /// <param name="_monsterAudioClip"> RichAudioClip to play the monsters sound. Use the provided function for creating a rich audio clip. </param>
-        /// <param name="_arcadeCalls"> Array of strings that contain different types of calls for the monster in arcade mode. </param>
-        /// <param name="_spiderPhobia"> If to hide the image from people afraid of spiders. (PLEASE MARK IT IF THE ENTRY HAS IT) </param>
-        /// <param name="_darknessPhobia"> If to hide the image it from people afraid of the dark. </param>
-        /// <param name="_dogPhobia"> If to hide the image it from people afraid of dogs. </param>
-        /// <param name="_holesPhobia"> If to hide the image from people afraid of many holes. </param>
-        /// <param name="_insectPhobia"> If to hide the image from people afraid of insects. </param>
-        /// <param name="_watchingPhobia"> If to hide the image from people afraid of being watched. </param>
-        /// <param name="_tightSpacePhobia"> If to hide the image from people afraid of tight spaces. </param>
-        public static MonsterProfile CreateMonster(string _monsterName = "NO_NAME", string _monsterDescription = "NO_DESCRIPTION", int _monsterID = -1, Sprite _monsterPortrait = null, RichAudioClip _monsterAudioClip = null, String[] _arcadeCalls = null, bool _spiderPhobia = false, bool _darknessPhobia = false, bool _dogPhobia = false, bool _holesPhobia = false, bool _insectPhobia = false, bool _watchingPhobia = false, bool _tightSpacePhobia = false)
+        /// <param name="monsterName"> Name of the monster to show. </param>
+        /// <param name="monsterDescription"> Description of the monster, see examples to understand formatting. ("<b>Works</b>") </param>
+        /// <param name="monsterID"> ID of the monster, if provided an already existing, it will replace it. To make sure no duplicate exist it is best to use the length of the monsters size. </param>
+        /// <param name="monsterPortrait"> Sprite image of the monster to show. </param>
+        /// <param name="monsterAudioClip"> RichAudioClip to play the monsters sound. Use the provided function for creating a rich audio clip. </param>
+        /// <param name="arcadeCalls"> Array of strings that contain different types of calls for the monster in arcade mode. </param>
+        /// <param name="spiderPhobia"> If to hide the image from people afraid of spiders. (PLEASE MARK IT IF THE ENTRY HAS IT) </param>
+        /// <param name="darknessPhobia"> If to hide the image it from people afraid of the dark. </param>
+        /// <param name="dogPhobia"> If to hide the image it from people afraid of dogs. </param>
+        /// <param name="holesPhobia"> If to hide the image from people afraid of many holes. </param>
+        /// <param name="insectPhobia"> If to hide the image from people afraid of insects. </param>
+        /// <param name="watchingPhobia"> If to hide the image from people afraid of being watched. </param>
+        /// <param name="tightSpacePhobia"> If to hide the image from people afraid of tight spaces. </param>
+        public static MonsterProfile CreateMonster(string monsterName = "NO_NAME",
+            string monsterDescription = "NO_DESCRIPTION", int monsterID = -1, Sprite monsterPortrait = null,
+            RichAudioClip monsterAudioClip = null, String[] arcadeCalls = null, bool spiderPhobia = false,
+            bool darknessPhobia = false, bool dogPhobia = false, bool holesPhobia = false,
+            bool insectPhobia = false, bool watchingPhobia = false, bool tightSpacePhobia = false)
         {
-
             MonsterProfile newMonster = ScriptableObject.CreateInstance<MonsterProfile>();
-            newMonster.name = _monsterName; // Set the name for the inspector
+            newMonster.name = monsterName; // Set the name for the inspector
 
-            newMonster.monsterName = _monsterName;
-            newMonster.monsterDescription = _monsterDescription;
-            newMonster.monsterID = _monsterID;
-            newMonster.monsterPortrait = _monsterPortrait;
-            newMonster.monsterAudioClip = _monsterAudioClip;
+            newMonster.monsterName = monsterName;
+            newMonster.monsterDescription = monsterDescription;
+            newMonster.monsterID = monsterID;
+            newMonster.monsterPortrait = monsterPortrait;
+            newMonster.monsterAudioClip = monsterAudioClip;
 
             // Phobias (Hides the image when selected)
-            newMonster.spider = _spiderPhobia;
-            newMonster.dark = _darknessPhobia;
-            newMonster.dog = _dogPhobia;
-            newMonster.holes = _holesPhobia;
-            newMonster.insect = _insectPhobia;
-            newMonster.watching = _watchingPhobia;
-            newMonster.tightSpace = _tightSpacePhobia;
+            newMonster.spider = spiderPhobia;
+            newMonster.dark = darknessPhobia;
+            newMonster.dog = dogPhobia;
+            newMonster.holes = holesPhobia;
+            newMonster.insect = insectPhobia;
+            newMonster.watching = watchingPhobia;
+            newMonster.tightSpace = tightSpacePhobia;
 
             // Arcade Calls (Which do not have a voice-over)
-            newMonster.arcadeCalls = _arcadeCalls; // Must be done correctly or else it will fail.
+            newMonster.arcadeCalls = arcadeCalls; // Must be done correctly or else it will fail.
 
             return newMonster;
         }
@@ -215,7 +229,8 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterName"> Name of the entry to find. </param>
         /// <param name="entryImage"> Sprite to insert into the entry. </param>
         /// <param name="monsterID"> Alternative way of finding the entry. </param>
-        public static void ReplaceMonsterImage(ref MonsterProfile[] monsterProfiles, string monsterName, Sprite entryImage, int monsterID = -1)
+        public static void ReplaceMonsterImage(ref MonsterProfile[] monsterProfiles, string monsterName,
+            Sprite entryImage, int monsterID = -1)
         {
             foreach (MonsterProfile entryProfile in monsterProfiles)
             {
@@ -232,13 +247,16 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterProfiles"> Reference of the monsterProfile to replace find the entry in. </param>
         /// <param name="monsterName"> Name of the entry to find. </param>
         /// <param name="monsterID"> Alternative way of finding the entry. </param>
-        public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles, string monsterName = "SKIP_MONSTER_NAME_TO_SEARCH", int monsterID = -1)
+        public static MonsterProfile FindEntry(ref MonsterProfile[] monsterProfiles,
+            string monsterName = "SKIP_MONSTER_NAME_TO_SEARCH", int monsterID = -1)
         {
             foreach (MonsterProfile entryProfile in monsterProfiles)
             {
-                if ((entryProfile.monsterName == monsterName && monsterName != "SKIP_MONSTER_NAME_TO_SEARCH") || (entryProfile.monsterID == monsterID && monsterID >= 0))
+                if ((entryProfile.monsterName == monsterName && monsterName != "SKIP_MONSTER_NAME_TO_SEARCH") ||
+                    (entryProfile.monsterID == monsterID && monsterID >= 0))
                 {
-                    return entryProfile; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
+                    return
+                        entryProfile; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
                 }
             }
 
@@ -253,11 +271,13 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterName"> Name of the entry to find. </param>
         /// <param name="replaceProfile"> Entry to replace the original with </param>
         /// <param name="monsterID"> Alternative way of finding the entry. </param>
-        public static void ReplaceEntry(ref MonsterProfile[] monsterProfiles, string monsterName, MonsterProfile replaceProfile, int monsterID = -1)
+        public static void ReplaceEntry(ref MonsterProfile[] monsterProfiles, string monsterName,
+            MonsterProfile replaceProfile, int monsterID = -1)
         {
             for (int i = 0; i < monsterProfiles.Length; i++)
             {
-                if (monsterProfiles[i].monsterName == monsterName || (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
+                if (monsterProfiles[i].monsterName == monsterName ||
+                    (monsterProfiles[i].monsterID == monsterID && monsterID >= 0))
                 {
                     monsterProfiles[i] = replaceProfile;
                 }
@@ -270,7 +290,8 @@ namespace NewSafetyHelp.EntryManager
         /// <param name="monsterProfiles"> Array of monster profiles. </param>
         public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
         {
-            Array.Sort(monsterProfiles, (x, y) => String.Compare(x.monsterName, y.monsterName, StringComparison.InvariantCulture));
+            Array.Sort(monsterProfiles,
+                (x, y) => String.Compare(x.monsterName, y.monsterName, StringComparison.InvariantCulture));
         }
     }
 }

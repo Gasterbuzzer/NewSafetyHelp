@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.EntryManager.EntryUnlocker
 {
     public static class EntryUnlockerPatcher
     {
         // Patches the entry unlocker to readd the missing entries to the different permission tiers that get lost upon reloading the computer scene.
-    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
+    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake")]
     public static class FixPermissionOverride
     {
         // List of entire permissions
@@ -30,9 +29,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
         {
             // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
 
-            #if DEBUG
-                MelonLogger.Msg("DEBUG: If tier/permission levels for extra entries were lost, they will now be readded.");
-            #endif
+            LoggingHelper.DebugLog("If tier/permission levels for extra entries were lost, they will now be readded.");
 
             for (int i = 0; i < EntriesReaddTierOne.Count; i++)
             {
@@ -103,7 +100,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (profileToCheck == null)
                 {
-                    MelonLogger.Error("ERROR: Profile to check is empty!");
+                    LoggingHelper.ErrorLog("Profile to check is empty!");
                     return;
                 }
                 
@@ -111,7 +108,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                 
                 if (customCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: No active custom campaign!");
+                    LoggingHelper.ErrorLog("No active custom campaign!");
                     return;
                 }
 
@@ -127,7 +124,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     }
                     else
                     {
-                        MelonLogger.Error("ERROR: Copy of entry profiles does not exist! Possibly called before initialization.");
+                        LoggingHelper.ErrorLog("Copy of entry profiles does not exist! Possibly called before initialization.");
                     }
                 }
             }

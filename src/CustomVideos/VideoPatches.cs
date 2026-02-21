@@ -3,6 +3,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -39,7 +40,7 @@ namespace NewSafetyHelp.CustomVideos
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("CustomCampaign is null. Critical error.");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
@@ -51,7 +52,7 @@ namespace NewSafetyHelp.CustomVideos
                     }
                     else
                     {
-                        MelonLogger.Error("Unable of finding the video show! Critical error.");
+                        LoggingHelper.CriticalErrorLog("Unable of finding the video show! Critical error.");
                         yield break;
                     }
 
@@ -69,7 +70,7 @@ namespace NewSafetyHelp.CustomVideos
 
                 if (_myClearScript == null)
                 {
-                    MelonLogger.Error("ERROR: MyClearScript was not found. Critical error.");
+                    LoggingHelper.CriticalErrorLog("MyClearScript was not found. Critical error.");
                     yield break;
                 }
 
@@ -77,7 +78,7 @@ namespace NewSafetyHelp.CustomVideos
 
                 if (myClearScript == null)
                 {
-                    MelonLogger.Error("ERROR: MyClearScript was able to get value. Critical error.");
+                    LoggingHelper.CriticalErrorLog("MyClearScript was able to get value. Critical error.");
                     yield break;
                 }
                 
@@ -87,7 +88,7 @@ namespace NewSafetyHelp.CustomVideos
                 
                 if (_refreshVideo == null)
                 {
-                    MelonLogger.Error("ERROR: RefreshVideo was null unable of calling. Critical error.");
+                    LoggingHelper.CriticalErrorLog("RefreshVideo was null unable of calling. Critical error.");
                     yield break;
                 }
                 
@@ -121,7 +122,7 @@ namespace NewSafetyHelp.CustomVideos
 
                 if (_playerCurrentPosition == null)
                 {
-                    MelonLogger.Error("ERROR: CurrentPosition was null. Calling original function.");
+                    LoggingHelper.ErrorLog("CurrentPosition was null. Calling original function.");
                     return true;
                 }
                 
@@ -129,19 +130,20 @@ namespace NewSafetyHelp.CustomVideos
                 {
                     __instance.myVideoPlayer.Pause();
                     
-                    _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); // __instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                    // OLD: __instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                    _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); 
                     
                     __instance.StopAllCoroutines();
                 }
                 else
                 {
-                    MelonCoroutines.Start(handleURLVideoBetter(__instance, _playerCurrentPosition));
+                    MelonCoroutines.Start(HandleURLVideoBetter(__instance, _playerCurrentPosition));
                 }
                 
                 return false; // Skip the original function
             }
 
-            public static IEnumerator handleURLVideoBetter(AudioSamplePlayer __instance, FieldInfo _playerCurrentPosition)
+            private static IEnumerator HandleURLVideoBetter(AudioSamplePlayer __instance, FieldInfo _playerCurrentPosition)
             {
                 __instance.myVideoPlayer.Play();
                 
@@ -162,14 +164,15 @@ namespace NewSafetyHelp.CustomVideos
                     }
                     else
                     {
-                        MelonLogger.Error("ERROR: Unable of playing video as the URL and the Clip are null.");
+                        LoggingHelper.ErrorLog("Unable of playing video as the URL and the Clip are null.");
                     }
                 }
                 else
                 {
                     if (__instance.myVideoPlayer.clip != null)
                     {
-                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
+                        // OLD: __instance.playerCurrentPosition
+                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   
                             (float) __instance.myVideoPlayer.clip.length - (float) __instance.myVideoPlayer.time));
                     }
                     else if (!string.IsNullOrEmpty(__instance.myVideoPlayer.url)) // Url is provided.
@@ -179,17 +182,18 @@ namespace NewSafetyHelp.CustomVideos
                         // Compute the duration correctly
                         float duration = __instance.myVideoPlayer.frameCount / __instance.myVideoPlayer.frameRate;
                         
-                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   // __instance.playerCurrentPosition
+                        // OLD: __instance.playerCurrentPosition
+                        yield return __instance.StartCoroutine(__instance.MoveOverSeconds(__instance.playerTracker,(Vector3) _playerCurrentPosition.GetValue(__instance) , __instance.playerEndPosition,   
                             duration - (float) __instance.myVideoPlayer.time));
                     }
                     else
                     {
-                        MelonLogger.Error("ERROR: Unable of playing video as the URL and the Clip are null.");
+                        LoggingHelper.ErrorLog("Unable of playing video as the URL and the Clip are null.");
                     }
                 }
             }
             
-            public static IEnumerator WaitForPrepare(VideoPlayer vp)
+            private static IEnumerator WaitForPrepare(VideoPlayer vp)
             {
                 vp.Prepare();
 
@@ -241,7 +245,7 @@ namespace NewSafetyHelp.CustomVideos
 
                 if (Camera.main == null)
                 {
-                    MelonLogger.Error("ERROR: Camera missing! Calling original function!");
+                    LoggingHelper.ErrorLog("Camera missing! Calling original function!");
                     return true;
                 }
                 
@@ -259,30 +263,31 @@ namespace NewSafetyHelp.CustomVideos
                 
                 float num = (__instance.playerTracker.transform.localPosition.x - __instance.playerStartPosition.x) / (__instance.playerEndPosition.x - __instance.playerStartPosition.x);
                 
-                FieldInfo _playerCurrentPosition = typeof(AudioSamplePlayer).GetField("playerCurrentPosition", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                FieldInfo playerCurrentPosition = typeof(AudioSamplePlayer).GetField("playerCurrentPosition", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
 
-                if (_playerCurrentPosition == null)
+                if (playerCurrentPosition == null)
                 {
-                    MelonLogger.Error("ERROR: CurrentPosition was null. Calling original function.");
+                    LoggingHelper.ErrorLog("CurrentPosition was null. Calling original function.");
                     return true;
                 }
                 
                 if ((bool) __instance.myVideoPlayer)
                 {
-                    MelonCoroutines.Start(handleURLVideoBetter(__instance, _playerCurrentPosition, num));
+                    MelonCoroutines.Start(HandleURLVideoBetter(__instance, playerCurrentPosition, num));
                 }
                 
                 if ((bool) __instance.myAudioSource)
                 {
                     __instance.myAudioSource.time = __instance.myAudioSource.clip.length * num;
                     
-                    _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); //__instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                    // OLD: __instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                    playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); 
                 }
                 
                 return false; // Skip the original function
             }
 
-            private static IEnumerator handleURLVideoBetter(AudioSamplePlayer __instance,
+            private static IEnumerator HandleURLVideoBetter(AudioSamplePlayer __instance,
                 FieldInfo _playerCurrentPosition, float num)
             {
                 if (__instance.myVideoPlayer.clip != null)
@@ -299,11 +304,12 @@ namespace NewSafetyHelp.CustomVideos
                 }
                 else
                 {
-                    MelonLogger.Error("ERROR: No URL or Clip provided for video player in update function! Critical error!");
+                    LoggingHelper.ErrorLog("No URL or Clip provided for video player in update function! Critical error!");
                     yield break;
                 }
                 
-                _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition); //__instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                // OLD: __instance.playerCurrentPosition = __instance.playerTracker.transform.localPosition;
+                _playerCurrentPosition.SetValue(__instance, __instance.playerTracker.transform.localPosition);
             }
             
             private static IEnumerator WaitForPrepare(VideoPlayer vp)

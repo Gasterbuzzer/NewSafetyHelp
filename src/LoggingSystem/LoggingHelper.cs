@@ -146,7 +146,8 @@ namespace NewSafetyHelp.LoggingSystem
 
         public static void CampaignNullError()
         {
-            ErrorLog("Custom Campaign is null, even though custom campaign is active.");
+            ErrorLog("Custom Campaign is null, even though custom campaign is active. " +
+                     "Calling either original function or cancelling the current operation.");
         }
     }
 }

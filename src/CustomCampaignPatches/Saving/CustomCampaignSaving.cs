@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignPatches.Saving
@@ -16,7 +17,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign == null)
             {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of saving.");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -83,7 +84,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
         {
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
-                MelonLogger.Warning("WARNING: Called save custom campaign but there is no campaign active.");
+                LoggingHelper.WarningLog("Called save custom campaign but there is no campaign active.");
                 return;
             }
 
@@ -91,7 +92,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign == null)
             {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of saving.");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -170,8 +171,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                     }
                     else
                     {
-                        MelonLogger.Warning(
-                            $"WARNING: Provided index {i} is not available. (savedCallerCorrectAnswer doesn't exist)");
+                        LoggingHelper.WarningLog($"Provided index {i} is not available. " +
+                                                 "(savedCallerCorrectAnswer doesn't exist)");
                     }
                 }
                 else
@@ -184,8 +185,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                     }
                     else
                     {
-                        MelonLogger.Warning(
-                            $"WARNING: Provided index {i} is not available. (savedCallerCorrectAnswer exists)");
+                        LoggingHelper.WarningLog($"Provided index {i} is not available." +
+                                                 " (savedCallerCorrectAnswer exists)");
                     }
                 }
             }
@@ -231,8 +232,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                     }
                     else
                     {
-                        MelonLogger.Warning(
-                            $"WARNING: Provided index {i} is not available. (SavedDayScore doesn't exist)");
+                        LoggingHelper.WarningLog($"Provided index {i} is not available." +
+                                                 $" (SavedDayScore doesn't exist)");
                     }
                 }
                 else
@@ -245,15 +246,16 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                     }
                     else
                     {
-                        MelonLogger.Warning($"WARNING: Provided index {i} is not available. (SavedDayScore exists)");
+                        LoggingHelper.WarningLog($"Provided index {i} is not available." +
+                                                 " (SavedDayScore exists)");
                     }
                 }
             }
 
             // We finished storing all important values. Now we save.
             MelonPreferences.Save();
-
-            MelonLogger.Msg($"INFO: Finished saving custom campaign {currentCampaign.CampaignName}.");
+        
+            LoggingHelper.InfoLog($"Finished saving custom campaign {currentCampaign.CampaignName}.");
         }
 
         /// <summary>
@@ -263,7 +265,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
         {
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
-                MelonLogger.Warning("WARNING: Called load custom campaign but there is no campaign active.");
+                LoggingHelper.WarningLog("Called load custom campaign but there is no campaign active.");
                 return;
             }
 
@@ -271,7 +273,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign == null)
             {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of loading.");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -312,8 +314,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                 }
                 else
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist! Setting to 0.0 for {i}.");
+                    LoggingHelper.WarningLog($"While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist!" +
+                                             $" Setting to 0.0 for {i}.");
                     currentCampaign.SavedCallersCorrectAnswer.Add(false);
                 }
             }
@@ -328,8 +330,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                 }
                 else
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: While loading all saved caller answers, 'SavedDayScore{i}' does not exist! Setting to false for {i}.");
+                    LoggingHelper.WarningLog($"While loading all saved caller answers, 'SavedDayScore{i}' does not exist!" +
+                                             $" Setting to false for {i}.");
                     currentCampaign.SavedDayScores.Add(0.0f);
                 }
             }
@@ -409,7 +411,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             }
 
             // Finished loading.
-            MelonLogger.Msg("INFO: Finished loading all custom campaign values.");
+            LoggingHelper.InfoLog("Finished loading all custom campaign values.");
         }
 
         /// <summary>
@@ -417,11 +419,11 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
         /// </summary>
         public static void ResetCustomCampaignFile()
         {
-            MelonLogger.Msg("INFO: Resetting custom campaign file.");
+            LoggingHelper.InfoLog("Resetting custom campaign file.");
 
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
-                MelonLogger.Warning("WARNING: Called reset custom campaign but there is no campaign active.");
+                LoggingHelper.WarningLog("Called reset custom campaign but there is no campaign active.");
                 return;
             }
 
@@ -429,7 +431,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign == null)
             {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of resetting.");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -442,14 +444,14 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign.CampaignSaveCategory == null)
             {
-                MelonLogger.Error("ERROR: Tried resetting but save is still null!");
+                LoggingHelper.ErrorLog("Tried resetting but save is still null!");
                 return;
             }
 
             if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays") == null)
             {
                 // If null, we cancel our operation since there is no save.
-                MelonLogger.Error("ERROR: Tried resetting when no save is available!");
+                LoggingHelper.ErrorLog("Tried resetting when no save is available!");
                 return;
             }
 
@@ -500,7 +502,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             currentCampaign.CampaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = false;
             currentCampaign.DefaultThemeAppliedOnce = false;
 
-            MelonLogger.Msg($"INFO: Finished resetting values for the custom campaign {currentCampaign.CampaignName}.");
+            LoggingHelper.InfoLog($"Finished resetting values for the custom campaign {currentCampaign.CampaignName}.");
         }
     }
 }

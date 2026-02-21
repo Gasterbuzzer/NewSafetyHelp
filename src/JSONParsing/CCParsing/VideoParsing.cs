@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using NewSafetyHelp.CustomCampaignPatches;
+﻿using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.LoggingSystem;

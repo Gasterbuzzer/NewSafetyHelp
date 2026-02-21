@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.CustomCampaignPatches.Saving
 {
@@ -14,7 +15,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign == null)
             {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of saving.");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -176,7 +177,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
         {
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
-                MelonLogger.Warning("WARNING: Called save custom campaign but there is no campaign active.");
+                LoggingHelper.WarningLog("Called save custom campaign but there is no campaign active.");
                 return;
             }
 
@@ -184,7 +185,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign == null)
             {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of saving.");
+                LoggingHelper.CampaignNullError();
                 return;
             }
             
@@ -474,7 +475,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             
             MelonPreferences.Save();
 
-            MelonLogger.Msg($"INFO: Finished saving (Options) for the custom campaign {currentCampaign.CampaignName}.");
+            LoggingHelper.InfoLog($"Finished saving (Options) for the custom campaign {currentCampaign.CampaignName}.");
         }
 
         /// <summary>
@@ -482,10 +483,11 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
         /// </summary>
         public static void LoadCustomCampaignOptions()
         {
-            MelonLogger.Msg("INFO: Starting to load all custom campaign settings/options.");
+            LoggingHelper.InfoLog("Starting to load all custom campaign settings/options.");
+            
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
-                MelonLogger.Warning("WARNING: Called load custom campaign but there is no campaign active.");
+                LoggingHelper.WarningLog("Called load custom campaign but there is no campaign active.");
                 return;
             }
 
@@ -493,7 +495,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
             if (currentCampaign == null)
             {
-                MelonLogger.Error("ERROR: Custom Campaign active but no campaign found. Unable of loading.");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -509,9 +511,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOptionsOnce();
             
-            #if DEBUG
-                MelonLogger.Msg($"DEBUG: Saved color themes ({currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
-            #endif
+            LoggingHelper.DebugLog($"Saved color themes ({currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
             
             // Load all values first into the currentCampaign instance.
             
@@ -637,7 +637,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             }
 
             // Finished loading.
-            MelonLogger.Msg("INFO: Finished loading all custom campaign settings/options.");
+            LoggingHelper.InfoLog("Finished loading all custom campaign settings/options.");
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.CustomCampaignPatches
 {
@@ -85,7 +85,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
             if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting theme ID!");
+                LoggingHelper.CampaignNullError();
                 return -1;
             }
 
@@ -126,7 +126,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
             if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                LoggingHelper.CampaignNullError();
                 return null;
             }
 
@@ -177,7 +177,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
             if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                LoggingHelper.CampaignNullError();
                 return -1;
             }
 
@@ -222,7 +222,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
             if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of setting conditional theme!");
+                LoggingHelper.CampaignNullError();
                 return -1;
             }
 
@@ -267,7 +267,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
             if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaignExtraInfo is null! Unable of getting the active theme!");
+                LoggingHelper.CampaignNullError();
                 return null;
             }
             
@@ -319,7 +319,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
             if (customCampaign == null)
             {
-                MelonLogger.Error("ERROR: customCampaign is null! Unable of getting modifier!");
+                LoggingHelper.CampaignNullError();
                 return default;
             }
 
@@ -397,22 +397,16 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
             if (customCampaign == null)
             {
-                MelonLogger.Error(
-                    "ERROR: customCampaign is null! Unable of adding entries to custom campaign!");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
-            #if DEBUG
-            MelonLogger.Msg(
-                $"DEBUG: Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
-            #endif
+            LoggingHelper.DebugLog($"Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
 
             // Add all entries.
             foreach (EntryMetadata entryInCustomCampaign in customCampaign.EntriesOnlyInCampaign)
             {
-                #if DEBUG
-                MelonLogger.Msg($"DEBUG: Adding entry {entryInCustomCampaign.Name} to custom campaign.");
-                #endif
+                LoggingHelper.DebugLog($"Adding entry {entryInCustomCampaign.Name} to custom campaign.");
 
                 EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry,
                     ref monsterProfileList.monsterProfiles, "allEntries");
@@ -425,24 +419,17 @@ namespace NewSafetyHelp.CustomCampaignPatches
         public static void ReplaceAllProvidedCampaignEntries(ref MonsterProfileList monsterProfileList)
         {
             CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
-
-            if (customCampaign == null || !InCustomCampaign)
+            
+            if (!InCustomCampaign || customCampaign == null)
             {
-                MelonLogger.Error(
-                    "ERROR: customCampaign is null! Unable of adding entries to custom campaign!");
+                LoggingHelper.CampaignNullError();
                 return;
             }
 
-            #if DEBUG
-            MelonLogger.Msg(
-                $"DEBUG: Now replacing all {customCampaign.EntryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
-            #endif
+            LoggingHelper.DebugLog($"Now replacing all {customCampaign.EntryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
 
             if (monsterProfileList.monsterProfiles.Length <= 0)
             {
-                #if DEBUG
-                MelonLogger.Msg($"DEBUG: Monster Profile ");
-                #endif
                 return;
             }
 
@@ -452,7 +439,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
 
                 if (realEntry == null)
                 {
-                    MelonLogger.Warning("WARNING: realEntry is null! Unable of replacing entry for this entry!");
+                    LoggingHelper.WarningLog("realEntry is null! Unable of replacing entry for this entry!");
                     return;
                 }
 
@@ -466,7 +453,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
                 {
                     if (string.IsNullOrEmpty(entryFound.Name))
                     {
-                        MelonLogger.Warning("WARNING: Monster entry was not found. Is is the correct name?");
+                        LoggingHelper.WarningLog("Monster entry was not found. Is is the correct name?");
                         continue;
                     }
 
@@ -474,25 +461,20 @@ namespace NewSafetyHelp.CustomCampaignPatches
                     EntryManager.EntryManager.DeleteMonsterProfile(ref monsterProfileList.monsterProfiles, null,
                         entryFound.Name);
 
-                    #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Deleting entry '{entryFound.Name}' in custom campaign.");
-                    #endif
+                    LoggingHelper.DebugLog($"Deleting entry '{entryFound.Name}' in custom campaign.");
                 }
                 else if (entryFound != null) // It exists, so replace it.
                 {
                     if (entryFound.referenceCopyEntry == null)
                     {
                         // I am too lazy to implement this. But if ever returns errors or problems, I will implement it this way.
-                        MelonLogger.Warning(
-                            "WARNING: referenceCopyEntry of EntryFound is null. Was the entry initialized?");
+                        LoggingHelper.WarningLog("referenceCopyEntry of EntryFound is null. Was the entry initialized?");
                         continue;
                     }
 
                     monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
 
-                    #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Replacing entry {entryFound.Name} with custom entry in custom campaign.");
-                    #endif
+                    LoggingHelper.DebugLog($"Replacing entry {entryFound.Name} with custom entry in custom campaign.");
                 }
             }
         }

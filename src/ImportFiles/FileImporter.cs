@@ -1,6 +1,6 @@
 ﻿using System.IO;
-using MelonLoader;
 using MelonLoader.Utils;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.ImportFiles
 {
@@ -15,7 +15,7 @@ namespace NewSafetyHelp.ImportFiles
 
             if (!Directory.Exists(modFolder)) // Our cute folder.
             {
-                MelonLogger.Msg("INFO: No UserData Folder found, creating one.");
+                LoggingHelper.InfoLog("No UserData Folder found, creating one.");
                 Directory.CreateDirectory(modFolder);
             }
 

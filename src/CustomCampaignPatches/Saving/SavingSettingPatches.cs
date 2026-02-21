@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignPatches.Saving
@@ -39,7 +39,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (saveXmasOptions == null)
                     {
-                        MelonLogger.Error("ERROR: SaveXmasOptions method was not found. Calling original function.");
+                        LoggingHelper.ErrorLog("SaveXmasOptions method was not found. Calling original function.");
                         return true;
                     }
 
@@ -153,8 +153,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null, unable of loading option values." +
-                                          " Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return false;
                     }
                     
@@ -221,7 +220,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null. Unable to loading video settings. Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -231,20 +230,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                     QualitySettings.vSyncCount = 0;
                     Application.targetFrameRate = customCampaign.SavedRefreshRate;
                     
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG LoadVideoSettings: {customCampaign.SavedScreenHeight} and {customCampaign.SavedScreenWidth} and {customCampaign.SavedFullScreenToggle}.");
-                        
-                        var cur = Screen.currentResolution;
-                        
-                        MelonLogger.Msg(
-                            $"[Resolution DEBUG] Unity currentResolution: " +
-                            $"{cur.width}x{cur.height}@{cur.refreshRate}"
-                        );
-
-                        MelonLogger.Msg(
-                            $"[Resolution DEBUG] TargetFrameRate: {Application.targetFrameRate}"
-                        );
-                    #endif
+                    LoggingHelper.DebugLog($"Load video settings: {customCampaign.SavedScreenHeight} and {customCampaign.SavedScreenWidth} and {customCampaign.SavedFullScreenToggle}.");
+                    LoggingHelper.DebugLog($"Target Frame Rate: {Application.targetFrameRate}");
                 }
                 
                 return false;

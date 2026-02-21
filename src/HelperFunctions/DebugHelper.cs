@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.HelperFunctions
 {
@@ -10,8 +10,8 @@ namespace NewSafetyHelp.HelperFunctions
         {
             // Create a stack trace
             StackTrace stackTrace = new StackTrace();
-            
-            MelonLogger.Msg(ConsoleColor.Magenta, "-----");
+            LoggingHelper.DebugLog("-----", consoleColor: ConsoleColor.Magenta);
+            LoggingHelper.DebugLog("", consoleColor: ConsoleColor.Magenta);
             
             for (int i = functionDepth + plusDepth; i >= 0; i--)
             {
@@ -19,12 +19,11 @@ namespace NewSafetyHelp.HelperFunctions
                 StackFrame callerFrame = stackTrace.GetFrame(i);
                 var callerMethod = callerFrame.GetMethod();
                 
-                #if DEBUG
-                    MelonLogger.Msg(ConsoleColor.Magenta, $"DEBUG: {i}: '{functionName}' (FD: {functionDepth}) was called by: '{callerMethod.Name}'.");
-                #endif
+                LoggingHelper.DebugLog($"{i}: '{functionName}' (FD: {functionDepth}) was called by: '{callerMethod.Name}'.",
+                    consoleColor: ConsoleColor.Magenta);
             }
             
-            MelonLogger.Msg(ConsoleColor.Magenta, "-----");
+            LoggingHelper.DebugLog("-----", consoleColor: ConsoleColor.Magenta);
         }
     }
 }

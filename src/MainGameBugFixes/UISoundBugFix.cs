@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using HarmonyLib;
-using MelonLoader;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 // ReSharper disable InconsistentNaming

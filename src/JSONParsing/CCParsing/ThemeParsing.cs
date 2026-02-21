@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Themes;

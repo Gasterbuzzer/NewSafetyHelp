@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,9 +16,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             /// <summary>
             /// Changes the save function to respect custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
+            private static bool Prefix(SaveManagerBehavior __instance)
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
@@ -31,7 +30,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (saveXmasGameProgress == null)
                     {
-                        MelonLogger.Error("ERROR: Method 'SaveXmasGameProgress' was null. Calling normal function.");
+                        LoggingHelper.ErrorLog("Method 'SaveXmasGameProgress' was null. Calling normal function.");
                         return true;
                     }
 
@@ -57,9 +56,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             /// <summary>
             /// Changes the save function to respect custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
+            private static bool Prefix(SaveManagerBehavior __instance)
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
@@ -72,7 +70,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (saveXmasGameFinished == null)
                     {
-                        MelonLogger.Error("ERROR: Method 'SaveXmasGameFinished' was null. Calling normal function.");
+                        LoggingHelper.ErrorLog("Method 'SaveXmasGameFinished' was null. Calling normal function.");
                         return true;
                     }
 
@@ -95,9 +93,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             /// <summary>
             /// Changes the load function to respect custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
+            private static bool Prefix(SaveManagerBehavior __instance)
             {
                 // We are loading now.
                 __instance.hasLoaded = false;
@@ -114,7 +111,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (_loadXmas == null)
                     {
-                        MelonLogger.Error("ERROR: Method 'LoadXmas' was null. Calling normal function.");
+                        LoggingHelper.ErrorLog("Method 'LoadXmas' was null. Calling normal function.");
                         return true;
                     }
 
@@ -389,9 +386,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
             /// <summary>
             /// Changes the delete save function to delete the custom campaign if called in a custom campaign.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, SaveManagerBehavior __instance)
+            private static bool Prefix(SaveManagerBehavior __instance)
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Use Custom Campaign saving.
                 {
@@ -405,8 +401,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (_deleteXmasGameProgress == null)
                     {
-                        MelonLogger.Error(
-                            "ERROR: DeleteXmasGameProgress method was not found. Calling default function.");
+                        LoggingHelper.ErrorLog("DeleteXmasGameProgress method was not found. " +
+                                               "Calling default function.");
                         return true;
                     }
 
@@ -440,7 +436,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                     PlayerPrefs.DeleteKey("SavedGameFinishedDisplay");
                     __instance.savedGameFinishedDisplay = 0;
 
-                    MelonLogger.Msg($"UNITY: Game Progress Save Data Deleted.");
+                    LoggingHelper.DebugLog("[UNITY] Game Progress Save Data Deleted.");
 
                     SceneManager.LoadScene("MainMenuScene");
                 }

@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.EntryManager.EntryListing
 {
     public static class EntryListingPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(EntryListingBehavior), "ShowEntryInfo", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(EntryListingBehavior), "ShowEntryInfo")]
         public static class ShowEntryInfoPatch
         {
             /// <summary>
@@ -29,7 +28,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: No active custom campaign!");
+                        LoggingHelper.CampaignNullError();
                         return;
                     }
 
@@ -44,7 +43,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
 
                             if (hasClickedField == null)
                             {
-                                MelonLogger.Error("ERROR: HasClicked Method is null! Unable of setting as viewed!");
+                                LoggingHelper.ErrorLog("HasClicked Method is null! Unable of setting as viewed!");
                             }
                             else
                             {
@@ -84,7 +83,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
 
                 if (hasClicked == null || determineLocked == null)
                 {
-                    MelonLogger.Error("CRITICAL ERROR: hasClicked and/or DetermineLocked could not be found and are null.");
+                    LoggingHelper.CriticalErrorLog("hasClicked and/or DetermineLocked could not be found and are null.");
                     yield break;
                 }
 
@@ -104,7 +103,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("CRITICAL ERROR: Custom Campaign is active but no campaign was found.");
+                        LoggingHelper.CriticalErrorLog("Custom Campaign is active but no campaign was found.");
                         yield break;
                     }
 

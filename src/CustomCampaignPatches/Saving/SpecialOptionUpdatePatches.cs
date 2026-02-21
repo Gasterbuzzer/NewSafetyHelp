@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
 
@@ -32,7 +32,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Called custom campaign part while no active custom campaign is available! Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -65,8 +65,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                 if (resolutionsField == null || resToString == null || justStarted == null || setSteamDeckResolution == null)
                 {
-                    MelonLogger.Error("ERROR: " +
-                                      "Field 'resolutions' or Method 'ResToString' or Field 'justStarted' or Method 'setSteamDeckResolution' was null. Calling normal function.");
+                    LoggingHelper.ErrorLog("Field 'resolutions' or Method 'ResToString' or Field 'justStarted' or Method 'setSteamDeckResolution' was null." +
+                                           " Calling normal function.");
                     return true;
                 }
                 
@@ -99,7 +99,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Called custom campaign part while no active custom campaign is available! Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -153,23 +153,11 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                         QualitySettings.vSyncCount = 0;
                         Application.targetFrameRate = GlobalVariables.refreshRateSetting;
                         
-                        #if DEBUG
-
-                        MelonLogger.Msg(
-                            $"DEBUG: Saved Resolution: {GlobalVariables.screenWidthSetting.ToString()}x{GlobalVariables.screenHeightSetting.ToString()} @{GlobalVariables.refreshRateSetting.ToString()}");
-                        
-                        var cur = Screen.currentResolution;
-                        
-                        MelonLogger.Msg(
-                            "DEBUG: Unity currentResolution: " +
-                            $"{cur.width}x{cur.height}@{cur.refreshRate}"
+                        LoggingHelper.DebugLog("Saved Resolution:" +
+                                               $" {GlobalVariables.screenWidthSetting.ToString()}x{GlobalVariables.screenHeightSetting.ToString()} @{GlobalVariables.refreshRateSetting.ToString()}");
+                        LoggingHelper.DebugLog(
+                            $"Target Frame Rate: {Application.targetFrameRate}"
                         );
-
-                        MelonLogger.Msg(
-                            $"DEBUG: TargetFrameRate: {Application.targetFrameRate}"
-                        );
-
-                        #endif
                     }
                 }
                 else // Custom Campaign
@@ -178,7 +166,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Called custom campaign part while no active custom campaign is available! Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -190,23 +178,10 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                         QualitySettings.vSyncCount = 0;
                         Application.targetFrameRate = customCampaign.SavedRefreshRate;
                         
-                        #if DEBUG
-                        
-                        MelonLogger.Msg(
-                            $"DEBUG: Saved Resolution: {customCampaign.SavedScreenWidth}x{customCampaign.SavedScreenHeight} @{customCampaign.SavedRefreshRate}");
-                        
-                        var cur = Screen.currentResolution;
-                        
-                        MelonLogger.Msg(
-                            "DEBUG: Unity currentResolution: " +
-                            $"{cur.width}x{cur.height}@{cur.refreshRate}"
-                        );
-
-                        MelonLogger.Msg(
-                            $"DEBUG: TargetFrameRate: {Application.targetFrameRate}"
-                        );
-                
-                        #endif
+                        LoggingHelper.DebugLog("Saved Resolution:" +
+                                               $" {GlobalVariables.screenWidthSetting.ToString()}x{GlobalVariables.screenHeightSetting.ToString()} @{GlobalVariables.refreshRateSetting.ToString()}");
+                        LoggingHelper.DebugLog(
+                            $"Target Frame Rate: {Application.targetFrameRate}");
                     }
                 }
                 
@@ -235,8 +210,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
                 
                 if (resolutionsField == null || justStartedField == null)
                 {
-                    MelonLogger.Error("ERROR: " +
-                                      "Field 'resolutions' or Field 'justStarted' was null. Calling normal function.");
+                    LoggingHelper.ErrorLog("Field 'resolutions' or Field 'justStarted' was null. " +
+                                           "Calling normal function.");
                     return true;
                 }
                 
@@ -273,7 +248,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Called custom campaign part while no active custom campaign is available! Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     

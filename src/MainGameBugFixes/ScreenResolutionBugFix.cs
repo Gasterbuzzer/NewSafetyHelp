@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using HarmonyLib;
-using MelonLoader;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 

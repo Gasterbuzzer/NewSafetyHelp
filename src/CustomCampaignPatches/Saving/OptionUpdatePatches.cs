@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignPatches.Saving
@@ -25,8 +26,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving volume. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -66,8 +66,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving volume. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -107,8 +106,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving volume. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -147,8 +145,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving CRT toggle. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -185,8 +182,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving fullscreen. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -218,8 +214,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving dyslexia toggle. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -250,8 +245,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving text size. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -280,8 +274,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -310,8 +303,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -340,8 +332,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -370,8 +361,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -400,8 +390,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -430,8 +419,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -460,8 +448,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving phobia setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -491,8 +478,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving call skip setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -528,8 +514,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving immunity setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -559,8 +544,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Saving
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable of saving accuracy setting. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     

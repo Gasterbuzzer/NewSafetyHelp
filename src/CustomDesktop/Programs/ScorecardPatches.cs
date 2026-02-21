@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,7 +29,7 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                             
                 if (clearListMethod == null)
                 {
-                    MelonLogger.Error("ERROR: clearListMethod is null!");
+                    LoggingHelper.ErrorLog("clearListMethod is null!");
                     return true;
                 }
                 
@@ -65,7 +65,8 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                     {
                         if (caller == null)
                         {
-                            MelonLogger.Warning($"WARNING: There seems to be an empty custom caller. Possible missing caller? (Index {currentCallerIndex})");
+                            LoggingHelper.WarningLog("There seems to be an empty custom caller." +
+                                                     $" Possible missing caller? (Index {currentCallerIndex})");
                             continue;
                         }
                         
@@ -73,13 +74,12 @@ namespace NewSafetyHelp.CustomDesktop.Programs
 
                         if (customCCallerFound == null)
                         {
-                            MelonLogger.Warning($"WARNING: There seems to be an empty custom caller. Possible missing caller? (Index {currentCallerIndex})");
+                            LoggingHelper.WarningLog("There seems to be an empty custom caller." +
+                                                     $" Possible missing caller? (Index {currentCallerIndex})");
                             continue;
                         }
                         
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding: {customCCallerFound.CallerName}. (Info: {caller.answeredCorrectly})");
-                        #endif
+                        LoggingHelper.DebugLog($"Adding: {customCCallerFound.CallerName}. (Info: {caller.answeredCorrectly})");
                         
                         if (customCCallerFound.LastDayCaller)
                         {
@@ -97,9 +97,7 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                                 Object.Instantiate(__instance.dayListing, __instance.contentHolder).GetComponentInChildren<TextMeshProUGUI>().text = "Day " + dayAmount.ToString();  
                             }
                             
-                            #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Scorecard: Caller is last day caller.");
-                            #endif
+                            LoggingHelper.DebugLog("Scorecard: Caller is last day caller.");
                         }
                         else if (caller.callerProfile.callerMonster !=  null)
                         {

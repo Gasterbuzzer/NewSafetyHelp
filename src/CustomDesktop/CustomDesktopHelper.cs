@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.Saving;
 using NewSafetyHelp.CustomDesktop.CustomDoubleClickButton;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
+using NewSafetyHelp.LoggingSystem;
 using Steamworks;
 using TMPro;
 using UnityEngine;
@@ -31,7 +31,7 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error("ERROR: Failed to find MainMenuCanvas. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find MainMenuCanvas. Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -50,8 +50,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find Desktop from Main Menu. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find Desktop from Main Menu." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -70,8 +70,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find Logo from Desktop. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find Logo from Desktop." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -91,8 +91,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find email list from Main Menu Canvas. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find email list from Main Menu Canvas." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -116,8 +116,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find email list from Main Menu Canvas. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find email list from Main Menu Canvas." +
+                                       " Possibly called outside of MainMenuCanvas?");
             }
         }
 
@@ -146,7 +146,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                 if (emailListing == null)
                 {
-                    MelonLogger.Error("ERROR: Failed to find email listing behavior for EmailListing");
+                    LoggingHelper.ErrorLog("Failed to find email listing behavior for EmailListing.");
                     Object.Destroy(originalEmail);
                     return null;
                 }
@@ -208,7 +208,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                 if (hasClicked == null)
                 {
-                    MelonLogger.Warning("WARNING: HasClicked Field could not be found (null).");
+                    LoggingHelper.WarningLog("HasClicked Field could not be found (null).");
                 }
                 else
                 {
@@ -219,8 +219,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find email to copy from in the Email List. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find email to copy from in the Email List." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -243,8 +243,8 @@ namespace NewSafetyHelp.CustomDesktop
 
                 if (foundGameObject != null)
                 {
-                    MelonLogger.Error(
-                        "ERROR: Failed to find windows bar from Main Menu. Possibly called outside of MainMenuCanvas?");
+                    LoggingHelper.ErrorLog("Failed to find windows bar from Main Menu." +
+                                           " Possibly called outside of MainMenuCanvas?");
                     return null;
                 }
 
@@ -266,8 +266,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find credits from the program list. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find credits from the program list." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -286,8 +286,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find mailbox from the program list. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find mailbox from the program list." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -306,8 +306,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find Options from the program list. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find Options from the program list." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -326,8 +326,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find EntryBrowser from the program list. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find EntryBrowser from the program list." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -346,8 +346,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find Artbook from the program list. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find Artbook from the program list." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -366,8 +366,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find Arcade from the program list. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find Arcade from the program list." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -386,8 +386,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find Scorecard from the program list. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find Scorecard from the program list." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -406,8 +406,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find username from window bar. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find username from window bar." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -427,7 +427,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error("ERROR: Failed to find next caller button. Possibly called outside of MainCanvas?");
+                LoggingHelper.ErrorLog("Failed to find next caller button." +
+                                       " Possibly called outside of MainCanvas?");
                 return null;
             }
         }
@@ -446,8 +447,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find left sided Programs from Desktop. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find left sided Programs from Desktop." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -466,8 +467,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find right sided Programs from Desktop. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find right sided Programs from Desktop." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -482,16 +483,14 @@ namespace NewSafetyHelp.CustomDesktop
 
             if (foundGameObject != null)
             {
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found the DLC Icon.");
-                #endif
+                LoggingHelper.DebugLog("Found the DLC Icon.");
 
                 return foundGameObject;
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find the winter DLC program. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find the winter DLC program." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -518,8 +517,8 @@ namespace NewSafetyHelp.CustomDesktop
 
             if (string.IsNullOrEmpty(customVideo.DesktopName))
             {
-                MelonLogger.Error(
-                    "ERROR: No filename provided for video to be created! Can lead to crashes or unwanted failures.");
+                LoggingHelper.ErrorLog("No filename provided for video to be created!" +
+                                       " Can lead to crashes or unwanted failures.");
             }
 
             newCustomVideo.name = customVideo.DesktopName + customVideo.VideoURL;
@@ -551,7 +550,7 @@ namespace NewSafetyHelp.CustomDesktop
 
             if (_onDayUnlock == null)
             {
-                MelonLogger.Error("ERROR: Could not find OnDayUnlock script for VideoExecutableFile!");
+                LoggingHelper.ErrorLog("Could not find OnDayUnlock script for VideoExecutableFile!");
                 return null;
             }
 
@@ -577,9 +576,7 @@ namespace NewSafetyHelp.CustomDesktop
             if (!SteamManager.Initialized ||
                 !SteamApps.BIsDlcInstalled(new AppId_t(2914730U))) // No DLC, we don't activate.
             {
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: DLC is not installed. Not activating DLC.");
-                #endif
+                LoggingHelper.DebugLog("DLC is not installed. Not activating DLC.");
 
                 // To make sure the DLC isn't enabled by accident.
                 DisableWinterDlcProgram();
@@ -587,9 +584,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return;
             }
 
-            #if DEBUG
-                MelonLogger.Msg($"DEBUG: DLC is installed. Activating DLC!");
-            #endif
+            LoggingHelper.DebugLog("DLC is installed. Activating DLC!");
 
             GetWinterDlcProgram().SetActive(true);
         }
@@ -608,8 +603,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find the main game program. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find the main game program." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -628,8 +623,8 @@ namespace NewSafetyHelp.CustomDesktop
             }
             else
             {
-                MelonLogger.Error(
-                    "ERROR: Failed to find the discord program. Possibly called outside of MainMenuCanvas?");
+                LoggingHelper.ErrorLog("Failed to find the discord program." +
+                                       " Possibly called outside of MainMenuCanvas?");
                 return null;
             }
         }
@@ -705,7 +700,8 @@ namespace NewSafetyHelp.CustomDesktop
 
         public static void ChangeToCustomCampaignSettings(string customCampaignName)
         {
-            MelonLogger.Msg(ConsoleColor.Green, $"INFO: Changing to custom campaign: {customCampaignName}.");
+            LoggingHelper.InfoLog($"Changing to custom campaign: {customCampaignName}.",
+                consoleColor: ConsoleColor.Green);
 
             // Activate the Custom Campaign
             CustomCampaignGlobal.ActivateCustomCampaign(customCampaignName);
@@ -719,7 +715,8 @@ namespace NewSafetyHelp.CustomDesktop
 
         public static void BackToMainGame(bool alsoLoadMainMenu = true)
         {
-            MelonLogger.Msg(ConsoleColor.Green, "INFO: Going back to the main game.");
+            LoggingHelper.InfoLog("Going back to the main game.",
+                consoleColor: ConsoleColor.Green);
 
             // Save values
             CustomCampaignSaving.SaveCustomCampaignInfo();

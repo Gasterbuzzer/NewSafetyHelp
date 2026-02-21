@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using NewSafetyHelp.LoggingSystem;
+﻿using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.ErrorDebugging

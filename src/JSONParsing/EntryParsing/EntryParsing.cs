@@ -890,12 +890,12 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         {
             // Create Monster and add him
             // NOTE: AudioClip is added later, since we need to do load it separately from the main thread.
-            newMonster = EntryManager.EntryManager.CreateMonster(_monsterName: monsterName,
-                _monsterDescription: monsterDescription, _monsterID: newID,
-                _arcadeCalls: arcadeCalls.ToArray(), _monsterPortrait: monsterPortrait, _monsterAudioClip: null,
-                _spiderPhobia: spiderPhobia, _darknessPhobia: darknessPhobia, _dogPhobia: dogPhobia,
-                _holesPhobia: holesPhobia, _insectPhobia: insectPhobia, _watchingPhobia: watchingPhobia,
-                _tightSpacePhobia: tightSpacePhobia);
+            newMonster = EntryManager.EntryManager.CreateMonster(monsterName: monsterName,
+                monsterDescription: monsterDescription, monsterID: newID,
+                arcadeCalls: arcadeCalls.ToArray(), monsterPortrait: monsterPortrait, monsterAudioClip: null,
+                spiderPhobia: spiderPhobia, darknessPhobia: darknessPhobia, dogPhobia: dogPhobia,
+                holesPhobia: holesPhobia, insectPhobia: insectPhobia, watchingPhobia: watchingPhobia,
+                tightSpacePhobia: tightSpacePhobia);
 
             // Create copy for lambda functions.
             MonsterProfile _newMonsterCopy = newMonster;
