@@ -602,8 +602,21 @@ namespace NewSafetyHelp.CustomDesktop
                     // Add custom settings
                     GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings", 
                         "Mod settings to show more information and also allow skipping the initial load scene.");
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipComputerSceneToggle,
+                        "Skip 3D Computer Scene on Startup", NewSafetyHelpMainClass.SkipComputerScene.Value);
+                    
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnDebugLogToggle,
                         "Enable Debug Logs", NewSafetyHelpMainClass.ShowDebugLogs.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnShowSkippedCallerLogToggle,
+                        "Enable Skipped Callers Logs", NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnThemeLogToggle,
+                        "Enable Theme Logs", NewSafetyHelpMainClass.ShowThemeDebugLog.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnRingtoneLogToggle,
+                        "Enable Ringtone Logs", NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value);
                 }
                 
                 return false; // Skip original function.

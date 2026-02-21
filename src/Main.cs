@@ -21,7 +21,7 @@ namespace NewSafetyHelp
         
         private static MelonPreferences_Category mainModSettings;
         
-        private static MelonPreferences_Entry<bool> skipComputerScene; // If to skip the initial computer scene.
+        public static MelonPreferences_Entry<bool> SkipComputerScene; // If to skip the initial computer scene.
         
         public static MelonPreferences_Entry<bool> ShowDebugLogs; // If to show the debug logs at all.
         public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog; // If to show the skipped callers debug log.
@@ -36,7 +36,7 @@ namespace NewSafetyHelp
             // Settings
             mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
             
-            skipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
+            SkipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
             
             ShowDebugLogs = mainModSettings.CreateEntry("ShowDebugLogs", false);
             ShowSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);
@@ -56,7 +56,7 @@ namespace NewSafetyHelp
                 SceneManager.LoadScene("MainMenuScene");
             #endif
 
-            if (skipComputerScene.Value)
+            if (SkipComputerScene.Value)
             {
                 SceneManager.LoadScene("MainMenuScene");
             }
