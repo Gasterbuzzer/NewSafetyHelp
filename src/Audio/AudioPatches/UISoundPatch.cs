@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.CustomRingtone;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -42,7 +42,7 @@ namespace NewSafetyHelp.Audio.AudioPatches
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null! Unable of changing audio clips.");
+                        LoggingHelper.CampaignNullError();
                         return;
                     }
 
@@ -102,16 +102,12 @@ namespace NewSafetyHelp.Audio.AudioPatches
 
                         int chosenPhoneCall = Random.Range(0, maxExclusive);
 
-                        #if DEBUG
-                        if (NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value)
-                        {
-                            MelonLogger.Msg($"DEBUG: ChosenPhoneCall: '{chosenPhoneCall}'.\n" +
-                                            $"maxExclusive: '{maxExclusive}'.\n" +
-                                            $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
-                                            $"validRingtones.Any(r => r.AppendRingtone): '{validRingtones.Any(r => r.AppendRingtone)}'.\n" +
-                                            $"validRingtones.Count '{validRingtones.Count}'.\n");
-                        }
-                        #endif
+                        LoggingHelper.DebugLog($"ChosenPhoneCall: '{chosenPhoneCall}'.\n" +
+                                               $"maxExclusive: '{maxExclusive}'.\n" +
+                                               $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
+                                               $"validRingtones.Any(r => r.AppendRingtone): '{validRingtones.Any(r => r.AppendRingtone)}'.\n" +
+                                               $"validRingtones.Count '{validRingtones.Count}'.\n",
+                            LoggingHelper.LoggingCategory.RINGTONE);
 
                         if (doNotAccountDefaultRingtone)
                         {
@@ -207,13 +203,13 @@ namespace NewSafetyHelp.Audio.AudioPatches
 
                 if (Camera.main == null)
                 {
-                    MelonLogger.Error("UNITY ERROR: Camera is null! Cannot play glitch effect.");
+                    LoggingHelper.ErrorLog("[UNITY] Camera is null! Cannot play glitch effect.");
                     yield break;
                 }
                 
                 while (Camera.main.GetComponent<Animator>().runtimeAnimatorController.animationClips.Length == 0)
                 {
-                    MelonLogger.Msg( "UNITY: Waiting for animationClips[] to populate.");
+                    LoggingHelper.DebugLog("[UNITY] Waiting for animationClips[] to populate.");
                     yield return null;
                 }
 

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
-using MelonLoader;
+﻿using System.Linq;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using Object = UnityEngine.Object;
 
@@ -11,7 +10,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
 {
     public static class ThemePatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnEnable", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnEnable")]
         public static class OptionsAddCustomSettings
         {
             /// <summary>
@@ -42,7 +41,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null in options prefix. Unable of adding options in custom campaign.");
+                        LoggingHelper.CampaignNullError();
                         return;
                     }
 
@@ -69,7 +68,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
             }
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(ColorPaletteController), "UpdateColorTheme", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(ColorPaletteController), "UpdateColorTheme")]
         public static class UpdateColorThemePatch
         {
             /// <summary>
@@ -107,18 +106,13 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable to updating color palette." +
-                                          " Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
-                    #if DEBUG
-                    if (NewSafetyHelpMainClass.ShowThemeDebugLog.Value)
-                    {
-                        MelonLogger.Msg($"DEBUG: Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
-                                        $"and custom campaign activeTheme: {customCampaign.ActiveTheme}.");
-                    }
-                    #endif
+                    LoggingHelper.DebugLog($"Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
+                    $"and custom campaign activeTheme: {customCampaign.ActiveTheme}.", LoggingHelper.LoggingCategory.THEME);
+                    
                     
                     // Now if we have not loaded in the default theme ever, we do it now.
                     if (!string.IsNullOrEmpty(customCampaign.DefaultTheme) 
@@ -162,13 +156,11 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
                             bool isCustomTheme = false;
                             CustomTheme theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme);
                         
-                            #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Is the theme custom? '{isCustomTheme}'. " +
-                                            $"Was theme invalid? '{theme != null}'. ");
-                        
-                            MelonLogger.Msg($"DEBUG: How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
-                                            $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.");
-                            #endif
+                            LoggingHelper.DebugLog($"Is the theme custom? '{isCustomTheme}'. " +
+                                                   $"Was theme invalid? '{theme != null}'. ");
+                            
+                            LoggingHelper.DebugLog($"How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
+                                                   $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.");
 
                             if (isCustomTheme 
                                 && theme != null
@@ -243,8 +235,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null! Unable to updating color palette. " +
-                                          "Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -257,12 +248,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
                     return false;
                 }
 
-                #if DEBUG
-                if (NewSafetyHelpMainClass.ShowThemeDebugLog.Value)
-                {
-                    MelonLogger.Msg($"DEBUG: Color Palette change called with ID: {__instance.colorDropdown.value}");
-                }
-                #endif
+                LoggingHelper.DebugLog($"Color Palette change called with ID: {__instance.colorDropdown.value}",
+                    LoggingHelper.LoggingCategory.THEME);
                 
                 GlobalVariables.colorPaletteController.UpdateColorTheme();
                 
