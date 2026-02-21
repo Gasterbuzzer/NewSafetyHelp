@@ -28,7 +28,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         {
             if (MyMusicSource == null)
             {
-                MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic.");
+                LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic.");
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
 
             if (myMusicSourceCast == null)
             {
-                MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic.");
+                LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic.");
                 return;
             }
 
@@ -78,7 +78,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         {
             if (MyMusicSource == null)
             {
-                MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic.");
+                LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic.");
                 return;
             }
 
@@ -86,7 +86,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
 
             if (myMusicSourceCast == null)
             {
-                MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic.");
+                LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic.");
                 return;
             }
 
@@ -138,8 +138,8 @@ namespace NewSafetyHelp.Audio.Music.Intermission
 
                 if (musicStopAfterSeconds - startAfterSeconds <= 0)
                 {
-                    MelonLogger.Warning("WARNING: Provided music ranges overlap and cause the music not to play." +
-                                        " Unable to play music.");
+                    LoggingHelper.WarningLog("Provided music ranges overlap and cause the music not to play." +
+                    " Unable to play music.");
                     yield break;
                 }
 
@@ -259,7 +259,8 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                     ).ToList();
 
                 LoggingHelper.DebugLog(
-                    $"Custom Intermission Music Available: {customCampaign.CustomIntermissionMusic.Count}. Valid: '{validCustomMusic.Count}'.");
+                    $"Custom Intermission Music Available: {customCampaign.CustomIntermissionMusic.Count}." +
+                    $" Valid: '{validCustomMusic.Count}'.");
 
                 if (validCustomMusic.Count <= 0)
                 {

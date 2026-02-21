@@ -133,6 +133,11 @@ namespace NewSafetyHelp.LoggingSystem
         {
             Log(loggingMessage, LoggingLevel.ERROR, loggingCategory);
         }
+        
+        public static void CriticalErrorLog(string loggingMessage, LoggingCategory loggingCategory = LoggingCategory.NONE)
+        {
+            Log(loggingMessage, LoggingLevel.CRITICAL_ERROR, loggingCategory);
+        }
 
         public static void WarningLog(string loggingMessage, LoggingCategory loggingCategory = LoggingCategory.NONE)
         {

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
@@ -10,33 +9,29 @@ using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.LoggingSystem;
 using NewSafetyHelp.VersionChecker;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
-
 namespace NewSafetyHelp.CustomDesktop
 {
     public static class CustomDesktop
     {
         
-        [HarmonyLib.HarmonyPatch(typeof(MainMenuCanvasBehavior), "Start", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(MainMenuCanvasBehavior), "Start")]
         public static class StartPatch
         {
             /// <summary>
             /// Hooks into the Main Menu Canvas Start function to add our own logic after wards.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, MainMenuCanvasBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(MainMenuCanvasBehavior __instance)
             {
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Start of Main Menu Canvas Behavior.");
-                #endif
+                LoggingHelper.DebugLog("Start of Main Menu Canvas Behavior.");
                 
                 // Credits Double Close Button Fix:
                 GameObject mainMenuCanvas = CustomDesktopHelper.GetMainMenuCanvas().gameObject;
@@ -68,7 +63,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null! Unable of replacing loading screen texts. Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 
@@ -148,7 +143,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null! Unable of replacing username. Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -465,33 +460,31 @@ namespace NewSafetyHelp.CustomDesktop
         }
         
         
-        [HarmonyLib.HarmonyPatch(typeof(DateTextController), "Start", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(DateTextController), "Start")]
         public static class StartDateTextPatch
         {
             /// <summary>
             /// Hooks into the Start function of the date function to allow for more robust days in custom campaigns.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
-            private static bool Prefix(MethodBase __originalMethod, DateTextController __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(DateTextController __instance)
             {
-                #if DEBUG
-                    MelonLogger.Msg("DEBUG: Handling day format.");
-                #endif
+                LoggingHelper.DebugLog("Handling day format.");
                 
-                FieldInfo _myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                FieldInfo myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
-                if (_myText == null)
+                if (myText == null)
                 {
-                    MelonLogger.Error("ERROR: MyText Field of DateTextController is null! Calling original.");
+                    LoggingHelper.ErrorLog("'MyText' Field of 'DateTextController' is null! Calling original.");
                     return true;
                 }
                 
-                _myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
+                myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
                 
                 if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
-                    TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); // __instance.myText
                     
                     string[] strArray = new string[5];
                     
@@ -519,7 +512,7 @@ namespace NewSafetyHelp.CustomDesktop
                 }
                 else if (!CustomCampaignGlobal.InCustomCampaign) // XMAS DLC
                 {
-                    TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); // __instance.myText
                     
                     string[] strArray = new string[5];
                     
@@ -547,11 +540,9 @@ namespace NewSafetyHelp.CustomDesktop
                 }
                 else // Custom Campaign
                 {
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Handling custom day format..");
-                    #endif
+                    LoggingHelper.DebugLog("Handling custom day format..");
                     
-                    TextMeshProUGUI text = (TextMeshProUGUI) _myText.GetValue(__instance); // __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); // __instance.myText
                     
                     // Get our stored values
 
@@ -559,7 +550,7 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null! Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return false;
                     }
                     
@@ -581,15 +572,11 @@ namespace NewSafetyHelp.CustomDesktop
                         dateList[2] = customCampaign.DesktopDateStartYear;
                     }
                     
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Current day format: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
-                    #endif
-                    
+                    LoggingHelper.DebugLog($"Current day format: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
+
                     dateList = DateUtil.FixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
                     
-                    #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Day format after fix: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
-                    #endif
+                    LoggingHelper.DebugLog($"Day format after fix: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
                     
                     string[] strArray = new string[5];
 

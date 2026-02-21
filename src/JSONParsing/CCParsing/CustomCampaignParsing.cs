@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -24,7 +24,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a custom campaign. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a custom campaign. Possible syntax mistake?");
                 return;
             }
             
@@ -44,9 +44,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (customCallerCC.CustomCampaignName == customCampaignName)
                     {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
-                        #endif
+                        LoggingHelper.DebugLog($"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
 
                         if (customCallerCC.IsGameOverCaller)
                         {
@@ -96,9 +94,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (missingMusic.CustomCampaignName == customCampaignName)
                     {
-                        #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
-                        #endif
+                        LoggingHelper.DebugLog($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
 
                         if (missingMusic.IsIntermissionMusic)
                         {
@@ -124,9 +120,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (missingModifier.CustomCampaignName == customCampaignName)
                     {
-                        #if DEBUG
-                            MelonLogger.Msg($"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
-                        #endif
+                        LoggingHelper.DebugLog($"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
 
                         if (missingModifier.UnlockDays == null)
                         {
@@ -152,9 +146,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (missingTheme.CustomCampaignName == customCampaignName)
                     {
-                        #if DEBUG
-                        MelonLogger.Msg($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
-                        #endif
+                        LoggingHelper.DebugLog($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
 
                         if (missingTheme.UnlockDays == null)
                         {
@@ -292,7 +284,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Sanity check in case it was passed but no entries have been reset to 0th permission.
             if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out _) && !resetDefaultEntriesPermission)
             {
-                MelonLogger.Warning("WARNING: Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
+                LoggingHelper.WarningLog("Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
             }
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_gameover_threshold", ref gameOverThreshold);
@@ -373,7 +365,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (string.IsNullOrEmpty((string) backgroundNames[i]))
                     {
-                        MelonLogger.Error($"ERROR: Did not find '{backgroundNames[i]}'. Adding null.");
+                        LoggingHelper.ErrorLog($"Did not find '{backgroundNames[i]}'. Adding null.");
                         backgroundSprites.Add(null);
                     }
                     else

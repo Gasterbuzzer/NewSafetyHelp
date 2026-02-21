@@ -6,6 +6,7 @@ using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
 using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NewSafetyHelp.VersionChecker;
@@ -63,9 +64,7 @@ namespace NewSafetyHelp
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            #if DEBUG
-            LoggerInstance.Msg($"DEBUG: Scene {sceneName} with build index {buildIndex} has been loaded!");
-            #endif
+            LoggingHelper.DebugLog($"Scene {sceneName} with build index {buildIndex} has been loaded!");
 
             IntermissionMusicHelper.StopIntermissionMusicRoutine();
 
@@ -74,7 +73,7 @@ namespace NewSafetyHelp
     }
 
     // Add new Entries.
-    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
+    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake")]
     public static class MainClassForMonsterEntries
     {
         // If we show the update message again.
@@ -114,7 +113,7 @@ namespace NewSafetyHelp
                 if (isInitializedMainOnce)
                 {
                     // We already added them once, no need to add them again.
-                    MelonLogger.Msg("INFO: Custom Entries were already added. Skipping adding them again. (This happens on scene reload).");
+                    LoggingHelper.InfoLog("Custom Entries were already added. Skipping adding them again. (This happens on scene reload).");
                     return;
                 }
             
@@ -122,9 +121,9 @@ namespace NewSafetyHelp
                 CopyMonsterProfiles = __instance.allEntries.monsterProfiles;
                 monsterProfileSize = CopyMonsterProfiles.Length;
 
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Now parsing all '.json' files...");
+                LoggingHelper.InfoLog("Now parsing all '.json' files...", consoleColor: ConsoleColor.Green);
 
-                // Read all json and add all monsters and campaigns (/Calls)
+                // Read all JSON and add all monsters and campaigns (/Calls)
                 ParseJSONFiles.LoadAllJSON(__instance);
                 
                 // Create copy after adding all custom entries that belong to the main campaign.
@@ -132,13 +131,13 @@ namespace NewSafetyHelp
                 monsterProfileSizeAfterAdding = copyMonsterProfilesAfterAdding.Length;
 
                 isInitializedMainOnce = true;
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Loaded all '.json' files successfully!");
+                LoggingHelper.InfoLog("Loaded all '.json' files successfully!", consoleColor: ConsoleColor.Green);
             }
             else if (!addedEntriesToCustomCampaign) // Custom Campaign
             {
                 if (CopyMonsterProfiles.Length <= 0 || monsterProfileSize <= 0) // Invalid loading.
                 {
-                    MelonLogger.Error("CRITICAL ERROR: Loading of old values to add the entries to failed! (Count == 0)");
+                    LoggingHelper.CriticalErrorLog("Loading of old values to add the entries to failed! (Count == 0)");
                     return;
                 }
 
@@ -146,7 +145,8 @@ namespace NewSafetyHelp
 
                 if (customCampaign == null)
                 {
-                    MelonLogger.Error("CRITICAL ERROR: Trying to add to empty custom campaign! Custom campaign is enabled but custom campaign was not found?");
+                    LoggingHelper.CriticalErrorLog("Trying to add to empty custom campaign! " +
+                                                   "Custom campaign is enabled but custom campaign was not found?");
                     return;
                 }
 
@@ -159,7 +159,7 @@ namespace NewSafetyHelp
                     __instance.allEntries.monsterProfiles = CopyMonsterProfiles;
                 }
                 
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added... (Custom Campaign)");
+                LoggingHelper.InfoLog("Entries are now being added... (Custom Campaign)", consoleColor: ConsoleColor.Green);
 
                 // Replace all entries that need replacement.
                 CustomCampaignGlobal.ReplaceAllProvidedCampaignEntries(ref __instance.allEntries);
@@ -168,17 +168,17 @@ namespace NewSafetyHelp
                 CustomCampaignGlobal.AddAllCustomCampaignEntriesToArray(ref __instance.allEntries);
 
                 addedEntriesToCustomCampaign = true;
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Added/Modified all custom entries successfully! (Custom Campaign)");
+                LoggingHelper.InfoLog("Added/Modified all custom entries successfully! (Custom Campaign)", consoleColor: ConsoleColor.Green);
             }
         }
     }
 
     // Patches the class when it opens to also update the monster list, since due to our coroutine's problem.
-    [HarmonyLib.HarmonyPatch(typeof(OptionsExecutable), "Open", new Type[] { })]
+    [HarmonyLib.HarmonyPatch(typeof(OptionsExecutable), "Open")]
     public static class UpdateListDesktop
     {
         /// <summary>
-        /// Update the list when opening.
+        /// Update the entry canvas list when opening.
         /// </summary>
         /// <param name="__instance"> Caller of function. </param>
         // ReSharper disable once UnusedMember.Local
@@ -188,9 +188,7 @@ namespace NewSafetyHelp
             if (__instance.myPopup.name == "EntryCanvasStandalone") // We are opening the EntryBrowser, lets update
             {
                 // Get the start of the EntryBrowser
-                Type optionsExecutable = typeof(EntryCanvasStandaloneBehavior);
-
-                MethodInfo startMethod = optionsExecutable.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public, null, new Type[] { }, null);
+                MethodInfo startMethod = typeof(EntryCanvasStandaloneBehavior).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (startMethod != null)
                 {
@@ -198,7 +196,7 @@ namespace NewSafetyHelp
                 }
                 else
                 {
-                    MelonLogger.Error("ERROR: Failed to access the member 'Start' of EntryCanvasStandaloneBehavior.");
+                    LoggingHelper.ErrorLog("Failed to access the member 'Start' of EntryCanvasStandaloneBehavior.");
                 }
             }
         }
