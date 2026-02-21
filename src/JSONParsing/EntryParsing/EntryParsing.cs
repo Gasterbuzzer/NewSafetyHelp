@@ -6,6 +6,7 @@ using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 if (!replaceEntry)
                 {
-                    MelonLogger.Warning($"WARNING: No Monster name given for file in {usermodFolderPath}. Defaulting to NO_NAME.");
+                    LoggingHelper.WarningLog($"No Monster name given for file in {usermodFolderPath}. Defaulting to NO_NAME.");
                 }
             }
 
@@ -48,7 +49,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 if (!replaceEntry)
                 {
-                    MelonLogger.Warning($"WARNING: No Monster description given for file in {usermodFolderPath}. Defaulting to NO_DESCRIPTION.");
+                    LoggingHelper.WarningLog($"No Monster description given for file in {usermodFolderPath}. Defaulting to NO_DESCRIPTION.");
                 }
             }
 
@@ -77,7 +78,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 if (!replaceEntry)
                 {
-                    MelonLogger.Msg($"Info: No Arcade Calls given for file in {usermodFolderPath}. Defaulting to empty values.");
+                    LoggingHelper.InfoLog($"No Arcade Calls given for file in {usermodFolderPath}. Defaulting to empty values.");
                 }
             }
             
@@ -92,7 +93,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                     if (!replaceEntry)
                     {
-                        MelonLogger.Warning($"WARNING: No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
+                        LoggingHelper.WarningLog($"No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
                     }
                 }
                 else
@@ -105,7 +106,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 if (!replaceEntry)
                 {
-                    MelonLogger.Warning($"WARNING: No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
+                    LoggingHelper.WarningLog($"No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
                 }
             }
 
@@ -116,14 +117,14 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (string.IsNullOrEmpty(monsterAudioClipLocation) && !replaceEntry)
                 {
-                    MelonLogger.Msg($"INFO: No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
+                    LoggingHelper.InfoLog($"No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
                 }
             }
             else
             {
                 if (!replaceEntry)
                 {
-                    MelonLogger.Msg($"INFO: No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
+                    LoggingHelper.InfoLog($"No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
                 }
             }
             
@@ -131,9 +132,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             if (jsonObjectParsed.TryGetValue("attached_custom_campaign_name", out var attachedCustomCampaignName))
             {
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found an entry that is custom campaign only.");
-                #endif
+                LoggingHelper.DebugLog("Found an entry that is custom campaign only.");
                 
                 customCampaignName = attachedCustomCampaignName.Value<string>();
                 inCustomCampaign = true;
@@ -226,8 +225,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 }
                 else
                 {
-                    MelonLogger.Warning(
-                        $"WARNING: Provided entry '{monsterName}' cannot be deleted as it is not replacing an entry.");
+                    LoggingHelper.WarningLog($"Provided entry '{monsterName}' cannot be deleted as it is not replacing an entry.");
                 }
             }
         }
@@ -247,7 +245,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as an entry. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as an entry. Possible syntax mistake?");
                 return;
             }
 
@@ -351,16 +349,15 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (string.IsNullOrEmpty(_callerAudioClipLocation) && !replaceEntry)
                 {
-                    MelonLogger.Msg(
-                        $"INFO: No caller audio given for file in {jsonFolderPath}. No audio will be heard.");
+                    LoggingHelper.InfoLog($"No caller audio given for file in {jsonFolderPath}." +
+                                          " No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(jsonFolderPath + "\\" + _callerAudioClipLocation) &&
                          !File.Exists(usermodFolderPath + "\\" + _callerAudioClipLocation))
                 {
-                    MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain {_callerAudioClipLocation}." +
-                        " Unable to add audio.");
+                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain {_callerAudioClipLocation}." +
+                                           " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -384,8 +381,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 }
                                 else
                                 {
-                                    MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {callerAudioClipLocationLambdaCopy}.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip {callerAudioClipLocationLambdaCopy}.");
                                 }
                             },
                             audioLocation)
@@ -402,16 +398,14 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (string.IsNullOrEmpty(consequenceCallerAudioClipLocation) && !replaceEntry)
                 {
-                    MelonLogger.Msg(
-                        $"INFO: No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
+                    LoggingHelper.InfoLog($"No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(jsonFolderPath + "\\" + consequenceCallerAudioClipLocation) &&
                          !File.Exists(usermodFolderPath + "\\" + consequenceCallerAudioClipLocation))
                 {
-                    MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain {consequenceCallerAudioClipLocation}." +
-                        " Unable to add audio.");
+                    LoggingHelper.ErrorLog( $"Location {jsonFolderPath} does not contain {consequenceCallerAudioClipLocation}." +
+                                            " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -435,8 +429,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 }
                                 else
                                 {
-                                    MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {consequenceCallerAudioClipLocation}.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip {consequenceCallerAudioClipLocation}.");
                                 }
                             },
                             audioLocation)
@@ -496,7 +489,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 }
                                 else
                                 {
-                                    MelonLogger.Error($"ERROR: Failed to load audio clip {monsterAudioClipLocation}.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip {monsterAudioClipLocation}.");
                                 }
                             },
                             audioLocation)
@@ -534,7 +527,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 }
                                 else
                                 {
-                                    MelonLogger.Error($"ERROR: Failed to load audio clip {monsterAudioClipLocation}.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip {monsterAudioClipLocation}.");
                                 }
                             },
                             audioLocation)
@@ -592,17 +585,15 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             if ((foundMonster == null && !onlyDLC && !includeDLC) || (foundMonster == null && foundMonsterXMAS == null))
             {
-                MelonLogger.Warning(
-                    "WARNING: Entry that was suppose to replace an entry failed. Information about the entry: " +
-                    $"Was found: {foundMonster != null} and was found in DLC: {foundMonsterXMAS != null}. " +
-                    $"Replacer Name: {monsterName} with Replacer ID: {newID}.");
+                LoggingHelper.WarningLog("Entry that was suppose to replace an entry failed. Information about the entry: " +
+                                         $"Was found: {foundMonster != null} and was found in DLC: {foundMonsterXMAS != null}. " +
+                                         $"Replacer Name: {monsterName} with Replacer ID: {newID}.");
                 return;
             }
 
-            MelonLogger.Msg(
-                $"INFO: Found in the original list {monsterName} / {newID}." +
-                " Now replacing/updating (for the main campaign / custom campaign)" +
-                $" the entry with given information for {monsterName} / {newID}.");
+            LoggingHelper.InfoLog($"Found in the original list {monsterName} / {newID}." +
+                                  " Now replacing/updating (for the main campaign / custom campaign)" +
+                                  $" the entry with given information for {monsterName} / {newID}.");
 
             // Portrait
             if (!string.IsNullOrEmpty(monsterPortraitLocation))
@@ -875,11 +866,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                         if (currentCustomCampaign == null)
                         {
-                            #if DEBUG
-                            MelonLogger.Msg(
-                                "DEBUG: Custom Campaign replace entry found before custom campaign has been parsed." +
-                                " Adding to late add.");
-                            #endif
+                            LoggingHelper.DebugLog("Custom Campaign replace entry found before custom campaign has been parsed." +
+                                                   " Adding to late add.");
 
                             GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Add(extraEntryInfo);
 
@@ -947,9 +935,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (foundCustomCampaign != null)
                 {
-                    #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Adding found custom campaign entry to the custom campaign.");
-                    #endif
+                    LoggingHelper.DebugLog("Adding found custom campaign entry to the custom campaign.");
 
                     if (extraEntryInfo != null)
                     {
@@ -957,18 +943,13 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     }
                     else
                     {
-                        MelonLogger.Warning(
-                            "WARNING: " +
-                            "Entry that was suppose to be added in custom campaign does not exist as extra info." +
-                            " (Error Type: 1) ");
+                        LoggingHelper.WarningLog("Entry that was suppose to be added in custom campaign does not exist as extra info." +
+                                                 " (Error Type: 1) ");
                     }
                 }
                 else
                 {
-                    #if DEBUG
-                    MelonLogger.Msg(
-                        $"DEBUG: Found monster entry before the custom campaign was found / does not exist.");
-                    #endif
+                    LoggingHelper.DebugLog("Found monster entry before the custom campaign was found / does not exist.");
 
                     if (extraEntryInfo != null)
                     {
@@ -976,10 +957,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     }
                     else
                     {
-                        MelonLogger.Warning(
-                            "WARNING: " +
-                            "Entry that was suppose to be added in custom campaign does not exist as extra info. " +
-                            "(Error Type: 2) ");
+                        LoggingHelper.WarningLog("Entry that was suppose to be added in custom campaign does not exist as extra info. " +
+                                                  "(Error Type: 2) ");
                     }
                 }
             }
@@ -1062,9 +1041,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     break;
             }
 
-            #if DEBUG
-                MelonLogger.Msg($"DEBUG: Finished parsing entry: {newMonster.monsterName}.");
-            #endif
+            LoggingHelper.DebugLog($"Finished parsing entry: {newMonster.monsterName}.");
         }
     }
 }
