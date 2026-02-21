@@ -8,6 +8,7 @@ using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -164,12 +165,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
-                #if DEBUG
-                if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
-                {
-                    MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: SubmitAnswer Called.");
-                }
-                #endif
+                LoggingHelper.DebugLog("SubmitAnswer Called.", LoggingHelper.LoggingCategory.SKIPPED_CALLER);
                 
                 FieldInfo onCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);

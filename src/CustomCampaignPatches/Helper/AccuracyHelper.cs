@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using NewSafetyHelp.CallerPatches.CallerModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignPatches.Helper
@@ -50,24 +51,20 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
         /// <returns>(True) Caller is allowed to call. (False) Caller is not allowed to call.</returns>
         public static bool CheckIfCallerIsToBeShown(CustomCCaller currentCaller)
         {
-            MelonLogger.Msg("INFO: Checking if accuracy caller is to be shown " +
-                            $"({currentCaller.CallerName} with '{currentCaller.AccuracyChecks.Count}' checks). " +
-                            $"Current day accuracy is '{GetCorrectAccuracy(false)}'. " +
-                            $"Total accuracy is '{GetCorrectAccuracy(true)}'.");
+            LoggingHelper.InfoLog("Checking if accuracy caller is to be shown " +
+                                  $"({currentCaller.CallerName} with '{currentCaller.AccuracyChecks.Count}' checks). " +
+                                  $"Current day accuracy is '{GetCorrectAccuracy(false)}'. " +
+                                  $"Total accuracy is '{GetCorrectAccuracy(true)}'.");
             
             foreach (AccuracyType accuracyType in currentCaller.AccuracyChecks)
             {
                 float currentAccuracy = GetCorrectAccuracy(accuracyType.UseTotalAccuracy);
                 
-                #if DEBUG
-                if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
-                {
-                    MelonLogger.Msg("DEBUG: Found" +
-                                    $"Accuracy caller with current check '{accuracyType.AccuracyCheck.ToString()}' " +
-                                    $"and required accuracy '{accuracyType.RequiredAccuracy}'. " +
-                                    $"The current accuracy is: '{currentAccuracy}'.");
-                }
-                #endif
+                LoggingHelper.DebugLog("DEBUG: Found" +
+                                       $"Accuracy caller with current check '{accuracyType.AccuracyCheck.ToString()}' " +
+                                       $"and required accuracy '{accuracyType.RequiredAccuracy}'. " +
+                                       $"The current accuracy is: '{currentAccuracy}'.",
+                    LoggingHelper.LoggingCategory.SKIPPED_CALLER);
                 
                 // The switch statements all look for the opposite of the current statement,
                 // since it only matters if we fail one of them and not if all check are true.

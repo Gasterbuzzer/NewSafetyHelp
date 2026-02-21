@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using System;
 using System.Reflection;
+using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
@@ -18,7 +19,10 @@ namespace NewSafetyHelp
         public static MelonPreferences_Category PersistantEntrySave;
         
         private static MelonPreferences_Category mainModSettings;
+        
         private static MelonPreferences_Entry<bool> skipComputerScene; // If to skip the initial computer scene.
+        
+        public static MelonPreferences_Entry<bool> ShowDebugLogs; // If to show the debug logs at all.
         public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog; // If to show the skipped callers debug log.
         public static MelonPreferences_Entry<bool> ShowThemeDebugLog; // If to show the logs for theme info.
         public static MelonPreferences_Entry<bool> ShowRingtoneDebugLog; // If to show the logs for ringtone info.
@@ -30,7 +34,10 @@ namespace NewSafetyHelp
             
             // Settings
             mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
+            
             skipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
+            
+            ShowDebugLogs = mainModSettings.CreateEntry("ShowDebugLogs", false);
             ShowSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);
             ShowThemeDebugLog = mainModSettings.CreateEntry("ShowThemeDebugLog", false);
             ShowRingtoneDebugLog = mainModSettings.CreateEntry("ShowRingtoneDebugLog", false);
@@ -59,6 +66,8 @@ namespace NewSafetyHelp
             #if DEBUG
             LoggerInstance.Msg($"DEBUG: Scene {sceneName} with build index {buildIndex} has been loaded!");
             #endif
+
+            IntermissionMusicHelper.StopIntermissionMusicRoutine();
 
             MelonPreferences.Save(); // Save on scene change.
         }

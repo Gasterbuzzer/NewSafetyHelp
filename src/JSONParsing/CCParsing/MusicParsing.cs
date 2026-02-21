@@ -76,7 +76,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (foundCustomCampaign != null)
             {
-                foundCustomCampaign.CustomMusic.Add(customMusic);
+                if (customMusic.IsIntermissionMusic)
+                {
+                    foundCustomCampaign.CustomIntermissionMusic.Add(customMusic);
+                }
+                else
+                {
+                    foundCustomCampaign.CustomMusic.Add(customMusic);
+                }
             }
             else
             {

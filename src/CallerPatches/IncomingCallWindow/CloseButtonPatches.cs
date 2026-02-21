@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
@@ -25,7 +25,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 {
                     if (CustomCampaignGlobal.InCustomCampaign) // If we are not in the main campaign.
                     {
-                        MelonLogger.Msg(ConsoleColor.Green, "INFO: Playing custom ending cutscene.");
+                        LoggingHelper.InfoLog("Playing custom ending cutscene.", consoleColor:ConsoleColor.Green);
 
                         GlobalVariables.callerControllerScript
                             .callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
@@ -65,9 +65,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         
                         if (checkResult > 0)
                         {
-                            #if DEBUG
-                            MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: Calling end day routine from close button.");
-                            #endif
+                            LoggingHelper.DebugLog("Calling end day routine from close button.");
                             
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
@@ -110,30 +108,21 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     // 2. If any valid caller comes afterward. (One that cannot be skipped)
                     
                     // 3. Is a consequence caller that will be shown.
+                    LoggingHelper.DebugLog($"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
+                                           $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'." +
+                                           $" Is a accuracy caller?: '{customCCallerFound.IsAccuracyCaller}'.",
+                        LoggingHelper.LoggingCategory.SKIPPED_CALLER);
                     
-                    #if DEBUG
-                    if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
-                    {
-                        MelonLogger.Msg(ConsoleColor.DarkMagenta,
-                            $"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
-                            $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'." +
-                            $" Is a accuracy caller?: '{customCCallerFound.IsAccuracyCaller}'.");
-                    }
-                    #endif
-
-                    #if DEBUG
-                    if (NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
-                    {
-                        MelonLogger.Msg(ConsoleColor.DarkMagenta,
-                            "DEBUG: Is ConsequenceProfile not null? (Meaning it's this current caller is a consequence caller):" +
-                            $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
-                            ".\n" +
-                            " Is this caller allowed to be called? (Meaning we got the answer wrong from the previous caller): " +
-                            $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
-                            ".\n " +
-                            $"Is this caller the last one of the day? '{customCCallerFound.LastDayCaller}'.");
-                    }
-                    #endif
+                    LoggingHelper.DebugLog("DEBUG: Is ConsequenceProfile not null? " +
+                                           "(Meaning it's this current caller is a consequence caller):" +
+                                           $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
+                                           ".\n" +
+                                           " Is this caller allowed to be called? " +
+                                           "(Meaning we got the answer wrong from the previous caller): " +
+                                           $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
+                                           ".\n " +
+                                           $"Is this caller the last one of the day? '{customCCallerFound.LastDayCaller}'.",
+                        LoggingHelper.LoggingCategory.SKIPPED_CALLER);
 
                     // Consequence caller
                     bool isConsequenceCaller = false;

@@ -6,6 +6,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.Audio.Music.Intermission
@@ -37,9 +38,32 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic.");
                 return;
             }
+            
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                LoggingHelper.CampaignNullError();
+                return;
+            }
+
+            if (customCampaign.CustomIntermissionMusic.Count <= 0)
+            {
+                return;
+            }
 
             shouldPlayIntermissionMusic = true;
-            playIntermission = MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip));
+            playIntermission = MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));
+        }
+
+        /// <summary>
+        /// Stops the intermission music coroutine from playing.
+        /// </summary>
+        public static void StopIntermissionMusicRoutine()
+        {
+            shouldPlayIntermissionMusic = false;
+                
+            MelonCoroutines.Stop(playIntermission);
         }
         
         /// <summary>
@@ -78,16 +102,25 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         /// </summary>
         /// <param name="myMusicSourceCast"> AudioSource to stop the music for. </param>
         /// <param name="audioClip"> Music to played. </param>
+        /// <param name="customCampaign"> Custom Campaign to find the music in. </param>
+        /// <param name="shouldLoop"> If the music should loop or should stop after being played once. </param>
         private static IEnumerator PlayIntermissionMusicLoop(AudioSource myMusicSourceCast, CustomMusic audioClip,
-            bool shouldLoop = true)
+            CustomCampaign customCampaign, bool shouldLoop = true)
         {
             bool wasProvidedNull = (audioClip == null);
+            bool shouldPlayIntermission = false;
             
             while (shouldPlayIntermissionMusic)
             {
                 if (audioClip == null || wasProvidedNull)
                 {
-                    audioClip = PickIntermissionMusic();
+                    audioClip = PickIntermissionMusic(ref shouldPlayIntermission, customCampaign);
+
+                    // No valid music found. We stop.
+                    if (!shouldPlayIntermission)
+                    {
+                        yield break; 
+                    }
                 }
                 
                 myMusicSourceCast.loop = false;
@@ -123,6 +156,11 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         /// <param name="audioClip"> Music to played. </param>
         private static float MusicEndRange(CustomMusic audioClip)
         {
+            if (audioClip.EndRange == null)
+            {
+                return audioClip.MusicClip.clip.length;
+            }
+            
             if (audioClip.EndRange.Count <= 0)
             {
                 return audioClip.MusicClip.clip.length;
@@ -154,6 +192,11 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         /// <param name="audioClip"> Music to played. </param>
         private static float MusicStartRange(CustomMusic audioClip)
         {
+            if (audioClip.StartRange == null)
+            {
+                return 0;
+            }
+            
             if (audioClip.StartRange.Count <= 0)
             {
                 return 0;
@@ -183,18 +226,13 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         /// Returns a valid intermission music that is allowed to play for the current day.
         /// </summary>
         /// <returns>Returns null if none found and </returns>
-        public static CustomMusic PickIntermissionMusic()
+        // ReSharper disable once RedundantAssignment
+        private static CustomMusic PickIntermissionMusic(ref bool shouldPlayIntermission, CustomCampaign customCampaign)
         {
+            shouldPlayIntermission = false;
+            
             if (CustomCampaignGlobal.InCustomCampaign)
             {
-                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-
-                if (customCampaign == null)
-                {
-                    MelonLogger.Error("ERROR: 'customCampaign' could not be found. Unable to pick intermission music.");
-                    return null;
-                }
-                
                 List<CustomMusic> validCustomMusic = customCampaign.CustomIntermissionMusic
                     .Where(clip =>
                         {
@@ -210,6 +248,8 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                             return clip.UnlockDay <= GlobalVariables.currentDay;
                         }
                     ).ToList();
+                
+                LoggingHelper.DebugLog($"Custom Intermission Music Available: {customCampaign.CustomIntermissionMusic.Count}. Valid: '{validCustomMusic.Count}'.");
 
                 if (validCustomMusic.Count <= 0)
                 {
@@ -217,6 +257,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 }
                 else
                 {
+                    shouldPlayIntermission = true;
                     int randomIndex = Random.Range(0, validCustomMusic.Count);
                     return validCustomMusic[randomIndex];
                 }

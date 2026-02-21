@@ -91,7 +91,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 // Create a copy of the list to iterate over
                 List<CustomMusic> tempList = new List<CustomMusic>(GlobalParsingVariables.PendingCustomCampaignMusic);
-
+                
                 foreach (CustomMusic missingMusic in tempList)
                 {
                     if (missingMusic.CustomCampaignName == customCampaignName)

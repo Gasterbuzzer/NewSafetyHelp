@@ -8,6 +8,7 @@ using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
+using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.VersionChecker;
 using TMPro;
@@ -609,6 +610,13 @@ namespace NewSafetyHelp.CustomDesktop
                     string str = string.Concat(strArray);
                     
                     text.text = str;
+                    
+                    
+                    // Add custom settings
+                    GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings", 
+                        "Mod settings to show more information and also allow skipping the initial load scene.");
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnDebugLogToggle,
+                        "Enable Debug Logs", NewSafetyHelpMainClass.ShowDebugLogs.Value);
                 }
                 
                 return false; // Skip original function.
