@@ -396,6 +396,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssign(jObjectParsed, "defaultTheme", ref defaultTheme);
+            ParsingHelper.TryAssign(jObjectParsed, "default_theme", ref defaultTheme);
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
             ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
 

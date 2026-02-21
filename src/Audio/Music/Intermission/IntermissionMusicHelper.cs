@@ -15,10 +15,11 @@ namespace NewSafetyHelp.Audio.Music.Intermission
     {
         private static bool shouldPlayIntermissionMusic = true;
         private static object playIntermission;
-        
+
         // Field Infos
-        private static readonly FieldInfo MyMusicSource = typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
-        
+        private static readonly FieldInfo MyMusicSource =
+            typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
+
         /// <summary>
         /// Plays intermission music based on the given custom music.
         /// </summary>
@@ -30,15 +31,15 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic.");
                 return;
             }
-                
-            AudioSource myMusicSourceCast = (AudioSource) MyMusicSource.GetValue(GlobalVariables.musicControllerScript);
+
+            AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(GlobalVariables.musicControllerScript);
 
             if (myMusicSourceCast == null)
             {
                 MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic.");
                 return;
             }
-            
+
             CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (customCampaign == null)
@@ -53,7 +54,8 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             }
 
             shouldPlayIntermissionMusic = true;
-            playIntermission = MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));
+            playIntermission =
+                MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));
         }
 
         /// <summary>
@@ -62,10 +64,13 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         public static void StopIntermissionMusicRoutine()
         {
             shouldPlayIntermissionMusic = false;
-                
-            MelonCoroutines.Stop(playIntermission);
+
+            if (playIntermission != null)
+            {
+                MelonCoroutines.Stop(playIntermission);
+            }
         }
-        
+
         /// <summary>
         /// Stops the intermission music from playing.
         /// </summary>
@@ -76,27 +81,27 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic.");
                 return;
             }
-                
-            AudioSource myMusicSourceCast = (AudioSource) MyMusicSource.GetValue(GlobalVariables.musicControllerScript);
+
+            AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(GlobalVariables.musicControllerScript);
 
             if (myMusicSourceCast == null)
             {
                 MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic.");
                 return;
             }
-            
+
             if (playIntermission != null)
             {
                 shouldPlayIntermissionMusic = false;
-                
+
                 MelonCoroutines.Stop(playIntermission);
-                
+
                 myMusicSourceCast.Stop();
-                
+
                 myMusicSourceCast.loop = true;
             }
         }
-        
+
         /// <summary>
         /// Actually plays the intermission music in a loop. The loop will stop when the stop function gets called.
         /// </summary>
@@ -109,7 +114,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         {
             bool wasProvidedNull = (audioClip == null);
             bool shouldPlayIntermission = false;
-            
+
             while (shouldPlayIntermissionMusic)
             {
                 if (audioClip == null || wasProvidedNull)
@@ -119,28 +124,31 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                     // No valid music found. We stop.
                     if (!shouldPlayIntermission)
                     {
-                        yield break; 
+                        yield break;
                     }
                 }
-                
+
                 myMusicSourceCast.loop = false;
-                
-                float musicStopAfterSeconds = MusicEndRange(audioClip);
+
                 float startAfterSeconds = MusicStartRange(audioClip);
-                
+                float musicStopAfterSeconds = MusicEndRange(audioClip);
+
+                LoggingHelper.DebugLog($"Intermission music playing with start of: '{startAfterSeconds}' with" +
+                                       $"end range of '{musicStopAfterSeconds}'.");
+
                 if (musicStopAfterSeconds - startAfterSeconds <= 0)
                 {
                     MelonLogger.Warning("WARNING: Provided music ranges overlap and cause the music not to play." +
                                         " Unable to play music.");
                     yield break;
                 }
-                
+
                 GlobalVariables.musicControllerScript.StartMusic(audioClip.MusicClip);
-            
+
                 myMusicSourceCast.time = startAfterSeconds;
-                
+
                 yield return new WaitForSeconds(musicStopAfterSeconds - startAfterSeconds);
-            
+
                 myMusicSourceCast.Stop();
 
                 if (!shouldLoop)
@@ -149,7 +157,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 }
             }
         }
-        
+
         /// <summary>
         /// Returns the music range where the music is supposed to be stopped based on the different types of end range.
         /// </summary>
@@ -160,17 +168,17 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             {
                 return audioClip.MusicClip.clip.length;
             }
-            
+
             if (audioClip.EndRange.Count <= 0)
             {
                 return audioClip.MusicClip.clip.length;
             }
-            
+
             switch (audioClip.EndRange.Count)
             {
                 case 1:
                     return audioClip.EndRange[0];
-                
+
                 case 2:
                     return Random.Range(audioClip.EndRange[0], audioClip.EndRange[1]);
             }
@@ -178,13 +186,13 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             if (audioClip.EndRange.Count > 2)
             {
                 int randomIndex = Random.Range(0, audioClip.EndRange.Count);
-                
+
                 return audioClip.EndRange[randomIndex];
             }
-            
+
             return audioClip.MusicClip.clip.length;
         }
-        
+
         /// <summary>
         /// Returns the music range where the music is supposed
         /// to be started based on the different types of start range.
@@ -196,17 +204,17 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             {
                 return 0;
             }
-            
+
             if (audioClip.StartRange.Count <= 0)
             {
                 return 0;
             }
-            
+
             switch (audioClip.StartRange.Count)
             {
                 case 1:
                     return audioClip.StartRange[0];
-                
+
                 case 2:
                     return Random.Range(audioClip.StartRange[0], audioClip.StartRange[1]);
             }
@@ -214,14 +222,14 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             if (audioClip.StartRange.Count > 2)
             {
                 int randomIndex = Random.Range(0, audioClip.StartRange.Count);
-                
+
                 return audioClip.StartRange[randomIndex];
             }
-            
+
             return 0;
         }
-        
-        
+
+
         /// <summary>
         /// Returns a valid intermission music that is allowed to play for the current day.
         /// </summary>
@@ -230,7 +238,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         private static CustomMusic PickIntermissionMusic(ref bool shouldPlayIntermission, CustomCampaign customCampaign)
         {
             shouldPlayIntermission = false;
-            
+
             if (CustomCampaignGlobal.InCustomCampaign)
             {
                 List<CustomMusic> validCustomMusic = customCampaign.CustomIntermissionMusic
@@ -242,14 +250,16 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                                 {
                                     return 1 == GlobalVariables.currentDay;
                                 }
+
                                 return clip.UnlockDay == GlobalVariables.currentDay;
                             }
-                                    
+
                             return clip.UnlockDay <= GlobalVariables.currentDay;
                         }
                     ).ToList();
-                
-                LoggingHelper.DebugLog($"Custom Intermission Music Available: {customCampaign.CustomIntermissionMusic.Count}. Valid: '{validCustomMusic.Count}'.");
+
+                LoggingHelper.DebugLog(
+                    $"Custom Intermission Music Available: {customCampaign.CustomIntermissionMusic.Count}. Valid: '{validCustomMusic.Count}'.");
 
                 if (validCustomMusic.Count <= 0)
                 {
@@ -262,7 +272,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                     return validCustomMusic[randomIndex];
                 }
             }
-            
+
             return null;
         }
     }
