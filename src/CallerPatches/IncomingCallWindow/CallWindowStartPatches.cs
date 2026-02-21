@@ -1,7 +1,7 @@
-﻿using MelonLoader;
-using NewSafetyHelp.Audio.Music.Intermission;
+﻿using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 {
@@ -67,7 +67,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null. Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -77,7 +77,8 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         
                         if (customCCaller == null)
                         {
-                            MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
+                            LoggingHelper.ErrorLog("Custom campaign caller was null. Unable of checking for downed network parameter." +
+                                                   " Calling original function.");
                             return true;
                         }
                         
@@ -90,12 +91,10 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         if (!GlobalVariables.isXmasDLC && customCCaller.DownedNetworkCaller)
                         {
 
-                            #if DEBUG
-                                MelonLogger.Msg($"DEBUG: Custom caller is set to play warped phone call sound" +
-                                                $" (INFO: Downed Network? {customCCaller.DownedNetworkCaller};" +
-                                                $" Caller Name: {customCCaller.CallerName}" +
-                                                ").");
-                            #endif
+                            LoggingHelper.DebugLog("Custom caller is set to play warped phone call sound" +
+                                                   $" (INFO: Downed Network? {customCCaller.DownedNetworkCaller};" +
+                                                   $" Caller Name: {customCCaller.CallerName}" +
+                                                   ").");
                             
                             GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.phoneCallWarped);
                             return false;

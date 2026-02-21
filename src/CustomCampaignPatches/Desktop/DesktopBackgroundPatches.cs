@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using MelonLoader;
+﻿using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignPatches.Desktop
 {
     public static class DesktopBackgroundPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(DayNumSpriteSwapper), "Start", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(DayNumSpriteSwapper), "Start")]
         public static class StartPatch
         {
             /// <summary>
             /// Original function replaces background based on the day.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
             // ReSharper disable once UnusedParameter.Local
-            private static bool Prefix(MethodBase __originalMethod, DayNumSpriteSwapper __instance)
+            private static bool Prefix(DayNumSpriteSwapper __instance)
             {
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
@@ -27,7 +24,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign null even though its enabled! Calling original function.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     

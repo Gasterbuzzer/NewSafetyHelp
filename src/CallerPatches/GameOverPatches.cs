@@ -1,9 +1,8 @@
-﻿using System;
-using System.Reflection;
-using MelonLoader;
+﻿using System.Reflection;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,7 +10,7 @@ namespace NewSafetyHelp.CallerPatches
 {
     public static class GameOverPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "TriggerGameOver", new Type[] { })]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "TriggerGameOver")]
         public static class TriggerGameOverPatch
         {
             /// <summary>
@@ -21,9 +20,7 @@ namespace NewSafetyHelp.CallerPatches
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance)
             {
-                #if DEBUG
-                MelonLogger.Msg($"DEBUG: Triggering GameOver Call + GameOver Cutscene.");
-                #endif
+                LoggingHelper.DebugLog("Triggering GameOver Call + GameOver Cutscene.");
 
                 MethodInfo answerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall",
                     BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -32,8 +29,7 @@ namespace NewSafetyHelp.CallerPatches
 
                 if (answerDynamicCall == null || triggerGameOver == null)
                 {
-                    MelonLogger.Error(
-                        "ERROR: AnswerDynamicCall or triggerGameOver is null. Calling original function.");
+                    LoggingHelper.ErrorLog("AnswerDynamicCall or triggerGameOver is null. Calling original function.");
                     return true;
                 }
 
@@ -43,7 +39,7 @@ namespace NewSafetyHelp.CallerPatches
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null. Calling original function.");
+                        LoggingHelper.ErrorLog("Custom Campaign is null. Calling original function.");
                         return true;
                     }
 
@@ -74,10 +70,7 @@ namespace NewSafetyHelp.CallerPatches
                         // Create custom caller and then replace gameOverCall with it.
                         if (customCCallerGameOverChosen != null)
                         {
-                            #if DEBUG
-                            MelonLogger.Msg(
-                                $"DEBUG: GameOver caller found to replace! {customCCallerGameOverChosen.CallerName}.");
-                            #endif
+                            LoggingHelper.DebugLog($"GameOver caller found to replace! {customCCallerGameOverChosen.CallerName}.");
 
                             CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
@@ -93,8 +86,8 @@ namespace NewSafetyHelp.CallerPatches
 
                             if (getRandomPicMethod == null || getRandomClip == null)
                             {
-                                MelonLogger.Error(
-                                    "ERROR: getRandomPicMethod or getRandomClip is null! Calling original function.");
+                                LoggingHelper.ErrorLog(
+                                    "getRandomPicMethod or getRandomClip is null! Calling original function.");
                                 return true;
                             }
 
@@ -104,8 +97,8 @@ namespace NewSafetyHelp.CallerPatches
                             }
                             else
                             {
-                                MelonLogger.Warning(
-                                    "WARNING: GameOver-Caller has no caller image, using random image.");
+                                LoggingHelper.WarningLog(
+                                    "GameOver-Caller has no caller image, using random image.");
 
                                 newProfile.callerPortrait = (Sprite)getRandomPicMethod.Invoke(__instance, null);
                             }
@@ -118,13 +111,13 @@ namespace NewSafetyHelp.CallerPatches
                             {
                                 if (AudioImport.CurrentLoadingAudios.Count > 0)
                                 {
-                                    MelonLogger.Warning(
-                                        "WARNING: GameOver-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");
+                                    LoggingHelper.WarningLog(
+                                        "GameOver-Caller audio is still loading! Using fallback for now. If this happens often, please check if the audio is too large!");
                                 }
                                 else
                                 {
-                                    MelonLogger.Warning(
-                                        "WARNING: GameOver-Caller has no audio! Using audio fallback. If you provided an audio but this error shows up, check for any errors before!");
+                                    LoggingHelper.WarningLog(
+                                        "GameOver-Caller has no audio! Using audio fallback. If you provided an audio but this error shows up, check for any errors before!");
                                 }
 
                                 newProfile.callerClip = (RichAudioClip)getRandomClip.Invoke(__instance, null);
@@ -133,8 +126,8 @@ namespace NewSafetyHelp.CallerPatches
                             if (!string.IsNullOrEmpty(customCCallerGameOverChosen.MonsterNameAttached) ||
                                 customCCallerGameOverChosen.MonsterIDAttached != -1)
                             {
-                                MelonLogger.Warning(
-                                    "WARNING: A monster was provided for the GameOver caller, but GameOver callers do not use any entries! Will default to none.");
+                                LoggingHelper.WarningLog(
+                                    "A monster was provided for the GameOver caller, but GameOver callers do not use any entries! Will default to none.");
                             }
 
                             newProfile.callerMonster = null;
@@ -142,8 +135,8 @@ namespace NewSafetyHelp.CallerPatches
 
                             if (customCCallerGameOverChosen.CallerIncreasesTier)
                             {
-                                MelonLogger.Warning(
-                                    "WARNING: Increase tier was provided for a GameOver caller! It will be set to false!");
+                                LoggingHelper.WarningLog(
+                                    "Increase tier was provided for a GameOver caller! It will be set to false!");
                             }
 
                             newProfile.increaseTier = false;
@@ -151,8 +144,8 @@ namespace NewSafetyHelp.CallerPatches
 
                             if (customCCallerGameOverChosen.ConsequenceCallerID != -1)
                             {
-                                MelonLogger.Warning(
-                                    "WARNING: GameOver Callers cannot be consequence caller, ignoring option.");
+                                LoggingHelper.WarningLog(
+                                    "GameOver Callers cannot be consequence caller, ignoring option.");
                             }
 
                             newProfile.consequenceCallerProfile = null;

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -20,22 +20,22 @@ namespace NewSafetyHelp.Audio
         /// </summary>
         /// <param name="callback"> Callback function used for getting the AudioClip back. </param>
         /// <param name="path"> Path to file. </param>
-        /// <param name="_audioType"> Unity AudioType </param>
-        public static IEnumerator LoadAudio(Action<AudioClip> callback, string path, AudioType _audioType = AudioType.MPEG)
+        /// <param name="audioType"> Unity AudioType </param>
+        public static IEnumerator LoadAudio(Action<AudioClip> callback, string path, AudioType audioType = AudioType.MPEG)
         {
-            MelonLogger.Msg($"INFO: Attempting to add {path} as audio type {_audioType.ToString()}.");
+            LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
             
             Time.timeScale = 0;
             
-            CurrentLoadingAudios.Add($"{path}{_audioType.ToString()}");
+            CurrentLoadingAudios.Add($"{path}{audioType.ToString()}");
 
             // First we check if the file exists
             if (!File.Exists(path))
             {
-                MelonLogger.Error($"ERROR: Given path to file {path} of type {_audioType.ToString()} does not exist.");
+                LoggingHelper.ErrorLog($"Given path to file {path} of type {audioType.ToString()} does not exist.");
                 
                 // Fix for audio failing to load causing a freeze.
-                CurrentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
+                CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
 
                 // If all audios finished loading we continue letting the game run.
                 if (CurrentLoadingAudios.Count <= 0)
@@ -47,7 +47,7 @@ namespace NewSafetyHelp.Audio
             }
 
             string url = "file://" + path;
-            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, _audioType))
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
             {
                 UnityWebRequestAsyncOperation operation = www.SendWebRequest();
 
@@ -59,7 +59,7 @@ namespace NewSafetyHelp.Audio
 
                 if (www.result == UnityWebRequest.Result.Success && operation.isDone) // Was able of getting the audio file.
                 {
-                    MelonLogger.Msg($"INFO: {path} as {_audioType.ToString()} has been successfully loaded.");
+                    LoggingHelper.InfoLog($"{path} as {audioType.ToString()} has been successfully loaded.");
 
                     callback(DownloadHandlerAudioClip.GetContent(www)); // Get actual audio clip
                 }
@@ -67,13 +67,15 @@ namespace NewSafetyHelp.Audio
                 {
                     if (!operation.isDone)
                     {
-                        MelonLogger.Error("ERROR: Audio Loading was not finished. This an an unexpected error.");
+                        LoggingHelper.ErrorLog("Audio Loading was not finished. This an an unexpected error.");
                     }
 
-                    MelonLogger.Error($"ERROR: Was unable of loading {path} as audio type {_audioType.ToString()}. \n Results in the error: {www.error} and the response code is: {www.responseCode}. Was the process finished?: {www.isDone}");
+                    LoggingHelper.ErrorLog($"Was unable of loading {path} as audio type {audioType.ToString()}." +
+                                           $" \n Results in the error: {www.error} and the response code is: {www.responseCode}." +
+                                           $" Was the process finished?: {www.isDone}");
                 }
                 
-                CurrentLoadingAudios.Remove($"{path}{_audioType.ToString()}");
+                CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
 
                 // If all audios finished loading we continue letting the game run.
                 if (CurrentLoadingAudios.Count <= 0)
@@ -89,13 +91,11 @@ namespace NewSafetyHelp.Audio
         /// </summary>
         public static void ReCallCallerListStart()
         {
-            Type callerController = typeof(CallerController);
-            
-            MethodInfo startCallerController = callerController.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            MethodInfo startCallerController =  typeof(CallerController).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
             if (startCallerController == null)
             {
-                MelonLogger.Error("ERROR: Start of CallerController was not found!");
+                LoggingHelper.ErrorLog("Start of CallerController was not found!");
                 return;
             }
 
@@ -107,15 +107,14 @@ namespace NewSafetyHelp.Audio
         /// <summary>
         /// Creates a new rich audio clip from a provided audio clip. Used for creating a monster.
         /// </summary>
-        /// <param name="_newAudioClip"> AudioClip to insert into the RichAudioClip. </param>
-        /// <param name="_volume"> Volume of the clip. </param>
-        public static RichAudioClip CreateRichAudioClip(AudioClip _newAudioClip, float _volume = 0.5f)
+        /// <param name="newAudioClip"> AudioClip to insert into the RichAudioClip. </param>
+        /// <param name="volume"> Volume of the clip. </param>
+        public static RichAudioClip CreateRichAudioClip(AudioClip newAudioClip, float volume = 0.5f)
         {
-
             RichAudioClip newRichAudioClip = ScriptableObject.CreateInstance<RichAudioClip>();
 
-            newRichAudioClip.clip = _newAudioClip;
-            newRichAudioClip.volume = _volume;
+            newRichAudioClip.clip = newAudioClip;
+            newRichAudioClip.volume = volume;
 
             return newRichAudioClip;
         }
@@ -177,7 +176,7 @@ namespace NewSafetyHelp.Audio
             else
             {
                 // Unknown File type, we return with Unknown
-                MelonLogger.Error("ERROR/WARNING: Unknown audio file type, attempting to still parse it. Expect failure.");
+                LoggingHelper.ErrorLog("Unknown audio file type, attempting to still parse it. Expect failure.");
                 return AudioType.UNKNOWN;
             }
         }

@@ -1,4 +1,4 @@
-﻿using MelonLoader;
+﻿using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CallerPatches.UI
@@ -22,7 +22,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             {
                 if (__instance.randomCallerClips.Length <= 0)
                 {
-                    MelonLogger.Warning("WARNING: No caller audio available for caller!");
+                    LoggingHelper.WarningLog("No caller audio available for caller!");
                     __result = null;
                     return false;
                 }
@@ -48,7 +48,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             {
                 if (__instance.randomCallerPics.Length <= 0)
                 {
-                    MelonLogger.Warning("WARNING: No image available for caller!");
+                    LoggingHelper.WarningLog("No image available for caller!");
                     __result = null;
                     return false;
                 }

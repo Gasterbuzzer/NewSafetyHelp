@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -45,8 +45,9 @@ namespace NewSafetyHelp.Audio.Music
 
                 if (_previousHoldMusicIndex == null)
                 {
-                    MelonLogger.Error(
-                        "ERROR: PreviousHoldMusicIndex is null. Unable of replacing MusicController StartNewRandomMusic. Calling original function.");
+                    LoggingHelper.ErrorLog("PreviousHoldMusicIndex is null." +
+                                           " Unable of replacing MusicController StartNewRandomMusic." +
+                                           " Calling original function.");
                     return true;
                 }
 
@@ -85,8 +86,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error(
-                            "ERROR: CustomCampaign is null! Cannot play random music. Using default logic.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 
@@ -143,20 +143,17 @@ namespace NewSafetyHelp.Audio.Music
                             playCustomMusic = true;
                         }
 
-                        #if DEBUG
-                        MelonLogger.Msg("DEBUG: " +
-                                        $"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)_previousHoldMusicIndex.GetValue(__instance)}." +
-                                        $" (From custom music? {playCustomMusic})" +
-                                        $" (Amount of clips: {amountOfClips})" +
-                                        $" (Total clips: {customCampaign.CustomMusic.Count})" +
-                                        $" (Remove default music? {customCampaign.RemoveDefaultMusic})" +
-                                        $" (Current day: {GlobalVariables.currentDay})");
-
+                        LoggingHelper.DebugLog($"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)_previousHoldMusicIndex.GetValue(__instance)}." +
+                                               $" (From custom music? {playCustomMusic})" +
+                                               $" (Amount of clips: {amountOfClips})" +
+                                               $" (Total clips: {customCampaign.CustomMusic.Count})" +
+                                               $" (Remove default music? {customCampaign.RemoveDefaultMusic})" +
+                                               $" (Current day: {GlobalVariables.currentDay})");
+                        
                         if (playCustomMusic)
                         {
-                            MelonLogger.Msg($"DEBUG: Amount of custom music: {customMusicAmount}.");
+                            LoggingHelper.DebugLog($"Amount of custom music: {customMusicAmount}.");
                         }
-                        #endif
 
                         _previousHoldMusicIndex.SetValue(__instance, chosenMusicIndex);
                     }
@@ -265,8 +262,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error(
-                            "ERROR: CustomCampaign is null! Cannot play random music. Using default logic.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 
@@ -296,7 +292,7 @@ namespace NewSafetyHelp.Audio.Music
                         }
                         else
                         {
-                            MelonLogger.Warning("WARNING: Music clip is empty! Possibly failed loading?");
+                            LoggingHelper.WarningLog("Music clip is empty! Possibly failed loading?");
                         }
                     }
                     else if (!customCampaign.RemoveDefaultMusic)
@@ -328,8 +324,8 @@ namespace NewSafetyHelp.Audio.Music
 
                 if (myMusicSource == null)
                 {
-                    MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic." +
-                                      " Calling original function.");
+                    LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic." +
+                                           " Calling original function.");
                     return true;
                 }
                 
@@ -337,8 +333,8 @@ namespace NewSafetyHelp.Audio.Music
 
                 if (myMusicSourceCast == null)
                 {
-                    MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic." +
-                                      " Calling original function.");
+                    LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic." +
+                                           " Calling original function.");
                     return true;
                 }
 
@@ -354,8 +350,8 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: Custom Campaign is null. Unable of changing StartMusic." +
-                                          " Calling original.");
+                        LoggingHelper.ErrorLog("Custom Campaign is null. Unable of changing StartMusic." +
+                                               " Calling original.");
                         return true;
                     }
 
@@ -414,8 +410,8 @@ namespace NewSafetyHelp.Audio.Music
 
                 if (myMusicSource == null)
                 {
-                    MelonLogger.Error("ERROR: 'myMusicSource' was not found. Unable of changing StartMusic." +
-                                      " Calling original function.");
+                    LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic." +
+                                           " Calling original function.");
                     return true;
                 }
                 
@@ -423,8 +419,8 @@ namespace NewSafetyHelp.Audio.Music
 
                 if (myMusicSourceCast == null)
                 {
-                    MelonLogger.Error("ERROR: 'myMusicSource' could not be cast. Unable of changing StartMusic." +
-                                      " Calling original function.");
+                    LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic." +
+                                           " Calling original function.");
                     return true;
                 }
                 
