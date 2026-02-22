@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
+using NewSafetyHelp.LoggingSystem;
 using Steamworks;
 using UnityEngine;
 
@@ -78,7 +78,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                             if (GlobalVariables.currentDay > currentCustomCampaign.CampaignDayStrings.Count 
                                 || currentCustomCampaign.CampaignDays > currentCustomCampaign.CampaignDayStrings.Count)
                             {
-                                MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
+                                LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                                         " Using default values.");
                                 dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                             }
                             else
@@ -110,7 +111,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                                     && daysStrings.Count != unlockDays.Count 
                                     && string.IsNullOrEmpty(dayString))
                                 {
-                                    MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using default values. ");
+                                    LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                                             " Using default values.");
                                     dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                                 }
                                 else
@@ -119,7 +121,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                                     {
                                         if (currentCustomCampaign.CampaignDays > daysStrings.Count)
                                         {
-                                            MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using modulated values. ");
+                                            LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                                                     " Using modulated values.");
                                         }
                                         
                                         dayString = daysStrings[(GlobalVariables.currentDay - 1) % daysStrings.Count]; // We simply pick what best fits.
@@ -128,7 +131,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                                     {
                                         if (daysStrings.Count != unlockDays.Count) // If we don't have enough to show.
                                         {
-                                            MelonLogger.Warning("WARNING: Amount of day strings does not correspond with the max amount of days for the custom campaign. Using modulated values. ");
+                                            LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                                                     " Using modulated values.");
                                             dayString = daysStrings[(GlobalVariables.currentDay - 1) % daysStrings.Count];
                                         }
                                         else // We do have enough days.
@@ -158,7 +162,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                     else
                     {
-                        MelonLogger.Warning("WARNING: Was unable of finding the current campaign. Defaulting to default values.");
+                        LoggingHelper.WarningLog("Was unable of finding the current campaign." +
+                                                 " Defaulting to default values.");
                         
                         __result = defaultDayNames[GlobalVariables.currentDay - 1];
                     }
@@ -203,7 +208,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                 if (loadVarsMethod == null || populateEntriesListMethod == null || writeDayStringMethod == null)
                 {
-                    MelonLogger.Error("ERROR: loadVarsMethod or populateEntriesListMethod or writeDayStringMethod is null!");
+                    LoggingHelper.ErrorLog("loadVarsMethod or populateEntriesListMethod or writeDayStringMethod is null!");
                     yield break;
                 }
                 
@@ -334,7 +339,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign is null! Unable of enabling skip call button.");
+                        LoggingHelper.CampaignNullError();
                     }
                     else if (customCampaign.AlwaysSkipCallButton)
                     {
@@ -361,9 +366,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-                #if DEBUG
-                    MelonLogger.Msg("DEBUG: Calling EndDayRoutine.");
-                #endif
+                LoggingHelper.DebugLog(" Calling EndDayRoutine.");
                 
                 __result = EndDayRoutineChanged(__instance);
                 
@@ -374,9 +377,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             {
                 if (IsDayEnding)
                 {
-                    #if DEBUG
-                        MelonLogger.Msg("DEBUG: Skipping EndDayRoutine.");
-                    #endif
+                    LoggingHelper.DebugLog("Skipping EndDayRoutine.");
                     
                     yield break;
                 }
@@ -409,15 +410,16 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 if (!GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo _unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod("UnlockDailySteamAchievement", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                    MethodInfo unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod("UnlockDailySteamAchievement", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                    if (_unlockDailySteamAchievement == null)
+                    if (unlockDailySteamAchievement == null)
                     {
-                        MelonLogger.Error("ERROR: Method 'UnlockDailySteamAchievement' was null. Catastrophic failure!");
+                        LoggingHelper.CriticalErrorLog("Method 'UnlockDailySteamAchievement' was null. Catastrophic failure!");
                         yield break;
                     }
 
-                    _unlockDailySteamAchievement.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.UnlockDailySteamAchievement();;
+                    // OLD: mainCanvasBehavior.UnlockDailySteamAchievement();
+                    unlockDailySteamAchievement.Invoke(mainCanvasBehavior, null); 
                 }
                     
                 GlobalVariables.fade.FadeIn(2f);
@@ -435,25 +437,25 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: customCampaign was null. Catastrophic failure!");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
                     customCampaign.SavedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
                 }
                 
-                FieldInfo _progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                FieldInfo progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                if (_progressDay == null)
+                if (progressDay == null)
                 {
-                    MelonLogger.Error("ERROR: Field 'progressDay' was null. Catastrophic failure!");
+                    LoggingHelper.CriticalErrorLog("Field 'progressDay' was null. Catastrophic failure!");
                     yield break;
                 }
                 
-                if (!(bool) _progressDay.GetValue(mainCanvasBehavior)) // !mainCanvasBehavior.progressDay
+                if (!(bool) progressDay.GetValue(mainCanvasBehavior)) // !mainCanvasBehavior.progressDay
                 {
                     ++GlobalVariables.currentDay;
-                    _progressDay.SetValue(mainCanvasBehavior, true); // mainCanvasBehavior.progressDay = true;
+                    progressDay.SetValue(mainCanvasBehavior, true); // mainCanvasBehavior.progressDay = true;
                 }
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
@@ -462,15 +464,16 @@ namespace NewSafetyHelp.CallerPatches.UI
                     GlobalVariables.saveManagerScript.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
                     GlobalVariables.saveManagerScript.savedEntryTier = GlobalVariables.entryUnlockScript.currentTier;
                     
-                    MethodInfo _saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                    if (_saveCallerAnswers == null)
+                    if (saveCallerAnswers == null)
                     {
-                        MelonLogger.Error("ERROR: Method 'SaveCallerAnswers' was null. Catastrophic failure!");
+                        LoggingHelper.CriticalErrorLog("Method 'SaveCallerAnswers' was null." +
+                                                       " Catastrophic failure!");
                         yield break;
                     }
                     
-                    _saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
+                    saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
                 }
                 else // Custom Campaign
                 {
@@ -478,7 +481,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign is null. Catastrophic failure!");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
                     
@@ -510,9 +513,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 yield return null;
                 
-                #if DEBUG
-                    MelonLogger.Msg("DEBUG: Ending the EndDayRoutine.");
-                #endif
+                LoggingHelper.DebugLog("Ending the EndDayRoutine.");
                 
                 mainCanvasBehavior.ExitToMenu();
                 
@@ -531,24 +532,24 @@ namespace NewSafetyHelp.CallerPatches.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-                __result = endingCutsceneRoutineChanged(__instance);
+                __result = EndingCutsceneRoutineChanged(__instance);
                 
                 return false; // Skip function with false.
             }
             
-            private static IEnumerator endingCutsceneRoutineChanged(MainCanvasBehavior __instance)
+            private static IEnumerator EndingCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
 
                 if (Camera.main == null)
                 {
-                    MelonLogger.Error("ERROR: Camera was null. Catastrophic failure!");
+                    LoggingHelper.CriticalErrorLog("Camera was null. Catastrophic failure!");
                     yield break;
                 }
                 
                 if (mainCanvasBehavior.videoPlayer.isPlaying || Camera.main.gameObject.GetComponent<Animator>().GetBool(Shake))
                 {
-                    MelonLogger.Msg("INFO: Ending cutscene is already playing. Not calling again.");
+                    LoggingHelper.InfoLog("INFO: Ending cutscene is already playing. Not calling again.");
                     yield break;
                 }
                 
@@ -569,15 +570,15 @@ namespace NewSafetyHelp.CallerPatches.UI
                     GlobalVariables.saveManagerScript.savedGameFinished = 1;
                     GlobalVariables.saveManagerScript.savedGameFinishedDisplay = 1;
                 
-                    MethodInfo _saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                    if (_saveCallerAnswers == null)
+                    if (saveCallerAnswers == null)
                     {
-                        MelonLogger.Error("ERROR: Method 'SaveCallerAnswers' was null. Catastrophic failure!");
+                        LoggingHelper.CriticalErrorLog("Method 'SaveCallerAnswers' was null. Catastrophic failure!");
                         yield break;
                     }
                     
-                    _saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
+                    saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
                 }
                 else // Custom Campaign
                 {
@@ -585,7 +586,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
                     
@@ -637,7 +638,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
@@ -663,7 +664,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
                     
@@ -694,14 +695,15 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (_achievedHundredPercentAccuracyRating == null)
                     {
-                        MelonLogger.Error("ERROR: Method 'AchievedHundredPercentAccuracyRating' was null. Catastrophic failure!");
+                        LoggingHelper.CriticalErrorLog("Method 'AchievedHundredPercentAccuracyRating' was null." +
+                                                       " Catastrophic failure!");
                         yield break;
                     }
                     
                     if ((bool) _achievedHundredPercentAccuracyRating.Invoke(mainCanvasBehavior, null)) // mainCanvasBehavior.AchievedHundredPercentAccuracyRating()
                     {
                         SteamUserStats.SetAchievement("PerfectGame");
-                        MelonLogger.Msg("UNITY LOG: PerfectGame Achievement Unlocked.");
+                        LoggingHelper.DebugLog("[UNITY] PerfectGame Achievement unlocked.");
                     }
                     SteamUserStats.StoreStats();
                 }
@@ -751,7 +753,9 @@ namespace NewSafetyHelp.CallerPatches.UI
                         
                         if (customCCaller == null)
                         {
-                            MelonLogger.Error("ERROR: Custom campaign caller was null. Unable of checking for downed network parameter. Calling original function.");
+                            LoggingHelper.ErrorLog("Custom campaign caller was null." +
+                                                   " Unable of checking for downed network parameter." +
+                                                   " Calling original function.");
                             return true;
                         }
 
@@ -788,15 +792,15 @@ namespace NewSafetyHelp.CallerPatches.UI
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 
-                FieldInfo _shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-                if (_shakeAnimationString == null)
+                if (shakeAnimationString == null)
                 {
-                    MelonLogger.Error("ERROR: shakeAnimationString is null! Catastrophic failure!");
+                    LoggingHelper.CriticalErrorLog("shakeAnimationString is null! Catastrophic failure!");
                     yield break;
                 }
                 
-                mainCanvasBehavior.cameraAnimator.SetBool((string) _shakeAnimationString.GetValue(__instance), true); // mainCanvasBehavior.shakeAnimationString
+                mainCanvasBehavior.cameraAnimator.SetBool((string) shakeAnimationString.GetValue(__instance), true); // mainCanvasBehavior.shakeAnimationString
                 
                 mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.screenShakeLoop,
                     GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
@@ -831,7 +835,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
@@ -861,7 +865,7 @@ namespace NewSafetyHelp.CallerPatches.UI
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign was null. Catastrophic failure!");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
                     

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
-using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
@@ -30,14 +30,14 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 return false; // Skip function with false.
             }
 
-            public static IEnumerator TypeTextCoroutine(CallWindowBehavior __instance, CallerProfile profile,
+            private static IEnumerator TypeTextCoroutine(CallWindowBehavior __instance, CallerProfile profile,
                 bool skip)
             {
                 yield return null;
 
                 if (profile == null)
                 {
-                    MelonLogger.Warning("WARNING: Profile is null. Possibly missing something?");
+                    LoggingHelper.WarningLog("Profile is null. Possibly missing something?");
                     yield break;
                 }
                 

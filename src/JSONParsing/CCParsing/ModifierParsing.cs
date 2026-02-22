@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
@@ -157,8 +156,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (string.IsNullOrEmpty(backgroundName.Value<string>()))
                     {
-                        MelonLogger.Error($"ERROR: Did not find '{backgroundName.Value<string>()}'." +
-                                          " Adding no background.");
+                        LoggingHelper.ErrorLog($"Did not find '{backgroundName.Value<string>()}'." +
+                                               " Adding no background.");
                         backgroundSprites.Add(null);
                     }
                     else
