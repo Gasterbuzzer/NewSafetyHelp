@@ -58,54 +58,48 @@ namespace NewSafetyHelp.LoggingSystem
             switch (loggingLevel)
             {
                 case LoggingLevel.ERROR:
-                    MelonLogger.Error("ERROR: " + loggingMessage);
+                    MelonLogger.Error($"ERROR: {loggingMessage}");
                     break;
 
                 case LoggingLevel.CRITICAL_ERROR:
-                    MelonLogger.Msg(ConsoleColor.Red, "CRITICAL ERROR: " + loggingMessage);
+                    MelonLogger.Msg(ConsoleColor.Red, $"CRITICAL ERROR: {loggingMessage}");
                     break;
 
                 case LoggingLevel.WARNING:
-                    MelonLogger.Warning("WARNING: " + loggingMessage);
+                    MelonLogger.Warning($"WARNING: {loggingMessage}");
                     break;
 
                 case LoggingLevel.INFO:
                     if (consoleColor != null)
                     {
-                        MelonLogger.Msg((ConsoleColor) consoleColor, "INFO: " + loggingMessage);
+                        MelonLogger.Msg((ConsoleColor) consoleColor, $"INFO: {loggingMessage}");
                     }
                     else
                     {
-                        MelonLogger.Msg("INFO: " + loggingMessage);
+                        MelonLogger.Msg($"INFO: {loggingMessage}");
                     }
                     break;
 
                 case LoggingLevel.DEBUG:
-                    if (NewSafetyHelpMainClass.ShowDebugLogs.Value)
+                    if (consoleColor != null)
                     {
-                        if (consoleColor != null)
-                        {
-                            MelonLogger.Msg((ConsoleColor) consoleColor, "DEBUG: " + loggingMessage);
-                        }
-                        else
-                        {
-                            MelonLogger.Msg("DEBUG: " + loggingMessage);
-                        }
+                        MelonLogger.Msg((ConsoleColor)consoleColor, $"DEBUG: {loggingMessage}");
+                    }
+                    else
+                    {
+                        MelonLogger.Msg($"DEBUG: {loggingMessage}");
                     }
 
                     break;
 
                 case LoggingLevel.DEBUG_WARNING:
-                    if (NewSafetyHelpMainClass.ShowDebugLogs.Value)
+                    if (consoleColor != null)
                     {
-                        if (consoleColor != null)
-                        {
-                            MelonLogger.Msg((ConsoleColor) consoleColor, "DEBUG WARNING: " + loggingMessage);
-                        }
-                        else
-                        {
-                            MelonLogger.Msg("DEBUG WARNING: " + loggingMessage);
-                        }
+                        MelonLogger.Msg((ConsoleColor)consoleColor, $"DEBUG WARNING: {loggingMessage}");
+                    }
+                    else
+                    {
+                        MelonLogger.Msg($"DEBUG WARNING: {loggingMessage}");
                     }
 
                     break;
