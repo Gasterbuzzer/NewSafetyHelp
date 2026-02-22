@@ -7,6 +7,7 @@ using MelonLoader;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -27,7 +28,10 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
             foreach (Caller caller in callers)
             {
                 if (profileToCheck == caller.callerProfile)
+                {
                     return caller; // Returns the caller
+                }
+
             }
 
             return null;
@@ -62,7 +66,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                     if (pickRandomClip == null)
                     {
-                        MelonLogger.Error("ERROR: PickRandomClip couldn't be found in CallerController.");
+                        LoggingHelper.ErrorLog("PickRandomClip couldn't be found in CallerController.");
                         return;
                     }
 
@@ -111,7 +115,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                 if (callerAudioSourceGetter == null)
                 {
-                    MelonLogger.Error($"CallerController: callerAudioSourceGetter is null");
+                    LoggingHelper.ErrorLog("CallerController: callerAudioSourceGetter is null");
                     yield break;
                 }
 
@@ -119,7 +123,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                 if (callerAudioSource == null)
                 {
-                    MelonLogger.Error($"CallerController: callerAudioSource is null");
+                    LoggingHelper.ErrorLog("CallerController: callerAudioSource is null");
                     yield break;
                 }
 
@@ -187,14 +191,14 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                 {
                     if (profile != null && profile.callerMonster != null)
                     {
-                        #if DEBUG
-                        MelonLogger.Msg(
-                            $"DEBUG: Monster Name: {profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}.");
-                        #endif
+                        LoggingHelper.DebugLog("Monster Name:" +
+                                               $" {profile.callerMonster.monsterName} with ID:" +
+                                               $" {profile.callerMonster.monsterID}.");
                     }
                     else if (!CustomCampaignGlobal.InCustomCampaign)
                     {
-                        MelonLogger.Msg("INFO: This caller does not have a monster entry. Thus not replaced.");
+                        LoggingHelper.InfoLog("This caller does not have a monster entry." +
+                                              " Thus not replaced.");
                     }
 
                     if (profile != null && profile.callerClip != null && profile.callerClip.clip != null)
@@ -203,10 +207,10 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                     }
                 }
 
-                #if DEBUG
-                MelonLogger.Msg(
-                    $"DEBUG: Caller Audio File Name: {callerAudioSource.name} with {callerAudioSource.clip.name} and {callerAudioSource.clip.length}.");
-                #endif
+                LoggingHelper.InfoLog("Caller Audio File Name:" +
+                                      $" {callerAudioSource.name} with " +
+                                      $"{callerAudioSource.clip.name} and " +
+                                      $"{callerAudioSource.clip.length}.");
 
                 if (profile != null && profile.callerClip != null)
                 {
@@ -232,9 +236,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref CallerProfile profile)
             {
-                #if DEBUG
-                MelonLogger.Msg($"DEBUG: New caller is calling.");
-                #endif
+                LoggingHelper.DebugLog("New caller is calling.");
 
                 if (profile == null)
                 {
@@ -244,8 +246,8 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                     }
                     else
                     {
-                        MelonLogger.Error("ERROR: Caller is null. Unable of calling. " +
-                                          "You may have a duplicate caller (Meaning the same ID on two callers)!");
+                        LoggingHelper.ErrorLog("Caller is null. Unable of calling. " +
+                                               "You may have a duplicate caller (Meaning the same ID on two callers)!");
                         return false;
                     }
                 }
@@ -286,10 +288,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                             if (item.allowCallAgainOverRestart)
                             {
-                                #if DEBUG
-                                MelonLogger.Msg(
-                                    $"INFO: Entry {item.Name} is allowed to be called again even if called once in the past.");
-                                #endif
+                                LoggingHelper.DebugLog($"Entry {item.Name} is allowed to be called again even if called once in the past.");
 
                                 entryAlreadyCalledBeforeEntry.Value =
                                     false; // Reset the entry. If not allowed to store the value.
@@ -297,21 +296,19 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                             if (entryAlreadyCalledBeforeEntry.Value)
                             {
-                                #if DEBUG
-                                MelonLogger.Msg(
-                                    $"INFO: Entry {item.Name} was already called once, so it will not be available for calling.");
-                                #endif
+                                LoggingHelper.DebugLog($"Entry {item.Name} was already called once," +
+                                                       $" so it will not be available for calling.");
                             }
 
                             if (Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
                             {
-                                if (!item
-                                        .allowCallAgainOverRestart) // We check if we already called once, if yes, we skip and if not we continue (setting is done later).
+                                // We check if we already called once, if yes, we skip and if not we continue
+                                // (setting is done later).
+                                if (!item.allowCallAgainOverRestart)
                                 {
                                     if (!entryAlreadyCalledBeforeEntry.Value &&
-                                        item.permissionLevel <=
-                                        GlobalVariables
-                                            .currentDay) // We never called it. And make sure we can actually access the callers' entry.
+                                        // We never called it. And make sure we can actually access the callers' entry.
+                                        item.permissionLevel <= GlobalVariables.currentDay) 
                                     {
                                         if (GlobalVariables.isXmasDLC) // If DLC
                                         {
@@ -320,15 +317,15 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                                 entries.Add(item);
                                                 replaceTrue = true;
 
-                                                MelonLogger.Msg(
-                                                    $"INFO: Saved Entry '{item.Name}' to not be called in the future.");
+                                                LoggingHelper.InfoLog($"Saved Entry '{item.Name}'" +
+                                                                      " to not be called in the future.");
 
                                                 entryAlreadyCalledBeforeEntry.Value = true;
                                             }
                                             else
                                             {
-                                                MelonLogger.Msg(
-                                                    $"INFO: Entry '{item.Name}' is not allowed to be called in DLC Mode.");
+                                                LoggingHelper.InfoLog($"Entry '{item.Name}'" +
+                                                                      " is not allowed to be called in DLC Mode.");
                                             }
                                         }
                                         else // Main Game
@@ -336,9 +333,9 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                             entries.Add(item);
                                             replaceTrue = true;
 
-                                            MelonLogger.Msg(
-                                                $"INFO: Saved Entry '{item.Name}' to not be called in the future.");
-
+                                            LoggingHelper.InfoLog($"Saved Entry '{item.Name}'" +
+                                                                  " to not be called in the future.");
+                                            
                                             entryAlreadyCalledBeforeEntry.Value = true;
                                         }
                                     }
@@ -373,30 +370,30 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                 // Not in custom campaign. This makes odd problems in custom campaigns.
                 if (!CustomCampaignGlobal.InCustomCampaign) 
                 {
+                    // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
                     if (profile != null && !__instance.arcadeMode &&
-                        profile.consequenceCallerProfile !=
-                        null) // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
+                        profile.consequenceCallerProfile != null) 
                     {
-                        MelonLogger.Msg($"INFO: Current caller is Consequence Caller.");
+                        LoggingHelper.InfoLog("Current caller is a consequence Caller.");
                         Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
 
                         if (callers != null) // Caller is valid.
                         {
-                            MelonLogger.Msg($"Consequence Caller name: {callers.callerProfile.name}");
+                            LoggingHelper.InfoLog($"Consequence Caller name: {callers.callerProfile.name}");
 
                             if (GlobalParsingVariables.EntriesMetadata.Exists(item =>
                                     item.referenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile
-                                        .name)) // IF the consequence caller has been replaced once.
+                                        .name)) // If the consequence caller has been replaced once.
                             {
-                                MelonLogger.Msg($"INFO: Consequence Caller to be replaced found!");
+                                LoggingHelper.InfoLog("Consequence Caller to be replaced found!");
                                 EntryMetadata foundMetadata = GlobalParsingVariables.EntriesMetadata.Find(item =>
                                     item.referenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile.name);
 
                                 if (foundMetadata == null)
                                 {
-                                    MelonLogger.Error($"INFO: Did not find replacement caller.");
+                                    LoggingHelper.ErrorLog("Did not find replacement caller.");
                                     return true;
                                 }
 
@@ -406,13 +403,13 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                 profile.callerPortrait = foundMetadata.consequenceCallerImage;
                                 profile.callerClip = foundMetadata.consequenceCallerClip;
 
-                                MelonLogger.Msg(
-                                    $"INFO: Replaced the current caller transcript with: {profile.callTranscription}.");
+                                LoggingHelper.InfoLog("Replaced the current caller transcript with: " +
+                                                      $"{profile.callTranscription}.");
                             }
                         }
                         else
                         {
-                            MelonLogger.Error($"INFO: Did not find initial caller.");
+                            LoggingHelper.ErrorLog("Did not find initial caller.");
                         }
                     }
                     // Replace information about the caller with a random entry
@@ -446,9 +443,9 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                             if (profile != null && profile.callerMonster != null)
                             {
-                                MelonLogger.Msg(
-                                    $"INFO: Replaced the current caller ({profile.callerMonster.monsterName} with ID: {profile.callerMonster.monsterID}) with a custom caller:" +
-                                    $" {selected.Name} with ID: {selected.ID}.");
+                                LoggingHelper.InfoLog($"Replaced the current caller ({profile.callerMonster.monsterName} " +
+                                                      $"with ID: {profile.callerMonster.monsterID}) with a custom caller:" +
+                                                      $" {selected.Name} with ID: {selected.ID}.");
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
@@ -456,17 +453,14 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                 .referenceProfileNameInternal = profile.name;
                         }
                     }
-                    #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Finished handling the caller replacement.");
-                    #endif
+                    
+                    LoggingHelper.DebugLog("Finished handling the caller replacement.");
                 }
 
                 __instance.currentCallerProfile = profile;
                 GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
 
-                #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Current caller calling is '{profile.callerName}'.");
-                #endif
+                LoggingHelper.DebugLog($"Current caller calling is '{profile.callerName}'.");
                 
                 return false; // Skip the original function
             }

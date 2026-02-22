@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Reflection;
-using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CallerPatches.IncomingCallWindow;
 using NewSafetyHelp.CustomCampaignPatches;
@@ -35,7 +34,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                 if (dynamicCaller == null)
                 {
-                    MelonLogger.Error("ERROR: CallerController.dynamicCaller is null!");
+                    LoggingHelper.ErrorLog("CallerController.dynamicCaller is null!");
                     return true;
                 }
 
@@ -62,14 +61,10 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     if (!found) // We do not replace, so we default back to the current caller.
                     {
                         monsterToCheck = __instance.callers[__instance.currentCallerID].callerProfile.callerMonster;
-                        MelonLogger.Msg(
-                            $"INFO: The caller monster was: {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}.");
-
-                        #if DEBUG
-                        MelonLogger.Msg($"DEBUG: The previous caller was not replaced by any custom caller.");
-                        #endif
+                        LoggingHelper.InfoLog("The caller monster was:" +
+                                              $" {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}.");
+                        LoggingHelper.DebugLog("The previous caller was not replaced by any custom caller.");
                     }
-
 
                     if (monsterID == monsterToCheck) // If correct
                     {
@@ -79,9 +74,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         // Debug Info in case the replacement worked.
                         if (found)
                         {
-                            #if DEBUG
-                            MelonLogger.Msg("DEBUG: Selected the correct replaced entry.");
-                            #endif
+                            LoggingHelper.DebugLog("Selected the correct replaced entry.");
                         }
                     }
                     else // If wrong
@@ -92,8 +85,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                             if (customCampaign == null)
                             {
-                                MelonLogger.Error(
-                                    "ERROR: CustomCampaign is null! Unable of checking if to skip checking the caller answer.");
+                                LoggingHelper.CampaignNullError();
                                 __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
                                 return false;
                             }
@@ -119,7 +111,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                                 if (triggerXmasLight == null)
                                 {
-                                    MelonLogger.Error("ERROR: triggerXmasLight is null!");
+                                    LoggingHelper.ErrorLog("triggerXmasLight is null! Calling original function.");
                                     return true;
                                 }
 
@@ -131,7 +123,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                             // Debug Info in case the replacement worked.
                             if (found)
                             {
-                                MelonLogger.Msg("INFO: Selected the wrong replaced entry.");
+                                LoggingHelper.InfoLog("Selected the wrong replaced entry.");
                             }
                         }
                     }
@@ -144,7 +136,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                     if (!CustomCampaignGlobal.InCustomCampaign)
                     {
-                        MelonLogger.Msg("INFO: Dynamic Caller. No replacement possible. Always correct.");
+                        LoggingHelper.DebugLog("INFO: Dynamic Caller. No replacement possible. Always correct.");
                     }
                 }
 
@@ -172,7 +164,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                 
                 if (onCallConcluded == null)
                 {
-                    MelonLogger.Error("ERROR: OnCallConcluded is null. Calling original function.");
+                    LoggingHelper.ErrorLog("OnCallConcluded is null. Calling original function.");
                     return true;
                 }
                 else // _onCallConcluded != null
@@ -181,14 +173,14 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                     if (del != null)
                     {
-                        del.DynamicInvoke(); // CallerController.OnCallConcluded();
+                        // Old: CallerController.OnCallConcluded();
+                        del.DynamicInvoke(); 
                     }
                     else
                     {
-                        #if DEBUG
-                        MelonLogger.Msg(
-                            "DEBUG WARNING: OnCallConcluded has no subscribers unable of executing. Ignoring.");
-                        #endif
+                        LoggingHelper.DebugLog("[INFO] OnCallConcluded has no subscribers unable of executing." +
+                                               " Ignoring.");
+
                     }
                 }
 
@@ -198,7 +190,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                 if (newCallRoutine == null)
                 {
-                    MelonLogger.Error("ERROR: NewCallRoutine is null. Calling original function.");
+                    LoggingHelper.ErrorLog("NewCallRoutine is null. Calling original function.");
                     return true;
                 }
 
@@ -212,7 +204,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                 if (_callerAudioSource == null)
                 {
-                    MelonLogger.Error("ERROR: callerAudioSource is null. Calling original function.");
+                    LoggingHelper.ErrorLog("callerAudioSource is null. Calling original function.");
                     return true;
                 }
 
@@ -221,12 +213,13 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                 if (triggerGameOver == null)
                 {
-                    MelonLogger.Error("ERROR: triggerGameOver is null. Calling original function.");
+                    LoggingHelper.ErrorLog("triggerGameOver is null. Calling original function.");
                     return true;
                 }
 
                 AudioSource callerAudioSource = (AudioSource)_callerAudioSource.GetValue(__instance);
-                callerAudioSource.Stop(); // __instance.callerAudioSource.Stop();
+                // OLD: __instance.callerAudioSource.Stop();
+                callerAudioSource.Stop(); 
 
                 if (__instance.arcadeMode)
                 {
@@ -241,8 +234,8 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     {
                         __instance.CreateCustomCaller();
 
-                        __instance.StartCoroutine(
-                            newCallRoutineTenValue); // this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
+                        // OLD: this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
+                        __instance.StartCoroutine(newCallRoutineTenValue); 
 
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
 
@@ -278,32 +271,33 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                         if (_colorLifeImages == null || _cameraShake == null || _arcadeFailureRoutine == null)
                         {
-                            MelonLogger.Error(
-                                "ERROR: ColorLifeImages or CameraShake or ArcadeFailureRoutine is null. Calling original function.");
+                            LoggingHelper.ErrorLog("ColorLifeImages or CameraShake or ArcadeFailureRoutine is null." +
+                                                   " Calling original function.");
                             return true;
                         }
 
-                        _colorLifeImages.Invoke(__instance, null); // __instance.ColorLifeImages();
+                        // OLD: __instance.ColorLifeImages();
+                        _colorLifeImages.Invoke(__instance, null); 
 
                         IEnumerator cameraShake = (IEnumerator)_cameraShake.Invoke(__instance, new object[] { 0.25f });
 
                         if (cameraShake != null)
                         {
-                            __instance.StartCoroutine(
-                                cameraShake); // __instance.StartCoroutine(__instance.CameraShake(0.25f));
+                            // OLD: __instance.StartCoroutine(__instance.CameraShake(0.25f));
+                            __instance.StartCoroutine(cameraShake);
                         }
 
                         if (__instance.currentStrikes >= __instance.strikesToFailure)
                         {
                             IEnumerator arcadeFailureRoutine =
                                 (IEnumerator)_arcadeFailureRoutine.Invoke(__instance, null);
-                            __instance.StartCoroutine(
-                                arcadeFailureRoutine); // __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
+                            // OLD: __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
+                            __instance.StartCoroutine(arcadeFailureRoutine); 
                         }
                         else
                         {
-                            __instance.StartCoroutine(
-                                newCallRoutineTenValue); //__instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
+                            // OLD: __instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
+                            __instance.StartCoroutine(newCallRoutineTenValue); 
                         }
                     }
                 }
@@ -318,7 +312,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                     if (checkCallerAnswer == null)
                     {
-                        MelonLogger.Error("ERROR: CheckCallerAnswer is null. Calling original function.");
+                        LoggingHelper.ErrorLog("CheckCallerAnswer is null. Calling original function.");
                         return true;
                     }
 
@@ -327,10 +321,9 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                     // Before checking, it is the last call of the day, we check if we can increase the tier.
 
-                    #if DEBUG
-                    MelonLogger.Msg(
-                        $"DEBUG: Increase tier? (For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) {__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
-                    #endif
+                    LoggingHelper.DebugLog("Increase tier?" +
+                                           $" (For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName})" +
+                                           $" {__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
 
                     if (__instance.callers[__instance.currentCallerID].callerProfile.increaseTier)
                     {
@@ -373,7 +366,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                         if (lastDayNum == null)
                         {
-                            MelonLogger.Error("ERROR: lastDayNum is null. Calling original function.");
+                            LoggingHelper.ErrorLog("lastDayNum is null. Calling original function.");
                             return true;
                         }
 
@@ -397,10 +390,8 @@ namespace NewSafetyHelp.CallerPatches.Answer
                         int checkResult = CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
-                            
-                            #if DEBUG
-                            MelonLogger.Msg(ConsoleColor.DarkYellow, "DEBUG: Calling end day routine from submit answer.");
-                            #endif
+                            LoggingHelper.DebugLog("Calling end day routine from submit answer.",
+                                consoleColor: ConsoleColor.DarkYellow);
                             
                             // Increase caller ID, since we are skipping callers.
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult;
@@ -416,7 +407,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                         if (customCampaign == null)
                         {
-                            MelonLogger.Error("ERROR: CustomCampaign is null. Calling original function.");
+                            LoggingHelper.CampaignNullError();
                             return true;
                         }
     
@@ -515,7 +506,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: CustomCampaign is null. Critical error.");
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
                         
