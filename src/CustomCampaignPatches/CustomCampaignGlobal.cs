@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -62,6 +63,24 @@ namespace NewSafetyHelp.CustomCampaignPatches
             }
             
             return customCampaign.CustomCallersInCampaign.Find(customCaller => customCaller.OrderInCampaign == orderID);
+        }
+        
+        /// <summary>
+        /// Gets the custom music from custom campaign.
+        /// </summary>
+        /// <param name="musicToFind">RichAudioClip of the music to find.</param>
+        /// <returns>CustomMusic object of the found object. If not found, default.</returns>
+        [CanBeNull]
+        public static CustomMusic GetCustomMusicFromActiveCampaign(RichAudioClip musicToFind)
+        {
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            
+            if (customCampaign == null)
+            {
+                return null;
+            }
+            
+            return customCampaign.CustomMusic.Find(customMusic => customMusic.MusicClip == musicToFind);
         }
 
         /// <summary>

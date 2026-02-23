@@ -6,6 +6,7 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -361,8 +362,32 @@ namespace NewSafetyHelp.Audio.Music
                     {
                         myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
                     }
+
+                    CustomMusic customMusic = CustomCampaignGlobal.GetCustomMusicFromActiveCampaign(myMusicClip);
+
+                    if (customMusic != null 
+                        && !customMusic.IsIntermissionMusic
+                        && customMusic.StartRange != null
+                        && customMusic.StartRange.Count > 0)
+                    {
+                        float? chosenStart = RandomFromList.GetRandomFromList(customMusic.StartRange);
+
+                        if (chosenStart != null)
+                        {
+                            myMusicSourceCast.time = (float) chosenStart;
+                            LoggingHelper.DebugLog($"Chosen starting music offset of: '{chosenStart}'.");
+                        }
+                        else
+                        {
+                            myMusicSourceCast.time = 0.0f;
+                        }
+                    }
+                    else
+                    {
+                        myMusicSourceCast.time = 0.0f;
+                    }
                     
-                    myMusicSourceCast.time = 0.0f;
+                    
                 }
                 else // Main Campaign
                 {
