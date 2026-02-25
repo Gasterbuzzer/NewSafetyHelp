@@ -53,6 +53,8 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 return;
             }
 
+            myMusicSourceCast.pitch = 1.0f;
+
             shouldPlayIntermissionMusic = true;
             playIntermission =
                 MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));

@@ -366,7 +366,7 @@ namespace NewSafetyHelp.CallerPatches.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
-                LoggingHelper.DebugLog(" Calling EndDayRoutine.");
+                LoggingHelper.DebugLog("Calling EndDayRoutine.");
                 
                 __result = EndDayRoutineChanged(__instance);
                 
