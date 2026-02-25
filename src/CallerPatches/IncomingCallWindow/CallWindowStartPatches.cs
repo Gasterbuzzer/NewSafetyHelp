@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.Audio.Music.Intermission;
+﻿using MelonLoader;
+using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
@@ -85,7 +86,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         // In case the intermission music is playing, we stop it.
                         if (CustomCampaignGlobal.InCustomCampaign)
                         {
-                            IntermissionMusicHelper.StopIntermissionMusic();
+                            MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
                         }
                         
                         if (!GlobalVariables.isXmasDLC && customCCaller.DownedNetworkCaller)

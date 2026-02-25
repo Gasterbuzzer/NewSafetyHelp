@@ -16,6 +16,8 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         private static bool shouldPlayIntermissionMusic = true;
         private static object playIntermission;
 
+        private static bool alreadyStoppingIntermissionMusic;
+
         // Field Infos
         private static readonly FieldInfo MyMusicSource =
             typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -56,6 +58,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             myMusicSourceCast.pitch = 1.0f;
 
             shouldPlayIntermissionMusic = true;
+            alreadyStoppingIntermissionMusic = false;
             playIntermission =
                 MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));
         }
@@ -65,7 +68,10 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         /// </summary>
         public static void StopIntermissionMusicRoutine()
         {
+            LoggingHelper.DebugLog("Stopping the intermission music.");
+            
             shouldPlayIntermissionMusic = false;
+            alreadyStoppingIntermissionMusic = false;
 
             if (playIntermission != null)
             {
@@ -76,20 +82,27 @@ namespace NewSafetyHelp.Audio.Music.Intermission
         /// <summary>
         /// Stops the intermission music from playing.
         /// </summary>
-        public static void StopIntermissionMusic()
+        public static IEnumerator StopIntermissionMusic()
         {
+            if (alreadyStoppingIntermissionMusic)
+            {
+                yield break;
+            }
+
+            alreadyStoppingIntermissionMusic = true;
+            
             if (MyMusicSource == null)
             {
-                LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic.");
-                return;
+                LoggingHelper.CriticalErrorLog("'myMusicSource' was not found. Unable of changing StartMusic.");
+                yield break;
             }
 
             AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(GlobalVariables.musicControllerScript);
 
             if (myMusicSourceCast == null)
             {
-                LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic.");
-                return;
+                LoggingHelper.CriticalErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic.");
+                yield break;
             }
 
             if (playIntermission != null)
@@ -98,9 +111,13 @@ namespace NewSafetyHelp.Audio.Music.Intermission
 
                 MelonCoroutines.Stop(playIntermission);
 
+                yield return FadeOutMusic(myMusicSourceCast);
+                
                 myMusicSourceCast.Stop();
-
                 myMusicSourceCast.loop = true;
+                myMusicSourceCast.volume = 1f;
+
+                alreadyStoppingIntermissionMusic = false;
             }
         }
 
@@ -119,6 +136,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
 
             while (shouldPlayIntermissionMusic)
             {
+                // Check if we should stop and to pick the next music.
                 if (audioClip == null || wasProvidedNull)
                 {
                     audioClip = PickIntermissionMusic(ref shouldPlayIntermission, customCampaign);
@@ -130,6 +148,8 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                     }
                 }
 
+                // Set some values to prevent a problem.
+                myMusicSourceCast.volume = audioClip.MusicClip.volume;
                 myMusicSourceCast.loop = false;
 
                 float startAfterSeconds = MusicStartRange(audioClip);
@@ -146,13 +166,21 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 }
 
                 GlobalVariables.musicControllerScript.StartMusic(audioClip.MusicClip);
-
+                
                 myMusicSourceCast.time = startAfterSeconds;
 
+                // Wait for end range.
                 yield return new WaitForSeconds(musicStopAfterSeconds - startAfterSeconds);
 
+                // Fade out the music.
+                yield return FadeOutMusic(myMusicSourceCast);
+                
+                // Reset values back to normal.
                 myMusicSourceCast.Stop();
+                myMusicSourceCast.loop = true;
+                myMusicSourceCast.volume = 1f;
 
+                // If we should stop.
                 if (!shouldLoop)
                 {
                     yield break;
@@ -277,6 +305,27 @@ namespace NewSafetyHelp.Audio.Music.Intermission
             }
 
             return null;
+        }
+        
+        /// <summary>
+        /// Fades out a given music source.
+        /// </summary>
+        private static IEnumerator FadeOutMusic(AudioSource mySource, float interpolateScalar = 1f)
+        {
+            float interpolateValue = 0.0f;
+            float maxVol = mySource.volume;
+            
+            while (mySource.volume > 0.0)
+            {
+                mySource.volume = Mathf.Lerp(maxVol, 0.0f, interpolateValue);
+                
+                interpolateValue += interpolateScalar * Time.deltaTime;
+                
+                yield return null;
+            }
+            
+            mySource.volume = 0.0f;
+            mySource.Stop();
         }
     }
 }

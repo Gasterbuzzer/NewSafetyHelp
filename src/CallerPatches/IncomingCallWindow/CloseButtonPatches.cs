@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using MelonLoader;
+using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
 using NewSafetyHelp.LoggingSystem;
@@ -66,6 +68,9 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                         if (checkResult > 0)
                         {
                             LoggingHelper.DebugLog("Calling end day routine from close button.");
+                            
+                            // In case the intermission music is playing, we stop it.
+                            MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
                             
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());

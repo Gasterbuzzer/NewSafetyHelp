@@ -30,7 +30,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     {
                         LoggingHelper.DebugLog("DEBUG: Last caller was the last one. Already ending the day.",
                             consoleColor: ConsoleColor.DarkYellow);
-                        
+
                         GlobalVariables.mainCanvasScript.CreateError("Day is ending. Please hold.");
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                         __instance.inputBlocker.SetActive(false);

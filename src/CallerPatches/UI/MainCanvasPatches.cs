@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.LoggingSystem;
 using Steamworks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -386,6 +388,8 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 mainCanvasBehavior.clockedOut = false;
+                
+                IntermissionMusicHelper.StopIntermissionMusicRoutine();
                 
                 yield return new WaitForSeconds(5f);
                 
@@ -925,7 +929,36 @@ namespace NewSafetyHelp.CallerPatches.UI
                 
                 return false; // Skip function with false.
             }
-            
+        }
+
+        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "ExitToMenu")]
+        public static class ExitToMenuPatch
+        {
+            /// <summary>
+            /// Patches the function to stop intermission music if still playing.
+            /// </summary>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once RedundantAssignment
+            private static bool Prefix(MainCanvasBehavior __instance)
+            {
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    IntermissionMusicHelper.StopIntermissionMusicRoutine();
+                }
+                
+                GlobalVariables.arcadeMode = false;
+                
+                if (!GlobalVariables.isXmasDLC)
+                {
+                    SceneManager.LoadScene("MainMenuScene");
+                }
+                else
+                {
+                    SceneManager.LoadScene("MainMenuSceneXmas");
+                }
+                
+                return false; // Skip function with false.
+            }
         }
         
     }

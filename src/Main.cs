@@ -66,8 +66,6 @@ namespace NewSafetyHelp
         {
             LoggingHelper.DebugLog($"Scene {sceneName} with build index {buildIndex} has been loaded!");
 
-            IntermissionMusicHelper.StopIntermissionMusicRoutine();
-
             MelonPreferences.Save(); // Save on scene change.
         }
     }
