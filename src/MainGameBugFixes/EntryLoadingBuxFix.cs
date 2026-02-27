@@ -42,7 +42,8 @@ namespace NewSafetyHelp.MainGameBugFixes
                 
                 __instance.selectedMonsterProfile = profile;
                 
-                if ((bool) isNetworkDown.Invoke(__instance, null)) // Original: __instance.IsNetworkDown()
+                // Original: __instance.IsNetworkDown()
+                if ((bool) isNetworkDown.Invoke(__instance, null)) 
                 {
                     profile = __instance.errorProfile;
                     __instance.cameraAnimator.SetTrigger(Glitch);
@@ -96,6 +97,9 @@ namespace NewSafetyHelp.MainGameBugFixes
             }
         }
         
+        /// <summary>
+        /// For EntryCanvas, not for MainCanvasBehavior like above. If you have a change, please update both.
+        /// </summary>
         [HarmonyLib.HarmonyPatch(typeof(EntryCanvasStandaloneBehavior), "UpdateSelectedEntry", typeof(MonsterProfile))]
         public static class EntryCanvasUpdateSelectedEntryPatch
         {

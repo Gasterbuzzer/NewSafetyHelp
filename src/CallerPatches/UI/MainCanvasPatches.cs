@@ -10,6 +10,7 @@ using NewSafetyHelp.LoggingSystem;
 using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -231,7 +232,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     // Currently just skips it.
                 }
 
-                if (GlobalVariables.isXmasDLC && (bool)(UnityEngine.Object)GlobalVariables.cheerMeterScript)
+                if (GlobalVariables.isXmasDLC && (bool)(Object)GlobalVariables.cheerMeterScript)
                 {
                     GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
                 }
