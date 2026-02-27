@@ -9,17 +9,20 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
 {
     public static class MainCanvasEntry
     {
-        public static GameObject GetEntryContent()
+        // Public reference to the animated portrait.
+        private static GameObject AnimatedPortrait;
+        
+        private static GameObject GetEntryContent()
         {
             return GameObject.Find("MainCanvas").transform.Find("Panel").transform.Find("MainEntryScrollWindow").transform.Find("Viewport").transform.Find("Content").gameObject;
         }
 
-        public static GameObject GetEntryPortrait()
+        private static GameObject GetEntryPortrait()
         {
             return GetEntryContent().transform.Find("Portrait").gameObject;
         }
         
-        public static GameObject CreateAnimatedPortrait()
+        private static GameObject CreateAnimatedPortrait()
         {
             GameObject portrait = GetEntryPortrait();
             GameObject portraitAnimated = Object.Instantiate(portrait, portrait.transform);
@@ -40,13 +43,15 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             videoPlayerComponent.isLooping = true;
             videoPlayerComponent.renderMode = VideoRenderMode.RenderTexture;
             videoPlayerComponent.aspectRatio = VideoAspectRatio.FitInside;
+            videoPlayerComponent.audioOutputMode = VideoAudioOutputMode.None;
             
-            var aspectFitter = portraitAnimated.AddComponent<AspectRatioFitter>();
+            AspectRatioFitter aspectFitter = portraitAnimated.AddComponent<AspectRatioFitter>();
             aspectFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             
             // Make render texture be the RawImage texture.
 
-            videoPlayerComponent.prepareCompleted += (videoPlayer) =>
+            videoPlayerComponent.prepareCompleted += 
+                videoPlayer =>
             {   
                 RenderTexture renderTexture = new RenderTexture((int) videoPlayer.width, (int) videoPlayer.height, 0);
                 renderTexture.Create();
@@ -61,14 +66,14 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             return portraitAnimated;
         }
 
-        public static void UpdateVisibilityNormalEntryPortrait(bool showEntryPortrait = false)
+        private static void UpdateVisibilityNormalEntryPortrait(bool showEntryPortrait = false)
         {
             GetEntryPortrait().GetComponent<Image>().enabled = showEntryPortrait;
         }
 
-        public static void SetVideoUrl(GameObject animatedPortrait, string url)
+        public static void SetVideoUrl(string url)
         {
-            VideoPlayer videoPlayerComponent = animatedPortrait.GetComponent<VideoPlayer>();
+            VideoPlayer videoPlayerComponent = AnimatedPortrait.GetComponent<VideoPlayer>();
 
             UpdateVisibilityNormalEntryPortrait();
             
@@ -83,7 +88,26 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             videoPlayerComponent.url = url;
             
             // Activate the portrait
-            animatedPortrait.SetActive(true);
+            AnimatedPortrait.SetActive(true);
+        }
+
+        public static void RestoreNormalPortrait()
+        {
+            // Show normal portrait again.
+            UpdateVisibilityNormalEntryPortrait(true);
+            
+            // Disable video player.
+            VideoPlayer videoPlayerComponent = AnimatedPortrait.GetComponent<VideoPlayer>();
+            
+            videoPlayerComponent.Stop();
+            
+            if(videoPlayerComponent.targetTexture != null)
+            {
+                videoPlayerComponent.targetTexture.Release();
+                Object.Destroy(videoPlayerComponent.targetTexture);
+            }
+            
+            AnimatedPortrait.SetActive(false);
         }
         
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "Start")]
@@ -114,9 +138,7 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
 
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    GameObject animatedPortrait = CreateAnimatedPortrait();
-                    SetVideoUrl(animatedPortrait,
-                        "C:/Program Files (x86)/Steam/steamapps/common/Home Safety Hotline/UserData/NewSafetyHelp/TESHSH/burger_cheese_butter.mp4");
+                    AnimatedPortrait = CreateAnimatedPortrait();
                 }
 
                 if (!GlobalVariables.isXmasDLC)
