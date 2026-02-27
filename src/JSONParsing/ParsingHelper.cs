@@ -467,12 +467,12 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="target">Target to write the value to.</param>
         /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
         /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
-        public static void TryAssignVideoPath(JObject jObjectParsed, string key, ref string target,
+        public static bool TryAssignVideoPath(JObject jObjectParsed, string key, ref string target,
             string jsonFolderPath, string usermodFolderPath)
         {
             if (!jObjectParsed.TryGetValue(key, out var token))
             {
-                return;
+                return false;
             }
             
             string videoFilePath = token.Value<string>();
@@ -501,6 +501,8 @@ namespace NewSafetyHelp.JSONParsing
                     target = "";
                 }
             }
+
+            return true;
         }
         
         /// <summary>

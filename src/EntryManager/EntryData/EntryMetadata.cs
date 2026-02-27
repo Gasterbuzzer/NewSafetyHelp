@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomCampaignPatches.Abstract;
+﻿using System;
+using NewSafetyHelp.CustomCampaignPatches.Abstract;
 
 namespace NewSafetyHelp.EntryManager.EntryData
 {
@@ -49,6 +50,9 @@ namespace NewSafetyHelp.EntryManager.EntryData
         // Custom Campaign
         public bool OnlyCustomCampaign = false;
         public bool DeleteEntry = false; // If to delete the entry (Only works in replacing mode)
+        
+        public string VideoUrlPortrait = String.Empty;
+        public bool IsVideoPortrait = false;
 
         // Constructor
         public EntryMetadata(string name, int id) { Name = name; ID = id; }

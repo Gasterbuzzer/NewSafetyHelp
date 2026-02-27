@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
@@ -9,6 +10,7 @@ using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+// ReSharper disable RedundantAssignment
 
 namespace NewSafetyHelp.JSONParsing.EntryParsing
 {
@@ -19,7 +21,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string monsterName, 
             ref string monsterDescription, ref List<string> arcadeCalls, ref Sprite monsterPortrait,
             ref string monsterPortraitLocation, ref string monsterAudioClipLocation, ref bool deleteReplaceEntry,
-            ref bool inCustomCampaign, ref string customCampaignName)
+            ref bool inCustomCampaign, ref string customCampaignName, 
+            ref string videoUrlPortrait, ref bool isVideoPortrait)
         {
             /* 
              * Monster Information
@@ -140,6 +143,10 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             
             // Parse if the "replace" entry should be deleted.
             ParsingHelper.TryAssign(jsonObjectParsed, "delete_entry", ref deleteReplaceEntry);
+            
+            // Video Entry Portrait
+            isVideoPortrait = ParsingHelper.TryAssignVideoPath(jsonObjectParsed, "portrait_video_name", 
+                ref videoUrlPortrait, jsonFolderPath, usermodFolderPath);
         }
 
         private static void ParsePhobias(ref JObject jsonObjectParsed, ref bool spiderPhobia, 
@@ -175,60 +182,6 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         // ----------------------------------------------------------------------------------------------------------
         // ----------------------------------------------------------------------------------------------------------
         // ----------------------------------------------------------------------------------------------------------
-        
-        // ReSharper disable once RedundantAssignment
-        private static void CreateNewExtra(ref EntryMetadata newExtra, ref string monsterName, ref int newID,
-            ref bool replaceEntry, ref string callerName, ref string callerTranscript, ref Sprite callerPortrait,
-            ref float callerReplaceChance, ref bool callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC,
-            ref bool includeDLC, ref bool includeMainCampaign, ref string consequenceCallerName,
-            ref string consequenceCallerTranscript, ref Sprite consequenceCallerPortrait,
-            ref bool deleteReplaceEntry, ref bool inCustomCampaign, ref string customCampaignName)
-        {
-            newExtra = new EntryMetadata(monsterName, newID)
-            {
-                Replace = replaceEntry,
-                CallerName = callerName,
-                CallTranscript = callerTranscript
-            }; // ID will not work if not provided, but this shouldn't be an issue.
-
-            if (callerPortrait != null)
-            {
-                newExtra.CallerImage = callerPortrait;
-            }
-
-            newExtra.CallerReplaceChance = callerReplaceChance;
-
-            newExtra.AllowCallAgainOverRestart = callerRestartCallAgain;
-
-            newExtra.PermissionLevel = accessLevel; // Minimum Access level required for call
-
-            // DLC Handling
-            newExtra.OnlyDLC = onlyDLC;
-            newExtra.IncludeInDlc = includeDLC;
-
-            newExtra.InMainCampaign = includeMainCampaign;
-
-            // Consequence Caller Handling
-            newExtra.ConsequenceName = consequenceCallerName;
-            newExtra.ConsequenceTranscript = consequenceCallerTranscript;
-            newExtra.ConsequenceCallerImage = consequenceCallerPortrait;
-
-            // Custom Campaign
-            newExtra.OnlyCustomCampaign = inCustomCampaign;
-            newExtra.CustomCampaignName = customCampaignName;
-
-            if (deleteReplaceEntry)
-            {
-                if (replaceEntry)
-                {
-                    newExtra.DeleteEntry = deleteReplaceEntry;
-                }
-                else
-                {
-                    LoggingHelper.WarningLog($"Provided entry '{monsterName}' cannot be deleted as it is not replacing an entry.");
-                }
-            }
-        }
         
         /// <summary>
         /// Function for adding a single entry.
@@ -291,6 +244,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             string customCampaignName = "NO_CUSTOM_CAMPAIGN_NAME";
 
             bool deleteReplaceEntry = false;
+            
+            string videoUrlPortrait = String.Empty;
+            bool isVideoPortrait = false;
 
             // Phobias
             bool spiderPhobia = false;
@@ -317,7 +273,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref accessLevelAdded, ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign,
                 ref monsterName, ref monsterDescription, ref arcadeCalls, ref monsterPortrait,
                 ref monsterPortraitLocation, ref monsterAudioClipLocation, ref deleteReplaceEntry,
-                ref inCustomCampaign, ref customCampaignName);
+                ref inCustomCampaign, ref customCampaignName, ref videoUrlPortrait, ref isVideoPortrait);
 
             // Parse Phobias
             ParsePhobias(ref jObjectParsed, ref spiderPhobia, ref spiderPhobiaIncluded,
@@ -339,7 +295,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref callerTranscript, ref callerPortrait, ref callerReplaceChance, ref callerRestartCallAgain,
                 ref accessLevel, ref onlyDLC,
                 ref includeDLC, ref includeMainCampaign, ref consequenceCallerName, ref consequenceCallerTranscript,
-                ref consequenceCallerPortrait, ref deleteReplaceEntry, ref inCustomCampaign, ref customCampaignName);
+                ref consequenceCallerPortrait, ref deleteReplaceEntry, ref inCustomCampaign, ref customCampaignName,
+                ref videoUrlPortrait, ref isVideoPortrait);
 
             // Caller Audio Path (Later gets added with coroutine)
             if (jObjectParsed.TryGetValue("caller_audio_clip_name", out var callerAudioClipNameValue))
@@ -541,7 +498,65 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allEntries.monsterProfiles);
             EntryManager.EntryManager.SortMonsterProfiles(ref entryUnlockerInstance.allXmasEntries.monsterProfiles);
         }
-        
+
+        private static void CreateNewExtra(ref EntryMetadata newExtra, ref string monsterName, ref int newID,
+            ref bool replaceEntry, ref string callerName, ref string callerTranscript, ref Sprite callerPortrait,
+            ref float callerReplaceChance, ref bool callerRestartCallAgain, ref int accessLevel, ref bool onlyDLC,
+            ref bool includeDLC, ref bool includeMainCampaign, ref string consequenceCallerName,
+            ref string consequenceCallerTranscript, ref Sprite consequenceCallerPortrait,
+            ref bool deleteReplaceEntry, ref bool inCustomCampaign, ref string customCampaignName,
+            ref string videoUrlPortrait, ref bool isVideoPortrait)
+        {
+            newExtra = new EntryMetadata(monsterName, newID)
+            {
+                Replace = replaceEntry,
+                CallerName = callerName,
+                CallTranscript = callerTranscript
+            }; // ID will not work if not provided, but this shouldn't be an issue.
+
+            if (callerPortrait != null)
+            {
+                newExtra.CallerImage = callerPortrait;
+            }
+
+            newExtra.CallerReplaceChance = callerReplaceChance;
+
+            newExtra.AllowCallAgainOverRestart = callerRestartCallAgain;
+
+            newExtra.PermissionLevel = accessLevel; // Minimum Access level required for call
+
+            // DLC Handling
+            newExtra.OnlyDLC = onlyDLC;
+            newExtra.IncludeInDlc = includeDLC;
+
+            newExtra.InMainCampaign = includeMainCampaign;
+
+            // Consequence Caller Handling
+            newExtra.ConsequenceName = consequenceCallerName;
+            newExtra.ConsequenceTranscript = consequenceCallerTranscript;
+            newExtra.ConsequenceCallerImage = consequenceCallerPortrait;
+
+            // Custom Campaign
+            newExtra.OnlyCustomCampaign = inCustomCampaign;
+            newExtra.CustomCampaignName = customCampaignName;
+
+            newExtra.VideoUrlPortrait = videoUrlPortrait;
+            newExtra.IsVideoPortrait = isVideoPortrait;
+
+            if (deleteReplaceEntry)
+            {
+                if (replaceEntry)
+                {
+                    newExtra.DeleteEntry = deleteReplaceEntry;
+                }
+                else
+                {
+                    LoggingHelper.WarningLog(
+                        $"Provided entry '{monsterName}' cannot be deleted as it is not replacing an entry.");
+                }
+            }
+        }
+
         private static void ReplaceEntryFunction(ref EntryUnlockController entryUnlockerInstance,
             ref bool onlyDLC, ref bool includeDLC, ref string monsterName, ref int newID,
             ref string monsterPortraitLocation, ref Sprite monsterPortrait, ref string monsterDescription,

@@ -2,6 +2,7 @@
 using System.Reflection;
 using NewSafetyHelp.CallerPatches.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -64,11 +65,13 @@ namespace NewSafetyHelp.MainGameBugFixes
 
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    if (profile.monsterName == "Animation")
+                    EntryMetadata currentlySelectedEntry =
+                        CustomCampaignGlobal.GetEntryFromActiveCampaign(profile.monsterName);
+                    
+                    if (currentlySelectedEntry != null
+                        && currentlySelectedEntry.IsVideoPortrait)
                     {
-                        MainCanvasEntry.SetVideoUrl(
-                            "C:/Program Files (x86)/Steam/steamapps/common/Home Safety Hotline/UserData/NewSafetyHelp/TESHSH/burger_cheese_butter.mp4"
-                            );
+                        MainCanvasEntry.SetVideoUrl(currentlySelectedEntry.VideoUrlPortrait);
                     }
                     else
                     {
