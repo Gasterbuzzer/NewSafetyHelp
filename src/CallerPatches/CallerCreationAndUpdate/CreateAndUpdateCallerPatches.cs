@@ -54,7 +54,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                         __instance.currentCustomCaller.callerMonster.monsterID ==
                         item.ID) // We found an entry to replace the audio for.
                     {
-                        __instance.currentCustomCaller.callerClip = item.callerClip;
+                        __instance.currentCustomCaller.callerClip = item.CallerClip;
                     }
                 }
 
@@ -140,45 +140,45 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                 {
                     foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                     {
-                        if (item.currentlySelected) // We found an entry to replace the audio for.
+                        if (item.CurrentlySelected) // We found an entry to replace the audio for.
                         {
-                            item.alreadyCalledOnce = true;
+                            item.AlreadyCalledOnce = true;
 
                             // We now check if we are allowed to save if the entry can be saved as already called.
-                            if (!item.allowCallAgainOverRestart)
+                            if (!item.AllowCallAgainOverRestart)
                             {
-                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.callerName))
+                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
                                     NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
-                                        item.Name + item.callerName, true);
+                                        item.Name + item.CallerName, true);
                                 }
                                 else
                                 {
                                     NewSafetyHelpMainClass.PersistantEntrySave
-                                        .GetEntry<bool>(item.Name + item.callerName).Value = true;
+                                        .GetEntry<bool>(item.Name + item.CallerName).Value = true;
                                 }
                             }
                             else
                             {
-                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.callerName))
+                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
                                     NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
-                                        item.Name + item.callerName, false); // Store it as false
+                                        item.Name + item.CallerName, false); // Store it as false
                                 }
                                 else
                                 {
                                     NewSafetyHelpMainClass.PersistantEntrySave
-                                        .GetEntry<bool>(item.Name + item.callerName).Value = false;
+                                        .GetEntry<bool>(item.Name + item.CallerName).Value = false;
                                 }
                             }
 
                             // Current selection is set to false once the answer for the caller has been submitted.
 
-                            if (item.callerClip != null && item.callerClip.clip != null)
+                            if (item.CallerClip != null && item.CallerClip.clip != null)
                             {
-                                callerAudioSource.clip = item.callerClip.clip;
+                                callerAudioSource.clip = item.CallerClip.clip;
                             }
 
                             found = true;
@@ -265,28 +265,28 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                 {
                     foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                     {
-                        if (item.inMainCampaign && !item.alreadyCalledOnce &&
-                            !item.currentlySelected) // Find a valid entry.
+                        if (item.InMainCampaign && !item.AlreadyCalledOnce &&
+                            !item.CurrentlySelected) // Find a valid entry.
                         {
                             // Create Entry if not existent and if allowed
 
                             MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry;
 
-                            if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.callerName))
+                            if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
                             {
                                 // ReSharper disable once RedundantTypeArgumentsOfMethod
                                 entryAlreadyCalledBeforeEntry =
                                     NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
-                                        item.Name + item.callerName, false);
+                                        item.Name + item.CallerName, false);
                             }
                             else
                             {
                                 entryAlreadyCalledBeforeEntry =
                                     NewSafetyHelpMainClass.PersistantEntrySave.GetEntry<bool>(item.Name +
-                                        item.callerName);
+                                        item.CallerName);
                             }
 
-                            if (item.allowCallAgainOverRestart)
+                            if (item.AllowCallAgainOverRestart)
                             {
                                 LoggingHelper.DebugLog($"Entry {item.Name} is allowed to be called again even if called once in the past.");
 
@@ -300,19 +300,19 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                                        $" so it will not be available for calling.");
                             }
 
-                            if (Random.Range(0.0f, 1.0f) <= item.callerReplaceChance)
+                            if (Random.Range(0.0f, 1.0f) <= item.CallerReplaceChance)
                             {
                                 // We check if we already called once, if yes, we skip and if not we continue
                                 // (setting is done later).
-                                if (!item.allowCallAgainOverRestart)
+                                if (!item.AllowCallAgainOverRestart)
                                 {
                                     if (!entryAlreadyCalledBeforeEntry.Value &&
                                         // We never called it. And make sure we can actually access the callers' entry.
-                                        item.permissionLevel <= GlobalVariables.currentDay) 
+                                        item.PermissionLevel <= GlobalVariables.currentDay) 
                                     {
                                         if (GlobalVariables.isXmasDLC) // If DLC
                                         {
-                                            if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+                                            if (item.IncludeInDlc || item.OnlyDLC) // Is allowed to be added?
                                             {
                                                 entries.Add(item);
                                                 replaceTrue = true;
@@ -343,13 +343,13 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                 }
                                 else // We are allowed to ignore it.
                                 {
-                                    if (item.permissionLevel <=
+                                    if (item.PermissionLevel <=
                                         GlobalVariables
                                             .currentDay) // Make sure we can actually access the callers' entry.
                                     {
                                         if (GlobalVariables.isXmasDLC) // If DLC
                                         {
-                                            if (item.includeInDLC || item.onlyDLC) // Is allowed to be added?
+                                            if (item.IncludeInDlc || item.OnlyDLC) // Is allowed to be added?
                                             {
                                                 entries.Add(item);
                                                 replaceTrue = true;
@@ -382,13 +382,13 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                             LoggingHelper.InfoLog($"Consequence Caller name: {callers.callerProfile.name}");
 
                             if (GlobalParsingVariables.EntriesMetadata.Exists(item =>
-                                    item.referenceProfileNameInternal ==
+                                    item.ReferenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile
                                         .name)) // If the consequence caller has been replaced once.
                             {
                                 LoggingHelper.InfoLog("Consequence Caller to be replaced found!");
                                 EntryMetadata foundMetadata = GlobalParsingVariables.EntriesMetadata.Find(item =>
-                                    item.referenceProfileNameInternal ==
+                                    item.ReferenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile.name);
 
                                 if (foundMetadata == null)
@@ -398,10 +398,10 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                                 }
 
                                 // It was replaced once, so we also change the consequence caller info.
-                                profile.callTranscription = foundMetadata.consequenceTranscript;
-                                profile.callerName = foundMetadata.consequenceName;
-                                profile.callerPortrait = foundMetadata.consequenceCallerImage;
-                                profile.callerClip = foundMetadata.consequenceCallerClip;
+                                profile.callTranscription = foundMetadata.ConsequenceTranscript;
+                                profile.callerName = foundMetadata.ConsequenceName;
+                                profile.callerPortrait = foundMetadata.ConsequenceCallerImage;
+                                profile.callerClip = foundMetadata.ConsequenceCallerClip;
 
                                 LoggingHelper.InfoLog("Replaced the current caller transcript with: " +
                                                       $"{profile.callTranscription}.");
@@ -426,20 +426,20 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                             // Audio check
                             GlobalParsingVariables.EntriesMetadata.Find(item => item.Equals(entries[entrySelected]))
-                                .currentlySelected = true;
+                                .CurrentlySelected = true;
 
                             // Get a "copy"
                             EntryMetadata selected = entries[entrySelected];
 
                             // Replace caller with custom caller
-                            profile.callerName = selected.callerName;
+                            profile.callerName = selected.CallerName;
 
-                            if (selected.callerImage != null) // If Image provided
+                            if (selected.CallerImage != null) // If Image provided
                             {
-                                profile.callerPortrait = selected.callerImage;
+                                profile.callerPortrait = selected.CallerImage;
                             }
 
-                            profile.callTranscription = selected.callTranscript;
+                            profile.callTranscription = selected.CallTranscript;
 
                             if (profile != null && profile.callerMonster != null)
                             {
@@ -450,7 +450,7 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
                             GlobalParsingVariables.EntriesMetadata.Find(item => item.Equals(entries[entrySelected]))
-                                .referenceProfileNameInternal = profile.name;
+                                .ReferenceProfileNameInternal = profile.name;
                         }
                     }
                     

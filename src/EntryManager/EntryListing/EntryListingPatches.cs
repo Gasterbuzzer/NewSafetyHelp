@@ -115,7 +115,7 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                         if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile))
                         {
                             // Our permission tier is 1 larger than the current permission.
-                            if (GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel)
+                            if (GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.PermissionLevel)
                             {
                                 hasClicked.SetValue(__instance, true);
                             }

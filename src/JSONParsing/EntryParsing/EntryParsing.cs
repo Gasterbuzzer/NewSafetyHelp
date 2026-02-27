@@ -186,32 +186,32 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         {
             newExtra = new EntryMetadata(monsterName, newID)
             {
-                replace = replaceEntry,
-                callerName = callerName,
-                callTranscript = callerTranscript
+                Replace = replaceEntry,
+                CallerName = callerName,
+                CallTranscript = callerTranscript
             }; // ID will not work if not provided, but this shouldn't be an issue.
 
             if (callerPortrait != null)
             {
-                newExtra.callerImage = callerPortrait;
+                newExtra.CallerImage = callerPortrait;
             }
 
-            newExtra.callerReplaceChance = callerReplaceChance;
+            newExtra.CallerReplaceChance = callerReplaceChance;
 
-            newExtra.allowCallAgainOverRestart = callerRestartCallAgain;
+            newExtra.AllowCallAgainOverRestart = callerRestartCallAgain;
 
-            newExtra.permissionLevel = accessLevel; // Minimum Access level required for call
+            newExtra.PermissionLevel = accessLevel; // Minimum Access level required for call
 
             // DLC Handling
-            newExtra.onlyDLC = onlyDLC;
-            newExtra.includeInDLC = includeDLC;
+            newExtra.OnlyDLC = onlyDLC;
+            newExtra.IncludeInDlc = includeDLC;
 
-            newExtra.inMainCampaign = includeMainCampaign;
+            newExtra.InMainCampaign = includeMainCampaign;
 
             // Consequence Caller Handling
-            newExtra.consequenceName = consequenceCallerName;
-            newExtra.consequenceTranscript = consequenceCallerTranscript;
-            newExtra.consequenceCallerImage = consequenceCallerPortrait;
+            newExtra.ConsequenceName = consequenceCallerName;
+            newExtra.ConsequenceTranscript = consequenceCallerTranscript;
+            newExtra.ConsequenceCallerImage = consequenceCallerPortrait;
 
             // Custom Campaign
             newExtra.OnlyCustomCampaign = inCustomCampaign;
@@ -377,7 +377,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 {
                                     // Add the audio
                                     // ReSharper disable once AccessToModifiedClosure
-                                    newExtra.callerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    newExtra.CallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else
                                 {
@@ -425,7 +425,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 {
                                     // Add the audio
                                     // ReSharper disable once AccessToModifiedClosure
-                                    newExtra.consequenceCallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
+                                    newExtra.ConsequenceCallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
                                 }
                                 else
                                 {
@@ -823,7 +823,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     // Include a copy of the monster in the extra info
                     GlobalParsingVariables.EntriesMetadata.Find(item =>
                             item.Name == foundMonsterCopy.monsterName || item.ID == foundMonsterCopy.monsterID)
-                        .referenceCopyEntry = foundMonster;
+                        .ReferenceCopyEntry = foundMonster;
                 }
 
                 if (foundMonsterXMAS != null)
@@ -840,7 +840,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         GlobalParsingVariables.EntriesMetadata.Find(item =>
                                 item.Name == foundMonsterXMASCopy.monsterName ||
                                 item.ID == foundMonsterXMASCopy.monsterID)
-                            .referenceCopyEntry = foundMonster;
+                            .ReferenceCopyEntry = foundMonster;
                     }
                 }
             }
@@ -854,7 +854,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     EntryMetadata extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item => item.Name == monsterNameCopy);
                     if (extraEntryInfo != null) // Only if it exists.
                     {
-                        extraEntryInfo.referenceCopyEntry = foundMonster;
+                        extraEntryInfo.ReferenceCopyEntry = foundMonster;
 
                         // Add the extraEntryInfo in custom campaign things.
 
@@ -905,7 +905,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 item.Name == _newMonsterCopy.monsterName || item.ID == _newMonsterCopy.monsterID);
             if (extraEntryInfo != null) // Only if it exists.
             {
-                extraEntryInfo.referenceCopyEntry = newMonster;
+                extraEntryInfo.ReferenceCopyEntry = newMonster;
             }
 
             // Decide where to add the Entry to. (Main Game or DLC or even both)

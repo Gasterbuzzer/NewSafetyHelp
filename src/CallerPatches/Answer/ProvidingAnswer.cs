@@ -48,12 +48,12 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     MonsterProfile monsterToCheck = null;
                     foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                     {
-                        if (item.currentlySelected) // We found an entry to replace the audio for.
+                        if (item.CurrentlySelected) // We found an entry to replace the audio for.
                         {
                             // Now we unselect the item for new calls to allow replacing.
-                            item.currentlySelected = false;
+                            item.CurrentlySelected = false;
 
-                            monsterToCheck = item.referenceCopyEntry;
+                            monsterToCheck = item.ReferenceCopyEntry;
 
                             found = true;
                         }

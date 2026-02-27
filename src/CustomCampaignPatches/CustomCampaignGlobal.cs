@@ -427,7 +427,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
             {
                 LoggingHelper.DebugLog($"Adding entry {entryInCustomCampaign.Name} to custom campaign.");
 
-                EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.referenceCopyEntry,
+                EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.ReferenceCopyEntry,
                     ref monsterProfileList.monsterProfiles, "allEntries");
             }
 
@@ -484,14 +484,14 @@ namespace NewSafetyHelp.CustomCampaignPatches
                 }
                 else if (entryFound != null) // It exists, so replace it.
                 {
-                    if (entryFound.referenceCopyEntry == null)
+                    if (entryFound.ReferenceCopyEntry == null)
                     {
                         // I am too lazy to implement this. But if ever returns errors or problems, I will implement it this way.
                         LoggingHelper.WarningLog("referenceCopyEntry of EntryFound is null. Was the entry initialized?");
                         continue;
                     }
 
-                    monsterProfileList.monsterProfiles[i] = entryFound.referenceCopyEntry;
+                    monsterProfileList.monsterProfiles[i] = entryFound.ReferenceCopyEntry;
 
                     LoggingHelper.DebugLog($"Replacing entry {entryFound.Name} with custom entry in custom campaign.");
                 }
