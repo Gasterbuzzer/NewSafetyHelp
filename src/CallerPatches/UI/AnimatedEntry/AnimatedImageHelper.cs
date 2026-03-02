@@ -45,6 +45,8 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
                 float ratio = (float)videoPlayer.width / videoPlayer.height;
                 aspectFitter.aspectRatio = ratio;
             };
+            
+            portraitAnimated.SetActive(false);
 
             return portraitAnimated;
         }

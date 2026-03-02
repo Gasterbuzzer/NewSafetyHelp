@@ -12,6 +12,7 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
         // Public reference to the animated portrait.
         private static GameObject animatedEntryPortrait;
         private static GameObject animatedCallerPortrait;
+        private static GameObject animatedCallerLargePortrait;
 
         private static GameObject GetEntryPortrait()
         {
@@ -46,6 +47,15 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
         }
         
         /// <summary>
+        /// Updates the visibility of the normal entry portrait to be visible or not.
+        /// </summary>
+        /// <param name="showEntryPortrait"></param>
+        private static void UpdateVisibilityLargeCallerPortrait(bool showEntryPortrait = false)
+        {
+            GlobalVariables.mainCanvasScript.largeCallerPortrait.enabled = showEntryPortrait;
+        }
+        
+        /// <summary>
         /// Sets the video URL of the entry animated portrait.
         /// </summary>
         /// <param name="url"></param>
@@ -66,10 +76,20 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
         }
         
         /// <summary>
-        /// Sets the url to the given to url to the given animaed portrait.
+        /// Sets the video URL of the large caller portrait.
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="animatedImageGameObject"></param>
+        public static void SetVideoUrlCallerLargePortrait(string url)
+        {
+            UpdateVisibilityLargeCallerPortrait();
+            SetVideoUrl(url, animatedCallerLargePortrait);
+        }
+        
+        /// <summary>
+        /// Sets the url to the given to url to the given animated portrait.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="animatedImageGameObject"> The animated image object to set the video on.</param>
         private static void SetVideoUrl(string url, GameObject animatedImageGameObject)
         {
             AnimatedImageHelper.SetVideoUrl(url, animatedImageGameObject);
@@ -95,6 +115,32 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             UpdateVisibilityCallerPortrait(true);
             
             RestoreNormalPortrait(animatedCallerPortrait);
+        }
+        
+        /// <summary>
+        /// Restores the caller portrait.
+        /// </summary>
+        public static void RestoreCallerLargePortrait()
+        {
+            if (animatedCallerLargePortrait == null)
+            {
+                return;
+            }
+            
+            HideLargeAnimatedPortrait();
+            
+            // Show normal portrait again.
+            UpdateVisibilityLargeCallerPortrait(true);
+            
+            RestoreNormalPortrait(animatedCallerLargePortrait);
+        }
+
+        /// <summary>
+        /// Hides the animated large portrait.
+        /// </summary>
+        private static void HideLargeAnimatedPortrait()
+        {
+            animatedCallerLargePortrait.SetActive(false);
         }
 
         /// <summary>
@@ -152,6 +198,12 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
                     if (animatedCallerPortrait == null)
                     {
                         animatedCallerPortrait = AnimatedImageHelper.CreateAnimatedPortrait(GetCallerPortrait());
+                    }
+                    
+                    if (animatedCallerLargePortrait == null)
+                    {
+                        animatedCallerLargePortrait = AnimatedImageHelper.CreateAnimatedPortrait(
+                            GlobalVariables.mainCanvasScript.largeCallerPortrait.gameObject);
                     }
                 }
 
