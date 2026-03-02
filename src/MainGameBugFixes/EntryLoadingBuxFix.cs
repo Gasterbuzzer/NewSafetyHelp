@@ -71,7 +71,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                     if (currentlySelectedEntry != null
                         && currentlySelectedEntry.IsVideoPortrait)
                     {
-                        MainCanvasEntry.SetVideoUrl(currentlySelectedEntry.VideoUrlPortrait);
+                        MainCanvasEntry.SetVideoUrlMainCanvas(currentlySelectedEntry.VideoUrlPortrait);
                     }
                     else
                     {
@@ -157,6 +157,22 @@ namespace NewSafetyHelp.MainGameBugFixes
                     
                     // Original: __instance.SelectMonsterPortrait(profile);
                     __instance.selectedMonsterPortraitImage.sprite = (Sprite) selectMonsterPortrait.Invoke(__instance, new object[] {profile});
+                }
+                
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    EntryMetadata currentlySelectedEntry =
+                        CustomCampaignGlobal.GetEntryFromActiveCampaign(profile.monsterName);
+                    
+                    if (currentlySelectedEntry != null
+                        && currentlySelectedEntry.IsVideoPortrait)
+                    {
+                        EntryCanvasStandaloneEntry.SetVideoUrlEntryStandaloneCanvas(currentlySelectedEntry.VideoUrlPortrait);
+                    }
+                    else
+                    {
+                        EntryCanvasStandaloneEntry.RestoreNormalPortrait();
+                    }
                 }
                 
                 if (profile.monsterAudioClip != null)

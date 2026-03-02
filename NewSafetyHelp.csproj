@@ -131,6 +131,8 @@
     <Compile Include="src\CallerPatches\IncomingCallWindow\CloseButtonPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\CallWindowStartPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\TypeTextPatches.cs" />
+    <Compile Include="src\CallerPatches\UI\AnimatedEntry\AnimatedImageHelper.cs" />
+    <Compile Include="src\CallerPatches\UI\AnimatedEntry\EntryCanvasStandaloneEntry.cs" />
     <Compile Include="src\CallerPatches\UI\AnimatedEntry\MainCanvasEntry.cs" />
     <Compile Include="src\CallerPatches\UI\MainCanvasPatches.cs" />
     <Compile Include="src\CallerPatches\UI\NextCaller.cs" />

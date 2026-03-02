@@ -1,33 +1,26 @@
 ﻿using System.Reflection;
 using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
 namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
 {
-    public static class MainCanvasEntry
+    public static class EntryCanvasStandaloneEntry
     {
-        // Public reference to the animated portrait.
         private static GameObject animatedPortrait;
         
-        private static GameObject GetEntryContent()
-        {
-            return GameObject.Find("MainCanvas").transform.Find("Panel").transform.Find("MainEntryScrollWindow").transform.Find("Viewport").transform.Find("Content").gameObject;
-        }
-
         private static GameObject GetEntryPortrait()
         {
-            return GetEntryContent().transform.Find("Portrait").gameObject;
+            return GameObject.Find("EntryCanvasStandalone").transform.Find("Panel").transform.Find("MainEntryScrollWindow").transform.Find("Viewport").transform.Find("Content").transform.Find("Portrait").gameObject;
         }
-
+        
         private static void UpdateVisibilityNormalEntryPortrait(bool showEntryPortrait = false)
         {
             GetEntryPortrait().GetComponent<Image>().enabled = showEntryPortrait;
         }
         
-        public static void SetVideoUrlMainCanvas(string url)
+        public static void SetVideoUrlEntryStandaloneCanvas(string url)
         {
             UpdateVisibilityNormalEntryPortrait();
             
@@ -44,7 +37,7 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             
             videoPlayerComponent.Stop();
             
-            if(videoPlayerComponent.targetTexture != null)
+            if (videoPlayerComponent.targetTexture != null)
             {
                 videoPlayerComponent.targetTexture.Release();
                 Object.Destroy(videoPlayerComponent.targetTexture);
@@ -53,45 +46,32 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             animatedPortrait.SetActive(false);
         }
         
-        [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "Start")]
+        [HarmonyLib.HarmonyPatch(typeof(EntryCanvasStandaloneBehavior), "Start")]
         public static class StartPatch
         {
+            private static MethodInfo loadVars = typeof(EntryCanvasStandaloneBehavior).GetMethod("LoadVars", BindingFlags.NonPublic | BindingFlags.Instance);
+            private static MethodInfo populateEntriesList = typeof(EntryCanvasStandaloneBehavior).GetMethod("PopulateEntriesList", BindingFlags.NonPublic | BindingFlags.Instance);
+            
             /// <summary>
-            /// Patches the start function 
+            /// Patches the start function.
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
-            private static bool Prefix(MainCanvasBehavior __instance)
+            private static bool Prefix(EntryCanvasStandaloneBehavior __instance)
             {
-                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                if (shakeAnimationString == null)
-                {
-                    LoggingHelper.ErrorLog("'shakeAnimationString' not found. Calling original function.");
-                    return true;
-                }
-                
-                __instance.StartCoroutine(__instance.StartSoftwareRoutine());
-                
-                if (GlobalVariables.arcadeMode && (bool) (Object) __instance.callTimer)
-                {
-                    __instance.callTimer.SetActive(true);
-                    __instance.livesPanel.SetActive(true);
-                }
-
-                if (CustomCampaignGlobal.InCustomCampaign
+                if (CustomCampaignGlobal.InCustomCampaign 
                     && animatedPortrait == null)
                 {
                     animatedPortrait = AnimatedImageHelper.CreateAnimatedPortrait(GetEntryPortrait());
                 }
-
-                if (!GlobalVariables.isXmasDLC)
-                {
-                    return false;
-                }
                 
-                // OLD: __instance.shakeAnimationString = "xmasShake";
-                shakeAnimationString.SetValue(__instance, "xmasShake");
+                // OLD: __instance.LoadVars();
+                loadVars.Invoke(__instance, null);
+                
+                // OLD: __instance.PopulateEntriesList();
+                populateEntriesList.Invoke(__instance, null);
+                
+                __instance.CloseWindow();
                 
                 return false; // Skip function with false.
             }
