@@ -93,7 +93,17 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 __instance.callerPortrait.sprite = profile.callerPortrait;
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    
+                    CustomCCaller currentCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+
+                    if (currentCaller != null 
+                        && currentCaller.CallerHasAnimatedPortrait)
+                    {
+                        MainCanvasEntry.SetVideoUrlCallerCornerPortrait(currentCaller.CallerAnimatedPortraitURL);
+                    }
+                    else
+                    {
+                        MainCanvasEntry.RestoreCallerCornerPortrait();
+                    }
                 }
                 
                 __instance.largeCallerPortrait.sprite = profile.callerPortrait;
@@ -142,6 +152,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                 
                 __instance.largeCallerPortrait.sprite = __instance.noCallerSprite;
                 __instance.largeCallerPortrait.gameObject.SetActive(true);
+                
                 __instance.callerNameText.text = "NO CURRENT CALLERS";
                 __instance.callerTranscription.text = "";
                 

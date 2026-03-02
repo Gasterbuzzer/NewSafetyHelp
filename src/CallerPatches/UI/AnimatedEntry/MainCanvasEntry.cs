@@ -13,6 +13,7 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
         private static GameObject animatedEntryPortrait;
         private static GameObject animatedCallerPortrait;
         private static GameObject animatedCallerLargePortrait;
+        private static GameObject animatedCallerCornerPortrait;
 
         private static GameObject GetEntryPortrait()
         {
@@ -56,6 +57,15 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
         }
         
         /// <summary>
+        /// Updates the visibility of the normal entry portrait to be visible or not.
+        /// </summary>
+        /// <param name="showEntryPortrait"></param>
+        private static void UpdateVisibilityCornerCallerPortrait(bool showEntryPortrait = false)
+        {
+            GlobalVariables.mainCanvasScript.callerPortrait.enabled = showEntryPortrait;
+        }
+        
+        /// <summary>
         /// Sets the video URL of the entry animated portrait.
         /// </summary>
         /// <param name="url"></param>
@@ -83,6 +93,16 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
         {
             UpdateVisibilityLargeCallerPortrait();
             SetVideoUrl(url, animatedCallerLargePortrait);
+        }
+        
+        /// <summary>
+        /// Sets the video URL of the corner caller portrait.
+        /// </summary>
+        /// <param name="url"></param>
+        public static void SetVideoUrlCallerCornerPortrait(string url)
+        {
+            UpdateVisibilityCornerCallerPortrait();
+            SetVideoUrl(url, animatedCallerCornerPortrait);
         }
         
         /// <summary>
@@ -115,6 +135,17 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             UpdateVisibilityCallerPortrait(true);
             
             RestoreNormalPortrait(animatedCallerPortrait);
+        }
+        
+        /// <summary>
+        /// Restores the corner caller portrait.
+        /// </summary>
+        public static void RestoreCallerCornerPortrait()
+        {
+            // Show normal portrait again.
+            UpdateVisibilityCornerCallerPortrait(true);
+            
+            RestoreNormalPortrait(animatedCallerCornerPortrait);
         }
         
         /// <summary>
@@ -204,6 +235,12 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
                     {
                         animatedCallerLargePortrait = AnimatedImageHelper.CreateAnimatedPortrait(
                             GlobalVariables.mainCanvasScript.largeCallerPortrait.gameObject);
+                    }
+                    
+                    if (animatedCallerCornerPortrait == null)
+                    {
+                        animatedCallerCornerPortrait = AnimatedImageHelper.CreateAnimatedPortrait(
+                            GlobalVariables.mainCanvasScript.callerPortrait.gameObject);
                     }
                 }
 
