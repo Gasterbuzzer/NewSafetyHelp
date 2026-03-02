@@ -156,9 +156,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 -1; // If this call is due to a consequence caller. You can provide it here.
 
             Sprite customCallerImage = null;
+            
+            string callerAnimatedPortraitURL = null; 
+            bool callerHasAnimatedPortrait = false;
 
-            int customCallerMonsterID =
-                -1; // 99% of times should never be used. Scream at the person who uses it in a bad way.
+            // 99% of times should never be used. Scream at the person who uses it in a bad way.
+            int customCallerMonsterID = -1; 
 
             // Warning Call
             bool isWarningCaller = false;
@@ -188,7 +191,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_transcript", ref customCallerTranscript);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_caller_image_name", ref customCallerImage, jsonFolderPath, usermodFolderPath, customCampaignName);
+            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_caller_image_name", ref customCallerImage,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "order_in_campaign", ref orderInCampaign);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_monster_name", ref customCallerMonsterName);
@@ -199,7 +203,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignAudioPath(jObjectParsed, "custom_caller_audio_clip_name",
                 ref customCallerAudioPath,  jsonFolderPath, usermodFolderPath, customCallerName);
 
-            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_consequence_caller_id", ref customCallerConsequenceCallerID);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_consequence_caller_id",
+                ref customCallerConsequenceCallerID);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_downed_network", ref downedCall);
 
             // Warning Caller Section
@@ -216,6 +221,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssign(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller);
             ParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
+            
+            // Animated Portrait
+            
+            callerHasAnimatedPortrait = ParsingHelper.TryAssignVideoPath(jObjectParsed,
+                "custom_caller_animated_portrait_name",
+                ref callerAnimatedPortraitURL, jsonFolderPath, usermodFolderPath);
 
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
@@ -239,6 +250,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignName = customCampaignName,
                 LastDayCaller = isLastCallerOfDay,
                 DownedNetworkCaller = downedCall,
+                
+                CallerAnimatedPortraitURL =  callerAnimatedPortraitURL,
+                CallerHasAnimatedPortrait = callerHasAnimatedPortrait,
 
                 IsWarningCaller = isWarningCaller,
                 WarningCallDay = warningCallDay,

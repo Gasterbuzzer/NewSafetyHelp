@@ -477,7 +477,7 @@ namespace NewSafetyHelp.JSONParsing
             
             string videoFilePath = token.Value<string>();
             
-            videoFilePath = jsonFolderPath + "\\" + videoFilePath;
+            string updatedFilePath = jsonFolderPath + "\\" + videoFilePath;
             string videoFileAlternativePath = usermodFolderPath + "\\" + videoFilePath;
 
             if (string.IsNullOrEmpty(videoFilePath))
@@ -487,9 +487,9 @@ namespace NewSafetyHelp.JSONParsing
             }
             else
             {
-                if (File.Exists(videoFilePath))
+                if (File.Exists(updatedFilePath))
                 {
-                    target = videoFilePath;
+                    target = updatedFilePath;
                 }
                 else if (File.Exists(videoFileAlternativePath))
                 {
@@ -497,7 +497,9 @@ namespace NewSafetyHelp.JSONParsing
                 }
                 else
                 {
-                    LoggingHelper.WarningLog($"Provided video {videoFilePath} does not exist.");
+                    LoggingHelper.WarningLog($"Provided video '{videoFilePath}' could not be found in either " +
+                                             $"'{updatedFilePath}' " +
+                                             $"or '{videoFileAlternativePath}'.");
                     target = "";
                 }
             }

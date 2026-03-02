@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using UnityEngine;
 
 namespace NewSafetyHelp.CallerPatches.CallerModel
 {
@@ -14,7 +15,11 @@ namespace NewSafetyHelp.CallerPatches.CallerModel
         
         public string CallTranscript = "NO_TRANSCRIPT"; // Call Transcript
         public string CallerName = "NO_CALLER_NAME"; // Caller Name
-        public UnityEngine.Sprite CallerImage = null; // Caller Image
+        public Sprite CallerImage = null; // Caller Image
+
+        // Animated Portrait
+        public string CallerAnimatedPortraitURL = null; 
+        public bool CallerHasAnimatedPortrait = false;
         
         public int ConsequenceCallerID = -1; // If this caller is a consequence caller, here would be the ID of that original caller.
 

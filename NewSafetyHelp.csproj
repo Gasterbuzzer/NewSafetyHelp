@@ -128,6 +128,7 @@
     <Compile Include="src\CallerPatches\CallerModel\CustomCCaller.cs" />
     <Compile Include="src\CallerPatches\CallerPatches.cs" />
     <Compile Include="src\CallerPatches\GameOverPatches.cs" />
+    <Compile Include="src\CallerPatches\IncomingCallWindow\AnimatedCallerPortraitPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\CloseButtonPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\CallWindowStartPatches.cs" />
     <Compile Include="src\CallerPatches\IncomingCallWindow\TypeTextPatches.cs" />

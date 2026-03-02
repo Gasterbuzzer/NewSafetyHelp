@@ -75,7 +75,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                     }
                     else
                     {
-                        MainCanvasEntry.RestoreNormalPortrait();
+                        MainCanvasEntry.RestoreEntryPortrait();
                     }
                 }
                 

@@ -10,37 +10,100 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
     public static class MainCanvasEntry
     {
         // Public reference to the animated portrait.
-        private static GameObject animatedPortrait;
-        
-        private static GameObject GetEntryContent()
-        {
-            return GameObject.Find("MainCanvas").transform.Find("Panel").transform.Find("MainEntryScrollWindow").transform.Find("Viewport").transform.Find("Content").gameObject;
-        }
+        private static GameObject animatedEntryPortrait;
+        private static GameObject animatedCallerPortrait;
 
         private static GameObject GetEntryPortrait()
         {
-            return GetEntryContent().transform.Find("Portrait").gameObject;
+            return GameObject.Find("MainCanvas").transform.Find("Panel").transform.Find("MainEntryScrollWindow").transform.Find("Viewport").transform.Find("Content").transform.Find("Portrait").gameObject;
         }
-
+        
+        /// <summary>
+        /// Finds the animated caller portrait.
+        /// </summary>
+        /// <returns></returns>
+        private static GameObject GetCallerPortrait()
+        {
+            return GameObject.Find("MainCanvas").transform.Find("CallPopup").transform.Find("CurrentCall").transform.Find("CallerPortrait").gameObject;
+        }
+        
+        /// <summary>
+        /// Updates the visibility of the normal entry portrait to be visible or not.
+        /// </summary>
+        /// <param name="showEntryPortrait"></param>
         private static void UpdateVisibilityNormalEntryPortrait(bool showEntryPortrait = false)
         {
             GetEntryPortrait().GetComponent<Image>().enabled = showEntryPortrait;
         }
         
+        /// <summary>
+        /// Updates the visibility of the normal caller portrait.
+        /// </summary>
+        /// <param name="showEntryPortrait"></param>
+        private static void UpdateVisibilityCallerPortrait(bool showEntryPortrait = false)
+        {
+            GetCallerPortrait().GetComponent<Image>().enabled = showEntryPortrait;
+        }
+        
+        /// <summary>
+        /// Sets the video URL of the entry animated portrait.
+        /// </summary>
+        /// <param name="url"></param>
         public static void SetVideoUrlMainCanvas(string url)
         {
             UpdateVisibilityNormalEntryPortrait();
-            
-            AnimatedImageHelper.SetVideoUrl(url, animatedPortrait);
+            SetVideoUrl(url, animatedEntryPortrait);
+        }
+        
+        /// <summary>
+        /// Sets the video url for the caller portrait.
+        /// </summary>
+        /// <param name="url"></param>
+        public static void SetVideoUrlCaller(string url)
+        {
+            UpdateVisibilityCallerPortrait();
+            SetVideoUrl(url, animatedCallerPortrait);
+        }
+        
+        /// <summary>
+        /// Sets the url to the given to url to the given animaed portrait.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="animatedImageGameObject"></param>
+        private static void SetVideoUrl(string url, GameObject animatedImageGameObject)
+        {
+            AnimatedImageHelper.SetVideoUrl(url, animatedImageGameObject);
         }
 
-        public static void RestoreNormalPortrait()
+        /// <summary>
+        /// Restores the entry portrait.
+        /// </summary>
+        public static void RestoreEntryPortrait()
         {
             // Show normal portrait again.
             UpdateVisibilityNormalEntryPortrait(true);
             
+            RestoreNormalPortrait(animatedEntryPortrait);
+        }
+
+        /// <summary>
+        /// Restores the caller portrait.
+        /// </summary>
+        public static void RestoreCallerPortrait()
+        {
+            // Show normal portrait again.
+            UpdateVisibilityCallerPortrait(true);
+            
+            RestoreNormalPortrait(animatedCallerPortrait);
+        }
+
+        /// <summary>
+        /// Restores a given animated portrait.
+        /// </summary>
+        private static void RestoreNormalPortrait(GameObject animatedImageGameObject)
+        {
             // Disable video player.
-            VideoPlayer videoPlayerComponent = animatedPortrait.GetComponent<VideoPlayer>();
+            VideoPlayer videoPlayerComponent = animatedImageGameObject.GetComponent<VideoPlayer>();
             
             videoPlayerComponent.Stop();
             
@@ -50,7 +113,7 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
                 Object.Destroy(videoPlayerComponent.targetTexture);
             }
             
-            animatedPortrait.SetActive(false);
+            animatedImageGameObject.SetActive(false);
         }
         
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "Start")]
@@ -79,10 +142,17 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
                     __instance.livesPanel.SetActive(true);
                 }
 
-                if (CustomCampaignGlobal.InCustomCampaign
-                    && animatedPortrait == null)
+                if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    animatedPortrait = AnimatedImageHelper.CreateAnimatedPortrait(GetEntryPortrait());
+                    if (animatedEntryPortrait == null)
+                    {
+                        animatedEntryPortrait = AnimatedImageHelper.CreateAnimatedPortrait(GetEntryPortrait());
+                    }
+                    
+                    if (animatedCallerPortrait == null)
+                    {
+                        animatedCallerPortrait = AnimatedImageHelper.CreateAnimatedPortrait(GetCallerPortrait());
+                    }
                 }
 
                 if (!GlobalVariables.isXmasDLC)
