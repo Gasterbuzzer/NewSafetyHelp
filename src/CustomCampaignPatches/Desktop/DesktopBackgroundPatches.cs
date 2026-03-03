@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NewSafetyHelp.CallerPatches.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -10,6 +11,8 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
         [HarmonyLib.HarmonyPatch(typeof(DayNumSpriteSwapper), "Start")]
         public static class StartPatch
         {
+            private static GameObject animatedVideoBackground;
+            
             /// <summary>
             /// Original function replaces background based on the day.
             /// </summary>
@@ -27,6 +30,10 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
+                    
+                    // Create animated video player for animated backgrounds
+                    animatedVideoBackground = AnimatedImageHelper.CreateAnimatedPortrait(__instance.gameObject,
+                        true, true, true);
                     
                     // If to disable the green color overlay.
 
@@ -70,7 +77,9 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                     
                     Sprite setBackgroundSprite;
                     
-                    if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 || customCampaign.SavedGameFinishedDisplay == 1) // If we finished the campaign.
+                    // If we finished the campaign.
+                    if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 
+                        || customCampaign.SavedGameFinishedDisplay == 1) 
                     {
                         if (customCampaign.GameFinishedBackground != null)
                         {
@@ -83,14 +92,16 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                     }
                     else // Current Day Background instead.
                     {
+                        // We have backgrounds to replace.
                         if (customCampaign.BackgroundSprites.Count > 0 
-                            && GlobalVariables.currentDay <= customCampaign.BackgroundSprites.Count) // We have backgrounds to replace.
+                            && GlobalVariables.currentDay <= customCampaign.BackgroundSprites.Count) 
                         {
                             setBackgroundSprite = customCampaign.BackgroundSprites[GlobalVariables.currentDay - 1];
                         }
                         else
                         {
-                            if (GlobalVariables.currentDay > __instance.spritesPerDay.Length) // Too many days for default image, we show first image.
+                            // Too many days for default image, we show first image.
+                            if (GlobalVariables.currentDay > __instance.spritesPerDay.Length) 
                             {
                                 setBackgroundSprite = __instance.spritesPerDay[0];
                             }
@@ -120,7 +131,9 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                         v => v != null && v.Count > 0);
                     
                     // Modifier
-                    if (desktopBackgroundsFound && desktopBackgrounds != null && desktopBackgrounds.Count > 0) // Valid backgrounds given.
+                    if (desktopBackgroundsFound
+                        && desktopBackgrounds != null
+                        && desktopBackgrounds.Count > 0) // Valid backgrounds given.
                     {
                         // Game Finished
                         if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 
@@ -175,6 +188,61 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                     else // Fallback
                     {
                         __instance.myImage.sprite = __instance.spritesPerDay[0];
+                    }
+                    
+                    bool animatedBackgroundsFound = false;
+                    List<string> animatedBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.AnimatedDesktopBackgrounds,
+                        ref animatedBackgroundsFound,
+                        v => v != null && v.Count > 0);
+                    
+                    bool removeBackgroundOnAnimatedBackgroundFound = false;
+                    bool removeBackgroundOnAnimatedBackground = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.BlackBackgroundOnAnimatedBackground,
+                        ref removeBackgroundOnAnimatedBackgroundFound);
+
+                    if (animatedBackgroundsFound)
+                    {
+                        if (removeBackgroundOnAnimatedBackgroundFound && removeBackgroundOnAnimatedBackground)
+                        {
+                            __instance.myImage.sprite = null;
+
+                            if (!desktopBackgroundColorFound)
+                            {
+                                __instance.myImage.color = Color.black;
+                            }
+                        }
+                        
+                        LoggingHelper.DebugLog($"'1:{unlockDaysFound} " +
+                                               $"2:{unlockDays != null} " +
+                                               $"3:{animatedBackgrounds.Count}' " +
+                                               $"4:{animatedBackgrounds[0]}");
+                        
+                        // General Case:
+                        if (!unlockDaysFound || unlockDays == null)
+                        {
+                            // We require a valid amount of backgrounds.
+                            if (animatedBackgrounds.Count > 0 
+                                && GlobalVariables.currentDay <= animatedBackgrounds.Count) 
+                            {
+                                AnimatedImageHelper.SetVideoUrl(
+                                    animatedBackgrounds[(GlobalVariables.currentDay - 1) % animatedBackgrounds.Count],
+                                    animatedVideoBackground
+                                );
+                            }
+                        }
+                        else if (unlockDays.Count > 0) // Conditional (Days) Case:
+                        {
+                            for (int i = 0; i < unlockDays.Count; i++)
+                            {
+                                if (GlobalVariables.currentDay == unlockDays[i])
+                                {
+                                    AnimatedImageHelper.SetVideoUrl(
+                                        animatedBackgrounds[i % animatedBackgrounds.Count],
+                                        animatedVideoBackground);
+                                }
+                            }
+                        }
                     }
                 }
                 else // Main Game

@@ -32,11 +32,11 @@ namespace NewSafetyHelp.JSONParsing
                 case 1:
                     return entryUnlocker.allXmasEntries.monsterProfiles.Length;
 
-                default: 
+                default:
                     return entryUnlocker.allEntries.monsterProfiles.Length;
             }
         }
-        
+
         /// <summary>
         /// Generates a new ID based on the given information.
         /// </summary>
@@ -59,8 +59,9 @@ namespace NewSafetyHelp.JSONParsing
                 int maxEntryIDMainCampaign = GetNewEntryID(entryUnlockerInstance);
                 int maxEntryIDMainDlc = GetNewEntryID(entryUnlockerInstance, 1);
 
-                LoggingHelper.DebugLog($"Entries in Main Campaign: {maxEntryIDMainCampaign} and entries in DLC: {maxEntryIDMainDlc}.");
-                
+                LoggingHelper.DebugLog(
+                    $"Entries in Main Campaign: {maxEntryIDMainCampaign} and entries in DLC: {maxEntryIDMainDlc}.");
+
                 if (onlyDlc) // Only DLC
                 {
                     newID = maxEntryIDMainDlc;
@@ -92,7 +93,7 @@ namespace NewSafetyHelp.JSONParsing
             LoggingHelper.InfoLog($"Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
             LoggingHelper.InfoLog("(This is the intended and recommended way of providing the ID.)");
         }
-        
+
         /// <summary>
         /// Helper coroutine for updating the audio correctly for a monster clip.
         /// </summary>
@@ -119,7 +120,7 @@ namespace NewSafetyHelp.JSONParsing
 
             callback(monsterSoundClip);
         }
-        
+
         /// <summary>
         /// Checks if the JSON object contains any of the keys.
         /// </summary>
@@ -130,7 +131,7 @@ namespace NewSafetyHelp.JSONParsing
         {
             return keys.Any(json.ContainsKey); // Checks if any of the keys is in the JSON via the flag ContainsKey
         }
-        
+
         /// <summary>
         /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
         /// </summary>
@@ -147,7 +148,7 @@ namespace NewSafetyHelp.JSONParsing
 
             target = token.Value<T>();
         }
-        
+
         /// <summary>
         /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
         /// This version takes in a bool that updates to "true" if updated.
@@ -169,7 +170,7 @@ namespace NewSafetyHelp.JSONParsing
             wasAssigned = true;
             target = token.Value<T>();
         }
-        
+
         /// <summary>
         /// Tries to assign the target with the image from the given JSON at the given key.
         /// If not found or if any problems happen, it will not write.
@@ -201,7 +202,7 @@ namespace NewSafetyHelp.JSONParsing
                     usermodFolderPath + "\\" + imagePath);
             }
         }
-        
+
         /// <summary>
         /// Attempts to assign the audio file path to the target string. But only if the audio file exists.
         /// </summary>
@@ -239,7 +240,7 @@ namespace NewSafetyHelp.JSONParsing
                 target = jsonFolderPath + "\\" + audioPath;
             }
         }
-        
+
         /// <summary>
         /// Attempts to parse the check option provided.
         /// </summary>
@@ -253,21 +254,21 @@ namespace NewSafetyHelp.JSONParsing
                     case "equal":
                     case "eq": // Equal
                         return AccuracyHelper.CheckOptions.EqualTo;
-                        
+
                     case "no":
                     case "n":
                     case "none": // None
                         return AccuracyHelper.CheckOptions.NoneSet;
-                        
+
                     case "greaterorequal":
                     case "geq": // Greater than or equal to
                         return AccuracyHelper.CheckOptions.GreaterThanOrEqualTo;
-                        
+
                     case "lesserorequal":
                     case "lessorequal":
                     case "leq": // Less than or equal to
                         return AccuracyHelper.CheckOptions.LessThanOrEqualTo;
-                    
+
                     case "nequal":
                     case "notequal":
                     case "!equal":
@@ -275,7 +276,7 @@ namespace NewSafetyHelp.JSONParsing
                     case "noteq":
                     case "neq": // Not equal to
                         return AccuracyHelper.CheckOptions.NotEqualTo;
-                        
+
                     default:
                         LoggingHelper.WarningLog("Provided accuracy check type" +
                                                  $" '{accuracyCheckTypeString}' is not in any known format." +
@@ -291,11 +292,11 @@ namespace NewSafetyHelp.JSONParsing
         /*
          * Const strings for assign list. This ensures more consistency.
          */
-        
+
         private const string AccuracyCheckTypeString = "accuracy_check_type";
         private const string AccuracyRequiredString = "accuracy_required";
         private const string TotalAccuracyString = "use_total_accuracy";
-        
+
         /// <summary>
         /// Attempts to parse the check option provided.
         /// </summary>
@@ -307,19 +308,19 @@ namespace NewSafetyHelp.JSONParsing
             {
                 return;
             }
-            
+
             if (target == null)
             {
                 target = new List<AccuracyType>();
             }
-            
+
             List<bool> isTotalAccuracyList = new List<bool>();
-            bool? providedSingleValueTA = TryAssignListOrSingleElement(jObjectParsed, TotalAccuracyString, 
+            bool? providedSingleValueTA = TryAssignListOrSingleElement(jObjectParsed, TotalAccuracyString,
                 ref isTotalAccuracyList);
-            
+
             List<float> accuracyRequiredList = new List<float>();
             TryAssignListOrSingleElement(jObjectParsed, AccuracyRequiredString, ref accuracyRequiredList);
-            
+
             List<string> accuracyCheckType = new List<string>();
             TryAssignListOrSingleElement(jObjectParsed, AccuracyCheckTypeString, ref accuracyCheckType);
 
@@ -346,7 +347,7 @@ namespace NewSafetyHelp.JSONParsing
                                        "Unable of parsing accuracy checks.");
                 return;
             }
-            
+
             for (int i = 0; i < accuracyCheckType.Count; i++)
             {
                 AccuracyType newAccuracyType = new AccuracyType();
@@ -362,7 +363,7 @@ namespace NewSafetyHelp.JSONParsing
 
                 if (providedSingleValueTA != null)
                 {
-                    if ((bool) providedSingleValueTA)
+                    if ((bool)providedSingleValueTA)
                     {
                         newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[0];
                     }
@@ -371,13 +372,13 @@ namespace NewSafetyHelp.JSONParsing
                         newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[i];
                     }
                 }
-                
+
                 newAccuracyType.RequiredAccuracy = accuracyRequiredList[i];
 
                 target.Add(newAccuracyType);
             }
         }
-        
+
         /// <summary>
         /// Attempts to parse the key for a list.
         /// </summary>
@@ -397,7 +398,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 target = new List<T>();
             }
-            
+
             if (token.Type == JTokenType.Array)
             {
                 foreach (JToken element in token)
@@ -414,7 +415,7 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     T value = token.Value<T>();
                     target.Add(value);
-                
+
                     return true;
                 }
                 catch
@@ -425,7 +426,52 @@ namespace NewSafetyHelp.JSONParsing
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Attempts to parse the key for a list.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        /// <param name="jsonFolderPath"> Folder path where the JSON is located. </param>
+        /// <param name="usermodFolderPath"> Folder path where the usermod is located. </param>
+        /// <returns>(Bool) If the parsed value was an array (false) or a single element (true).
+        /// Null if we failed parsing.</returns>
+        public static bool? TryAssignUrlListOrSingleUrl(JObject jObjectParsed, string key, ref List<string> target,
+            string jsonFolderPath, string usermodFolderPath)
+        {
+            bool? result = TryAssignListOrSingleElement(jObjectParsed, key, ref target);
+
+            for (int i = 0; i < target.Count; i++)
+            {
+                if (string.IsNullOrEmpty(target[i]))
+                {
+                    LoggingHelper.WarningLog($"Provided video path is empty. Unable to show show video.");
+                }
+                else
+                {
+                    string firstFilePath = jsonFolderPath + "\\" + target[i];
+                    string videoFileAlternativePath = usermodFolderPath + "\\" + target[i];
+
+                    if (File.Exists(firstFilePath))
+                    {
+                        target[i] = firstFilePath;
+                    }
+                    else if (File.Exists(videoFileAlternativePath))
+                    {
+                        target[i] = videoFileAlternativePath;
+                    }
+                    else if (!File.Exists(firstFilePath) && !File.Exists(videoFileAlternativePath))
+                    {
+                        LoggingHelper.WarningLog($"Could not find video '{target[i]}' in either: '{firstFilePath}' or " +
+                                                 $"'{videoFileAlternativePath}'.");
+                    }
+                }
+            }
+            
+            return result;
+        }
+
         /// <summary>
         /// Attempts to parse the key for a list.
         /// </summary>

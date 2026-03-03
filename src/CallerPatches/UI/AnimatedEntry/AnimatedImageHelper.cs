@@ -6,11 +6,14 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
 {
     public static class AnimatedImageHelper
     {
-        public static GameObject CreateAnimatedPortrait(GameObject animatedPortrait)
+        public static GameObject CreateAnimatedPortrait(GameObject animatedPortrait, bool deleteChildren = false,
+            bool deleteDaySpriteSwapper = false, bool setAsFirstChild = false)
         {
             GameObject portraitAnimated = Object.Instantiate(animatedPortrait, animatedPortrait.transform);
 
             portraitAnimated.transform.localPosition = Vector3.zero;
+
+            portraitAnimated.name = "Animated-Image-VideoPlayer";
 
             // Add updated texture
             Object.DestroyImmediate(portraitAnimated.GetComponent<Image>());
@@ -18,6 +21,24 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             RawImage rawImageComponent = portraitAnimated.AddComponent<RawImage>();
             rawImageComponent.raycastTarget = false;
 
+            if (deleteChildren)
+            {
+                foreach (Transform child in portraitAnimated.transform)
+                {
+                    Object.Destroy(child.gameObject);
+                }
+            }
+
+            if (deleteDaySpriteSwapper)
+            {
+                Object.Destroy(portraitAnimated.GetComponent<DayNumSpriteSwapper>());
+            }
+
+            if (setAsFirstChild)
+            {
+                portraitAnimated.transform.SetAsFirstSibling();
+            }
+            
             // Add video player.
             VideoPlayer videoPlayerComponent = portraitAnimated.AddComponent<VideoPlayer>();
 

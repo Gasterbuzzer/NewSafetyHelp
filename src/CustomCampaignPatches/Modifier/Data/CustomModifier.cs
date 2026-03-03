@@ -20,9 +20,14 @@ namespace NewSafetyHelp.CustomCampaignPatches.Modifier.Data
         public string RenameMainGameDesktopIcon = string.Empty; // Renames the main desktop icon.
         public Sprite MainGameDesktopIcon = null; // Icon of the main game desktop program.
         
+        // Backgrounds
         public List<Sprite> DesktopBackgrounds = new List<Sprite>(); // Desktop Backgrounds
         
         public Sprite GameFinishedBackground = null; // Desktop Background (Finished the game)
+        
+        // URLs to each animated background.
+        public List<string> AnimatedDesktopBackgrounds = new List<string>();
+        public bool BlackBackgroundOnAnimatedBackground = false;
         
         // If to disable the color the background green (or custom) the same as the main game does.
         public bool DisableColorBackground = false;

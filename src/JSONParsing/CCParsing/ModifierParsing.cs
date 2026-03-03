@@ -82,7 +82,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite backgroundLogo = null;
             bool disableBackgroundLogo = false;
             float backgroundLogoTransparency = 0.2627f;
-            
+
+            // Animated Backgrounds
+            List<string> animatedDesktopBackgrounds = new List<string>();
+            bool blackBackgroundOnAnimatedBackground = false;
+
             // Icons
             Sprite mailBoxIcon = null; // Mail Box Icon on Desktop
             Sprite entryBrowserIcon = null; // Entry Browser Icon on Desktop
@@ -109,7 +113,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             bool arcadeActive = false;
             bool arcadeChanged = false; // See entryBrowserChanged for explanation.
-            
+
             bool hideDiscordProgramChanged = false;
             bool hideDiscordProgram = false; // For those who want more immersion. Should not be recommended.
 
@@ -168,10 +172,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     }
                 }
             }
-            
+
+            ParsingHelper.TryAssignUrlListOrSingleUrl(jObjectParsed, "animated_desktop_backgrounds",
+                ref animatedDesktopBackgrounds, jsonFolderPath, usermodFolderPath);
+
+            ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",
+                ref blackBackgroundOnAnimatedBackground);
+
             ParsingHelper.TryAssignSprite(jObjectParsed, "game_finished_desktop_background",
                 ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
@@ -202,7 +212,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                         default:
                             LoggingHelper.ErrorLog("Provided color for desktop background is invalid! " +
-                                                   "Make sure its 3 or 4 values.");
+                                                   "Make sure it's 3 or 4 values.");
                             break;
                     }
                 }
@@ -214,28 +224,28 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
-            
+
             ParsingHelper.TryAssignWithBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram,
                 ref hideDiscordProgramChanged);
 
             ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_credits_image_name", ref creditsIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_mailbox_image_name", ref mailBoxIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_entry_browser_image_name", ref entryBrowserIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_options_image_name", ref optionsIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_artbook_image_name", ref artbookIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_arcade_image_name", ref arcadeIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_scorecard_image_name", ref scorecardIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
 
@@ -251,13 +261,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive,
                 ref entryBrowserChanged);
-            
+
             ParsingHelper.TryAssignWithBool(jObjectParsed, "scorecard_state", ref scorecardActive,
                 ref scorecardChanged);
-            
+
             ParsingHelper.TryAssignWithBool(jObjectParsed, "artbook_state", ref artbookActive,
                 ref artbookChanged);
-            
+
             ParsingHelper.TryAssignWithBool(jObjectParsed, "arcade_state", ref arcadeActive,
                 ref arcadeChanged);
 
@@ -280,10 +290,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomBackgroundLogo = backgroundLogo,
                 DisableDesktopLogo = disableBackgroundLogo,
                 BackgroundLogoTransparency = backgroundLogoTransparency,
-                
+
+                AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
+                BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
+
                 HideDiscordProgramChanged = hideDiscordProgramChanged,
                 HideDiscordProgram = hideDiscordProgram,
-                
+
                 MailBoxIcon = mailBoxIcon,
                 EntryBrowserIcon = entryBrowserIcon,
                 OptionsIcon = optionsIcon,
