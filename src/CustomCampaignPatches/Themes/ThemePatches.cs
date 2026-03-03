@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomDesktop;
+using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
@@ -60,7 +60,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Themes
                     
                     if (customCampaign.DisablePickingThemeOption)
                     {
-                        CustomDesktopHelper.DisableThemeDropdownInGame();
+                        ThemeProgramHelper.DisableThemeDropdownInGame();
                     }
                 }
                 

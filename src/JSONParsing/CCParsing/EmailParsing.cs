@@ -66,6 +66,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Image
             Sprite emailImage = null;
+            
+            string emailAnimatedVideo = null;
 
             // Unlock
             int emailUnlockDay = 0;
@@ -81,6 +83,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
                 usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignVideoPath(jObjectParsed, "email_animated_image", ref emailAnimatedVideo,
+                jsonFolderPath, usermodFolderPath);
 
             return new CustomEmail
             {
@@ -93,7 +98,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 UnlockDay = emailUnlockDay,
                 UnlockThreshold = emailUnlockThreshold,
 
-                EmailImage = emailImage
+                EmailImage = emailImage,
+                EmailAnimatedVideo = emailAnimatedVideo
             };
         }
     }

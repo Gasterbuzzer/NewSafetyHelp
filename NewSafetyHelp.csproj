@@ -160,7 +160,12 @@
     <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
     <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs" />
     <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs" />
+    <Compile Include="src\CustomDesktop\Utils\CustomCampaignProgramHelper.cs" />
+    <Compile Include="src\CustomDesktop\Utils\CustomCampaignSceneSwitcher.cs" />
     <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
+    <Compile Include="src\CustomDesktop\Utils\EmailHelper.cs" />
+    <Compile Include="src\CustomDesktop\Utils\ThemeProgramHelper.cs" />
+    <Compile Include="src\CustomDesktop\Utils\VideoHelper.cs" />
     <Compile Include="src\CustomThemes\ColorHelper.cs" />
     <Compile Include="src\CustomVideos\CustomVideo.cs" />
     <Compile Include="src\CustomVideos\VideoPatches.cs" />

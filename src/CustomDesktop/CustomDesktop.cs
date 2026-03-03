@@ -20,7 +20,6 @@ namespace NewSafetyHelp.CustomDesktop
 {
     public static class CustomDesktop
     {
-        
         [HarmonyLib.HarmonyPatch(typeof(MainMenuCanvasBehavior), "Start")]
         public static class StartPatch
         {
@@ -99,7 +98,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (customCampaign.DisablePickingThemeOption)
                     {
-                        CustomDesktopHelper.DisableThemeDropdownDesktop();
+                        ThemeProgramHelper.DisableThemeDropdownDesktop();
                     }
                 }
 
@@ -110,16 +109,18 @@ namespace NewSafetyHelp.CustomDesktop
                 {
                     foreach (CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
                     {
-                        CustomDesktopHelper.CreateCustomProgramIcon(customCampaign.CampaignDesktopName, customCampaign.CampaignName, customCampaign.CampaignIcon);
+                        CustomCampaignProgramHelper.CreateCustomProgramIcon(customCampaign.CampaignDesktopName,
+                            customCampaign.CampaignName, customCampaign.CampaignIcon);
                     }
                     
-                    if (GlobalParsingVariables.MainCampaignEmails.Count > 0) // If we have custom emails for the main campaign.
+                    // If we have custom emails for the main campaign.
+                    if (GlobalParsingVariables.MainCampaignEmails.Count > 0) 
                     {
                         foreach (CustomEmail emailExtra in GlobalParsingVariables.MainCampaignEmails)
                         {
                             if (emailExtra.InMainCampaign)
                             {
-                                CustomDesktopHelper.CreateEmail(emailExtra);
+                                EmailHelper.CreateEmail(emailExtra);
                             }
                         }
                     }
@@ -130,7 +131,7 @@ namespace NewSafetyHelp.CustomDesktop
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Custom Campaign
                 {
-                    CustomDesktopHelper.CreateBackToMainGameButton();
+                    CustomCampaignProgramHelper.CreateBackToMainGameButton();
                     
                     // Hide DLC Button
                     CustomDesktopHelper.DisableWinterDlcProgram();
@@ -175,14 +176,14 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         foreach (CustomEmail emailExtra in customCampaign.Emails)
                         {
-                            CustomDesktopHelper.CreateEmail(emailExtra);
+                            EmailHelper.CreateEmail(emailExtra);
                         }
                     }
                     
                     // Remove all emails from the main game.
                     if (customCampaign.RemoveDefaultEmails)
                     {
-                        CustomDesktopHelper.RemoveMainGameEmails();
+                        EmailHelper.RemoveMainGameEmails();
                     }
                     
                     // Hide Logo
@@ -232,7 +233,8 @@ namespace NewSafetyHelp.CustomDesktop
 
                     float logoTransparency = 0.2627f;
                     
-                    if (!customCampaign.CustomDesktopLogoTransparency.Equals(0.2627f)) // If we have a Custom Transparency
+                    // If we have a Custom Transparency
+                    if (!customCampaign.CustomDesktopLogoTransparency.Equals(0.2627f)) 
                     {
                         logoTransparency = customCampaign.CustomDesktopLogoTransparency;
                     }
@@ -410,7 +412,7 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         foreach (CustomVideo customVideo in customCampaign.AllDesktopVideos)
                         {
-                            CustomDesktopHelper.CreateCustomVideoFileProgram(customVideo);
+                            VideoHelper.CreateCustomVideoFileProgram(customVideo);
                         }
                     }
                 }
@@ -442,7 +444,8 @@ namespace NewSafetyHelp.CustomDesktop
                 
                 yield return new WaitForSeconds(2f);
                 
-                GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.computerFanSpin, GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource);
+                GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.computerFanSpin,
+                    GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource);
                 
                 __instance.loginText2.SetActive(true);
                 
@@ -463,6 +466,8 @@ namespace NewSafetyHelp.CustomDesktop
         [HarmonyLib.HarmonyPatch(typeof(DateTextController), "Start")]
         public static class StartDateTextPatch
         {
+            private static FieldInfo myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            
             /// <summary>
             /// Hooks into the Start function of the date function to allow for more robust days in custom campaigns.
             /// </summary>
@@ -471,8 +476,6 @@ namespace NewSafetyHelp.CustomDesktop
             private static bool Prefix(DateTextController __instance)
             {
                 LoggingHelper.DebugLog("Handling day format.");
-                
-                FieldInfo myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
                 if (myText == null)
                 {
@@ -480,7 +483,8 @@ namespace NewSafetyHelp.CustomDesktop
                     return true;
                 }
                 
-                myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
+                // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
+                myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); 
                 
                 if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
@@ -512,7 +516,8 @@ namespace NewSafetyHelp.CustomDesktop
                 }
                 else if (!CustomCampaignGlobal.InCustomCampaign) // XMAS DLC
                 {
-                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); // __instance.myText
+                    // __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); 
                     
                     string[] strArray = new string[5];
                     
@@ -574,7 +579,8 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     LoggingHelper.DebugLog($"Current day format: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
 
-                    dateList = DateUtil.FixDayMonthYear(dateList[0]  + GlobalVariables.currentDay, dateList[1], dateList[2]);
+                    dateList = DateUtil.FixDayMonthYear(dateList[0] + GlobalVariables.currentDay,
+                        dateList[1], dateList[2]);
                     
                     LoggingHelper.DebugLog($"Day format after fix: {dateList[0]} / {dateList[1]} / {dateList[2]}.");
                     

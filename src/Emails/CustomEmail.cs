@@ -11,7 +11,10 @@ namespace NewSafetyHelp.Emails
 
         public string EmailBody = "";
         
-        public Sprite EmailImage = null; // Image shown at the end of the email.
+        // Image shown at the end of the email.
+        public Sprite EmailImage = null; 
+        
+        public string EmailAnimatedVideo = null;
         
         // Unlock
         public int UnlockDay = 0;

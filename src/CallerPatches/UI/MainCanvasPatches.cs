@@ -6,6 +6,7 @@ using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop;
+using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.LoggingSystem;
 using Steamworks;
 using UnityEngine;
@@ -684,7 +685,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                         }
                         
                         // Afterward we load all main game values.
-                        CustomDesktopHelper.BackToMainGame(false);
+                        CustomCampaignSceneSwitcher.BackToMainGame(false);
                     }
                     else // If not, we show the default one.
                     {

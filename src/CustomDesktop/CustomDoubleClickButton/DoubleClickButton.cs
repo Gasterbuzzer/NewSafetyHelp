@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using NewSafetyHelp.CustomDesktop.Utils;
+using UnityEngine;
 
 namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
 {
@@ -13,7 +14,7 @@ namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
 
             if (timeSinceLastClick <= DoubleClickThreshold)
             {
-                CustomDesktopHelper.ChangeToCustomCampaignSettings(customCampaignName);
+                CustomCampaignSceneSwitcher.ChangeToCustomCampaignSettings(customCampaignName);
             }
             
             lastClickTime = Time.time;
@@ -25,7 +26,7 @@ namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
 
             if (timeSinceLastClick <= DoubleClickThreshold)
             {
-                CustomDesktopHelper.BackToMainGame();
+                CustomCampaignSceneSwitcher.BackToMainGame();
             }
             
             lastClickTime = Time.time;
