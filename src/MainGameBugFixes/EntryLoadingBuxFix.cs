@@ -71,11 +71,12 @@ namespace NewSafetyHelp.MainGameBugFixes
                     if (currentlySelectedEntry != null
                         && currentlySelectedEntry.IsVideoPortrait)
                     {
-                        MainCanvasEntry.SetVideoUrlMainCanvas(currentlySelectedEntry.VideoUrlPortrait);
+                        MainCanvasEntry.SetVideoUrl(currentlySelectedEntry.VideoUrlPortrait,
+                            MainCanvasEntry.PortraitType.ENTRY);
                     }
                     else
                     {
-                        MainCanvasEntry.RestoreEntryPortrait();
+                        MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.ENTRY);
                     }
                 }
                 

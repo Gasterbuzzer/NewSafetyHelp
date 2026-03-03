@@ -31,7 +31,6 @@ namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
                 {
                     return caller; // Returns the caller
                 }
-
             }
 
             return null;

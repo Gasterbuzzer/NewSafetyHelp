@@ -41,11 +41,12 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     if (currentCaller != null 
                         && currentCaller.CallerHasAnimatedPortrait)
                     {
-                        MainCanvasEntry.SetVideoUrlCaller(currentCaller.CallerAnimatedPortraitURL);
+                        MainCanvasEntry.SetVideoUrl(currentCaller.CallerAnimatedPortraitURL,
+                            MainCanvasEntry.PortraitType.CALLER);
                     }
                     else
                     {
-                        MainCanvasEntry.RestoreCallerPortrait();
+                        MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CALLER);
                     }
                 }
                 
@@ -98,11 +99,12 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     if (currentCaller != null 
                         && currentCaller.CallerHasAnimatedPortrait)
                     {
-                        MainCanvasEntry.SetVideoUrlCallerCornerPortrait(currentCaller.CallerAnimatedPortraitURL);
+                        MainCanvasEntry.SetVideoUrl(currentCaller.CallerAnimatedPortraitURL,
+                            MainCanvasEntry.PortraitType.CORNER_CALLER);
                     }
                     else
                     {
-                        MainCanvasEntry.RestoreCallerCornerPortrait();
+                        MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CORNER_CALLER);
                     }
                 }
                 
@@ -114,11 +116,12 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     if (currentCaller != null 
                         && currentCaller.CallerHasAnimatedPortrait)
                     {
-                        MainCanvasEntry.SetVideoUrlCallerLargePortrait(currentCaller.CallerAnimatedPortraitURL);
+                        MainCanvasEntry.SetVideoUrl(currentCaller.CallerAnimatedPortraitURL,
+                            MainCanvasEntry.PortraitType.LARGE_CALLER);
                     }
                     else
                     {
-                        MainCanvasEntry.RestoreCallerLargePortrait();
+                        MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.LARGE_CALLER);
                     }
                 }
                 
@@ -147,7 +150,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    MainCanvasEntry.RestoreCallerLargePortrait();
+                    MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.LARGE_CALLER);
                 }
                 
                 __instance.largeCallerPortrait.sprite = __instance.noCallerSprite;

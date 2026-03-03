@@ -9,6 +9,14 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
 {
     public static class MainCanvasEntry
     {
+        public enum PortraitType
+        {
+            ENTRY,
+            CALLER,
+            LARGE_CALLER,
+            CORNER_CALLER
+        }
+        
         // Public reference to the animated portrait.
         private static GameObject animatedEntryPortrait;
         private static GameObject animatedCallerPortrait;
@@ -28,150 +36,118 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
         {
             return GameObject.Find("MainCanvas").transform.Find("CallPopup").transform.Find("CurrentCall").transform.Find("CallerPortrait").gameObject;
         }
-        
+
         /// <summary>
-        /// Updates the visibility of the normal entry portrait to be visible or not.
+        /// Updates the visibility of a given portrait to be visible or not.
         /// </summary>
-        /// <param name="showEntryPortrait"></param>
-        private static void UpdateVisibilityNormalEntryPortrait(bool showEntryPortrait = false)
+        /// <param name="portraitToUpdate">Portrait to update the visibility of.</param>
+        /// <param name="showPortrait">If to show the portrait or not.</param>
+        private static void UpdateVisibilityPortrait(PortraitType portraitToUpdate, bool showPortrait = false)
         {
-            GetEntryPortrait().GetComponent<Image>().enabled = showEntryPortrait;
-        }
-        
-        /// <summary>
-        /// Updates the visibility of the normal caller portrait.
-        /// </summary>
-        /// <param name="showEntryPortrait"></param>
-        private static void UpdateVisibilityCallerPortrait(bool showEntryPortrait = false)
-        {
-            GetCallerPortrait().GetComponent<Image>().enabled = showEntryPortrait;
-        }
-        
-        /// <summary>
-        /// Updates the visibility of the normal entry portrait to be visible or not.
-        /// </summary>
-        /// <param name="showEntryPortrait"></param>
-        private static void UpdateVisibilityLargeCallerPortrait(bool showEntryPortrait = false)
-        {
-            GlobalVariables.mainCanvasScript.largeCallerPortrait.enabled = showEntryPortrait;
-        }
-        
-        /// <summary>
-        /// Updates the visibility of the normal entry portrait to be visible or not.
-        /// </summary>
-        /// <param name="showEntryPortrait"></param>
-        private static void UpdateVisibilityCornerCallerPortrait(bool showEntryPortrait = false)
-        {
-            GlobalVariables.mainCanvasScript.callerPortrait.enabled = showEntryPortrait;
-        }
-        
-        /// <summary>
-        /// Sets the video URL of the entry animated portrait.
-        /// </summary>
-        /// <param name="url"></param>
-        public static void SetVideoUrlMainCanvas(string url)
-        {
-            UpdateVisibilityNormalEntryPortrait();
-            SetVideoUrl(url, animatedEntryPortrait);
-        }
-        
-        /// <summary>
-        /// Sets the video url for the caller portrait.
-        /// </summary>
-        /// <param name="url"></param>
-        public static void SetVideoUrlCaller(string url)
-        {
-            UpdateVisibilityCallerPortrait();
-            SetVideoUrl(url, animatedCallerPortrait);
-        }
-        
-        /// <summary>
-        /// Sets the video URL of the large caller portrait.
-        /// </summary>
-        /// <param name="url"></param>
-        public static void SetVideoUrlCallerLargePortrait(string url)
-        {
-            UpdateVisibilityLargeCallerPortrait();
-            SetVideoUrl(url, animatedCallerLargePortrait);
-        }
-        
-        /// <summary>
-        /// Sets the video URL of the corner caller portrait.
-        /// </summary>
-        /// <param name="url"></param>
-        public static void SetVideoUrlCallerCornerPortrait(string url)
-        {
-            UpdateVisibilityCornerCallerPortrait();
-            SetVideoUrl(url, animatedCallerCornerPortrait);
+            Image chosenPortrait = null;
+            
+            switch (portraitToUpdate)
+            {
+                case PortraitType.ENTRY:
+                    chosenPortrait = GetEntryPortrait().GetComponent<Image>();
+                    break;
+                
+                case PortraitType.CALLER:
+                    chosenPortrait = GetCallerPortrait().GetComponent<Image>();
+                    break;
+                
+                case PortraitType.LARGE_CALLER:
+                    chosenPortrait = GlobalVariables.mainCanvasScript.largeCallerPortrait;
+                    break;
+                
+                case PortraitType.CORNER_CALLER:
+                    chosenPortrait = GlobalVariables.mainCanvasScript.callerPortrait;
+                    break;
+            }
+
+            if (chosenPortrait != null)
+            {
+                chosenPortrait.enabled = showPortrait;
+            }
         }
         
         /// <summary>
         /// Sets the url to the given to url to the given animated portrait.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="animatedImageGameObject"> The animated image object to set the video on.</param>
-        private static void SetVideoUrl(string url, GameObject animatedImageGameObject)
+        /// <param name="url"> URL to show as the video. </param>
+        /// <param name="chosenPortrait"> Type of portrait this applies to. </param>
+        public static void SetVideoUrl(string url, PortraitType chosenPortrait)
         {
-            AnimatedImageHelper.SetVideoUrl(url, animatedImageGameObject);
-        }
+            GameObject animatedImageGameObject = null;
 
-        /// <summary>
-        /// Restores the entry portrait.
-        /// </summary>
-        public static void RestoreEntryPortrait()
-        {
-            // Show normal portrait again.
-            UpdateVisibilityNormalEntryPortrait(true);
+            UpdateVisibilityPortrait(chosenPortrait);
             
-            RestoreNormalPortrait(animatedEntryPortrait);
-        }
-
-        /// <summary>
-        /// Restores the caller portrait.
-        /// </summary>
-        public static void RestoreCallerPortrait()
-        {
-            // Show normal portrait again.
-            UpdateVisibilityCallerPortrait(true);
-            
-            RestoreNormalPortrait(animatedCallerPortrait);
-        }
-        
-        /// <summary>
-        /// Restores the corner caller portrait.
-        /// </summary>
-        public static void RestoreCallerCornerPortrait()
-        {
-            // Show normal portrait again.
-            UpdateVisibilityCornerCallerPortrait(true);
-            
-            RestoreNormalPortrait(animatedCallerCornerPortrait);
-        }
-        
-        /// <summary>
-        /// Restores the caller portrait.
-        /// </summary>
-        public static void RestoreCallerLargePortrait()
-        {
-            if (animatedCallerLargePortrait == null)
+            switch (chosenPortrait)
             {
-                return;
+                case PortraitType.ENTRY:
+                    animatedImageGameObject = animatedEntryPortrait;
+                    break;
+                
+                case PortraitType.CALLER:
+                    animatedImageGameObject = animatedCallerPortrait;
+                    break;
+                
+                case PortraitType.LARGE_CALLER:
+                    animatedImageGameObject = animatedCallerLargePortrait;
+                    break;
+                
+                case PortraitType.CORNER_CALLER:
+                    animatedImageGameObject = animatedCallerCornerPortrait;
+                    break;
+            }
+
+            if (animatedImageGameObject != null)
+            {
+                AnimatedImageHelper.SetVideoUrl(url, animatedImageGameObject);
+            }
+        }
+        
+        /// <summary>
+        /// Restores the normal image portrait.
+        /// </summary>
+        public static void RestorePortrait(PortraitType chosenPortrait)
+        {
+            GameObject animatedImageGameObject = null;
+
+            switch (chosenPortrait)
+            {
+                case PortraitType.ENTRY:
+                    animatedImageGameObject = animatedEntryPortrait;
+                    break;
+                
+                case PortraitType.CALLER:
+                    animatedImageGameObject = animatedCallerPortrait;
+                    break;
+                
+                case PortraitType.LARGE_CALLER:
+                    if (animatedCallerLargePortrait == null)
+                    {
+                        return;
+                    }
+                    
+                    animatedCallerLargePortrait.SetActive(false);
+                    
+                    animatedImageGameObject = animatedCallerLargePortrait;
+                    
+                    break;
+                
+                case PortraitType.CORNER_CALLER:
+                    animatedImageGameObject = animatedCallerCornerPortrait;
+                    break;
             }
             
-            HideLargeAnimatedPortrait();
-            
             // Show normal portrait again.
-            UpdateVisibilityLargeCallerPortrait(true);
+            UpdateVisibilityPortrait(chosenPortrait, true);
             
-            RestoreNormalPortrait(animatedCallerLargePortrait);
-        }
-
-        /// <summary>
-        /// Hides the animated large portrait.
-        /// </summary>
-        private static void HideLargeAnimatedPortrait()
-        {
-            animatedCallerLargePortrait.SetActive(false);
+            if (animatedImageGameObject != null)
+            {
+                RestoreNormalPortrait(animatedImageGameObject);
+            }
         }
 
         /// <summary>
@@ -199,7 +175,7 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             /// <summary>
             /// Patches the start function 
             /// </summary>
-            /// <param name="__instance"> Caller of function. </param>
+            /// <param name="__instance"> CALLER of function. </param>
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MainCanvasBehavior __instance)
             {
