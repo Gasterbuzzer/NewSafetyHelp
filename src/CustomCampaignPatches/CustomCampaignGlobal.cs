@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
+using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.LoggingSystem;
 
@@ -81,6 +82,24 @@ namespace NewSafetyHelp.CustomCampaignPatches
             }
             
             return customCampaign.CustomMusic.Find(customMusic => customMusic.MusicClip == musicToFind);
+        }
+        
+        /// <summary>
+        /// Gets the custom email from custom campaign.
+        /// </summary>
+        /// <param name="emailToFind"> Email one wishes to find in the custom campaign.</param>
+        /// <returns>CustomEmail object of the found object. If not found, default.</returns>
+        [CanBeNull]
+        public static CustomEmail GetCustomEmailFromActiveCampaign(Email emailToFind)
+        {
+            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            
+            if (customCampaign == null)
+            {
+                return null;
+            }
+            
+            return customCampaign.Emails.Find(customEmail => customEmail.ReferenceToEmailObject == emailToFind);
         }
 
         /// <summary>

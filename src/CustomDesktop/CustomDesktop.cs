@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.CallerPatches.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
@@ -20,6 +21,7 @@ namespace NewSafetyHelp.CustomDesktop
 {
     public static class CustomDesktop
     {
+        
         [HarmonyLib.HarmonyPatch(typeof(MainMenuCanvasBehavior), "Start")]
         public static class StartPatch
         {
@@ -66,13 +68,18 @@ namespace NewSafetyHelp.CustomDesktop
                         return true;
                     }
 
-                    if (customCampaign.LoadingTexts[0].Count > 0 && !string.IsNullOrEmpty(customCampaign.LoadingTexts[0][0]))
+                    EmailHelper.SetAnimatedEmail(
+                        AnimatedImageHelper.CreateAnimatedPortrait(EmailHelper.GetEmailImageGameObject(),
+                        disableVideoClicking: true));
+
+                    if (customCampaign.LoadingTexts[0].Count > 0 
+                        && !string.IsNullOrEmpty(customCampaign.LoadingTexts[0][0]))
                     {
                         __instance.loginText.GetComponent<TextMeshProUGUI>().text = customCampaign.LoadingTexts[0][0];
 
                         // Set animated texts to provided texts. (Even if just 1)
                         AnimatedText loginText01 = __instance.loginText.GetComponent<AnimatedText>();
-                            
+
                         loginText01.textFrames = new string[customCampaign.LoadingTexts[0].Count];
 
                         for (int i = 0; i < customCampaign.LoadingTexts[0].Count; i++)
@@ -81,7 +88,8 @@ namespace NewSafetyHelp.CustomDesktop
                         }
                     }
                     
-                    if (customCampaign.LoadingTexts[1].Count > 0 && !string.IsNullOrEmpty(customCampaign.LoadingTexts[1][0]))
+                    if (customCampaign.LoadingTexts[1].Count > 0 
+                        && !string.IsNullOrEmpty(customCampaign.LoadingTexts[1][0]))
                     {
                         __instance.loginText2.GetComponent<TextMeshProUGUI>().text = customCampaign.LoadingTexts[1][0];
                         
@@ -120,7 +128,7 @@ namespace NewSafetyHelp.CustomDesktop
                         {
                             if (emailExtra.InMainCampaign)
                             {
-                                EmailHelper.CreateEmail(emailExtra);
+                                emailExtra.ReferenceToEmailObject = EmailHelper.CreateEmail(emailExtra);
                             }
                         }
                     }
@@ -176,7 +184,7 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         foreach (CustomEmail emailExtra in customCampaign.Emails)
                         {
-                            EmailHelper.CreateEmail(emailExtra);
+                            emailExtra.ReferenceToEmailObject = EmailHelper.CreateEmail(emailExtra);
                         }
                     }
                     

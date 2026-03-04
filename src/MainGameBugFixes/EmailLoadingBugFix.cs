@@ -1,5 +1,9 @@
 ﻿using System.Collections;
 using System.Reflection;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomDesktop.Utils;
+using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -35,7 +39,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                         $"<b>Subject Line: {__instance.selectedEmail.subjectLine}</b> \n\nFrom: {__instance.selectedEmail.sender}\n\n\n{__instance.selectedEmail.emailBody}";
                     
                     // If we selected the same email, we don't update the email.
-                    if ( __instance.displayedEmailBody.text.Equals(newEmailBody))
+                    if (__instance.displayedEmailBody.text.Equals(newEmailBody))
                     {
                         if (__instance.selectedEmail.imageAttachment != null)
                         {
@@ -52,14 +56,56 @@ namespace NewSafetyHelp.MainGameBugFixes
                     
                     __instance.displayedEmailBody.text = newEmailBody;
 
-                    if (__instance.selectedEmail.imageAttachment != null)
+                    bool showVideo = false;
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign == null)
+                        {
+                            LoggingHelper.CampaignNullError();
+                            return true;
+                        }
+
+                        CustomEmail customEmail = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(
+                            __instance.selectedEmail);
+
+                        LoggingHelper.DebugLog("Trying to find associated custom email. Did we find a custom email? " +
+                                               $"{customEmail != null}.");
+                    
+                        if (customEmail != null)
+                        {
+                            if (customEmail.HasAnimatedVideo)
+                            {
+                                LoggingHelper.DebugLog($"Playing email video: '{customEmail.EmailAnimatedVideo}'.");
+                                EmailHelper.SetVideoUrlEmail(customEmail.EmailAnimatedVideo);
+
+                                showVideo = true;
+                            }
+                            else
+                            {
+                                EmailHelper.RestoreEmailPortrait();
+                            }
+                        }
+                        else
+                        {
+                            EmailHelper.RestoreEmailPortrait();
+                        }
+                    }
+
+                    if (showVideo 
+                        || __instance.selectedEmail.imageAttachment != null)
                     {
                         __instance.displayedImage.transform.parent.gameObject.SetActive(true);
-                        __instance.displayedImage.sprite = __instance.selectedEmail.imageAttachment;
                     }
                     else
                     {
                         __instance.displayedImage.transform.parent.gameObject.SetActive(false);
+                    }
+
+                    if (__instance.selectedEmail.imageAttachment != null)
+                    {
+                        __instance.displayedImage.sprite = __instance.selectedEmail.imageAttachment;
                     }
                 }
                 else

@@ -7,7 +7,7 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
     public static class AnimatedImageHelper
     {
         public static GameObject CreateAnimatedPortrait(GameObject animatedPortrait, bool deleteChildren = false,
-            bool deleteDaySpriteSwapper = false, bool setAsFirstChild = false)
+            bool deleteDaySpriteSwapper = false, bool setAsFirstChild = false, bool disableVideoClicking = true)
         {
             GameObject portraitAnimated = Object.Instantiate(animatedPortrait, animatedPortrait.transform);
 
@@ -19,8 +19,12 @@ namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
             Object.DestroyImmediate(portraitAnimated.GetComponent<Image>());
             
             RawImage rawImageComponent = portraitAnimated.AddComponent<RawImage>();
-            rawImageComponent.raycastTarget = false;
 
+            if (disableVideoClicking)
+            {
+                rawImageComponent.raycastTarget = false;
+            }
+            
             if (deleteChildren)
             {
                 foreach (Transform child in portraitAnimated.transform)

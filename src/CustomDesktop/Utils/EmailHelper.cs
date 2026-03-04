@@ -1,18 +1,66 @@
 ﻿using System.Reflection;
+using NewSafetyHelp.CallerPatches.UI.AnimatedEntry;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace NewSafetyHelp.CustomDesktop.Utils
 {
     public static class EmailHelper
     {
+        private static GameObject animatedEmail;
+
+        public static void SetAnimatedEmail(GameObject email)
+        {
+            animatedEmail = email;
+        }
+        
+        public static GameObject GetEmailImageGameObject()
+        {
+            return GameObject.Find("MainMenuCanvas").transform.Find("EmailPopup").transform
+                .Find("EmailContentScrollview").transform.Find("Viewport").transform.Find("Content").transform
+                .Find("EmailImageBorder").transform.Find("EmailImage").gameObject;
+        }
+        
+        public static void SetVideoUrlEmail(string url)
+        {
+            UpdateVisibilityOfNormalEmailPortrait();
+            
+            AnimatedImageHelper.SetVideoUrl(url, animatedEmail);
+        } 
+        
+        public static void RestoreEmailPortrait()
+        {
+            // Show normal portrait again.
+            UpdateVisibilityOfNormalEmailPortrait(true);
+            
+            // Disable video player.
+            VideoPlayer videoPlayerComponent = animatedEmail.GetComponent<VideoPlayer>();
+            
+            videoPlayerComponent.Stop();
+            
+            if (videoPlayerComponent.targetTexture != null)
+            {
+                videoPlayerComponent.targetTexture.Release();
+                Object.Destroy(videoPlayerComponent.targetTexture);
+            }
+            
+            animatedEmail.SetActive(false);
+        }
+        
+        private static void UpdateVisibilityOfNormalEmailPortrait(bool showEntryPortrait = false)
+        {
+            GetEmailImageGameObject().GetComponent<Image>().enabled = showEntryPortrait;
+        }
+        
         /// <summary>
         /// Creates an email and returns a reference.
         /// </summary>
         /// <returns>New Email reference.</returns>
-        public static GameObject CreateEmail(CustomEmail emailToCreate)
+        public static Email CreateEmail(CustomEmail emailToCreate)
         {
             GameObject originalEmail = CustomDesktopHelper.GetEmailList().transform.Find("EmailListing (14)").gameObject;
 
@@ -99,10 +147,11 @@ namespace NewSafetyHelp.CustomDesktop.Utils
                 }
                 else
                 {
-                    hasClicked.SetValue(emailListing, false); // emailListing.hasClicked = false;
+                    // OLD: emailListing.hasClicked = false;
+                    hasClicked.SetValue(emailListing, false); 
                 }
 
-                return newEmail;
+                return clonedEmail;
             }
             else
             {

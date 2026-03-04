@@ -213,11 +213,6 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                             }
                         }
                         
-                        LoggingHelper.DebugLog($"'1:{unlockDaysFound} " +
-                                               $"2:{unlockDays != null} " +
-                                               $"3:{animatedBackgrounds.Count}' " +
-                                               $"4:{animatedBackgrounds[0]}");
-                        
                         // General Case:
                         if (!unlockDaysFound || unlockDays == null)
                         {

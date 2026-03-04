@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomCampaignPatches.Abstract;
+﻿using JetBrains.Annotations;
+using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using UnityEngine;
 
 namespace NewSafetyHelp.Emails
@@ -12,9 +13,10 @@ namespace NewSafetyHelp.Emails
         public string EmailBody = "";
         
         // Image shown at the end of the email.
-        public Sprite EmailImage = null; 
+        [CanBeNull] public Sprite EmailImage = null; 
         
         public string EmailAnimatedVideo = null;
+        public bool HasAnimatedVideo = false;
         
         // Unlock
         public int UnlockDay = 0;
@@ -22,5 +24,8 @@ namespace NewSafetyHelp.Emails
         
         // Main Campaign Values
         public bool InMainCampaign = false;
+        
+        // For finding the custom email:
+        [CanBeNull] public Email ReferenceToEmailObject = null;
     }
 }
