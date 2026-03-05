@@ -16,11 +16,15 @@ namespace NewSafetyHelp.Audio.Music
     public static class MusicControllerPatches
     {
         // Used for figuring out, what is playing, instead of guessing or searching.
-        private static RichAudioClip CurrentMusicClip;
+        private static RichAudioClip currentMusicClip;
         
         [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartRandomMusic")]
         public static class StartRandomMusicPatch
         {
+            private static readonly FieldInfo PreviousHoldMusicIndex = 
+                typeof(MusicController).GetField("previousHoldMusicIndex",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
             /// <summary>
             /// Patches the play random music to not play day 7 music in custom campaigns.
             /// </summary>
@@ -41,10 +45,7 @@ namespace NewSafetyHelp.Audio.Music
                 int chosenMusicIndex = 0;
                 bool playCustomMusic = false;
 
-                FieldInfo _previousHoldMusicIndex = typeof(MusicController).GetField("previousHoldMusicIndex",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                if (_previousHoldMusicIndex == null)
+                if (PreviousHoldMusicIndex == null)
                 {
                     LoggingHelper.ErrorLog("PreviousHoldMusicIndex is null." +
                                            " Unable of replacing MusicController StartNewRandomMusic." +
@@ -52,32 +53,34 @@ namespace NewSafetyHelp.Audio.Music
                     return true;
                 }
 
+                List<CustomMusic> customMusicList = new List<CustomMusic>();
+
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main game
                 {
                     if (GlobalVariables.currentDay > 4)
                     {
                         for (int musicChoosingAttempt = 0;
-                             chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
+                             chosenMusicIndex == (int)PreviousHoldMusicIndex.GetValue(__instance) &&
                              musicChoosingAttempt < 3;
                              ++musicChoosingAttempt) // __instance.previousHoldMusicIndex
                         {
                             chosenMusicIndex = Random.Range(0, __instance.onHoldMusicClips.Length);
                         }
 
-                        _previousHoldMusicIndex.SetValue(__instance,
+                        PreviousHoldMusicIndex.SetValue(__instance,
                             chosenMusicIndex); // __instance.previousHoldMusicIndex = index1;
                     }
                     else
                     {
                         for (int musicChoosingAttempt = 0;
-                             chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
+                             chosenMusicIndex == (int)PreviousHoldMusicIndex.GetValue(__instance) &&
                              musicChoosingAttempt < 3;
                              ++musicChoosingAttempt) // __instance.previousHoldMusicIndex
                         {
                             chosenMusicIndex = Random.Range(0, GlobalVariables.currentDay);
                         }
 
-                        _previousHoldMusicIndex.SetValue(__instance,
+                        PreviousHoldMusicIndex.SetValue(__instance,
                             chosenMusicIndex); // __instance.previousHoldMusicIndex = index1;
                     }
                 }
@@ -91,25 +94,28 @@ namespace NewSafetyHelp.Audio.Music
                         return true;
                     }
 
+                    customMusicList = customCampaign.CustomMusic
+                        .Where(clip =>
+                            {
+                                if (clip.OnlyPlayOnUnlockDay)
+                                {
+                                    if (clip.UnlockDay <= 0)
+                                    {
+                                        return 1 == GlobalVariables.currentDay;
+                                    }
+
+                                    return clip.UnlockDay == GlobalVariables.currentDay;
+                                }
+
+                                return clip.UnlockDay <= GlobalVariables.currentDay;
+                            }
+                        ).ToList();
+
+                    int customMusicAmount = customMusicList.Count;
+
                     if (customCampaign.AlwaysRandomMusic || GlobalVariables.currentDay > 4)
                     {
                         int amountOfClips = 0;
-
-                        int customMusicAmount = customCampaign.CustomMusic
-                            .Where(clip =>
-                                {
-                                    if (clip.OnlyPlayOnUnlockDay)
-                                    {
-                                        if (clip.UnlockDay <= 0)
-                                        {
-                                            return 1 == GlobalVariables.currentDay;
-                                        }
-                                        return clip.UnlockDay == GlobalVariables.currentDay;
-                                    }
-                                    
-                                    return clip.UnlockDay <= GlobalVariables.currentDay;
-                                }
-                            ).ToList().Count;
 
                         if (!customCampaign.RemoveDefaultMusic)
                         {
@@ -124,7 +130,7 @@ namespace NewSafetyHelp.Audio.Music
                         chosenMusicIndex = Random.Range(0, amountOfClips); // Set it once.
 
                         for (int musicChoosingAttempt = 0;
-                             chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
+                             chosenMusicIndex == (int)PreviousHoldMusicIndex.GetValue(__instance) &&
                              musicChoosingAttempt < 3;
                              ++musicChoosingAttempt)
                         {
@@ -144,7 +150,7 @@ namespace NewSafetyHelp.Audio.Music
                             playCustomMusic = true;
                         }
 
-                        LoggingHelper.DebugLog($"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)_previousHoldMusicIndex.GetValue(__instance)}." +
+                        LoggingHelper.DebugLog($"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)PreviousHoldMusicIndex.GetValue(__instance)}." +
                                                $" (From custom music? {playCustomMusic})" +
                                                $" (Amount of clips: {amountOfClips})" +
                                                $" (Total clips: {customCampaign.CustomMusic.Count})" +
@@ -156,27 +162,11 @@ namespace NewSafetyHelp.Audio.Music
                             LoggingHelper.DebugLog($"Amount of custom music: {customMusicAmount}.");
                         }
 
-                        _previousHoldMusicIndex.SetValue(__instance, chosenMusicIndex);
+                        PreviousHoldMusicIndex.SetValue(__instance, chosenMusicIndex);
                     }
                     else
                     {
                         int amountOfClips = 0;
-
-                        int customMusicAmount = customCampaign.CustomMusic
-                            .Where(clip => 
-                                {
-                                    if (clip.OnlyPlayOnUnlockDay)
-                                    {
-                                        if (clip.UnlockDay <= 0)
-                                        {
-                                            return 1 == GlobalVariables.currentDay;
-                                        }
-                                        return clip.UnlockDay == GlobalVariables.currentDay;
-                                    }
-                                    
-                                    return clip.UnlockDay <= GlobalVariables.currentDay;
-                                }
-                                ).ToList().Count;
 
                         if (!customCampaign.RemoveDefaultMusic)
                         {
@@ -193,7 +183,7 @@ namespace NewSafetyHelp.Audio.Music
                             playCustomMusic = true;
 
                             for (int musicChoosingAttempt = 0;
-                                 chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
+                                 chosenMusicIndex == (int)PreviousHoldMusicIndex.GetValue(__instance) &&
                                  musicChoosingAttempt < 3;
                                  ++musicChoosingAttempt)
                             {
@@ -210,7 +200,7 @@ namespace NewSafetyHelp.Audio.Music
                                 case 0: // Normal
 
                                     for (int musicChoosingAttempt = 0;
-                                         chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
+                                         chosenMusicIndex == (int)PreviousHoldMusicIndex.GetValue(__instance) &&
                                          musicChoosingAttempt < 3;
                                          ++musicChoosingAttempt) // __instance.previousHoldMusicIndex
                                     {
@@ -224,7 +214,7 @@ namespace NewSafetyHelp.Audio.Music
                                     playCustomMusic = true;
 
                                     for (int musicChoosingAttempt = 0;
-                                         chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
+                                         chosenMusicIndex == (int)PreviousHoldMusicIndex.GetValue(__instance) &&
                                          musicChoosingAttempt < 3;
                                          ++musicChoosingAttempt)
                                     {
@@ -237,7 +227,7 @@ namespace NewSafetyHelp.Audio.Music
                         else if (!customCampaign.RemoveDefaultMusic && customMusicAmount <= 0) // Normal
                         {
                             for (int musicChoosingAttempt = 0;
-                                 chosenMusicIndex == (int)_previousHoldMusicIndex.GetValue(__instance) &&
+                                 chosenMusicIndex == (int)PreviousHoldMusicIndex.GetValue(__instance) &&
                                  musicChoosingAttempt < 3;
                                  ++musicChoosingAttempt) // __instance.previousHoldMusicIndex
                             {
@@ -245,7 +235,7 @@ namespace NewSafetyHelp.Audio.Music
                             }
                         }
 
-                        _previousHoldMusicIndex.SetValue(__instance,
+                        PreviousHoldMusicIndex.SetValue(__instance,
                             chosenMusicIndex); // __instance.previousHoldMusicIndex = index1;
                     }
                 }
@@ -269,24 +259,8 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (playCustomMusic)
                     {
-                        List<CustomMusic> customMusicList = customCampaign.CustomMusic
-                            .Where(clip => 
-                            {
-                                if (clip.OnlyPlayOnUnlockDay)
-                                {
-                                    if (clip.UnlockDay <= 0)
-                                    {
-                                        return 1 == GlobalVariables.currentDay;
-                                    }
-                                    return clip.UnlockDay == GlobalVariables.currentDay;
-                                }
-                                    
-                                return clip.UnlockDay <= GlobalVariables.currentDay;
-                                
-                            }).ToList();
-
                         if (customMusicList.Count > 0 
-                            && customMusicList.Count >= chosenMusicIndex
+                            && chosenMusicIndex < customMusicList.Count
                             && customMusicList[chosenMusicIndex].MusicClip != null)
                         {
                             __instance.StartMusic(customMusicList[chosenMusicIndex].MusicClip);
@@ -411,7 +385,7 @@ namespace NewSafetyHelp.Audio.Music
                 }
 
                 // Store a reference to the clip for later checking or restoring.
-                CurrentMusicClip = myMusicClip;
+                currentMusicClip = myMusicClip;
                 
                 myMusicSourceCast.Play(); // __instance.myMusicSource.Play();
                 
@@ -465,9 +439,9 @@ namespace NewSafetyHelp.Audio.Music
                         yield return new WaitForSeconds(0.1f);
                     }
 
-                    if (CurrentMusicClip != null)
+                    if (currentMusicClip != null)
                     {
-                        myMusicSourceCast.volume = CurrentMusicClip.volume; 
+                        myMusicSourceCast.volume = currentMusicClip.volume; 
                     }
                 }
             }
