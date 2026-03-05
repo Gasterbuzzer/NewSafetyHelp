@@ -59,6 +59,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel
         public List<int> WarningCallThresholdCallerAmounts = new List<int>();
 
         public bool SkipCallersCorrectly = false; // If all the callers should be marked as correct and skipped.
+        public bool GameOverImmunity = false; // If gameover is avoided.
 
         // Date and Username
         public string DesktopUsernameText = "";

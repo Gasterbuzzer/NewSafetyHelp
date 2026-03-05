@@ -204,6 +204,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             bool skipCallersCorrectly = false; // If to always skip callers with the answer being marked as "correct".
 
+            bool gameOverImmunity = false; // If to not be able to lose.
+
             // Thresholds
             int gameOverThreshold = 60; // Threshold when to trigger game over.
             int warningThreshold = 60; // Threshold when to trigger a warning call.
@@ -383,6 +385,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
             ParsingHelper.TryAssign(jObjectParsed, "custom_desktop_logo_transparency", ref customDesktopLogoTransparency);
             ParsingHelper.TryAssign(jObjectParsed, "skip_callers_correctly", ref skipCallersCorrectly);
+            ParsingHelper.TryAssign(jObjectParsed, "game_over_immunity", ref gameOverImmunity);
             
             ParsingHelper.TryAssignSprite(jObjectParsed, "custom_desktop_logo_name", ref customDesktopLogo,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
@@ -441,6 +444,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ChangeMainGameDesktopIcon = changeMainProgramSprite,
 
                 AlwaysSkipCallButton = alwaysSkipCallButton,
+                GameOverImmunity = gameOverImmunity,
 
                 RemoveDefaultEmails = removeAllDefaultEmails,
 

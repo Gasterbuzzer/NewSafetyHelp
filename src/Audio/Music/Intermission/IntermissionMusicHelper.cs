@@ -168,6 +168,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                 GlobalVariables.musicControllerScript.StartMusic(audioClip.MusicClip);
                 
                 myMusicSourceCast.time = startAfterSeconds;
+                myMusicSourceCast.pitch = 1.0f;
 
                 // Wait for end range.
                 yield return new WaitForSeconds(musicStopAfterSeconds - startAfterSeconds);

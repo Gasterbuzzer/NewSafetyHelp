@@ -511,6 +511,13 @@ namespace NewSafetyHelp.CallerPatches
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "AnswerCaller")]
         public static class AnswerCallerPatch
         {
+            private static readonly FieldInfo GivenWarning = typeof(CallerController).GetField("givenWarning",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+            private static readonly FieldInfo FirstCaller = typeof(CallerController).GetField("firstCaller",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+            private static readonly MethodInfo AnswerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+            
             /// <summary>
             /// Patches answer caller to have more features for custom campaigns.
             /// </summary>
@@ -520,14 +527,7 @@ namespace NewSafetyHelp.CallerPatches
             {
                 LoggingHelper.DebugLog("Called 'AnswerCaller' method.");
 
-                FieldInfo _givenWarning = typeof(CallerController).GetField("givenWarning",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-                FieldInfo _firstCaller = typeof(CallerController).GetField("firstCaller",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-                MethodInfo _answerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall",
-                    BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-
-                if (_givenWarning == null || _answerDynamicCall == null || _firstCaller == null)
+                if (GivenWarning == null || AnswerDynamicCall == null || FirstCaller == null)
                 {
                     LoggingHelper.ErrorLog("'givenWarning' or 'AnswerDynamicCall' or 'firstCaller' is null." +
                                            " Calling original function.");
@@ -553,57 +553,57 @@ namespace NewSafetyHelp.CallerPatches
                     }
                     else if (GlobalVariables.currentDay == 1 && __instance.callersToday == 3 &&
                              !__instance.ScoreIsPassing(__instance.warningThreshold) &&
-                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                             !(bool)GivenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance,
+                        AnswerDynamicCall.Invoke(__instance,
                             new object[]
                                 { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                        GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
                     else if (GlobalVariables.currentDay == 2 && __instance.callersToday == 2 &&
                              !__instance.ScoreIsPassing(__instance.warningThreshold) &&
-                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                             !(bool)GivenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance,
+                        AnswerDynamicCall.Invoke(__instance,
                             new object[]
                                 { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                        GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
                     else if (GlobalVariables.currentDay == 3 && __instance.callersToday == 3 &&
                              !__instance.ScoreIsPassing(__instance.warningThreshold) &&
-                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                             !(bool)GivenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance,
+                        AnswerDynamicCall.Invoke(__instance,
                             new object[]
                                 { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                        GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
                     else if (GlobalVariables.currentDay == 4 && __instance.callersToday == 4 &&
                              !__instance.ScoreIsPassing(__instance.warningThreshold) &&
-                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                             !(bool)GivenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance,
+                        AnswerDynamicCall.Invoke(__instance,
                             new object[]
                                 { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                        GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
                     else if (GlobalVariables.currentDay == 5 && __instance.callersToday == 5 &&
                              !__instance.ScoreIsPassing(__instance.warningThreshold) &&
-                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                             !(bool)GivenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance,
+                        AnswerDynamicCall.Invoke(__instance,
                             new object[]
                                 { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                        GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
                     else if (GlobalVariables.currentDay == 6 && __instance.callersToday == 7 &&
                              !__instance.ScoreIsPassing(__instance.warningThreshold) &&
-                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                             !(bool)GivenWarning.GetValue(__instance)) // !__instance.givenWarning
                     {
-                        _answerDynamicCall.Invoke(__instance,
+                        AnswerDynamicCall.Invoke(__instance,
                             new object[]
                                 { __instance.warningCall }); // __instance.AnswerDynamicCall(__instance.warningCall);
-                        _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
+                        GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);
                     }
                     else
                     {
@@ -624,17 +624,24 @@ namespace NewSafetyHelp.CallerPatches
 
                     int[] callersTodayMainCampaign = { 3, 2, 3, 4, 5, 7 };
 
-                    // Not Arcade Mode, is last call of day?, not DLC, threshold correct, current day is after day 1 and no save immunity.
-                    if (!GlobalVariables.arcadeMode && __instance.IsLastCallOfDay() && !GlobalVariables.isXmasDLC &&
-                        !__instance.ScoreIsPassing(customCampaign.GameOverThreshold) &&
-                        GlobalVariables.currentDay > 1 && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
+                    // Not Arcade Mode, is last call of day?,
+                    // not DLC, threshold correct,
+                    // current day is after day 1 and no save immunity.
+                    // And no game over immunity by the custom campaign.
+                    if (!GlobalVariables.arcadeMode 
+                        && __instance.IsLastCallOfDay() 
+                        && !GlobalVariables.isXmasDLC 
+                        && !__instance.ScoreIsPassing(customCampaign.GameOverThreshold) 
+                        && GlobalVariables.currentDay > 1 
+                        && GlobalVariables.saveManagerScript.savedImmunityToggle == 0
+                        && !customCampaign.GameOverImmunity)
                     {
                         __instance.TriggerGameOver();
                     }
-                    else if (!__instance.ScoreIsPassing(customCampaign.WarningThreshold) &&
-                             !(bool)_givenWarning.GetValue(__instance)) // !__instance.givenWarning
+                    else if (!__instance.ScoreIsPassing(customCampaign.WarningThreshold) 
+                             && !(bool)GivenWarning.GetValue(__instance)) // OLD: !__instance.givenWarning
                     {
-                        LoggingHelper.DebugLog("Caller (Warning) checks started.");
+                        LoggingHelper.DebugLog("(Warning) Caller checks started.");
 
                         int callersTodayRequiredWarning;
 
@@ -792,12 +799,12 @@ namespace NewSafetyHelp.CallerPatches
 
                             // OLD: __instance.AnswerDynamicCall(__instance.warningCall);
                             // Insert warning caller.
-                            _answerDynamicCall.Invoke(__instance,
+                            AnswerDynamicCall.Invoke(__instance,
                                 new object[]
                                 {
                                     __instance.warningCall
                                 }); 
-                            _givenWarning.SetValue(__instance, true); // __instance.givenWarning = true);   
+                            GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);   
                         }
                         else
                         {
@@ -813,14 +820,14 @@ namespace NewSafetyHelp.CallerPatches
                 // Since we have duplicated copies of this, we just have a flag called if that section is called.
                 if (normalCallerAfterCheck) 
                 {
-                    if (!(bool)_firstCaller.GetValue(__instance) && !__instance.arcadeMode) // !__instance.firstCaller
+                    if (!(bool)FirstCaller.GetValue(__instance) && !__instance.arcadeMode) // !__instance.firstCaller
                     {
                         ++__instance.currentCallerID;
                     }
 
-                    if ((bool)_firstCaller.GetValue(__instance)) // __instance.firstCaller
+                    if ((bool)FirstCaller.GetValue(__instance)) // __instance.firstCaller
                     {
-                        _firstCaller.SetValue(__instance, false); // __instance.firstCaller = false;
+                        FirstCaller.SetValue(__instance, false); // __instance.firstCaller = false;
                     }
 
                     __instance.UpdateCallerInfo();

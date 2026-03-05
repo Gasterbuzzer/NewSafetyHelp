@@ -150,6 +150,13 @@ namespace NewSafetyHelp.CallerPatches.Answer
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", typeof(MonsterProfile))]
         public static class SubmitAnswerPatch
         {
+            // Some reflection.
+            private static readonly MethodInfo NewCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+            
+            private static readonly FieldInfo LastDayNum = typeof(CallerController).GetField("lastDayNum",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            
             /// <summary>
             /// Changes the function to work with better with custom campaigns. By also increasing tier on last call if available.
             /// </summary>
@@ -185,18 +192,14 @@ namespace NewSafetyHelp.CallerPatches.Answer
                     }
                 }
 
-                // Some reflection.
-                MethodInfo newCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-
-                if (newCallRoutine == null)
+                if (NewCallRoutine == null)
                 {
                     LoggingHelper.ErrorLog("NewCallRoutine is null. Calling original function.");
                     return true;
                 }
 
-                IEnumerator newCallRoutineTenValue = (IEnumerator)newCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
-                IEnumerator newCallRoutineDefaultValues = (IEnumerator)newCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
+                IEnumerator newCallRoutineTenValue = (IEnumerator)NewCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
+                IEnumerator newCallRoutineDefaultValues = (IEnumerator)NewCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
                 
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
 
@@ -219,6 +222,7 @@ namespace NewSafetyHelp.CallerPatches.Answer
                 }
 
                 AudioSource callerAudioSource = (AudioSource)_callerAudioSource.GetValue(__instance);
+                
                 // OLD: __instance.callerAudioSource.Stop();
                 callerAudioSource.Stop(); 
 
@@ -338,14 +342,37 @@ namespace NewSafetyHelp.CallerPatches.Answer
                             && GlobalVariables.currentDay > 1 
                             && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
+                            
                             // In case we are not in the DLC and our score is not passing,
                             // we show the last game over caller.
                             
-                            //__instance.StartCoroutine(__instance.NewCallRoutine());
-                            __instance.StartCoroutine(newCallRoutineDefaultValues); 
+                            // Now we also check if there is immunity
+                            bool showGameoverCaller = true;
+                            
+                            if (CustomCampaignGlobal.InCustomCampaign)
+                            {
+                                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
-                            GlobalVariables.mainCanvasScript.NoCallerWindow();
-                            return false;
+                                if (customCampaign == null)
+                                {
+                                    LoggingHelper.CampaignNullError();
+                                    return true;
+                                }
+
+                                if (customCampaign.GameOverImmunity)
+                                {
+                                    showGameoverCaller = false;
+                                }
+                            }
+
+                            if (showGameoverCaller)
+                            {
+                                //__instance.StartCoroutine(__instance.NewCallRoutine());
+                                __instance.StartCoroutine(newCallRoutineDefaultValues); 
+
+                                GlobalVariables.mainCanvasScript.NoCallerWindow();
+                                return false;
+                            }
                         }
 
                         if (GlobalVariables.isXmasDLC &&
@@ -362,19 +389,19 @@ namespace NewSafetyHelp.CallerPatches.Answer
                             return false;
                         }
 
-                        FieldInfo lastDayNum = typeof(CallerController).GetField("lastDayNum",
-                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-
-                        if (lastDayNum == null)
+                        if (LastDayNum == null)
                         {
                             LoggingHelper.ErrorLog("lastDayNum is null. Calling original function.");
                             return true;
                         }
 
-                        if (GlobalVariables.currentDay < (int)lastDayNum.GetValue(__instance)) //__instance.lastDayNum
+                        if (GlobalVariables.currentDay < (int)LastDayNum.GetValue(__instance)) //__instance.lastDayNum
                         {
-                            // GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
-                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            // OLD:
+                            // GlobalVariables.mainCanvasScript.StartCoroutine(
+                            // GlobalVariables.mainCanvasScript.EndDayRoutine());
+                            GlobalVariables.mainCanvasScript.StartCoroutine(
+                                GlobalVariables.mainCanvasScript.EndDayRoutine());
 
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
