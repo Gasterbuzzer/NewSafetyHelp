@@ -5,6 +5,7 @@ using System.Reflection;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.LoggingSystem;
@@ -242,6 +243,12 @@ namespace NewSafetyHelp.CallerPatches.UI
                 mainCanvasBehavior.clockedIn = false;
                 GlobalVariables.callerControllerScript.callersToday = 0;
                 GlobalVariables.callerControllerScript.correctCallsToday = 0;
+
+                // So that the accuracy caller knows where to start.
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    AccuracyHelper.StartOfDayCallerID = GlobalVariables.callerControllerScript.currentCallerID;
+                }
                 
                 if (!GlobalVariables.arcadeMode)
                 {

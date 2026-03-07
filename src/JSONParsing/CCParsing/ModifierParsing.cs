@@ -119,6 +119,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
+            
+            // Cheats
+            bool showDefaultUIAccuracyText = false; // If to show the accuracy UI text string from the base game.
+            bool showDefaultUIAccuracyTextChanged = false; // If boolean was updated.
 
             /*
              * Modifier Parsing
@@ -270,6 +274,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithBool(jObjectParsed, "arcade_state", ref arcadeActive,
                 ref arcadeChanged);
+            
+            // Cheats
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "show_accuracy_display",
+                ref showDefaultUIAccuracyText, ref showDefaultUIAccuracyTextChanged);
 
             return new CustomModifier
             {
@@ -319,7 +327,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ArtbookChanged = artbookChanged,
 
                 ArcadeActive = arcadeActive,
-                ArcadeChanged = arcadeChanged
+                ArcadeChanged = arcadeChanged,
+                
+                ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
+                ShowDefaultUIAccuracyTextChanged = showDefaultUIAccuracyTextChanged
             };
         }
     }

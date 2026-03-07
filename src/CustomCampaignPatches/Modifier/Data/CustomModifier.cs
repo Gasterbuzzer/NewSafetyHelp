@@ -80,6 +80,13 @@ namespace NewSafetyHelp.CustomCampaignPatches.Modifier.Data
         
         public List<string> DayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
         
+        /*
+         * Cheats
+         */
+        
+        public bool ShowDefaultUIAccuracyText = false; // If to show the accuracy UI text string from the base game.
+        public bool ShowDefaultUIAccuracyTextChanged = false; // If boolean was updated.
+        
         // Removed. The effort to add these are difficult. So for now, we simply ignore it, unless someone needs it.
         //public List<List<string>> loadingTexts = new List<List<string>>(); // Texts shown when entering the desktop.
     }

@@ -113,18 +113,22 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     // 2. If any valid caller comes afterward. (One that cannot be skipped)
                     
                     // 3. Is a consequence caller that will be shown.
-                    LoggingHelper.DebugLog($"DEBUG: Last caller of day (Caller ID: {i}): '{customCCallerFound.LastDayCaller}'." +
-                                           $" Next caller name (Caller ID: {i}): '{customCCallerFound.CallerName}'." +
+
+                    int currentIndexCopy = i;
+                    
+                    LoggingHelper.DebugLog(() => 
+                            $"Last caller of day (Caller ID: {currentIndexCopy}): '{customCCallerFound.LastDayCaller}'." +
+                                           $" Next caller name (Caller ID: {currentIndexCopy}): '{customCCallerFound.CallerName}'." +
                                            $" Is a accuracy caller?: '{customCCallerFound.IsAccuracyCaller}'.",
                         LoggingHelper.LoggingCategory.SKIPPED_CALLER);
                     
-                    LoggingHelper.DebugLog("DEBUG: Is ConsequenceProfile not null? " +
+                    LoggingHelper.DebugLog(() => "Is ConsequenceProfile not null? " +
                                            "(Meaning it's this current caller is a consequence caller):" +
-                                           $" '{GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile != null}'" +
+                                           $" '{GlobalVariables.callerControllerScript.callers[currentIndexCopy].callerProfile.consequenceCallerProfile != null}'" +
                                            ".\n" +
                                            " Is this caller allowed to be called? " +
                                            "(Meaning we got the answer wrong from the previous caller): " +
-                                           $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[i].callerProfile.consequenceCallerProfile)}'" +
+                                           $"'{GlobalVariables.callerControllerScript.CanReceiveConsequenceCall(GlobalVariables.callerControllerScript.callers[currentIndexCopy].callerProfile.consequenceCallerProfile)}'" +
                                            ".\n " +
                                            $"Is this caller the last one of the day? '{customCCallerFound.LastDayCaller}'.",
                         LoggingHelper.LoggingCategory.SKIPPED_CALLER);

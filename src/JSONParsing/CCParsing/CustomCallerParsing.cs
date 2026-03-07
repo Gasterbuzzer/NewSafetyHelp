@@ -174,6 +174,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Accuracy Caller
             bool isAccuracyCaller = false; // If this caller is an accuracy caller.
             List<AccuracyType> accuracyChecks = new List<AccuracyType>(); // How it should be checked for.
+            bool countEveryCallerForLocalAccuracy = false;
+            // If the accuracy check should consider every caller for the day.
             
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
@@ -222,6 +224,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller);
             ParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
             
+            ParsingHelper.TryAssign(jObjectParsed, "accuracy_caller_count_total_day_instead",
+                ref countEveryCallerForLocalAccuracy);
+            
             // Animated Portrait
             
             callerHasAnimatedPortrait = ParsingHelper.TryAssignVideoPath(jObjectParsed,
@@ -261,7 +266,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 GameOverCallDay = gameOverCallDay,
                 
                 IsAccuracyCaller = isAccuracyCaller,
-                AccuracyChecks = accuracyChecks
+                AccuracyChecks = accuracyChecks,
+                CountEveryCallerForLocalAccuracy = countEveryCallerForLocalAccuracy
             };
         }
     }

@@ -58,6 +58,8 @@ namespace NewSafetyHelp.CallerPatches.CallerModel
         // Accuracy Caller
         public bool IsAccuracyCaller = false; // If this caller is an accuracy caller.
         public List<AccuracyType> AccuracyChecks = new List<AccuracyType>(); // List of all accuracy checks.
+        public bool CountEveryCallerForLocalAccuracy = false; 
+        // If we take into account every type of callers when computing the accuracy.
         
         // Constructor
         public CustomCCaller(int orderInCampaign) { OrderInCampaign = orderInCampaign;}
