@@ -244,5 +244,19 @@ namespace NewSafetyHelp.LoggingSystem
             ErrorLog("Custom Campaign is null, even though custom campaign is active. " +
                      "Calling either original function or cancelling the current operation.");
         }
+        
+        /// <summary>
+        /// Logs that some variables reflected are null. Provide them via "nameof()".
+        /// </summary>
+        /// <param name="differentVariableNames">All the variables names to display in the error.</param>
+        public static void ReflectionError(params string[] differentVariableNames)
+        {
+            string reflectionErrorMessage = 
+                "Method or Field reflection failed. " +
+                $"Possible variables that failed: '{string.Join("' '", differentVariableNames)}'. " +
+                "Calling original function.";
+            
+            Log(reflectionErrorMessage, LoggingLevel.ERROR);
+        }
     }
 }

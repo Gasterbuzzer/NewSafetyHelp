@@ -36,7 +36,6 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 

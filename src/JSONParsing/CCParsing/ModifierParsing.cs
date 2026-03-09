@@ -63,6 +63,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         {
             // When the modifier is unlocked. If null, it is a general modifier.
             List<int> unlockDays = null;
+            
+            bool onlyIfGameFinished = false;
 
             /*
              * Desktop Settings
@@ -130,6 +132,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "modifier_custom_campaign_attached",
                 ref customCampaignName);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "only_if_game_beaten", ref onlyIfGameFinished);
 
             if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
             {
@@ -284,6 +288,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignName = customCampaignName,
 
                 UnlockDays = unlockDays,
+                
+                OnlyIfGameFinished = onlyIfGameFinished,
 
                 UsernameText = username,
 

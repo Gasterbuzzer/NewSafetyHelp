@@ -10,6 +10,9 @@ namespace NewSafetyHelp.CustomCampaignPatches.Modifier.Data
         // Days the theme appears in, if set to null, it will apply every day.
         [CanBeNull] public List<int> UnlockDays = null; 
         // If a single day was added only, then we only have single day added.
+
+        // If the modifier should only work if the game was finished.
+        public bool OnlyIfGameFinished = false;
         
         /*
          * Default Desktop Options

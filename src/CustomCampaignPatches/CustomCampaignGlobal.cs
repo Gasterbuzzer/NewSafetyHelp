@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using NewSafetyHelp.Audio.Music.Data;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.Emails;
@@ -12,12 +13,12 @@ namespace NewSafetyHelp.CustomCampaignPatches
 {
     public static class CustomCampaignGlobal
     {
-        public static readonly List<CustomCampaignModel.CustomCampaign> CustomCampaignsAvailable = new List<CustomCampaignModel.CustomCampaign>();
+        public static readonly List<CustomCampaign> CustomCampaignsAvailable = new List<CustomCampaign>();
 
         // ReSharper disable once RedundantDefaultMemberInitializer
-        public static bool InCustomCampaign = false;
-
-        public static string CurrentCustomCampaignName = "";
+        public static bool InCustomCampaign => currentCustomCampaign != null;
+        
+        private static CustomCampaign currentCustomCampaign;
 
         /// <summary>
         /// Activates the custom campaign values.
@@ -25,8 +26,10 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <param name="customCampaignName">Name of the custom campaign to set as the current one.</param>
         public static void ActivateCustomCampaign(string customCampaignName)
         {
-            InCustomCampaign = true;
-            CurrentCustomCampaignName = customCampaignName;
+            currentCustomCampaign = CustomCampaignsAvailable.Find(
+                customCampaign =>
+                    customCampaign.CampaignName == customCampaignName
+                );
         }
 
         /// <summary>
@@ -34,18 +37,21 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// </summary>
         public static void DeactivateCustomCampaign()
         {
-            InCustomCampaign = false;
-            CurrentCustomCampaignName = "";
+            currentCustomCampaign = null;
         }
 
         /// <summary>
         /// Returns the current campaign as CustomCampaign.
         /// </summary>
         /// <returns>CustomCampaign Object of the current activate custom campaign.</returns>
-        public static CustomCampaignModel.CustomCampaign GetActiveCustomCampaign()
+        public static CustomCampaign GetActiveCustomCampaign()
         {
-            return CustomCampaignsAvailable.Find(scannedCampaign =>
-                scannedCampaign.CampaignName == CurrentCustomCampaignName);
+            if (currentCustomCampaign == null)
+            {
+                LoggingHelper.CampaignNullError();
+            }
+            
+            return currentCustomCampaign;
         }
 
         /// <summary>
@@ -56,7 +62,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
         [CanBeNull]
         public static CallerPatches.CallerModel.CustomCCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
             
             if (customCampaign == null)
             {
@@ -74,7 +80,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
         [CanBeNull]
         public static CustomMusic GetCustomMusicFromActiveCampaign(RichAudioClip musicToFind)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
             
             if (customCampaign == null)
             {
@@ -92,7 +98,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
         [CanBeNull]
         public static CustomEmail GetCustomEmailFromActiveCampaign(Email emailToFind)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
             
             if (customCampaign == null)
             {
@@ -109,7 +115,14 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <returns>EntryMetadata Object with the returned object. If not found, default. </returns>
         public static EntryMetadata GetEntryFromActiveCampaign(string entryName)
         {
-            return GetActiveCustomCampaign().EntriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
+            
+            if (customCampaign == null)
+            {
+                return null;
+            }
+            
+            return customCampaign.EntriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
         }
 
         /// <summary>
@@ -119,7 +132,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <returns>ID of the theme if found. -1 if not found or if something went wrong.</returns>
         private static int GetThemeID(CustomTheme theme)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -160,11 +173,10 @@ namespace NewSafetyHelp.CustomCampaignPatches
         [CanBeNull]
         public static CustomTheme GetThemeFromID(int themeID)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return null;
             }
 
@@ -211,11 +223,10 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <returns>(Int) -1 = No theme found; Otherwise: ID of Theme.</returns>
         public static int GetThemeIDFromName(string themeName)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return -1;
             }
 
@@ -256,7 +267,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <returns>(Int) -1 = No theme to be activated; Otherwise: ID of Theme to be activated.</returns>
         public static int CheckIfConditionalTheme()
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
@@ -301,11 +312,10 @@ namespace NewSafetyHelp.CustomCampaignPatches
         [CanBeNull]
         public static CustomTheme GetActiveTheme(ref bool isCustomTheme)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return null;
             }
             
@@ -353,11 +363,10 @@ namespace NewSafetyHelp.CustomCampaignPatches
             ref bool foundModifier, Func<TValue, bool> predicate = null,
             Func<CustomModifier, bool> specialPredicate = null)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return default;
             }
 
@@ -431,20 +440,21 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <param name="monsterProfileList">MonsterProfileList to add the entries to.</param>
         public static void AddAllCustomCampaignEntriesToArray(ref MonsterProfileList monsterProfileList)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
-            LoggingHelper.DebugLog($"Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
+            LoggingHelper.DebugLog(() => 
+                $"Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
 
             // Add all entries.
             foreach (EntryMetadata entryInCustomCampaign in customCampaign.EntriesOnlyInCampaign)
             {
-                LoggingHelper.DebugLog($"Adding entry {entryInCustomCampaign.Name} to custom campaign.");
+                LoggingHelper.DebugLog(() => 
+                    $"Adding entry {entryInCustomCampaign.Name} to custom campaign.");
 
                 EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.ReferenceCopyEntry,
                     ref monsterProfileList.monsterProfiles, "allEntries");
@@ -454,17 +464,21 @@ namespace NewSafetyHelp.CustomCampaignPatches
             EntryManager.EntryManager.SortMonsterProfiles(ref monsterProfileList.monsterProfiles);
         }
 
+        /// <summary>
+        /// Replaces all the main campaign entries with the provided entries. Only if a match was found.
+        /// </summary>
+        /// <param name="monsterProfileList">List of entries that want to replace something.</param>
         public static void ReplaceAllProvidedCampaignEntries(ref MonsterProfileList monsterProfileList)
         {
-            CustomCampaignModel.CustomCampaign customCampaign = GetActiveCustomCampaign();
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
             
             if (!InCustomCampaign || customCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
-            LoggingHelper.DebugLog($"Now replacing all {customCampaign.EntryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
+            LoggingHelper.DebugLog(() =>
+                $"Now replacing all {customCampaign.EntryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
 
             if (monsterProfileList.monsterProfiles.Length <= 0)
             {
@@ -487,32 +501,40 @@ namespace NewSafetyHelp.CustomCampaignPatches
                 );
 
                 // If we delete the entry or replace it.
-                if (entryFound != null && entryFound.DeleteEntry) // Delete
+                if (entryFound != null) // Delete
                 {
-                    if (string.IsNullOrEmpty(entryFound.Name))
+                    if (entryFound.DeleteEntry)
                     {
-                        LoggingHelper.WarningLog("Monster entry was not found. Is is the correct name?");
-                        continue;
+                        if (string.IsNullOrEmpty(entryFound.Name))
+                        {
+                            LoggingHelper.WarningLog("Monster entry was not found. Is is the correct name?");
+                            continue;
+                        }
+
+                        // Delete by name.
+                        EntryManager.EntryManager.DeleteMonsterProfile(ref monsterProfileList.monsterProfiles,
+                            null, entryFound.Name);
+
+                        LoggingHelper.DebugLog(() => 
+                            $"Deleting entry '{entryFound.Name}' in custom campaign.");
                     }
-
-                    // Delete by name.
-                    EntryManager.EntryManager.DeleteMonsterProfile(ref monsterProfileList.monsterProfiles, null,
-                        entryFound.Name);
-
-                    LoggingHelper.DebugLog($"Deleting entry '{entryFound.Name}' in custom campaign.");
-                }
-                else if (entryFound != null) // It exists, so replace it.
-                {
-                    if (entryFound.ReferenceCopyEntry == null)
+                    else // It exists, so replace it.
                     {
-                        // I am too lazy to implement this. But if ever returns errors or problems, I will implement it this way.
-                        LoggingHelper.WarningLog("referenceCopyEntry of EntryFound is null. Was the entry initialized?");
-                        continue;
+                        if (entryFound.ReferenceCopyEntry == null)
+                        {
+                            // I am too lazy to implement this.
+                            // But if ever returns errors or problems, I will implement it this way.
+                            LoggingHelper.WarningLog("referenceCopyEntry of EntryFound is null. " +
+                                                     "Was the entry initialized?");
+                            continue;
+                        }
+
+                        monsterProfileList.monsterProfiles[i] = entryFound.ReferenceCopyEntry;
+
+                        LoggingHelper.DebugLog(() => 
+                            $"Replacing entry {entryFound.Name} with custom entry in custom campaign.");
                     }
-
-                    monsterProfileList.monsterProfiles[i] = entryFound.ReferenceCopyEntry;
-
-                    LoggingHelper.DebugLog($"Replacing entry {entryFound.Name} with custom entry in custom campaign.");
+                    
                 }
             }
         }
