@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
+using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -27,13 +28,13 @@ namespace NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel
          */
 
         // Caller in the campaign
-        public List<CallerPatches.CallerModel.CustomCCaller> CustomCallersInCampaign = new List<CallerPatches.CallerModel.CustomCCaller>();
+        public List<CustomCCaller> CustomCallersInCampaign = new List<CustomCCaller>();
 
         // Warning Callers in the campaign
-        public List<CallerPatches.CallerModel.CustomCCaller> CustomWarningCallersInCampaign = new List<CallerPatches.CallerModel.CustomCCaller>();
+        public List<CustomCCaller> CustomWarningCallersInCampaign = new List<CustomCCaller>();
 
         // Game Over Callers in the campaign
-        public List<CallerPatches.CallerModel.CustomCCaller> CustomGameOverCallersInCampaign = new List<CallerPatches.CallerModel.CustomCCaller>();
+        public List<CustomCCaller> CustomGameOverCallersInCampaign = new List<CustomCCaller>();
 
         // Entries that exist only in this campaign.  
         public List<EntryMetadata> EntriesOnlyInCampaign = new List<EntryMetadata>();
@@ -188,22 +189,27 @@ namespace NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel
 
         public bool DisablePickingThemeOption = false; // If true, it will hide the option to set the theme.
         
-        public bool DefaultThemeAppliedOnce = false; // If a default theme is given, it will only be applied once, if overwritten. Too bad, we allow our users more freedom.
+        // If a default theme is given, it will only be applied once, if overwritten.
+        // Too bad, we allow our users more freedom.
+        public bool DefaultThemeAppliedOnce = false; 
         
         public string DefaultTheme = null; // Default theme to be loaded when doing the campaign for the first time.
         
         public int ActiveTheme = 0; // 0 is default theme. (0-3 are reserved for the default themes)
         
-        public List<CustomTheme> CustomThemesGeneral = new List<CustomTheme>(); // List of themes for general.
-        public List<CustomTheme> CustomThemesDays = new List<CustomTheme>(); // List of (conditional) themes that apply for certain days and apply to a certain theme only.
+        // List of themes for general.
+        public List<CustomTheme> CustomThemesGeneral = new List<CustomTheme>(); 
+        
+        // List of (conditional) themes that apply for certain days and apply to a certain theme only.
+        public List<CustomTheme> CustomThemesDays = new List<CustomTheme>();
         
         // Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
         
-        public List<CustomModifier> CustomModifiersGeneral = new List<CustomModifier>(); // List of modifiers for general.
-        public List<CustomModifier> CustomModifiersDays = new List<CustomModifier>(); // List of (conditional) modifiers that apply for certain days.
+        // All the different modifiers.
+        public List<ModifierSource> ModifierSources = new List<ModifierSource>(); 
         
         // Ringtones
         public bool DoNotAccountDefaultRingtone = true;
-        public List<CustomRingtone.CustomRingtone> CustomRingtones = new List<CustomRingtone.CustomRingtone>(); // List of custom ringtones.
+        public List<CustomRingtone.CustomRingtone> CustomRingtones = new List<CustomRingtone.CustomRingtone>();
     }
 }

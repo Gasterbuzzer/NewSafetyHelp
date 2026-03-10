@@ -140,6 +140,7 @@
     <Compile Include="src\CallerPatches\UI\UIFallbacks.cs" />
     <Compile Include="src\CustomCampaignPatches\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaignPatches\CustomCampaignGlobal.cs" />
+    <Compile Include="src\CustomCampaignPatches\CustomCampaignModel\ModifierSource.cs" />
     <Compile Include="src\CustomCampaignPatches\CustomRingtone\CustomRingtone.cs" />
     <Compile Include="src\CustomCampaignPatches\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaignPatches\Desktop\OnDayUnlockPatches.cs" />

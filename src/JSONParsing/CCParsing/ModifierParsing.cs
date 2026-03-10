@@ -35,19 +35,33 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add to correct campaign.
-            CustomCampaign foundCustomCampaign =
+            CustomCampaign customCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
 
-            if (foundCustomCampaign != null)
+            if (customCampaign != null)
             {
                 if (customModifier.UnlockDays == null)
                 {
-                    foundCustomCampaign.CustomModifiersGeneral.Add(customModifier);
+                    if (!customModifier.OnlyIfGameFinished)
+                    {
+                        customCampaign.ModifierSources[0].Modifiers.Add(customModifier); // General
+                    }
+                    else
+                    {
+                        customCampaign.ModifierSources[1].Modifiers.Add(customModifier); // General Game Finished
+                    }
                 }
                 else
                 {
-                    foundCustomCampaign.CustomModifiersDays.Add(customModifier);
+                    if (!customModifier.OnlyIfGameFinished)
+                    {
+                        customCampaign.ModifierSources[2].Modifiers.Add(customModifier); // Day
+                    }
+                    else
+                    {
+                        customCampaign.ModifierSources[3].Modifiers.Add(customModifier); // Day Game Finished
+                    }
                 }
             }
             else

@@ -94,7 +94,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (missingMusic.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog($"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
+                        LoggingHelper.DebugLog(() => $"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
 
                         if (missingMusic.IsIntermissionMusic)
                         {
@@ -110,6 +110,37 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
+            customCampaign.ModifierSources = new List<ModifierSource>
+            {
+                new ModifierSource
+                {
+                    ModifierName = "General Modifier",
+                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays == null && !modifier.OnlyIfGameFinished
+                },
+                
+                new ModifierSource
+                {
+                    ModifierName = "General Modifier when game is finished.",
+                    SourceCondition = c => c.SavedGameFinished == 1 || c.SavedGameFinishedDisplay == 1,
+                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays == null && modifier.OnlyIfGameFinished
+                },
+                
+                new ModifierSource
+                {
+                    ModifierName = "Day Modifier",
+                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays != null && !modifier.OnlyIfGameFinished,
+                    ModifierExtraSelectionCondition = modifier => modifier.UnlockDays != null && modifier.UnlockDays.Contains(GlobalVariables.currentDay)
+                },
+                
+                new ModifierSource
+                {
+                    ModifierName = "Day Modifier when the game is finished.",
+                    SourceCondition = c => c.SavedGameFinished == 1 || c.SavedGameFinishedDisplay == 1,
+                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays != null && modifier.OnlyIfGameFinished,
+                    ModifierExtraSelectionCondition = modifier => modifier.UnlockDays != null && modifier.UnlockDays.Contains(GlobalVariables.currentDay)
+                }
+            };
+            
             // Check if any modifier has to be added to a custom campaign.
             if (GlobalParsingVariables.PendingCustomCampaignModifiers.Count > 0)
             {
@@ -120,15 +151,30 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (missingModifier.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog($"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
+                        LoggingHelper.DebugLog(() => 
+                            $"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
 
                         if (missingModifier.UnlockDays == null)
                         {
-                            customCampaign.CustomModifiersGeneral.Add(missingModifier);
+                            if (!missingModifier.OnlyIfGameFinished)
+                            {
+                                customCampaign.ModifierSources[0].Modifiers.Add(missingModifier);
+                            }
+                            else
+                            {
+                                customCampaign.ModifierSources[1].Modifiers.Add(missingModifier);
+                            }
                         }
                         else
                         {
-                            customCampaign.CustomModifiersDays.Add(missingModifier);
+                            if (!missingModifier.OnlyIfGameFinished)
+                            {
+                                customCampaign.ModifierSources[2].Modifiers.Add(missingModifier);
+                            }
+                            else
+                            {
+                                customCampaign.ModifierSources[3].Modifiers.Add(missingModifier);
+                            }
                         }
                         
                         GlobalParsingVariables.PendingCustomCampaignModifiers.Remove(missingModifier);
@@ -146,7 +192,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (missingTheme.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog($"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
+                        LoggingHelper.DebugLog(() => $"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
 
                         if (missingTheme.UnlockDays == null)
                         {

@@ -14,8 +14,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
     public static class CustomCampaignGlobal
     {
         public static readonly List<CustomCampaign> CustomCampaignsAvailable = new List<CustomCampaign>();
-
-        // ReSharper disable once RedundantDefaultMemberInitializer
+        
         public static bool InCustomCampaign => currentCustomCampaign != null;
         
         private static CustomCampaign currentCustomCampaign;
@@ -308,7 +307,8 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <summary>
         /// Gets the Theme that is current active.
         /// </summary>
-        /// <returns>Returns the actual active theme. Null if we failed or the theme is a default theme from the game.</returns>
+        /// <returns>Returns the actual active theme.
+        /// Null if we failed or the theme is a default theme from the game.</returns>
         [CanBeNull]
         public static CustomTheme GetActiveTheme(ref bool isCustomTheme)
         {
@@ -383,55 +383,70 @@ namespace NewSafetyHelp.CustomCampaignPatches
             TValue selectedValue = default(TValue);
             foundModifier = false;
 
-            // For each general modifier, we check if it contains the value and add these to the "valid modifier general list".
-            // We then pick the first in the list.
-            // Note: General modifiers do not require to check for days, since they are always "valid", only the predicate.
-
-            if (customCampaign.CustomModifiersGeneral != null)
+            // Loops through each modifier source and selects the value that fits the criteria.
+            // If multiple exist, it will pick the first valid value of that modifier source type.
+            // The list is ordered based on priority, elements that come first have the smallest priority, while
+            // elements that come later have higher priority.
+            foreach (ModifierSource modifierSource in customCampaign.ModifierSources)
             {
-                foreach (CustomModifier modifierGeneral in customCampaign.CustomModifiersGeneral)
+                if (modifierSource != null 
+                    && modifierSource.Modifiers != null
+                    && modifierSource.Modifiers.Count > 0)
                 {
-                    if (modifierGeneral == null)
+                    if (modifierSource.SourceCondition(customCampaign))
                     {
-                        continue;
-                    }
+                        (bool found, TValue value) modifierResult = GetModifierValueFromList(
+                            modifierSource.Modifiers, selector, predicate, 
+                            modifier => modifierSource.ModifierExtraSelectionCondition(modifier)
+                                        && specialPredicate(modifier));
 
-                    TValue value = selector(modifierGeneral);
-
-                    if (predicate(value) && specialPredicate(modifierGeneral))
-                    {
-                        foundModifier = true;
-                        selectedValue = value;
-                        break;
-                    }
-                }
-            }
-
-            // Now we check for conditional modifiers. Same work as with the general modifiers.
-            // We only need to check if valid for the current day.
-
-            if (customCampaign.CustomModifiersDays != null)
-            {
-                foreach (CustomModifier modifierDay in customCampaign.CustomModifiersDays)
-                {
-                    if (modifierDay == null)
-                    {
-                        continue;
-                    }
-
-                    TValue value = selector(modifierDay);
-
-                    if (predicate(value) && modifierDay.UnlockDays != null
-                                         && modifierDay.UnlockDays.Contains(GlobalVariables.currentDay)
-                                         && specialPredicate(modifierDay))
-                    {
-                        foundModifier = true;
-                        return value;
+                        if (modifierResult.found)
+                        {
+                            foundModifier = true;
+                            selectedValue = modifierResult.value;
+                        }
                     }
                 }
             }
             
             return selectedValue;
+        }
+
+        /// <summary>
+        /// Gets the first valid modifier value from a given list of modifiers. Returns first valid or default value.
+        /// </summary>
+        /// <param name="modifierList">List with all modifiers to be checked.</param>
+        /// <param name="selector">Lambda function to select the value out of the modifier.</param>
+        /// <param name="predicate">Predicate to check if the value is valid.</param>
+        /// <param name="specialPredicate">Special predicate that only works for modifiers.</param>
+        /// <typeparam name="TValue">Variable type of the selected parameter.</typeparam>
+        /// <returns>First valid result or default if not found.</returns>
+        private static (bool found, TValue value) GetModifierValueFromList<TValue>(
+            List<CustomModifier> modifierList,
+            Func<CustomModifier, TValue> selector,
+            Func<TValue, bool> predicate, Func<CustomModifier, bool> specialPredicate)
+        {
+            if (modifierList == null)
+            {
+                return (false, default);
+            }
+            
+            foreach (CustomModifier modifier in modifierList)
+            {
+                if (modifier == null)
+                {
+                    continue;
+                }
+
+                TValue value = selector(modifier);
+
+                if (predicate(value) && specialPredicate(modifier))
+                {
+                    return (true, value);
+                }
+            }
+            
+            return (false, default);
         }
 
         /// <summary>
