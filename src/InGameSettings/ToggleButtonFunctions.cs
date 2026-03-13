@@ -40,5 +40,12 @@ namespace NewSafetyHelp.InGameSettings
             
             return toggleValue;
         }
+        
+        public static bool OnEmailLogToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.ShowEmailDebugLog.Value = toggleValue;
+            
+            return toggleValue;
+        }
     }
 }

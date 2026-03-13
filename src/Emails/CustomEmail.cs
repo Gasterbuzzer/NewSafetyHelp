@@ -1,5 +1,7 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using NewSafetyHelp.CustomCampaignPatches.Abstract;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
 using UnityEngine;
 
 namespace NewSafetyHelp.Emails
@@ -18,9 +20,22 @@ namespace NewSafetyHelp.Emails
         public string EmailAnimatedVideo = null;
         public bool HasAnimatedVideo = false;
         
-        // Unlock
+        // Day from which day onward this email is allowed to appear.
         public int UnlockDay = 0;
-        public int UnlockThreshold = 0;
+
+        // When showing the list of emails, which priority should this email have?
+        // Higher int => Higher priority
+        public int EmailPriority = 0;
+        
+        public float UnlockThreshold = 0;
+        public List<EmailAccuracyType> UnlockAccuracy = null;
+        public bool UseOldAccuracyChecks = true;
+        
+        // If the player requires to finish the game first.
+        // NOTE: It also requires the check to be true.
+        public bool UnlockWhenGameFinished = false;
+        
+        
         
         // Main Campaign Values
         public bool InMainCampaign = false;

@@ -631,6 +631,9 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnRingtoneLogToggle,
                         "Enable Ringtone Logs", NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEmailLogToggle,
+                        "Enable Email Logs", NewSafetyHelpMainClass.ShowEmailDebugLog.Value);
                 }
                 
                 return false; // Skip original function.

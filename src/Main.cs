@@ -27,6 +27,7 @@ namespace NewSafetyHelp
         public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog; // If to show the skipped callers debug log.
         public static MelonPreferences_Entry<bool> ShowThemeDebugLog; // If to show the logs for theme info.
         public static MelonPreferences_Entry<bool> ShowRingtoneDebugLog; // If to show the logs for ringtone info.
+        public static MelonPreferences_Entry<bool> ShowEmailDebugLog; // If to show the logs for email info.
 
         public override void OnInitializeMelon()
         {
@@ -42,6 +43,7 @@ namespace NewSafetyHelp
             ShowSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);
             ShowThemeDebugLog = mainModSettings.CreateEntry("ShowThemeDebugLog", false);
             ShowRingtoneDebugLog = mainModSettings.CreateEntry("ShowRingtoneDebugLog", false);
+            ShowEmailDebugLog = mainModSettings.CreateEntry("ShowEmailDebugLog", false);
             
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;

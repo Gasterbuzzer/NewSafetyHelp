@@ -156,7 +156,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     // If accuracy caller
                     if (customCCallerFound.IsAccuracyCaller)
                     {
-                        bool showCaller = AccuracyHelper.CheckIfCallerIsToBeShown(customCCallerFound);
+                        bool showCaller = AccuracyCallerHelper.CheckIfCallerIsToBeShown(customCCallerFound);
                         
                         // Accuracy caller that is supposed to be called, since its condition was fulfilled.
                         if (customCCallerFound.IsAccuracyCaller && showCaller)

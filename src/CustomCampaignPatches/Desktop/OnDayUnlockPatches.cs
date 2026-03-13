@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -24,13 +26,18 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                     return false;
                 }
 
+                // If not meant for Arcade Mode.
                 if (!__instance.enableForArcadeMode)
                 {
                     // Special cases / exceptions:
                     if (CustomCampaignGlobal.InCustomCampaign)
                     {
                         string gameObjectName = __instance.gameObject.name;
-
+                        
+                        // For future reference: The switch outcome only matters if the modifier was applied.
+                        // If true: It means that we wish for the GameObject to be left enabled.
+                        // If false (And modifier is false): We wish to check further.
+                        // If false (And modifier is true): We wish to disable the object.
                         bool modifierApplied = false;
                         bool switchOutcome = false;
 
@@ -73,16 +80,18 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                         return false;
                     }
 
+                    // It means the unlock day hasn't been reached yet.
                     if (GlobalVariables.currentDay < __instance.unlockDay)
                     {
                         __instance.gameObject.SetActive(false);
 
-                        LoggingHelper.DebugLog($"Day to unlock ({__instance.unlockDay}) has not been reached." +
-                                               $" Disabling this GameObject ('{__instance.gameObject.name}')." +
-                                               " (Main and Custom Campaign)." +
-                                               $" Current day: {GlobalVariables.currentDay}.\n");
+                        LoggingHelper.DebugLog(() =>
+                            $"Day to unlock ({__instance.unlockDay}) has not been reached." +
+                            $" Disabling this GameObject ('{__instance.gameObject.name}')." +
+                            " (Main and Custom Campaign)." +
+                            $" Current day: {GlobalVariables.currentDay}.\n");
                     }
-                    else
+                    else // Unlock Day has been reached.
                     {
                         if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                         {
@@ -95,8 +104,10 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                                 }
                                 else
                                 {
-                                    LoggingHelper.DebugLog(
-                                        $"[UNITY]: Email unlocked: {__instance.gameObject.name}| Day Checked: {(__instance.unlockDay - 1).ToString()}| Day Score: " +
+                                    LoggingHelper.DebugLog(() =>
+                                        $"[UNITY]: Email unlocked: {__instance.gameObject.name}| " +
+                                        $"Day Checked: {(__instance.unlockDay - 1).ToString()}" +
+                                        "| Day Score: " +
                                         $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()).ToString(CultureInfo.InvariantCulture)}");
                                 }
                             }
@@ -117,60 +128,108 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                             {
                                 unlockDay = 0;
                             }
-
-                            LoggingHelper.DebugLog(
-                                $"This object unlock in day: {unlockDay} (Current Day is {GlobalVariables.currentDay})." +
+                            
+                            LoggingHelper.DebugLog(() =>
+                                $"This object unlocks on day: {__instance.unlockDay} (Current Day is {GlobalVariables.currentDay})." +
                                 $" The threshold is: {__instance.scoreThresholdToUnlock}." +
-                                $" The current score for that day is {currentCampaign.SavedDayScores[unlockDay]}." +
-                                $" (For GameObject: '{__instance.gameObject.name}')");
+                                $" The current score for the day {__instance.unlockDay-1} is {currentCampaign.SavedDayScores[unlockDay]}." +
+                                $" (For GameObject: '{__instance.gameObject.name}')" +
+                                $" Is threshold over 0? '{__instance.scoreThresholdToUnlock > 0.0f}'");
 
-                            if (__instance.scoreThresholdToUnlock > 0.0f) // Has a set value other than the default.
+                            // Mostly only emails have a threshold.
+                            // Has a set value other than the default.
+                            if (__instance.scoreThresholdToUnlock > 0.0f)
                             {
+                                EmailListingBehavior emailComponent = __instance.gameObject.GetComponent<EmailListingBehavior>();
+                                
+                                LoggingHelper.DebugLog($"Checking if GameObject is email. Is email null? '{emailComponent == null}'", LoggingHelper.LoggingCategory.EMAIL);
+                                
+                                if (emailComponent != null)
+                                {
+                                    LoggingHelper.DebugLog("Found Email to be unlocked.",
+                                        LoggingHelper.LoggingCategory.EMAIL);
+                                    
+                                    CustomEmail email = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(emailComponent.myEmail);
+
+                                    if (email != null)
+                                    {
+                                        if (!email.UseOldAccuracyChecks) // New Check System.
+                                        {
+                                            // We check each condition.
+                                            if (AccuracyHelper.CheckIfEmailAccuracyType(email))
+                                            {
+                                                LoggingHelper.DebugLog("Email allowed to be shown.",
+                                                    LoggingHelper.LoggingCategory.EMAIL);
+                                                return false;
+                                            }
+                                            else // Checks failed.
+                                            {
+                                                LoggingHelper.DebugLog("One of the checks failed," +
+                                                                       " deactivating GameObject.",
+                                                    LoggingHelper.LoggingCategory.EMAIL);
+                                                __instance.gameObject.SetActive(false);
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // If the email checks failed, or it wasn't an email, we use the old system:
+                                
+                                // If the threshold was not reached (score too low).
                                 if (currentCampaign.SavedDayScores[unlockDay] <
                                     (double)__instance.scoreThresholdToUnlock)
                                 {
-                                    LoggingHelper.DebugLog(
+                                    LoggingHelper.DebugLog(() =>
                                         $"The score {currentCampaign.SavedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock." +
                                         $" Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject." +
                                         $" Disabling this GameObject '{__instance.gameObject.name}'.\n");
 
                                     __instance.gameObject.SetActive(false);
                                 }
-                                else
+                                else // Threshold was enough.
                                 {
-                                    LoggingHelper.DebugLog(
-                                        $"[UNITY] Email unlocked: {__instance.gameObject.name}| Day Checked: {(unlockDay).ToString()}| Day Score: " +
-                                        $"{currentCampaign.SavedDayScores[unlockDay]}.\n");
+                                    LoggingHelper.DebugLog(() =>
+                                        $"[UNITY] Email unlocked: {__instance.gameObject.name}| " +
+                                        $"Day Checked: {unlockDay.ToString()}| Day Score: " +
+                                        $"{currentCampaign.SavedDayScores[unlockDay]}.\n",
+                                        LoggingHelper.LoggingCategory.EMAIL);
                                 }
                             }
                         }
 
+                        // This object does not require to beat the game,
+                        // The save manager is valid (not null) or 
+                        // We have beaten the game (finished it)
+                        // Or if we are in the DLC, and it only unlocks for the DLC.
                         if (!__instance.beatGameUnlock || !(bool)GlobalVariables.saveManagerScript ||
                             GlobalVariables.saveManagerScript.savedGameFinished >= 1 ||
                             __instance.xmasUnlock && GlobalVariables.isXmasDLC)
                         {
-                            LoggingHelper.DebugLog($"GameObject '{__instance.gameObject.name}' is unlocked!" +
-                                                   " This may be due to it always being unlocked or by beating the game or being in winter DLC." +
-                                                   $" BeatGameUnlock: '{__instance.beatGameUnlock}'." +
-                                                   $" SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'." +
-                                                   $" SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'." +
-                                                   $" XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
+                            LoggingHelper.DebugLog(() =>
+                                $"GameObject '{__instance.gameObject.name}' is unlocked!" +
+                                " This may be due to it always being unlocked or by beating the game or being in winter DLC." +
+                                $" BeatGameUnlock: '{__instance.beatGameUnlock}'." +
+                                $" SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'." +
+                                $" SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'." +
+                                $" XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
                             return false;
                         }
-                        else // If not enabled by beating the game or unlocked by 
+                        else // If any of the above criteria wasn't met.
                         {
-                            LoggingHelper.DebugLog("Didn't beat the game to unlock this or not in winter DLC." +
-                                                   $" Disabling the GameObject '{__instance.gameObject.name}'." +
-                                                   $" BeatGameUnlock: '{__instance.beatGameUnlock}'." +
-                                                   $" SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'." +
-                                                   $" SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'." +
-                                                   $" XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
+                            LoggingHelper.DebugLog(() =>
+                                "Didn't beat the game to unlock this or not in winter DLC." +
+                                $" Disabling the GameObject '{__instance.gameObject.name}'." +
+                                $" BeatGameUnlock: '{__instance.beatGameUnlock}'." +
+                                $" SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'." +
+                                $" SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'." +
+                                $" XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
 
                             __instance.gameObject.SetActive(false);
                         }
                     }
                 }
-                else
+                else // Else means that it is made for Arcade.
                 {
                     LoggingHelper.DebugLog("Disabling UI Icon. GameObject made for Arcade.");
 
@@ -181,6 +240,14 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
             }
         }
 
+        /// <summary>
+        /// Handles the Entry Browser of the desktop icon for enabling or disabling based on custom campaign settings.
+        /// </summary>
+        /// <param name="__instance">Instance of the OnDayUnlock script. </param>
+        /// <param name="modifierApplied">A bool that defines if a modifier was applied.
+        /// (Needed for overwriting values, such as disabling and not just simply saying "Don't enable",
+        /// but rather be "disable)</param>
+        /// <returns>(Bool) Outcome of the handling. (If to enable or not)</returns>
         public static bool HandleEntryBrowserUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "EntryBrowser-Executable")
@@ -218,7 +285,15 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
 
             return false; // If not set to unlock.
         }
-
+        
+        /// <summary>
+        /// Handles the Scorecard of the desktop icon for enabling or disabling based on custom campaign settings.
+        /// </summary>
+        /// <param name="__instance">Instance of the OnDayUnlock script. </param>
+        /// <param name="modifierApplied">A bool that defines if a modifier was applied.
+        /// (Needed for overwriting values, such as disabling and not just simply saying "Don't enable",
+        /// but rather be "disable)</param>
+        /// <returns>(Bool) Outcome of the handling. (If to enable or not)</returns>
         public static bool HandleScorecardUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "Scorecard")
@@ -257,6 +332,14 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
             return false; // If not set to unlock.
         }
 
+        /// <summary>
+        /// Handles the Artbook of the desktop icon for enabling or disabling based on custom campaign settings.
+        /// </summary>
+        /// <param name="__instance">Instance of the OnDayUnlock script. </param>
+        /// <param name="modifierApplied">A bool that defines if a modifier was applied.
+        /// (Needed for overwriting values, such as disabling and not just simply saying "Don't enable",
+        /// but rather be "disable)</param>
+        /// <returns>(Bool) Outcome of the handling. (If to enable or not)</returns>
         public static bool HandleArtbookUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "Artbook-Executable")
@@ -295,6 +378,14 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
             return false; // If not set to unlock.
         }
 
+        /// <summary>
+        /// Handles the Arcade of the desktop icon for enabling or disabling based on custom campaign settings.
+        /// </summary>
+        /// <param name="__instance">Instance of the OnDayUnlock script. </param>
+        /// <param name="modifierApplied">A bool that defines if a modifier was applied.
+        /// (Needed for overwriting values, such as disabling and not just simply saying "Don't enable",
+        /// but rather be "disable)</param>
+        /// <returns>(Bool) Outcome of the handling. (If to enable or not)</returns>
         public static bool HandleArcadeUnlocker(ref OnDayUnlock __instance, ref bool modifierApplied)
         {
             if (__instance.gameObject.name == "Arcade-Executable")
@@ -333,6 +424,11 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
             return false; // If not set to unlock.
         }
 
+        /// <summary>
+        /// Handles the case if the DLC Icon appears too early. Since it may be disabled on accident.
+        /// </summary>
+        /// <param name="__instance">Instance of the OnDayUnlock script.</param>
+        /// <returns>(Bool) If we avoid messing with the DLC icon.</returns>
         public static bool HandleCustomCampaignIconsTooEarly(ref OnDayUnlock __instance)
         {
             // If always on. We just leave them on.

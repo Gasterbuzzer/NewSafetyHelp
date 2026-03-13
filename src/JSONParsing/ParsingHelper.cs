@@ -255,6 +255,7 @@ namespace NewSafetyHelp.JSONParsing
                     case "eq": // Equal
                         return AccuracyHelper.CheckOptions.EqualTo;
 
+                    case "":
                     case "no":
                     case "n":
                     case "none": // None
@@ -363,13 +364,98 @@ namespace NewSafetyHelp.JSONParsing
 
                 if (providedSingleValueTA != null)
                 {
-                    if ((bool)providedSingleValueTA)
+                    if ((bool)providedSingleValueTA && isTotalAccuracyList.Count > 0)
                     {
                         newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[0];
                     }
                     else if (i < isTotalAccuracyList.Count)
                     {
                         newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[i];
+                    }
+                }
+
+                newAccuracyType.RequiredAccuracy = accuracyRequiredList[i];
+
+                target.Add(newAccuracyType);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to parse the check option for emails.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        /// <param name="isUsingOldSystem">(Ref Bool) if we found at least one element for the new system.</param>
+        public static void TryAssignListEmailAccuracyType(JObject jObjectParsed, ref List<EmailAccuracyType> target,
+            ref bool isUsingOldSystem)
+        {
+            isUsingOldSystem = true;
+            
+            if (!jObjectParsed.TryGetValue("email_required_accuracy", out _))
+            {
+                return;
+            }
+
+            if (target == null)
+            {
+                target = new List<EmailAccuracyType>();
+            }
+
+            List<int> differentAccuracyDays = new List<int>();
+            bool? hasOnlyOneAccuracyDay = TryAssignListOrSingleElement(jObjectParsed, "email_accuracy_days",
+                ref differentAccuracyDays);
+            
+            List<float> accuracyRequiredList = new List<float>();
+            TryAssignListOrSingleElement(jObjectParsed,"email_required_accuracy", ref accuracyRequiredList);
+
+            List<string> accuracyCheckType = new List<string>();
+            TryAssignListOrSingleElement(jObjectParsed,"email_accuracy_check_type" , ref accuracyCheckType);
+
+            if (accuracyRequiredList.Count != accuracyCheckType.Count)
+            {
+                LoggingHelper.ErrorLog("Provided email accuracy lists must all have equal length. " +
+                                       "Unable of parsing accuracy checks.");
+                return;
+            }
+            
+            if (differentAccuracyDays.Count > accuracyCheckType.Count)
+            {
+                LoggingHelper.ErrorLog("Provided email accuracy days list has too many elements. " +
+                                       "Unable of parsing accuracy checks.");
+                return;
+            }
+
+            if (accuracyCheckType.Count > 0
+                || accuracyCheckType.Count > 0
+                || differentAccuracyDays.Count > 0)
+            {
+                isUsingOldSystem = false;
+            }
+
+            for (int i = 0; i < accuracyCheckType.Count; i++)
+            {
+                EmailAccuracyType newAccuracyType = new EmailAccuracyType();
+
+                if (!string.IsNullOrEmpty(accuracyCheckType[i]))
+                {
+                    newAccuracyType.AccuracyCheck = TryAssignSingleAccuracyType(accuracyCheckType[i]);
+                }
+                else
+                {
+                    LoggingHelper.WarningLog("Provided email accuracy type is invalid. " +
+                                             "Defaulting to 'greater or equal'.");
+                    newAccuracyType.AccuracyCheck = AccuracyHelper.CheckOptions.GreaterThanOrEqualTo;
+                }
+
+                if (hasOnlyOneAccuracyDay != null)
+                {
+                    if ((bool)hasOnlyOneAccuracyDay && differentAccuracyDays.Count > 0)
+                    {
+                        newAccuracyType.CheckDay = differentAccuracyDays[0];
+                    }
+                    else if (i < differentAccuracyDays.Count)
+                    {
+                        newAccuracyType.CheckDay = differentAccuracyDays[i];
                     }
                 }
 
@@ -446,7 +532,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 if (string.IsNullOrEmpty(target[i]))
                 {
-                    LoggingHelper.WarningLog($"Provided video path is empty. Unable to show show video.");
+                    LoggingHelper.WarningLog("Provided video path is empty. Unable to show show video.");
                 }
                 else
                 {

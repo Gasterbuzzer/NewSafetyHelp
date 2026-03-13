@@ -1,5 +1,5 @@
-﻿using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+﻿using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -20,7 +20,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
         /// Computes the total campaign accuracy. (0-1 format)
         /// </summary>
         /// <returns></returns>
-        private static float ComputeTotalCampaignAccuracy()
+        public static float ComputeTotalCampaignAccuracy()
         {
             float correctCallers = 0;
             
@@ -34,98 +34,116 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
             
             return correctCallers / GlobalVariables.callerControllerScript.callers.Length;
         }
-        
+
         /// <summary>
-        /// Computes the accuracy for the current day. (0-1 format) (Only counts for entry based callers)
+        /// Checks if the given EmailAccuracyDay can even be checked (unlock day is valid).
         /// </summary>
-        /// <returns></returns>
-        private static float ComputeDayAccuracy()
+        /// <returns>(Bool) True: Day is valid. False: Day is not reached yet.</returns>
+        public static bool CheckIfDayValid(EmailAccuracyType accuracyType, CustomEmail email)
         {
-            if (GlobalVariables.callerControllerScript.callersToday <= 0)
+            int? unlockDay = accuracyType.CheckDay;
+            
+            if (accuracyType.CheckDay == null)
             {
-                return 1; // 100% correct, since no callers have happened until now.
-            }
-
-            return (float)GlobalVariables.callerControllerScript.correctCallsToday /
-                   GlobalVariables.callerControllerScript.callersToday;
-        }
-        
-        // Variable for the total day accuracy.
-        public static int StartOfDayCallerID = 0;
-        
-        /// <summary>
-        /// Computes the accuracy for the current day. (0-1 format). (Counts all caller types)
-        /// </summary>
-        /// <returns></returns>
-        private static float ComputeTotalDayAccuracy()
-        {
-            int amountOfCallersToday = 0;
-            int amountOfCorrectCallersToday = 0;
-
-            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-
-            if (customCampaign == null)
-            {
-                LoggingHelper.CampaignNullError();
-                return 0;
+                unlockDay = email.UnlockDay - 1;
             }
             
-            for (int i = StartOfDayCallerID; i < customCampaign.CustomCallersInCampaign.Count; i++)
+            if (unlockDay <= 0
+                || unlockDay <= GlobalVariables.currentDay)
             {
-                CustomCCaller customCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
-
-                if (customCaller == null)
-                {
-                    LoggingHelper.WarningLog($"Missing caller found for caller order {i}. Not counting this caller.");
-                    continue;
-                }
-                
-                amountOfCallersToday++;
-                
-                if (GlobalVariables.callerControllerScript.callers[i].answeredCorrectly)
-                {
-                    amountOfCorrectCallersToday++;
-                }
-                
-                // Last caller of the day, we can stop.
-                if (customCaller.LastDayCaller)
-                {
-                    break;
-                }
+                return true;
             }
 
-            if (amountOfCallersToday <= 0)
-            {
-                return 1;
-            }
+            LoggingHelper.DebugLog($"Checking accuracy day of '{unlockDay}' " +
+                                   $"on day '{GlobalVariables.currentDay}'. " +
+                                   $"(Accuracy type check day: '{accuracyType.CheckDay}')",
+                LoggingHelper.LoggingCategory.EMAIL);
             
-            return (float) amountOfCorrectCallersToday / amountOfCallersToday;
+            return false;
         }
 
         /// <summary>
-        /// Checks if the provided caller has to required accuracy to be allowed to be shown.
+        /// Gets the accuracy of a provided day.
         /// </summary>
-        /// <param name="currentCaller">Caller to be checked.</param>
-        /// <returns>(True) Caller is allowed to call. (False) Caller is not allowed to call.</returns>
-        public static bool CheckIfCallerIsToBeShown(CustomCCaller currentCaller)
+        /// <param name="unlockDay">Day to check for.</param>
+        /// <param name="email"> Email to be checked. </param>
+        /// <returns>(Float?) If found, will return the score of that day. If not, it will return null.</returns>
+        public static float? GetAccuracyOfDay(int? unlockDay, CustomEmail email)
         {
-            LoggingHelper.InfoLog(() => "Checking if accuracy caller is to be shown " +
-                                  $"({currentCaller.CallerName} with '{currentCaller.AccuracyChecks.Count}' checks). " +
-                                  $"Current day accuracy is '{GetCorrectAccuracy(false)}'. " +
-                                  $"Total current day accuracy is '{GetCorrectAccuracy(false, true)}'. " +
-                                  $"Total accuracy is '{GetCorrectAccuracy(true)}'.",
-                LoggingHelper.LoggingCategory.SKIPPED_CALLER);
-            
-            foreach (AccuracyType accuracyType in currentCaller.AccuracyChecks)
+            if (unlockDay == null)
             {
-                float currentAccuracy = GetCorrectAccuracy(accuracyType.UseTotalAccuracy, 
-                    currentCaller.CountEveryCallerForLocalAccuracy);
+                unlockDay = email.UnlockDay - 1;
+            }
+            
+            if (unlockDay <= 0)
+            {
+                LoggingHelper.WarningLog("Unable of getting accuracy for any day that isn't the first. " +
+                                         $"Unlock day '{unlockDay}' with unlock day of " +
+                                         $"'{email.UnlockDay}' is thus invalid.");
+                return null;
+            }
+            
+            if (CustomCampaignGlobal.InCustomCampaign)
+            {
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                if (customCampaign == null)
+                {
+                    return null;
+                }
+
+                if (customCampaign.SavedDayScores.Count > unlockDay)
+                {
+                    return customCampaign.SavedDayScores[(int) unlockDay] / 100.0f;
+                }
+            }
+            else
+            {
+                if (PlayerPrefs.HasKey("SavedDayScore" + unlockDay))
+                {
+                    return PlayerPrefs.GetFloat("SavedDayScore" + unlockDay) / 100.0f;
+                } 
+            }
+            
+            return null;
+        }
+        
+        /// <summary>
+        /// Checks if the provided email has the accuracy to be allowed to be shown.
+        /// Please note, if you have an email that uses the old system, then don't use this function.
+        /// </summary>
+        /// <param name="email">Email to be checked.</param>
+        /// <returns>(True) Passed all checks. (False) Failed a check.</returns>
+        public static bool CheckIfEmailAccuracyType(CustomEmail email)
+        {
+            LoggingHelper.DebugLog("Checking email accuracy type.", LoggingHelper.LoggingCategory.EMAIL);
+            
+            foreach (EmailAccuracyType accuracyType in email.UnlockAccuracy)
+            {
+                // If the day of to unlock is even reached.
+                if (!CheckIfDayValid(accuracyType, email))
+                {
+                    LoggingHelper.DebugLog("Accuracy day not reached.", LoggingHelper.LoggingCategory.EMAIL);
+                    return false;
+                }
+
+                float? currentAccuracyWithNull = GetAccuracyOfDay(accuracyType.CheckDay, email);
+
+                if (currentAccuracyWithNull == null)
+                {
+                    LoggingHelper.WarningLog("Unable of getting accuracy of a day. " +
+                                             "Possible logic error? Not showing email.");
+                    return false;
+                }
+
+                // Valid accuracy.
+                float currentAccuracy = (float) currentAccuracyWithNull;
                 
-                LoggingHelper.DebugLog(() => "DEBUG: Found" +
-                                       $"Accuracy caller with current check '{accuracyType.AccuracyCheck.ToString()}' " +
-                                       $"and required accuracy '{accuracyType.RequiredAccuracy}'. " +
-                                       $"The current accuracy is: '{currentAccuracy}'.",
-                    LoggingHelper.LoggingCategory.SKIPPED_CALLER);
+                LoggingHelper.DebugLog($"The current accuracy is '{currentAccuracy}' of day '{accuracyType.CheckDay}' " +
+                                       $"(Email Unlock Day: '{email.UnlockDay}') " +
+                                       $"with check type: '{accuracyType.AccuracyCheck.ToString()}'. " +
+                                       $"With required accuracy of '{accuracyType.RequiredAccuracy}'.",
+                    LoggingHelper.LoggingCategory.EMAIL);
                 
                 // The switch statements all look for the opposite of the current statement,
                 // since it only matters if we fail one of them and not if all check are true.
@@ -171,29 +189,6 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
             // No check failed, we return true.
             return true;
         }
-
-        /// <summary>
-        /// Picks the correct accuracy that is needed.
-        /// </summary>
-        /// <param name="useTotalAccuracy">What accuracy to get.</param>
-        /// <param name="useTotalDayAccuracy">If the day accuracy should account for every type of caller and
-        /// not just entry based callers. </param>
-        /// <returns>Accuracy that the caller chose.</returns>
-        public static float GetCorrectAccuracy(bool useTotalAccuracy, bool useTotalDayAccuracy = false)
-        {
-            if (useTotalAccuracy)
-            {
-                return ComputeTotalCampaignAccuracy();
-            }
-
-            if (useTotalDayAccuracy)
-            {
-                return ComputeTotalDayAccuracy();  
-            }
-            else
-            {
-                return ComputeDayAccuracy();  
-            }
-        }
+        
     }
 }

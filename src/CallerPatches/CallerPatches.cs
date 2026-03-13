@@ -855,7 +855,7 @@ namespace NewSafetyHelp.CallerPatches
 
                                 if (currentCaller != null && currentCaller.IsAccuracyCaller)
                                 {
-                                    bool showCaller = AccuracyHelper.CheckIfCallerIsToBeShown(currentCaller);
+                                    bool showCaller = AccuracyCallerHelper.CheckIfCallerIsToBeShown(currentCaller);
 
                                     LoggingHelper.DebugLog($"Should the accuracy caller be shown? '{showCaller}'.");
 

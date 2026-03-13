@@ -144,10 +144,12 @@
     <Compile Include="src\CustomCampaignPatches\CustomRingtone\CustomRingtone.cs" />
     <Compile Include="src\CustomCampaignPatches\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaignPatches\Desktop\OnDayUnlockPatches.cs" />
+    <Compile Include="src\CustomCampaignPatches\Helper\AccuracyCallerHelper.cs" />
     <Compile Include="src\CustomCampaignPatches\Helper\AccuracyHelper.cs" />
     <Compile Include="src\CustomCampaignPatches\Abstract\CustomCampaignElement.cs" />
     <Compile Include="src\CustomCampaignPatches\Helper\AccuracyTextPatches.cs" />
     <Compile Include="src\CustomCampaignPatches\Helper\AccuracyType.cs" />
+    <Compile Include="src\CustomCampaignPatches\Helper\EmailAccuracyType.cs" />
     <Compile Include="src\CustomCampaignPatches\Helper\RandomFromList.cs" />
     <Compile Include="src\CustomCampaignPatches\Saving\CustomCampaignOptionSaving.cs" />
     <Compile Include="src\CustomCampaignPatches\Saving\CustomCampaignSaving.cs" />

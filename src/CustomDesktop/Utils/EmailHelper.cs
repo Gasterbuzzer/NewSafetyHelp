@@ -134,7 +134,15 @@ namespace NewSafetyHelp.CustomDesktop.Utils
                 OnDayUnlock newEmailOnDayUnlock = newEmail.GetComponent<OnDayUnlock>();
 
                 newEmailOnDayUnlock.unlockDay = emailToCreate.UnlockDay;
-                newEmailOnDayUnlock.scoreThresholdToUnlock = emailToCreate.UnlockThreshold;
+
+                if (emailToCreate.UseOldAccuracyChecks)
+                {
+                    newEmailOnDayUnlock.scoreThresholdToUnlock = emailToCreate.UnlockThreshold;
+                }
+                else // Use new system, so we set an impossible value and later handle it separately.
+                {
+                    newEmailOnDayUnlock.scoreThresholdToUnlock = 2.0f;
+                }
 
                 // Mark the email as not read.
 

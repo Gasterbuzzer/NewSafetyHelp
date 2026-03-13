@@ -1,5 +1,7 @@
-﻿using NewSafetyHelp.CustomCampaignPatches;
+﻿using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Helper;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -68,11 +70,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite emailImage = null;
             
             string emailAnimatedVideo = null;
-            bool hasAnimatedVideo = false;
 
             // Unlock
             int emailUnlockDay = 0;
-            int emailUnlockThreshold = 0;
+            
+            float unlockThreshold = 0;
+            
+            // New Unlock System
+            List<EmailAccuracyType> unlockAccuracy = null;
+            bool useOldAccuracyChecks = true;
 
             ParsingHelper.TryAssign(jObjectParsed, "email_in_main_campaign", ref inMainCampaign);
             ParsingHelper.TryAssign(jObjectParsed, "email_custom_campaign_name", ref customCampaignName);
@@ -80,12 +86,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "email_sender", ref emailSender);
             ParsingHelper.TryAssign(jObjectParsed, "email_body", ref emailBody);
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
-            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref emailUnlockThreshold);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
+            
+            ParsingHelper.TryAssignListEmailAccuracyType(jObjectParsed, ref unlockAccuracy, ref useOldAccuracyChecks);
 
             ParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
                 usermodFolderPath, customCampaignName);
             
-            hasAnimatedVideo = ParsingHelper.TryAssignVideoPath(jObjectParsed, "email_animated_image",
+            bool hasAnimatedVideo = ParsingHelper.TryAssignVideoPath(jObjectParsed, "email_animated_image",
                 ref emailAnimatedVideo, jsonFolderPath, usermodFolderPath);
 
             return new CustomEmail
@@ -97,7 +106,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 EmailBody = emailBody,
 
                 UnlockDay = emailUnlockDay,
-                UnlockThreshold = emailUnlockThreshold,
+                UnlockThreshold = unlockThreshold,
+                UnlockAccuracy = unlockAccuracy,
+                UseOldAccuracyChecks = useOldAccuracyChecks,
 
                 EmailImage = emailImage,
                 

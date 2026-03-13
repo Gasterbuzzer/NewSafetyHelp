@@ -10,7 +10,8 @@ namespace NewSafetyHelp.LoggingSystem
             NONE,
             SKIPPED_CALLER,
             THEME,
-            RINGTONE
+            RINGTONE,
+            EMAIL
         }
 
         private enum LoggingLevel
@@ -60,6 +61,13 @@ namespace NewSafetyHelp.LoggingSystem
                     
                     case LoggingCategory.RINGTONE:
                         if (!NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value)
+                        {
+                            return false;
+                        }
+                        break;
+                    
+                    case LoggingCategory.EMAIL:
+                        if (!NewSafetyHelpMainClass.ShowEmailDebugLog.Value)
                         {
                             return false;
                         }

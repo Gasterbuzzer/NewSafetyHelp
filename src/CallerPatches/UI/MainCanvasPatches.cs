@@ -247,7 +247,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                 // So that the accuracy caller knows where to start.
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    AccuracyHelper.StartOfDayCallerID = GlobalVariables.callerControllerScript.currentCallerID;
+                    AccuracyCallerHelper.StartOfDayCallerID = GlobalVariables.callerControllerScript.currentCallerID;
                 }
                 
                 if (!GlobalVariables.arcadeMode)
