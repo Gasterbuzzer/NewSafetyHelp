@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
@@ -447,6 +448,18 @@ namespace NewSafetyHelp.CustomCampaignPatches
             }
             
             return (false, default);
+        }
+        
+        /// <summary>
+        /// Sorts the emails to the correct priorities and days.
+        /// </summary>
+        /// <param name="customCampaign"> Custom campaign that requires email sorting. </param>
+        public static void SortEmailsInCustomCampaign(CustomCampaign customCampaign)
+        {
+            customCampaign.Emails = customCampaign.Emails.
+                OrderBy(email => email.UnlockDay).
+                ThenByDescending(email => email.EmailPriority).
+                ToList();
         }
 
         /// <summary>

@@ -41,13 +41,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             else
             {
                 // Add to correct campaign.
-                CustomCampaign foundCustomCampaign =
+                CustomCampaign customCampaign =
                     CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                         customCampaignSearch.CampaignName == customCampaignName);
 
-                if (foundCustomCampaign != null)
+                if (customCampaign != null)
                 {
-                    foundCustomCampaign.Emails.Add(customEmail);
+                    customCampaign.Emails.Add(customEmail);
                 }
                 else
                 {
@@ -76,6 +76,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             float unlockThreshold = 0;
             
+            int emailPriority = 0;
+            
             // New Unlock System
             List<EmailAccuracyType> unlockAccuracy = null;
             bool useOldAccuracyChecks = true;
@@ -86,6 +88,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "email_sender", ref emailSender);
             ParsingHelper.TryAssign(jObjectParsed, "email_body", ref emailBody);
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
+            ParsingHelper.TryAssign(jObjectParsed, "email_priority", ref emailPriority);
             
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
             
@@ -104,6 +107,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 EmailSubject = emailSubject,
                 SenderName = emailSender,
                 EmailBody = emailBody,
+                
+                EmailPriority = emailPriority,
 
                 UnlockDay = emailUnlockDay,
                 UnlockThreshold = unlockThreshold,

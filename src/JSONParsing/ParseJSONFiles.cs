@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using NewSafetyHelp.Audio;
+using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.CCParsing;
 using NewSafetyHelp.LoggingSystem;
@@ -43,6 +45,15 @@ namespace NewSafetyHelp.JSONParsing
             foreach (string foldersStringName in foldersDataPath)
             {
                 LoadJsonFilesFromFolder(foldersStringName, __instance);
+            }
+            
+            // For all custom campaigns we make sure their emails are sorted.
+            foreach (CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
+            {
+                if (customCampaign.Emails.Count > 0)
+                {
+                    CustomCampaignGlobal.SortEmailsInCustomCampaign(customCampaign);
+                }
             }
 
             // If no audio is loading, we can reset the game back. If not, we let the audios do so.

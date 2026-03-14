@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
 using NewSafetyHelp.CustomCampaignPatches.Themes;
+using NewSafetyHelp.Emails;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -78,8 +80,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref customCampaign.Emails, customCampaignName, "emails");
             
             // Sort by unlock day. This is to prevent some oddities where some emails that appear later, appear in the list sooner.
-            customCampaign.Emails.Sort((emailOne, emailTwo) => emailOne.UnlockDay.CompareTo(emailTwo.UnlockDay));
-
+            CustomCampaignGlobal.SortEmailsInCustomCampaign(customCampaign);
+            
             // Check if any videos have to be added to a custom campaign.
             ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
                 ref customCampaign.AllDesktopVideos, customCampaignName, "videos");
