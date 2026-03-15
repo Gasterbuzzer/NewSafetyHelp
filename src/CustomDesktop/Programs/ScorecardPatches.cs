@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
@@ -70,7 +71,7 @@ namespace NewSafetyHelp.CustomDesktop.Programs
                             continue;
                         }
                         
-                        CallerPatches.CallerModel.CustomCCaller customCCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(currentCallerIndex);
+                        CustomCCaller customCCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(currentCallerIndex);
 
                         if (customCCallerFound == null)
                         {

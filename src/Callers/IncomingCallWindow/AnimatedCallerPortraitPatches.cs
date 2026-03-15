@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Reflection;
-using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CallerPatches.UI.AnimatedEntry;
-using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.Callers.UI.AnimatedEntry;
+using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.LoggingSystem;
 
-namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
+namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
     public static class AnimatedCallerPortraitPatches
     {

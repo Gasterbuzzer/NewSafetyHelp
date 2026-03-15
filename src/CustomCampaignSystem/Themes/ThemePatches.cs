@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using Object = UnityEngine.Object;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Themes
+namespace NewSafetyHelp.CustomCampaignSystem.Themes
 {
     public static class ThemePatches
     {

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace NewSafetyHelp.CallerPatches.CallerCreationAndUpdate
+namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 {
     public static class CreateAndUpdateCallerPatches
     {

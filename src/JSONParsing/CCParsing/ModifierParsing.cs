@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;

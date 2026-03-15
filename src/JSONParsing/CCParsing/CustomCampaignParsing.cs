@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
-using NewSafetyHelp.CustomCampaignPatches.Themes;
-using NewSafetyHelp.Emails;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -39,10 +38,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (GlobalParsingVariables.PendingCustomCampaignCustomCallers.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<CallerPatches.CallerModel.CustomCCaller> tempList =
-                    new List<CallerPatches.CallerModel.CustomCCaller>(GlobalParsingVariables.PendingCustomCampaignCustomCallers);
+                List<CustomCCaller> tempList =
+                    new List<CustomCCaller>(GlobalParsingVariables.PendingCustomCampaignCustomCallers);
 
-                foreach (CallerPatches.CallerModel.CustomCCaller customCallerCC in tempList)
+                foreach (CustomCCaller customCallerCC in tempList)
                 {
                     if (customCallerCC.CustomCampaignName == customCampaignName)
                     {

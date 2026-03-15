@@ -1,6 +1,6 @@
-﻿using NewSafetyHelp.CustomCampaignPatches.Abstract;
+﻿using NewSafetyHelp.CustomCampaignSystem.Abstract;
 
-namespace NewSafetyHelp.CustomCampaignPatches.CustomRingtone
+namespace NewSafetyHelp.CustomCampaignSystem.CustomRingtone
 {
     public class CustomRingtone : CustomCampaignElementBase
     {

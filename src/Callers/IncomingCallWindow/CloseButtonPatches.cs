@@ -2,12 +2,12 @@
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.Helper;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.LoggingSystem;
 
-namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
+namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
     public static class CloseButtonPatches
     {
@@ -98,7 +98,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
             {
                 if (i < __instance.callers.Length) // Valid caller.
                 {
-                    CallerModel.CustomCCaller customCCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
+                    CustomCCaller customCCallerFound = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(i);
 
                     // If the next caller does not exist or was not found, we simply say false.
                     // There might be valid callers after that one, but we are in an invalid state.

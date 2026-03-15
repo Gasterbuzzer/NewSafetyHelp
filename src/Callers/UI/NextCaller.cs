@@ -1,10 +1,9 @@
 ﻿using System;
-using MelonLoader;
-using NewSafetyHelp.CallerPatches.IncomingCallWindow;
-using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.Callers.IncomingCallWindow;
+using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.LoggingSystem;
 
-namespace NewSafetyHelp.CallerPatches.UI
+namespace NewSafetyHelp.Callers.UI
 {
     public static class NextCaller
     {

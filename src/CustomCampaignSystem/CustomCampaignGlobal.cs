@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
-using NewSafetyHelp.CustomCampaignPatches.Themes;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.LoggingSystem;
 
-namespace NewSafetyHelp.CustomCampaignPatches
+namespace NewSafetyHelp.CustomCampaignSystem
 {
     public static class CustomCampaignGlobal
     {
@@ -60,7 +61,7 @@ namespace NewSafetyHelp.CustomCampaignPatches
         /// <param name="orderID">Order number in the current custom campaign.</param>
         /// <returns>CustomCCaller Object with the returned object. If not found, default. </returns>
         [CanBeNull]
-        public static CallerPatches.CallerModel.CustomCCaller GetCustomCallerFromActiveCampaign(int orderID)
+        public static CustomCCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
             

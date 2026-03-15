@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Helper
+namespace NewSafetyHelp.CustomCampaignSystem.Helper
 {
     public static class RandomFromList
     {

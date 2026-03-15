@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Helper
+namespace NewSafetyHelp.CustomCampaignSystem.Helper
 {
     public static class AccuracyTextPatches
     {

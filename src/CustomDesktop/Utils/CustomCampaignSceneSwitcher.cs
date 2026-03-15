@@ -1,6 +1,7 @@
 ﻿using System;
 using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.Saving;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.Saving;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine.SceneManagement;
 

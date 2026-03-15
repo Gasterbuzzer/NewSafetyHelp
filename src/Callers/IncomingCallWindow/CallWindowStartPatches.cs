@@ -1,10 +1,11 @@
 ﻿using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 
-namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
+namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
     public static class CallWindowStartPatches
     {
@@ -74,7 +75,7 @@ namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
                     
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
                     {
-                        CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
+                        CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
                         
                         if (customCCaller == null)
                         {

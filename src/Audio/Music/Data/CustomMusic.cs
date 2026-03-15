@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NewSafetyHelp.CustomCampaignPatches.Abstract;
+using NewSafetyHelp.CustomCampaignSystem.Abstract;
 
 namespace NewSafetyHelp.Audio.Music.Data
 {

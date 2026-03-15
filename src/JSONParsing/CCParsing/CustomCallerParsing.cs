@@ -2,11 +2,10 @@
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CallerPatches.CallerModel;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Helper;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -158,8 +157,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             Sprite customCallerImage = null;
             
-            string callerAnimatedPortraitURL = null; 
-            bool callerHasAnimatedPortrait = false;
+            string callerAnimatedPortraitURL = null;
 
             // 99% of times should never be used. Scream at the person who uses it in a bad way.
             int customCallerMonsterID = -1; 
@@ -227,10 +225,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssign(jObjectParsed, "accuracy_caller_count_total_day_instead",
                 ref countEveryCallerForLocalAccuracy);
-            
+
             // Animated Portrait
-            
-            callerHasAnimatedPortrait = ParsingHelper.TryAssignVideoPath(jObjectParsed,
+            bool callerHasAnimatedPortrait = ParsingHelper.TryAssignVideoPath(jObjectParsed,
                 "custom_caller_animated_portrait_name",
                 ref callerAnimatedPortraitURL, jsonFolderPath, usermodFolderPath);
 

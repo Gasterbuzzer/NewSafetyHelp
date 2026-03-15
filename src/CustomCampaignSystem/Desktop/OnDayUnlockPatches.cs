@@ -1,14 +1,13 @@
 ﻿using System.Globalization;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Helper;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
 
-namespace NewSafetyHelp.CustomCampaignPatches.Desktop
+namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 {
     public static class OnDayUnlockPatches
     {

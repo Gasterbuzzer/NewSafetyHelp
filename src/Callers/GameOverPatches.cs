@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using NewSafetyHelp.Audio;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace NewSafetyHelp.CallerPatches
+namespace NewSafetyHelp.Callers
 {
     public static class GameOverPatches
     {
@@ -45,7 +46,7 @@ namespace NewSafetyHelp.CallerPatches
 
                     if (customCampaign.CustomGameOverCallersInCampaign.Count > 0)
                     {
-                        CallerModel.CustomCCaller customCCallerGameOverChosen = null;
+                        CustomCCaller customCCallerGameOverChosen = null;
 
                         if (customCampaign.CustomGameOverCallersInCampaign.Exists(customCaller =>
                                 customCaller.GameOverCallDay <= -1))

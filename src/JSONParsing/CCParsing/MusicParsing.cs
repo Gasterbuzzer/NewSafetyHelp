@@ -3,8 +3,8 @@ using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 

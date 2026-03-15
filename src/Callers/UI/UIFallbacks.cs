@@ -1,7 +1,7 @@
 ﻿using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.CallerPatches.UI
+namespace NewSafetyHelp.Callers.UI
 {
     public static class UIFallbacks
     {

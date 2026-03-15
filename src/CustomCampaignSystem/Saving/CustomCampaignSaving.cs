@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Saving
+namespace NewSafetyHelp.CustomCampaignSystem.Saving
 {
     public static class CustomCampaignSaving
     {

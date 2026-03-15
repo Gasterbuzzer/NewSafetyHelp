@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using NewSafetyHelp.CallerPatches.UI.AnimatedEntry;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.Callers.UI.AnimatedEntry;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Desktop
+namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 {
     public static class DesktopBackgroundPatches
     {

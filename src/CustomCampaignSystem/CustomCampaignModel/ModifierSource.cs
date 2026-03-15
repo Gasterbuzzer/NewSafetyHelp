@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 
-namespace NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel
+namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 {
     public class ModifierSource
     {

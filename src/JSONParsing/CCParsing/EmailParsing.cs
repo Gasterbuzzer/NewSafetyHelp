@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Helper;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;

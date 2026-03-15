@@ -1,4 +1,4 @@
-﻿namespace NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers
+﻿namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 {
     public static class AccuracyHelper
     {

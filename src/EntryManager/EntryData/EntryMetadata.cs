@@ -1,5 +1,5 @@
 ﻿using System;
-using NewSafetyHelp.CustomCampaignPatches.Abstract;
+using NewSafetyHelp.CustomCampaignSystem.Abstract;
 
 namespace NewSafetyHelp.EntryManager.EntryData
 {

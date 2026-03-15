@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaignPatches.CustomRingtone;
-using NewSafetyHelp.CustomCampaignPatches.Modifier.Data;
-using NewSafetyHelp.CustomCampaignPatches.Themes;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomRingtone;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -17,10 +18,10 @@ namespace NewSafetyHelp.JSONParsing
         // Main Game (Main Campaign) Lists
         public static List<CustomTheme> MainGameThemes = new List<CustomTheme>();
         public static List<CustomEmail> MainCampaignEmails = new List<CustomEmail>();
-        public static Dictionary<int, CallerPatches.CallerModel.CustomCCaller> CustomCallersMainGame = new Dictionary<int, CallerPatches.CallerModel.CustomCCaller>();
+        public static Dictionary<int, CustomCCaller> CustomCallersMainGame = new Dictionary<int, CustomCCaller>();
 
         // Custom Campaign Pending Content (Content to be added later because the custom campaign has not been parsed yet)
-        public static List<CallerPatches.CallerModel.CustomCCaller> PendingCustomCampaignCustomCallers = new List<CallerPatches.CallerModel.CustomCCaller>();
+        public static List<CustomCCaller> PendingCustomCampaignCustomCallers = new List<CustomCCaller>();
         public static List<EntryMetadata> PendingCustomCampaignEntries = new List<EntryMetadata>();
         public static List<EntryMetadata> PendingCustomCampaignReplaceEntries = new List<EntryMetadata>();
         public static List<CustomEmail> PendingCustomCampaignEmails = new List<CustomEmail>();

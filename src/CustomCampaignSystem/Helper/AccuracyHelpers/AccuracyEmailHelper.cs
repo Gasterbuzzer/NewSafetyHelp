@@ -1,10 +1,10 @@
-﻿using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
+﻿using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers
+namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 {
     public static class AccuracyEmailHelper
     {

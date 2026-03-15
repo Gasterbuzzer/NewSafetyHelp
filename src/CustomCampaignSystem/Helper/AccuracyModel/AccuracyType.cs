@@ -1,6 +1,6 @@
-﻿using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
+﻿using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel
+namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel
 {
     public class AccuracyType
     {

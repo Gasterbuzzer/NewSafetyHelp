@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.Audio.Music.Intermission;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignPatches.Helper;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.LoggingSystem;
@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
-namespace NewSafetyHelp.CallerPatches.UI
+namespace NewSafetyHelp.Callers.UI
 {
     public static class MainCanvasPatches
     {
@@ -763,7 +763,7 @@ namespace NewSafetyHelp.CallerPatches.UI
                     }
                     else // Custom Campaign
                     {
-                        CallerModel.CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                        CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
                         
                         if (customCCaller == null)
                         {

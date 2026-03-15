@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
-using NewSafetyHelp.CustomCampaignPatches.Abstract;
-using NewSafetyHelp.CustomCampaignPatches.Helper;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Abstract;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.Emails

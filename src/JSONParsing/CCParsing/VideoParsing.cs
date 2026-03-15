@@ -1,5 +1,5 @@
-﻿using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+﻿using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;

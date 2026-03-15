@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using NewSafetyHelp.CustomCampaignPatches.Abstract;
-using NewSafetyHelp.CustomCampaignPatches.Helper;
-using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Abstract;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using UnityEngine;
 
-namespace NewSafetyHelp.CallerPatches.CallerModel
+namespace NewSafetyHelp.Callers.CallerModel
 {
     
     public class CustomCCaller : CustomCampaignElementBase

@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
-using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.CustomCampaignSystem;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace NewSafetyHelp.CallerPatches.UI.AnimatedEntry
+namespace NewSafetyHelp.Callers.UI.AnimatedEntry
 {
     public static class EntryCanvasStandaloneEntry
     {

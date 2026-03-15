@@ -3,16 +3,16 @@ using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
-using NewSafetyHelp.CallerPatches.IncomingCallWindow;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.Callers.IncomingCallWindow;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace NewSafetyHelp.CallerPatches.Answer
+namespace NewSafetyHelp.Callers.Answer
 {
     public static class ProvidingAnswer
     {

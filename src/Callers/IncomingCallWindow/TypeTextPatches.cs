@@ -3,7 +3,7 @@ using System.Reflection;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.CallerPatches.IncomingCallWindow
+namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
     public static class TypeTextPatches
     {

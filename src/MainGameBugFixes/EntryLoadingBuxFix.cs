@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
-using NewSafetyHelp.CallerPatches.UI.AnimatedEntry;
-using NewSafetyHelp.CustomCampaignPatches;
+using NewSafetyHelp.Callers.UI.AnimatedEntry;
+using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;

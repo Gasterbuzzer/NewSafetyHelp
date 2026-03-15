@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Reflection;
 using MelonLoader;
-using NewSafetyHelp.CustomCampaignPatches;
-using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.Video;
