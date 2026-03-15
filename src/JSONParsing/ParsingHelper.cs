@@ -10,6 +10,7 @@ using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -392,7 +393,7 @@ namespace NewSafetyHelp.JSONParsing
             ref bool isUsingOldSystem)
         {
             isUsingOldSystem = true;
-            
+
             if (!jObjectParsed.TryGetValue("email_required_accuracy", out _))
             {
                 return;
@@ -406,12 +407,12 @@ namespace NewSafetyHelp.JSONParsing
             List<int> differentAccuracyDays = new List<int>();
             bool? hasOnlyOneAccuracyDay = TryAssignListOrSingleElement(jObjectParsed, "email_accuracy_days",
                 ref differentAccuracyDays);
-            
+
             List<float> accuracyRequiredList = new List<float>();
-            TryAssignListOrSingleElement(jObjectParsed,"email_required_accuracy", ref accuracyRequiredList);
+            TryAssignListOrSingleElement(jObjectParsed, "email_required_accuracy", ref accuracyRequiredList);
 
             List<string> accuracyCheckType = new List<string>();
-            TryAssignListOrSingleElement(jObjectParsed,"email_accuracy_check_type" , ref accuracyCheckType);
+            TryAssignListOrSingleElement(jObjectParsed, "email_accuracy_check_type", ref accuracyCheckType);
 
             if (accuracyRequiredList.Count != accuracyCheckType.Count)
             {
@@ -419,7 +420,7 @@ namespace NewSafetyHelp.JSONParsing
                                        "Unable of parsing accuracy checks.");
                 return;
             }
-            
+
             if (differentAccuracyDays.Count > accuracyCheckType.Count)
             {
                 LoggingHelper.ErrorLog("Provided email accuracy days list has too many elements. " +
@@ -487,12 +488,13 @@ namespace NewSafetyHelp.JSONParsing
             {
                 target = new List<CallerRequirement>();
             }
-            
+
             List<int> callerRequirementIDs = new List<int>();
             TryAssignListOrSingleElement(jObjectParsed, callerRequirementIDKey, ref callerRequirementIDs);
-            
+
             List<bool> callerCorrectness = new List<bool>();
-            bool? singleCorrectness = TryAssignListOrSingleElement(jObjectParsed, callerCorrectnessKey, ref callerCorrectness);
+            bool? singleCorrectness =
+                TryAssignListOrSingleElement(jObjectParsed, callerCorrectnessKey, ref callerCorrectness);
 
             for (int i = 0; i < callerRequirementIDs.Count; i++)
             {
@@ -503,7 +505,7 @@ namespace NewSafetyHelp.JSONParsing
 
                 if (singleCorrectness != null)
                 {
-                    if ((bool) singleCorrectness 
+                    if ((bool)singleCorrectness
                         && callerCorrectness.Count > 0)
                     {
                         newCallerRequirement.ShouldCallerBeCorrect = callerCorrectness[0];
@@ -513,7 +515,7 @@ namespace NewSafetyHelp.JSONParsing
                         newCallerRequirement.ShouldCallerBeCorrect = callerCorrectness[i];
                     }
                 }
-                
+
                 target.Add(newCallerRequirement);
             }
         }
@@ -602,12 +604,13 @@ namespace NewSafetyHelp.JSONParsing
                     }
                     else if (!File.Exists(firstFilePath) && !File.Exists(videoFileAlternativePath))
                     {
-                        LoggingHelper.WarningLog($"Could not find video '{target[i]}' in either: '{firstFilePath}' or " +
-                                                 $"'{videoFileAlternativePath}'.");
+                        LoggingHelper.WarningLog(
+                            $"Could not find video '{target[i]}' in either: '{firstFilePath}' or " +
+                            $"'{videoFileAlternativePath}'.");
                     }
                 }
             }
-            
+
             return result;
         }
 
@@ -628,7 +631,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 target = new List<T>();
             }
-            
+
             if (token.Type == JTokenType.Array)
             {
                 foreach (JToken element in token)
@@ -641,9 +644,8 @@ namespace NewSafetyHelp.JSONParsing
             {
                 LoggingHelper.ErrorLog($"Provided key '{key}' does not contain a list.");
             }
-            
         }
-        
+
         /// <summary>
         /// Attempts to assign the video file path to the target string. But only if the video file exists.
         /// </summary>
@@ -659,9 +661,9 @@ namespace NewSafetyHelp.JSONParsing
             {
                 return false;
             }
-            
+
             string videoFilePath = token.Value<string>();
-            
+
             string updatedFilePath = jsonFolderPath + "\\" + videoFilePath;
             string videoFileAlternativePath = usermodFolderPath + "\\" + videoFilePath;
 
@@ -691,7 +693,34 @@ namespace NewSafetyHelp.JSONParsing
 
             return true;
         }
-        
+
+        /// <summary>
+        /// Attempts to assign the video file path to the target string. But only if the video file exists.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        public static bool TryAssignURL(JObject jObjectParsed, string key, ref Uri target)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return false;
+            }
+
+            string givenStringURL = token.Value<string>();
+
+            if (!URLVerification.SetEmailClickURL(givenStringURL, ref target))
+            {
+                LoggingHelper.WarningLog($"Provided URL with the key '{key}' is invalid. Unable of setting url.");
+                return false;
+            }
+
+            LoggingHelper.DebugLog($"Found email URL: '{target.AbsoluteUri.Substring(0, 10)}[...]'." +
+                                   " It has been marked as valid.");
+
+            return true;
+        }
+
         /// <summary>
         /// Adds any pending elements (elements that were parsed before the campaign was parsed)
         /// to the provided campaign list.
@@ -713,7 +742,8 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     if (missingElement.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog($"Adding missing {elementName} to the custom campaign: {customCampaignName}.");
+                        LoggingHelper.DebugLog(
+                            $"Adding missing {elementName} to the custom campaign: {customCampaignName}.");
 
                         listToBeAddedTo.Add(missingElement);
 

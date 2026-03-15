@@ -182,6 +182,7 @@
     <Compile Include="src\EntryManager\EntryUnlocker\EntryUnlockerPatcher.cs" />
     <Compile Include="src\ErrorDebugging\UnityLogHook.cs" />
     <Compile Include="src\HelperFunctions\DebugHelper.cs" />
+    <Compile Include="src\HelperFunctions\URLVerification.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
     <Compile Include="src\ImportFiles\ImageImport.cs" />
     <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />

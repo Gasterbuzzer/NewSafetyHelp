@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
@@ -67,6 +68,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string emailSender = "";
             string emailBody = "";
 
+            // Url that is opened on click
+            Uri emailClickUrl = null;
+            
             // Image
             Sprite emailImage = null;
             
@@ -108,6 +112,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             bool hasAnimatedVideo = ParsingHelper.TryAssignVideoPath(jObjectParsed, "email_animated_image",
                 ref emailAnimatedVideo, jsonFolderPath, usermodFolderPath);
+            
+            ParsingHelper.TryAssignURL(jObjectParsed, "email_click_url", ref emailClickUrl);
 
             return new CustomEmail
             {
@@ -116,6 +122,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 EmailSubject = emailSubject,
                 SenderName = emailSender,
                 EmailBody = emailBody,
+                
+                EmailClickURL = emailClickUrl,
                 
                 EmailPriority = emailPriority,
                 
