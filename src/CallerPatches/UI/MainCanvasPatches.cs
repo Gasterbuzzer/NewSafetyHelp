@@ -6,6 +6,7 @@ using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.LoggingSystem;

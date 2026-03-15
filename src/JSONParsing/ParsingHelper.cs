@@ -7,6 +7,8 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;

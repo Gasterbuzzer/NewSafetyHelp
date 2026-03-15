@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.Emails
@@ -35,7 +36,7 @@ namespace NewSafetyHelp.Emails
         // NOTE: It also requires the check to be true.
         public bool UnlockWhenGameFinished = false;
         
-        
+        // TODO: Add feature for only unlocking based if a caller was right or wrong.
         
         // Main Campaign Values
         public bool InMainCampaign = false;

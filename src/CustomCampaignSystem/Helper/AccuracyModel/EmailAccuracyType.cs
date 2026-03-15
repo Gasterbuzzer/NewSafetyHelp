@@ -1,4 +1,6 @@
-﻿namespace NewSafetyHelp.CustomCampaignPatches.Helper
+﻿using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
+
+namespace NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel
 {
     public class EmailAccuracyType
     {

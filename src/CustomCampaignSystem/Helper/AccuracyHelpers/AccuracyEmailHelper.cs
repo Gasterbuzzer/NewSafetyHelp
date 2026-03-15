@@ -1,40 +1,13 @@
 ﻿using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Helper
+namespace NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers
 {
-    public static class AccuracyHelper
+    public static class AccuracyEmailHelper
     {
-        public enum CheckOptions
-        {
-            GreaterThanOrEqualTo,
-            LessThanOrEqualTo,
-            EqualTo,
-            NotEqualTo,
-            NoneSet
-        }
-        
-        /// <summary>
-        /// Computes the total campaign accuracy. (0-1 format)
-        /// </summary>
-        /// <returns></returns>
-        public static float ComputeTotalCampaignAccuracy()
-        {
-            float correctCallers = 0;
-            
-            foreach (var caller in GlobalVariables.callerControllerScript.callers)
-            {
-                if (caller.answeredCorrectly)
-                {
-                    correctCallers++;
-                }
-            }
-            
-            return correctCallers / GlobalVariables.callerControllerScript.callers.Length;
-        }
-
         /// <summary>
         /// Checks if the given EmailAccuracyDay can even be checked (unlock day is valid).
         /// </summary>
@@ -117,6 +90,29 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
         public static bool CheckIfEmailAccuracyType(CustomEmail email)
         {
             LoggingHelper.DebugLog("Checking email accuracy type.", LoggingHelper.LoggingCategory.EMAIL);
+
+            // If the email is only allowed to be unlocked after the game has been finished, we check that first.
+            if (email.UnlockWhenGameFinished)
+            {
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        return false;
+                    }
+
+                    // Game has not been finished. So the checks fail.
+                    if (customCampaign.SavedGameFinished != 1
+                        && customCampaign.SavedGameFinishedDisplay != 1)
+                    {
+                        LoggingHelper.DebugLog("Email will not be shown. Game has not been finished.",
+                            LoggingHelper.LoggingCategory.EMAIL);
+                        return false;
+                    }
+                }
+            }
             
             foreach (EmailAccuracyType accuracyType in email.UnlockAccuracy)
             {
@@ -149,7 +145,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
                 // since it only matters if we fail one of them and not if all check are true.
                 switch (accuracyType.AccuracyCheck)
                 {
-                    case CheckOptions.EqualTo:
+                    case AccuracyHelper.CheckOptions.EqualTo:
                         if (!Mathf.Approximately(accuracyType.RequiredAccuracy, currentAccuracy))
                         {
                             return false;
@@ -157,7 +153,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
 
                         break;
 
-                    case CheckOptions.GreaterThanOrEqualTo:
+                    case AccuracyHelper.CheckOptions.GreaterThanOrEqualTo:
                         if (!(currentAccuracy >= accuracyType.RequiredAccuracy))
                         {
                             return false;
@@ -165,7 +161,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
 
                         break;
 
-                    case CheckOptions.LessThanOrEqualTo:
+                    case AccuracyHelper.CheckOptions.LessThanOrEqualTo:
                         if (!(currentAccuracy <= accuracyType.RequiredAccuracy))
                         {
                             return false;
@@ -173,7 +169,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
 
                         break;
                     
-                    case CheckOptions.NotEqualTo:
+                    case AccuracyHelper.CheckOptions.NotEqualTo:
                         if (Mathf.Approximately(currentAccuracy, accuracyType.RequiredAccuracy))
                         {
                             return false;
@@ -181,7 +177,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
 
                         break;
 
-                    case CheckOptions.NoneSet:
+                    case AccuracyHelper.CheckOptions.NoneSet:
                         break;
                 }
             }
@@ -189,6 +185,5 @@ namespace NewSafetyHelp.CustomCampaignPatches.Helper
             // No check failed, we return true.
             return true;
         }
-        
     }
 }

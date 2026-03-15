@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignPatches.Abstract;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.CallerPatches.CallerModel

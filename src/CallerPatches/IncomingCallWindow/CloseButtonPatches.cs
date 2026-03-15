@@ -4,6 +4,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
 using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.CallerPatches.IncomingCallWindow

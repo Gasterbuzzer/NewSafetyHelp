@@ -1,9 +1,10 @@
 ﻿using NewSafetyHelp.CallerPatches.CallerModel;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyModel;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomCampaignPatches.Helper
+namespace NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers
 {
     public static class AccuracyCallerHelper
     {

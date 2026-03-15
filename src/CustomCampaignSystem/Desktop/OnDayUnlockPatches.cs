@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using NewSafetyHelp.CustomCampaignPatches.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignPatches.Helper;
+using NewSafetyHelp.CustomCampaignPatches.Helper.AccuracyHelpers;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -156,7 +157,7 @@ namespace NewSafetyHelp.CustomCampaignPatches.Desktop
                                         if (!email.UseOldAccuracyChecks) // New Check System.
                                         {
                                             // We check each condition.
-                                            if (AccuracyHelper.CheckIfEmailAccuracyType(email))
+                                            if (AccuracyEmailHelper.CheckIfEmailAccuracyType(email))
                                             {
                                                 LoggingHelper.DebugLog("Email allowed to be shown.",
                                                     LoggingHelper.LoggingCategory.EMAIL);
