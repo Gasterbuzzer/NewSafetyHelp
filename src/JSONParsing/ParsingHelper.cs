@@ -8,6 +8,7 @@ using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
@@ -463,6 +464,57 @@ namespace NewSafetyHelp.JSONParsing
                 newAccuracyType.RequiredAccuracy = accuracyRequiredList[i];
 
                 target.Add(newAccuracyType);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to parse the check option for emails.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        /// <param name="callerRequirementIDKey">Key to read the caller ID from.</param>
+        /// <param name="callerCorrectnessKey">Key that describes if the caller is correct or wrong.</param>
+        public static void TryAssignCallerRequirement(JObject jObjectParsed, ref List<CallerRequirement> target,
+            string callerRequirementIDKey = "email_caller_requirement_ids",
+            string callerCorrectnessKey = "email_caller_requirement_should_be_correct")
+        {
+            if (!jObjectParsed.TryGetValue(callerRequirementIDKey, out _))
+            {
+                return;
+            }
+
+            if (target == null)
+            {
+                target = new List<CallerRequirement>();
+            }
+            
+            List<int> callerRequirementIDs = new List<int>();
+            TryAssignListOrSingleElement(jObjectParsed, callerRequirementIDKey, ref callerRequirementIDs);
+            
+            List<bool> callerCorrectness = new List<bool>();
+            bool? singleCorrectness = TryAssignListOrSingleElement(jObjectParsed, callerCorrectnessKey, ref callerCorrectness);
+
+            for (int i = 0; i < callerRequirementIDs.Count; i++)
+            {
+                CallerRequirement newCallerRequirement = new CallerRequirement
+                {
+                    CallerID = callerRequirementIDs[i]
+                };
+
+                if (singleCorrectness != null)
+                {
+                    if ((bool) singleCorrectness 
+                        && callerCorrectness.Count > 0)
+                    {
+                        newCallerRequirement.ShouldCallerBeCorrect = callerCorrectness[0];
+                    }
+                    else if (i < callerCorrectness.Count)
+                    {
+                        newCallerRequirement.ShouldCallerBeCorrect = callerCorrectness[i];
+                    }
+                }
+                
+                target.Add(newCallerRequirement);
             }
         }
 

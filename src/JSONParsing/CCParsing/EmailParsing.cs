@@ -2,6 +2,7 @@
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -72,11 +73,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string emailAnimatedVideo = null;
 
             // Unlock
+            bool unlockWhenGameFinished = false;
+            
             int emailUnlockDay = 0;
             
             float unlockThreshold = 0;
             
             int emailPriority = 0;
+            
+            // For this email to appear, it may require some callers to be correct or false.
+            List<CallerRequirement> unlockRequiredCallers = null;
             
             // New Unlock System
             List<EmailAccuracyType> unlockAccuracy = null;
@@ -88,7 +94,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "email_sender", ref emailSender);
             ParsingHelper.TryAssign(jObjectParsed, "email_body", ref emailBody);
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
+            ParsingHelper.TryAssign(jObjectParsed, "unlock_when_game_finished", ref unlockWhenGameFinished);
             ParsingHelper.TryAssign(jObjectParsed, "email_priority", ref emailPriority);
+            
+            ParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers);
             
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
             
@@ -109,11 +118,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 EmailBody = emailBody,
                 
                 EmailPriority = emailPriority,
+                
+                UnlockWhenGameFinished = unlockWhenGameFinished,
 
                 UnlockDay = emailUnlockDay,
                 UnlockThreshold = unlockThreshold,
                 UnlockAccuracy = unlockAccuracy,
                 UseOldAccuracyChecks = useOldAccuracyChecks,
+                
+                UnlockRequiredCallers = unlockRequiredCallers,
 
                 EmailImage = emailImage,
                 

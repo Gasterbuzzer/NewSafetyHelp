@@ -40,7 +40,8 @@ namespace NewSafetyHelp.Callers.CallerModel
         
         // Order in campaign, used when creating the call list array.
         // If two entries have the same order, the last one will replace it.
-        public readonly int OrderInCampaign; 
+        // As another info, if there is not enough space, it will simply not be added.
+        public readonly int OrderInCampaign;
         
         // Custom Campaign Settings
         public bool InCustomCampaign = false;

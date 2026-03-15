@@ -295,8 +295,8 @@ namespace NewSafetyHelp.Callers
                         newProfile.increaseTier = customCallerCC.CallerIncreasesTier;
 
                         // Sanity check if we actually have a valid order provided.
-                        if (customCallerCC.OrderInCampaign < 0 || customCallerCC.OrderInCampaign >=
-                            currentCustomCampaign.CustomCallersInCampaign.Count)
+                        if (customCallerCC.OrderInCampaign < 0 
+                            || customCallerCC.OrderInCampaign >= currentCustomCampaign.CustomCallersInCampaign.Count)
                         {
                             LoggingHelper.ErrorLog("Provided order is not valid! (Might be missing a caller(s) in between callers!)" +
                                                    $" (Info: Provided Order: {customCallerCC.OrderInCampaign}; " +
@@ -333,8 +333,8 @@ namespace NewSafetyHelp.Callers
                                     .Count) // We have a valid ConsequenceCaller ID.
                             {
                                 // We check if the current consequence caller and the original caller exists.
-                                if ((__instance.callers[customCallerIDWithConsequenceCaller.Key] != null) &&
-                                    (__instance.callers[customCallerIDWithConsequenceCaller.Value] != null))
+                                if (__instance.callers[customCallerIDWithConsequenceCaller.Key] != null
+                                    && __instance.callers[customCallerIDWithConsequenceCaller.Value] != null)
                                 {
                                     // It exists
                                     __instance.callers[customCallerIDWithConsequenceCaller.Key].callerProfile

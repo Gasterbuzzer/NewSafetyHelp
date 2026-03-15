@@ -151,6 +151,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                     
                                     CustomEmail email = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(emailComponent.myEmail);
 
+                                    // If we found an email, it means it is a custom email.
+                                    // If we don't find any email, it either isn't an email or from the main campaign.
                                     if (email != null)
                                     {
                                         if (!email.UseOldAccuracyChecks) // New Check System.

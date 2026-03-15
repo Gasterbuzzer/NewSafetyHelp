@@ -2,6 +2,7 @@
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;

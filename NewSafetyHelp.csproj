@@ -140,7 +140,6 @@
     <Compile Include="src\Callers\UI\UIFallbacks.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\ModifierSource.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\OnDayUnlockPatches.cs" />
@@ -151,7 +150,9 @@
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\AccuracyType.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\EmailAccuracyType.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs" />
+    <Compile Include="src\CustomCampaignSystem\Modifier\Data\ModifierSource.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignOptionSaving.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignSaving.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\OptionUpdatePatches.cs" />

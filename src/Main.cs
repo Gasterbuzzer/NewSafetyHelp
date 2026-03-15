@@ -1,8 +1,6 @@
 ﻿using MelonLoader;
 using System;
 using System.Reflection;
-using NewSafetyHelp.Audio.Music.Intermission;
-using NewSafetyHelp.CustomCampaignPatches;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;

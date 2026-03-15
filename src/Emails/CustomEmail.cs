@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using UnityEngine;
 
 namespace NewSafetyHelp.Emails
@@ -28,14 +29,15 @@ namespace NewSafetyHelp.Emails
         public int EmailPriority = 0;
         
         public float UnlockThreshold = 0;
-        public List<EmailAccuracyType> UnlockAccuracy = null;
+        [CanBeNull] public List<EmailAccuracyType> UnlockAccuracy = null;
         public bool UseOldAccuracyChecks = true;
+        
+        // For this email to appear, it may require some callers to be correct or false.
+        [CanBeNull] public List<CallerRequirement> UnlockRequiredCallers = null;
         
         // If the player requires to finish the game first.
         // NOTE: It also requires the check to be true.
         public bool UnlockWhenGameFinished = false;
-        
-        // TODO: Add feature for only unlocking based if a caller was right or wrong.
         
         // Main Campaign Values
         public bool InMainCampaign = false;
