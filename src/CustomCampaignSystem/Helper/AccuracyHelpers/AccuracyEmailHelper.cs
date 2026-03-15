@@ -134,6 +134,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 
                     bool isMarkedCorrect = customCampaign.SavedCallersCorrectAnswer[callerID];
                     
+                    LoggingHelper.DebugLog(() => "Caller Requirement for caller " +
+                                           $"ID: '{callerID}' with requirement " +
+                                           $"'{callerRequirement.ShouldCallerBeCorrect}'." +
+                                           $" Is that caller marked as correct? '{isMarkedCorrect}'. ",
+                        LoggingHelper.LoggingCategory.EMAIL);
+                    
                     if (callerRequirement.ShouldCallerBeCorrect != isMarkedCorrect)
                     {
                         return false;
