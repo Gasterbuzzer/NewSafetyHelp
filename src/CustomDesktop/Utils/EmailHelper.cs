@@ -109,7 +109,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
         /// <param name="hasNoURL">If when setting the URL, if to simply strip all events.</param>
         /// <param name="urlToOpen">Which URL to open upon pressing the image.</param>
         /// <param name="hasAnimatedVideo">If this is an animated video or if it is the default image.</param>
-        public static void SetUrlToOpen(bool hasNoURL, Uri urlToOpen, bool hasAnimatedVideo)
+        public static void SetClickUrlToOpen(bool hasNoURL, Uri urlToOpen, bool hasAnimatedVideo)
         {
             if (imageButtonComponent == null
                 || animatedImageButtonComponent == null)

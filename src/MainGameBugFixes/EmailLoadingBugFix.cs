@@ -89,7 +89,8 @@ namespace NewSafetyHelp.MainGameBugFixes
                                 EmailHelper.RestoreEmailPortrait();
                             }
 
-                            EmailHelper.SetUrlToOpen(customEmail.EmailClickURL == null, customEmail.EmailClickURL,
+                            // For the image clicking behavior.
+                            EmailHelper.SetClickUrlToOpen(customEmail.EmailClickURL == null, customEmail.EmailClickURL,
                                 customEmail.HasAnimatedVideo);
                         }
                         else
