@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
@@ -9,6 +10,8 @@ using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NewSafetyHelp.VersionChecker;
+using UnityEngine.EventSystems;
+
 // ReSharper disable RedundantDefaultMemberInitializer
 
 namespace NewSafetyHelp

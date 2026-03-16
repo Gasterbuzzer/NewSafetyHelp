@@ -15,6 +15,8 @@ namespace NewSafetyHelp.MainGameBugFixes
         public static class DisplayEmailPatch
         {
             private static readonly int ScreenLoad = Animator.StringToHash("ScreenLoad");
+            private static readonly MethodInfo UpdateLayoutGroupMethod = 
+                typeof(EmailWindowBehavior).GetMethod("UpdateLayoutGroup", BindingFlags.NonPublic | BindingFlags.Instance);
             
             /// <summary>
             /// DisplayEmail patch to fix the double loading bug.
@@ -25,11 +27,9 @@ namespace NewSafetyHelp.MainGameBugFixes
             // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(EmailWindowBehavior __instance, ref Email emailToDisplay)
             {
-                MethodInfo updateLayoutGroupMethod = typeof(EmailWindowBehavior).GetMethod("UpdateLayoutGroup", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                if (updateLayoutGroupMethod == null)
+                if (UpdateLayoutGroupMethod == null)
                 {
-                    LoggingHelper.ErrorLog("Method 'UpdateLayoutGroup' was not found. Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(UpdateLayoutGroupMethod));
                     return true;
                 }
                 
@@ -63,33 +63,41 @@ namespace NewSafetyHelp.MainGameBugFixes
 
                         if (customCampaign == null)
                         {
-                            LoggingHelper.CampaignNullError();
                             return true;
                         }
 
                         CustomEmail customEmail = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(
                             __instance.selectedEmail);
 
-                        LoggingHelper.DebugLog("Trying to find associated custom email. Did we find a custom email? " +
-                                               $"{customEmail != null}.");
+                        LoggingHelper.DebugLog(() => 
+                            "Trying to find associated custom email. Did we find a custom email? " +
+                                               $"{customEmail != null}.", LoggingHelper.LoggingCategory.EMAIL);
                     
                         if (customEmail != null)
                         {
                             if (customEmail.HasAnimatedVideo)
                             {
-                                LoggingHelper.DebugLog($"Playing email video: '{customEmail.EmailAnimatedVideo}'.");
+                                LoggingHelper.DebugLog(() => 
+                                        $"Playing email video: '{customEmail.EmailAnimatedVideo}'.",
+                                    LoggingHelper.LoggingCategory.EMAIL);
+                                
                                 EmailHelper.SetVideoUrlEmail(customEmail.EmailAnimatedVideo);
-
                                 showVideo = true;
                             }
                             else
                             {
                                 EmailHelper.RestoreEmailPortrait();
                             }
+
+                            EmailHelper.SetUrlToOpen(customEmail.EmailClickURL == null, customEmail.EmailClickURL,
+                                customEmail.HasAnimatedVideo);
                         }
                         else
                         {
                             EmailHelper.RestoreEmailPortrait();
+                            
+                            // We disable any leftover email image cursor swaps.
+                            EmailHelper.DisableEmailImageCursorHover();
                         }
                     }
 
@@ -131,7 +139,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                 __instance.previewScrollbar.value = 1f;
 
                 // Original: __instance.UpdateLayoutGroup(__instance.inboxLayoutGroup)
-                IEnumerator updateLayoutGroupCoroutine = (IEnumerator) updateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.inboxLayoutGroup}); 
+                IEnumerator updateLayoutGroupCoroutine = (IEnumerator) UpdateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.inboxLayoutGroup}); 
                 __instance.StartCoroutine(updateLayoutGroupCoroutine);
                 
                 return false; // Skip original

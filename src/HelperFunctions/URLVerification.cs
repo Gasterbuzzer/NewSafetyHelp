@@ -79,11 +79,16 @@ namespace NewSafetyHelp.HelperFunctions
                 return false;
             }
 
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = emailClickURL.AbsoluteUri,
-                UseShellExecute = true
-            });
+            LoggingHelper.DebugLog(() => "Opening email URI: " +
+                                         $"'{emailClickURL.AbsoluteUri.Substring(0, 10)}[...]'.",
+                LoggingHelper.LoggingCategory.EMAIL);
+
+            Process.Start(
+                new ProcessStartInfo
+                {
+                    FileName = emailClickURL.AbsoluteUri,
+                    UseShellExecute = true
+                });
 
             return true;
         }
@@ -128,7 +133,7 @@ namespace NewSafetyHelp.HelperFunctions
         /// </summary>
         /// <param name="emailUri">URI to be checked.</param>
         /// <returns>(Bool) True: Is in a URL scheme. False: Is possibly a file or something else.</returns>
-        private static bool IsURLAndNotUnsafe(Uri emailUri)
+        public static bool IsURLAndNotUnsafe(Uri emailUri)
         {
             // Avoid malicious urls.
             if (emailUri.IsFile || emailUri.IsLoopback)

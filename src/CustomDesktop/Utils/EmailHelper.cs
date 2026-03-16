@@ -1,23 +1,205 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.Emails;
+using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using Object = UnityEngine.Object;
 
 namespace NewSafetyHelp.CustomDesktop.Utils
 {
     public static class EmailHelper
     {
+        /// <summary>
+        /// Containing the reference to the animated email image GameObject.
+        /// </summary>
         private static GameObject animatedEmail;
+        /// <summary>
+        /// Reference to the Button of the image.
+        /// </summary>
+        private static Button imageButtonComponent;
+        /// <summary>
+        /// Reference to the Button of the animated image.
+        /// </summary>
+        private static Button animatedImageButtonComponent;
 
+        /// <summary>
+        /// The SwapCursorHover references for showing if the object can be clicked or not.
+        /// </summary>
+        private static SwapCursorHoverDisplayer imageSwapCursorHoverDisplayer;
+        private static SwapCursorHoverDisplayer animatedImageSwapCursorHoverDisplayer;
+
+        /// <summary>
+        /// Sets the private GameObject of the animated email.
+        /// </summary>
+        /// <param name="email">GameObject that contains the animated email</param>
         public static void SetAnimatedEmail(GameObject email)
         {
             animatedEmail = email;
         }
         
+        /// <summary>
+        /// Adds a button and any raycasts for the email.
+        /// </summary>
+        public static void CreateClickableEmail(bool enableClickingImage = false,
+            bool enableClickingAnimatedImage = false)
+        {
+            GameObject emailImageGameObject = GetEmailImageGameObject();
+            SwapCursorHoverDisplayer closeButtonSwapCursorHoverDisplayer = GetCloseButtonOnHoverScript();
+
+            if (emailImageGameObject == null 
+                || animatedEmail == null
+                || closeButtonSwapCursorHoverDisplayer == null)
+            {
+                return;
+            }
+            
+            // We first make the loading hider not absorb clicks.
+            GetEmailLoadingHider().GetComponent<Image>().raycastTarget = false;
+            
+            // We get the Texture2D of the close button for later usage.
+            Texture2D restoredCursor = closeButtonSwapCursorHoverDisplayer.defaultCursor;
+            Texture2D hoverCursor = closeButtonSwapCursorHoverDisplayer.hoverCursor;
+            
+            // Add button and cursor swapper.
+            imageButtonComponent = emailImageGameObject.AddComponent<Button>();
+            imageSwapCursorHoverDisplayer = emailImageGameObject.AddComponent<SwapCursorHoverDisplayer>();
+            imageSwapCursorHoverDisplayer.enabled = false;
+            imageSwapCursorHoverDisplayer.defaultCursor = restoredCursor;
+            imageSwapCursorHoverDisplayer.hoverCursor = hoverCursor;
+            
+            animatedImageButtonComponent = animatedEmail.AddComponent<Button>();
+            animatedImageSwapCursorHoverDisplayer = animatedEmail.AddComponent<SwapCursorHoverDisplayer>();
+            animatedImageSwapCursorHoverDisplayer.enabled = false;
+            animatedImageSwapCursorHoverDisplayer.defaultCursor = restoredCursor;
+            animatedImageSwapCursorHoverDisplayer.hoverCursor = hoverCursor;
+            
+            // Allows original image to be pressed.
+            if (enableClickingImage)
+            {
+                emailImageGameObject.GetComponent<Image>().raycastTarget = true;
+                animatedImageSwapCursorHoverDisplayer.enabled = true;
+            }
+            else
+            {
+                emailImageGameObject.GetComponent<Image>().raycastTarget = false;
+                animatedImageSwapCursorHoverDisplayer.enabled = false;
+            }
+
+            // Allows animated image to be pressed.
+            if (enableClickingAnimatedImage)
+            {
+                animatedEmail.GetComponent<RawImage>().raycastTarget = true;
+                imageSwapCursorHoverDisplayer.enabled = true;
+            }
+            else
+            {
+                animatedEmail.GetComponent<RawImage>().raycastTarget = false;
+                imageSwapCursorHoverDisplayer.enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// For buttons sets the correct event.
+        /// </summary>
+        /// <param name="hasNoURL">If when setting the URL, if to simply strip all events.</param>
+        /// <param name="urlToOpen">Which URL to open upon pressing the image.</param>
+        /// <param name="hasAnimatedVideo">If this is an animated video or if it is the default image.</param>
+        public static void SetUrlToOpen(bool hasNoURL, Uri urlToOpen, bool hasAnimatedVideo)
+        {
+            if (imageButtonComponent == null
+                || animatedImageButtonComponent == null)
+            {
+                return;
+            }
+            
+            imageButtonComponent.onClick.RemoveAllListeners();
+            animatedImageButtonComponent.onClick.RemoveAllListeners();
+            
+            GameObject emailImageGameObject = GetEmailImageGameObject();
+
+            if (emailImageGameObject == null 
+                || animatedEmail == null)
+            {
+                DisableEmailImageCursorHover();
+                return;
+            }
+            
+            // Allows original image to be pressed.
+            if (!hasNoURL)
+            {
+                emailImageGameObject.GetComponent<Image>().raycastTarget = true;
+                animatedEmail.GetComponent<RawImage>().raycastTarget = true;
+            }
+            else
+            {
+                emailImageGameObject.GetComponent<Image>().raycastTarget = false;
+                animatedEmail.GetComponent<RawImage>().raycastTarget = false;
+            }
+            
+            if (hasNoURL)
+            {
+                DisableEmailImageCursorHover();
+                return;
+            }
+                
+            if (urlToOpen != null 
+                && URLVerification.IsURLAndNotUnsafe(urlToOpen))
+            {
+                imageButtonComponent.onClick.AddListener(() =>
+                {
+                    URLVerification.OpenEmailURI(urlToOpen);
+                });
+                
+                animatedImageButtonComponent.onClick.AddListener(() =>
+                {
+                    URLVerification.OpenEmailURI(urlToOpen);
+                });
+                
+                // We also enable the corresponding cursor hover.
+                SetWhichImageGetsTheCursorHover(hasAnimatedVideo);
+            }
+            else
+            {
+                DisableEmailImageCursorHover();
+            }
+        }
+
+        /// <summary>
+        /// Sets which image object will be able to swap the cursor.
+        /// </summary>
+        /// <param name="showForAnimatedVideo">If to enable for animated video.</param>
+        private static void SetWhichImageGetsTheCursorHover(bool showForAnimatedVideo = false)
+        {
+            if (showForAnimatedVideo)
+            {
+                imageSwapCursorHoverDisplayer.enabled = false;
+                animatedImageSwapCursorHoverDisplayer.enabled = true;
+            }
+            else
+            {
+                imageSwapCursorHoverDisplayer.enabled = true;
+                animatedImageSwapCursorHoverDisplayer.enabled = false;
+            }
+        }
+        
+        /// <summary>
+        /// Disables all email image cursor swapper elements.
+        /// </summary>
+        public static void DisableEmailImageCursorHover()
+        {
+            imageSwapCursorHoverDisplayer.enabled = false;
+            animatedImageSwapCursorHoverDisplayer.enabled = false;
+        }
+        
+        /// <summary>
+        /// Gets the email Image GameObject.
+        /// </summary>
+        /// <returns>Email Image</returns>
         public static GameObject GetEmailImageGameObject()
         {
             return GameObject.Find("MainMenuCanvas").transform.Find("EmailPopup").transform
@@ -25,6 +207,30 @@ namespace NewSafetyHelp.CustomDesktop.Utils
                 .Find("EmailImageBorder").transform.Find("EmailImage").gameObject;
         }
         
+        /// <summary>
+        /// Gets the SwapCursorHoverDisplayer of the CloseButton.
+        /// </summary>
+        /// <returns>SwapCursorHoverDisplayer of the CloseButton</returns>
+        public static SwapCursorHoverDisplayer GetCloseButtonOnHoverScript()
+        {
+            return GameObject.Find("MainMenuCanvas").transform.Find("EmailPopup").
+                Find("WindowsBar").Find("CloseButton").GetComponent<SwapCursorHoverDisplayer>();
+        }
+        
+        /// <summary>
+        /// Gets the Email Loading hider GameObject.
+        /// </summary>
+        /// <returns>LoadingHider of the emails.</returns>
+        private static GameObject GetEmailLoadingHider()
+        {
+            return GameObject.Find("MainMenuCanvas").transform.Find("EmailPopup").transform
+                .Find("EmailContentScrollview").transform.Find("Viewport").transform.Find("LoadingHider").gameObject;
+        }
+        
+        /// <summary>
+        /// Sets the URL of the video.
+        /// </summary>
+        /// <param name="url"></param>
         public static void SetVideoUrlEmail(string url)
         {
             UpdateVisibilityOfNormalEmailPortrait();
@@ -32,6 +238,9 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             AnimatedImageHelper.SetVideoUrl(url, animatedEmail);
         } 
         
+        /// <summary>
+        /// Restores the default email portrait (image) to the normal style.
+        /// </summary>
         public static void RestoreEmailPortrait()
         {
             // Show normal portrait again.
@@ -51,9 +260,13 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             animatedEmail.SetActive(false);
         }
         
-        private static void UpdateVisibilityOfNormalEmailPortrait(bool showEntryPortrait = false)
+        /// <summary>
+        /// Shows or hides the default image.
+        /// </summary>
+        /// <param name="showImage">If to show the default image or hide it.</param>
+        private static void UpdateVisibilityOfNormalEmailPortrait(bool showImage = false)
         {
-            GetEmailImageGameObject().GetComponent<Image>().enabled = showEntryPortrait;
+            GetEmailImageGameObject().GetComponent<Image>().enabled = showImage;
         }
         
         /// <summary>

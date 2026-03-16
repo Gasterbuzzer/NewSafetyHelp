@@ -68,10 +68,14 @@ namespace NewSafetyHelp.CustomDesktop
                         return true;
                     }
 
+                    // We initialize all GameObjects required by the email system.
                     EmailHelper.SetAnimatedEmail(
                         AnimatedImageHelper.CreateAnimatedPortrait(EmailHelper.GetEmailImageGameObject(),
                         disableVideoClicking: true));
 
+                    EmailHelper.CreateClickableEmail();
+
+                    // Loading Text replacement.
                     if (customCampaign.LoadingTexts[0].Count > 0 
                         && !string.IsNullOrEmpty(customCampaign.LoadingTexts[0][0]))
                     {
