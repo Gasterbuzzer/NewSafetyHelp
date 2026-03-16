@@ -24,17 +24,28 @@ namespace NewSafetyHelp.InGameSettings
             
             return null;
         }
+        
+        private static GameObject GetOptionsPopup()
+        {
+            GameObject contentSettings = GameObject.Find("MainMenuCanvas").transform.
+                Find("OptionsPopup").gameObject;
+            
+            return contentSettings;
+        }
+        
+        private static GameObject GetCloseButton()
+        {
+            GameObject closeButton = GetOptionsPopup().transform.Find("WindowsBar").Find("CloseButton").gameObject;
+            
+            return closeButton;
+        }
 
         private static GameObject GetContentSettings()
         {
-            GameObject contentSettings = GameObject.Find("MainMenuCanvas").transform.Find("OptionsPopup").transform.Find("OptionsScrollRect").transform.Find("Viewport").transform.Find("Content").gameObject;
-
-            if (contentSettings != null)
-            {
-                return contentSettings;
-            }
+            GameObject contentSettings = GetOptionsPopup().transform.
+                Find("OptionsScrollRect").Find("Viewport").Find("Content").gameObject;
             
-            return null;
+            return contentSettings;
         }
         
         public static GameObject CreateNewToggle(GameObject parentGameObject,  
@@ -63,6 +74,32 @@ namespace NewSafetyHelp.InGameSettings
                 toggle.onValueChanged.AddListener(inputBool => eventOnLabelChange(inputBool));
                 
                 return newToggle;
+            }
+            
+            return null;
+        }
+        
+        public static GameObject CreateButton(GameObject parentGameObject, Func<GameObject, GameObject> eventOnClick,
+            string newButtonName = "New Toggle Name", string newButtonDescription = "New Toggle Description")
+        {
+            GameObject closeButton = GetCloseButton();
+
+            if (closeButton != null)
+            {
+                GameObject newButton = Object.Instantiate(closeButton, parentGameObject.transform);
+                
+                newButton.name = newButtonName;
+                
+                newButton.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text = newButtonDescription;
+
+                Button newButtonComponent = newButton.GetComponent<Button>();
+                
+                newButtonComponent.onClick.RemoveAllListeners();
+                newButtonComponent.onClick = new Button.ButtonClickedEvent(); // Clear all previous events.
+                
+                newButtonComponent.onClick.AddListener(() => eventOnClick(newButton));
+                
+                return newButton;
             }
             
             return null;

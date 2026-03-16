@@ -13,21 +13,21 @@ namespace NewSafetyHelp.JSONParsing
     public static class GlobalParsingVariables
     {
         // "Global" Variables for handling extra information such as caller audio. Gets stored as its ID and with its Name.
-        public static List<EntryMetadata> EntriesMetadata = new List<EntryMetadata>();
+        public static readonly List<EntryMetadata> EntriesMetadata = new List<EntryMetadata>();
         
         // Main Game (Main Campaign) Lists
-        public static List<CustomTheme> MainGameThemes = new List<CustomTheme>();
-        public static List<CustomEmail> MainCampaignEmails = new List<CustomEmail>();
-        public static Dictionary<int, CustomCCaller> CustomCallersMainGame = new Dictionary<int, CustomCCaller>();
+        public static readonly List<CustomTheme> MainGameThemes = new List<CustomTheme>();
+        public static readonly List<CustomEmail> MainCampaignEmails = new List<CustomEmail>();
+        public static readonly Dictionary<int, CustomCCaller> CustomCallersMainGame = new Dictionary<int, CustomCCaller>();
 
         // Custom Campaign Pending Content (Content to be added later because the custom campaign has not been parsed yet)
-        public static List<CustomCCaller> PendingCustomCampaignCustomCallers = new List<CustomCCaller>();
+        public static readonly List<CustomCCaller> PendingCustomCampaignCustomCallers = new List<CustomCCaller>();
         public static List<EntryMetadata> PendingCustomCampaignEntries = new List<EntryMetadata>();
         public static List<EntryMetadata> PendingCustomCampaignReplaceEntries = new List<EntryMetadata>();
         public static List<CustomEmail> PendingCustomCampaignEmails = new List<CustomEmail>();
-        public static List<CustomMusic> PendingCustomCampaignMusic = new List<CustomMusic>();
-        public static List<CustomModifier> PendingCustomCampaignModifiers = new List<CustomModifier>();
-        public static List<CustomTheme> PendingCustomCampaignThemes = new List<CustomTheme>();
+        public static readonly List<CustomMusic> PendingCustomCampaignMusic = new List<CustomMusic>();
+        public static readonly List<CustomModifier> PendingCustomCampaignModifiers = new List<CustomModifier>();
+        public static readonly List<CustomTheme> PendingCustomCampaignThemes = new List<CustomTheme>();
         public static List<CustomVideo> PendingCustomCampaignVideos = new List<CustomVideo>();
         public static List<CustomRingtone> PendingCustomCampaignRingtones = new List<CustomRingtone>();
         

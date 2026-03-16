@@ -200,6 +200,7 @@
     <Compile Include="src\JSONParsing\GlobalParsingVariables.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\JSONParsing\ParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ReloadJSONParsing.cs" />
     <Compile Include="src\LoggingSystem\LoggingHelper.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

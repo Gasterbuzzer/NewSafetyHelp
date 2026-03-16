@@ -58,10 +58,6 @@ namespace NewSafetyHelp
 
         public override void OnLateInitializeMelon()
         {
-            #if DEBUG
-                SceneManager.LoadScene("MainMenuScene");
-            #endif
-
             if (SkipComputerScene.Value)
             {
                 SceneManager.LoadScene("MainMenuScene");
@@ -70,7 +66,8 @@ namespace NewSafetyHelp
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            LoggingHelper.DebugLog($"Scene {sceneName} with build index {buildIndex} has been loaded!");
+            LoggingHelper.DebugLog(() => 
+                $"Scene {sceneName} with build index {buildIndex} has been loaded!");
 
             MelonPreferences.Save(); // Save on scene change.
         }
@@ -92,6 +89,7 @@ namespace NewSafetyHelp
         private static int monsterProfileSize = 0;
         
         private static MonsterProfile[] copyMonsterProfilesAfterAdding;
+        
         // ReSharper disable once NotAccessedField.Local
         private static int monsterProfileSizeAfterAdding = 0; // May be used later. Don't remove.
 
@@ -117,7 +115,8 @@ namespace NewSafetyHelp
                 if (isInitializedMainOnce)
                 {
                     // We already added them once, no need to add them again.
-                    LoggingHelper.InfoLog("Custom Entries were already added. Skipping adding them again. (This happens on scene reload).");
+                    LoggingHelper.InfoLog("Custom Entries were already added. " +
+                                          "Skipping adding them again. (This happens on scene reload).");
                     return;
                 }
             
@@ -125,17 +124,7 @@ namespace NewSafetyHelp
                 CopyMonsterProfiles = __instance.allEntries.monsterProfiles;
                 monsterProfileSize = CopyMonsterProfiles.Length;
 
-                LoggingHelper.InfoLog("Now parsing all '.json' files...", consoleColor: ConsoleColor.Green);
-
-                // Read all JSON and add all monsters and campaigns (/Calls)
-                ParseJSONFiles.LoadAllJSON(__instance);
-                
-                // Create copy after adding all custom entries that belong to the main campaign.
-                copyMonsterProfilesAfterAdding = __instance.allEntries.monsterProfiles;
-                monsterProfileSizeAfterAdding = copyMonsterProfilesAfterAdding.Length;
-
-                isInitializedMainOnce = true;
-                LoggingHelper.InfoLog("Loaded all '.json' files successfully!", consoleColor: ConsoleColor.Green);
+                StartingJSONParsing(__instance);
             }
             else if (!addedEntriesToCustomCampaign) // Custom Campaign
             {
@@ -175,12 +164,31 @@ namespace NewSafetyHelp
                 LoggingHelper.InfoLog("Added/Modified all custom entries successfully! (Custom Campaign)", consoleColor: ConsoleColor.Green);
             }
         }
+        
+        public static void StartingJSONParsing(EntryUnlockController __instance)
+        {
+            LoggingHelper.InfoLog("Now parsing all '.json' files...", consoleColor: ConsoleColor.Green);
+
+            // Read all JSON and add all monsters and campaigns (/Calls)
+            ParseJSONFiles.LoadAllJSON(__instance);
+                
+            // Create copy after adding all custom entries that belong to the main campaign.
+            copyMonsterProfilesAfterAdding = __instance.allEntries.monsterProfiles;
+            monsterProfileSizeAfterAdding = copyMonsterProfilesAfterAdding.Length;
+
+            isInitializedMainOnce = true;
+            LoggingHelper.InfoLog("Loaded all '.json' files successfully!", consoleColor: ConsoleColor.Green);
+        }
     }
 
     // Patches the class when it opens to also update the monster list, since due to our coroutine's problem.
     [HarmonyLib.HarmonyPatch(typeof(OptionsExecutable), "Open")]
     public static class UpdateListDesktop
     {
+        private static readonly MethodInfo StartMethod = 
+            typeof(EntryCanvasStandaloneBehavior).GetMethod("Start",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+        
         /// <summary>
         /// Update the entry canvas list when opening.
         /// </summary>
@@ -189,19 +197,16 @@ namespace NewSafetyHelp
         // ReSharper disable once InconsistentNaming
         private static void Prefix(OptionsExecutable __instance)
         {
-            if (__instance.myPopup.name == "EntryCanvasStandalone") // We are opening the EntryBrowser, lets update
+            // We are opening the EntryBrowser, so we update the list.
+            if (__instance.myPopup.name == "EntryCanvasStandalone") 
             {
-                // Get the start of the EntryBrowser
-                MethodInfo startMethod = typeof(EntryCanvasStandaloneBehavior).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                if (StartMethod == null)
+                {
+                    LoggingHelper.ReflectionError(nameof(StartMethod));
+                    return;
+                }
 
-                if (startMethod != null)
-                {
-                    startMethod.Invoke(__instance.myPopup.GetComponent<EntryCanvasStandaloneBehavior>(), null);
-                }
-                else
-                {
-                    LoggingHelper.ErrorLog("Failed to access the member 'Start' of EntryCanvasStandaloneBehavior.");
-                }
+                StartMethod.Invoke(__instance.myPopup.GetComponent<EntryCanvasStandaloneBehavior>(), null);
             }
         }
     }

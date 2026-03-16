@@ -113,10 +113,40 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                 }
                 
-                if (NewSafetyHelpMainClass.SkipLoadingScreen.Value)
+                // Add custom settings
+                GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings", 
+                    "Mod settings to show more information and also allow skipping the initial load scene.");
+                    
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipComputerSceneToggle,
+                    "Skip 3D Computer Scene on Startup", NewSafetyHelpMainClass.SkipComputerScene.Value);
+                    
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipLoadingScreenToggle,
+                    "Skip Desktop Loading Screen", NewSafetyHelpMainClass.SkipLoadingScreen.Value);
+                    
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnDebugLogToggle,
+                    "Enable Debug Logs", NewSafetyHelpMainClass.ShowDebugLogs.Value);
+                    
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnShowSkippedCallerLogToggle,
+                    "Enable Skipped Callers Logs", NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value);
+                    
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnThemeLogToggle,
+                    "Enable Theme Logs", NewSafetyHelpMainClass.ShowThemeDebugLog.Value);
+                    
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnRingtoneLogToggle,
+                    "Enable Ringtone Logs", NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value);
+                    
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEmailLogToggle,
+                    "Enable Email Logs", NewSafetyHelpMainClass.ShowEmailDebugLog.Value);
+
+                InGameSettingHelper.CreateButton(developerSettings, (e) =>
                 {
-                    __instance.loginText.transform.parent.gameObject.SetActive(false);
-                }
+                    LoggingHelper.InfoLog("Reloading all JSON files. " +
+                                          "Please note, this is in beta and may break some features. ",
+                        consoleColor: ConsoleColor.Green);
+                    ReloadJSONParsing.ReloadAllJSONFiles(e);
+                    
+                    return e;
+                }, "Reload all JSON files", "Reload all JSON files");
 
                 // Plays beginning segment to desktop.
                 __instance.StartCoroutine(StartupRoutine(__instance));
@@ -445,6 +475,12 @@ namespace NewSafetyHelp.CustomDesktop
 
             private static IEnumerator StartupRoutine(MainMenuCanvasBehavior __instance)
             {
+                if (NewSafetyHelpMainClass.SkipLoadingScreen.Value)
+                {
+                    __instance.loginText.transform.parent.gameObject.SetActive(false);
+                    yield break;
+                }
+                
                 // We check if null AND if destroyed. Since we might not be initialized.
                 // Later the reference might be destroyed, as such we also need to check if destroyed.
                 while (GlobalVariables.UISoundControllerScript ==null)
@@ -619,32 +655,6 @@ namespace NewSafetyHelp.CustomDesktop
                     string str = string.Concat(strArray);
                     
                     text.text = str;
-                    
-                    
-                    // Add custom settings
-                    GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings", 
-                        "Mod settings to show more information and also allow skipping the initial load scene.");
-                    
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipComputerSceneToggle,
-                        "Skip 3D Computer Scene on Startup", NewSafetyHelpMainClass.SkipComputerScene.Value);
-                    
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipLoadingScreenToggle,
-                        "Skip Desktop Loading Screen", NewSafetyHelpMainClass.SkipLoadingScreen.Value);
-                    
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnDebugLogToggle,
-                        "Enable Debug Logs", NewSafetyHelpMainClass.ShowDebugLogs.Value);
-                    
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnShowSkippedCallerLogToggle,
-                        "Enable Skipped Callers Logs", NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value);
-                    
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnThemeLogToggle,
-                        "Enable Theme Logs", NewSafetyHelpMainClass.ShowThemeDebugLog.Value);
-                    
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnRingtoneLogToggle,
-                        "Enable Ringtone Logs", NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value);
-                    
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEmailLogToggle,
-                        "Enable Email Logs", NewSafetyHelpMainClass.ShowEmailDebugLog.Value);
                 }
                 
                 return false; // Skip original function.

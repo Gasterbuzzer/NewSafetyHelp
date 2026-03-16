@@ -49,7 +49,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref usermodFolderPath, ref jsonFolderPath, ref customCampaignName, ref inMainCampaign,
                 ref customCallerMonsterName, ref customCallerAudioPath,
                 ref orderInCampaign, GlobalParsingVariables.MainCampaignCallAmount,
-                ref GlobalParsingVariables.CustomCallersMainGame);
+                GlobalParsingVariables.CustomCallersMainGame);
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
@@ -141,7 +141,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         private static CustomCCaller ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName, ref bool inMainCampaign,
             ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,
-            int mainCampaignCallAmount, ref Dictionary<int, CustomCCaller> customCallerMainGame)
+            int mainCampaignCallAmount, Dictionary<int, CustomCCaller> customCallerMainGame)
         {
             // Caller Information
             string customCallerName = "NO_CUSTOM_CALLER_NAME";
