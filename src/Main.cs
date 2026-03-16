@@ -1,6 +1,5 @@
 ﻿using MelonLoader;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
@@ -10,7 +9,6 @@ using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NewSafetyHelp.VersionChecker;
-using UnityEngine.EventSystems;
 
 // ReSharper disable RedundantDefaultMemberInitializer
 
@@ -24,6 +22,8 @@ namespace NewSafetyHelp
         private static MelonPreferences_Category mainModSettings;
         
         public static MelonPreferences_Entry<bool> SkipComputerScene; // If to skip the initial computer scene.
+        
+        public static MelonPreferences_Entry<bool> SkipLoadingScreen; // If to skip the loading texts part.
         
         public static MelonPreferences_Entry<bool> ShowDebugLogs; // If to show the debug logs at all.
         public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog; // If to show the skipped callers debug log.
@@ -40,6 +40,8 @@ namespace NewSafetyHelp
             mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
             
             SkipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
+            
+            SkipLoadingScreen = mainModSettings.CreateEntry("SkipLoadingScreen", false);
             
             ShowDebugLogs = mainModSettings.CreateEntry("ShowDebugLogs", false);
             ShowSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);

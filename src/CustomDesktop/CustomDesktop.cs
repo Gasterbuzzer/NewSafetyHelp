@@ -64,7 +64,6 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 
@@ -112,6 +111,11 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         ThemeProgramHelper.DisableThemeDropdownDesktop();
                     }
+                }
+                
+                if (NewSafetyHelpMainClass.SkipLoadingScreen.Value)
+                {
+                    __instance.loginText.transform.parent.gameObject.SetActive(false);
                 }
 
                 // Plays beginning segment to desktop.
@@ -623,6 +627,9 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipComputerSceneToggle,
                         "Skip 3D Computer Scene on Startup", NewSafetyHelpMainClass.SkipComputerScene.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipLoadingScreenToggle,
+                        "Skip Desktop Loading Screen", NewSafetyHelpMainClass.SkipLoadingScreen.Value);
                     
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnDebugLogToggle,
                         "Enable Debug Logs", NewSafetyHelpMainClass.ShowDebugLogs.Value);

@@ -47,5 +47,12 @@ namespace NewSafetyHelp.InGameSettings
             
             return toggleValue;
         }
+        
+        public static bool OnSkipLoadingScreenToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.SkipLoadingScreen.Value = toggleValue;
+            
+            return toggleValue;
+        }
     }
 }
