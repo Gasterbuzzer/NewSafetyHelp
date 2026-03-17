@@ -357,19 +357,23 @@ namespace NewSafetyHelp.CustomCampaignSystem
         }
 
         /// <summary>
-        /// From the provided selected value it returns the value that fits all the criteria.
+        /// Iterates through all modifier types and tries finding a valid value to use.
         /// </summary>
-        /// <returns>Returns default value if we no value is set. If set, it returns the requested value.</returns>
-        [CanBeNull]
-        public static TValue GetActiveModifierValue<TValue>(Func<CustomModifier, TValue> selector,
-            ref bool foundModifier, Func<TValue, bool> predicate = null,
+        /// <param name="selector">Function that selects the value from the modifier.</param>
+        /// <param name="predicate">Requirement for the picked value.</param>
+        /// <param name="specialPredicate">Requirement for the modifier.</param>
+        /// <typeparam name="TValue">Value of return value.</typeparam>
+        /// <returns>(Tuple) Returns as the first parameter, if we found any value.
+        /// The second value is the actual picked value.</returns>
+        public static (bool foundModifier, TValue value) GetActiveModifierValue<TValue>(Func<CustomModifier,
+                TValue> selector, Func<TValue, bool> predicate = null,
             Func<CustomModifier, bool> specialPredicate = null)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
-                return default;
+                return (false, default);
             }
 
             if (predicate == null)
@@ -383,7 +387,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
             }
 
             TValue selectedValue = default(TValue);
-            foundModifier = false;
+            bool foundModifier = false;
 
             // Loops through each modifier source and selects the value that fits the criteria.
             // If multiple exist, it will pick the first valid value of that modifier source type.
@@ -391,27 +395,31 @@ namespace NewSafetyHelp.CustomCampaignSystem
             // elements that come later have higher priority.
             foreach (ModifierSource modifierSource in customCampaign.ModifierSources)
             {
-                if (modifierSource != null 
-                    && modifierSource.Modifiers != null
-                    && modifierSource.Modifiers.Count > 0)
+                if (modifierSource == null 
+                    || modifierSource.Modifiers == null
+                    || modifierSource.Modifiers.Count == 0)
                 {
-                    if (modifierSource.SourceCondition(customCampaign))
-                    {
-                        (bool found, TValue value) modifierResult = GetModifierValueFromList(
-                            modifierSource.Modifiers, selector, predicate, 
-                            modifier => modifierSource.ModifierExtraSelectionCondition(modifier)
-                                        && specialPredicate(modifier));
+                    continue;
+                }
 
-                        if (modifierResult.found)
-                        {
-                            foundModifier = true;
-                            selectedValue = modifierResult.value;
-                        }
-                    }
+                if (!modifierSource.SourceCondition(customCampaign))
+                {
+                    continue;
+                }
+                
+                (bool found, TValue value) modifierResult = GetModifierValueFromList(
+                    modifierSource.Modifiers, selector, predicate, 
+                    modifier => modifierSource.ModifierExtraSelectionCondition(modifier)
+                                && specialPredicate(modifier));
+
+                if (modifierResult.found)
+                {
+                    foundModifier = true;
+                    selectedValue = modifierResult.value;
                 }
             }
             
-            return selectedValue;
+            return (foundModifier, selectedValue);
         }
 
         /// <summary>

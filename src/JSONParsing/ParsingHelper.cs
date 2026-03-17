@@ -184,12 +184,12 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
         /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
         /// <param name="customCampaignName">(Optional) Name of the custom campaign. Used to display errors.</param>
-        public static void TryAssignSprite(JObject jObjectParsed, string key, ref Sprite target, string jsonFolderPath,
+        public static bool TryAssignSprite(JObject jObjectParsed, string key, ref Sprite target, string jsonFolderPath,
             string usermodFolderPath, string customCampaignName = null)
         {
             if (!jObjectParsed.TryGetValue(key, out var token))
             {
-                return;
+                return false;
             }
 
             string imagePath = token.Value<string>();
@@ -204,6 +204,8 @@ namespace NewSafetyHelp.JSONParsing
                 target = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
                     usermodFolderPath + "\\" + imagePath);
             }
+
+            return true;
         }
 
         /// <summary>

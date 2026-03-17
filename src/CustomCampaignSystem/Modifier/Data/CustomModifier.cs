@@ -22,11 +22,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         
         public string RenameMainGameDesktopIcon = string.Empty; // Renames the main desktop icon.
         public Sprite MainGameDesktopIcon = null; // Icon of the main game desktop program.
+        public bool MainGameDesktopIconChanged = false;
         
         // Backgrounds
         public List<Sprite> DesktopBackgrounds = new List<Sprite>(); // Desktop Backgrounds
         
         public Sprite GameFinishedBackground = null; // Desktop Background (Finished the game)
+        public bool GameFinishedBackgroundChanged = false;
         
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();
@@ -41,6 +43,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public bool DisableDesktopLogo = false;
         
         public Sprite CustomBackgroundLogo = null; // Logo to show in desktop (if not disabled)
+        public bool CustomBackgroundLogoChanged = false;
+        
         public float BackgroundLogoTransparency = 0.2627f;
         
         public bool HideDiscordProgramChanged = false; // (If it was changed) (It means if to take into consideration)
@@ -49,15 +53,27 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // Program Icons
         
         public Sprite MailBoxIcon = null; // Mail Box Icon on Desktop
+        public bool MailBoxIconChanged = false;
+        
         public Sprite EntryBrowserIcon = null; // Entry Browser Icon on Desktop
+        public bool EntryBrowserIconChanged = false;
+        
         public Sprite OptionsIcon = null; // Options Icon on Desktop
+        public bool OptionsIconChanged = false;
+        
         public Sprite ArtbookIcon = null; // Artbook Icon on Desktop
+        public bool ArtbookIconChanged = false;
+        
         public Sprite ArcadeIcon = null; // Arcade Icon on Desktop
+        public bool ArcadeIconChanged = false;
+        
         public Sprite ScorecardIcon = null; // Weekly Report Icon on Desktop
+        public bool ScorecardIconChanged = false;
         
         // Credits
         [CanBeNull] public string DesktopCredits = null;
         public Sprite CreditsIcon = null; // Credits Icon on Desktop
+        public bool CreditsIconChanged = false;
         
         /*
          * Enable Scorecard and such.
@@ -82,6 +98,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
          */
         
         public List<string> DayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
+
+        // If to disable the desktop loading.
+        public bool DisableDesktopLoading = false;
         
         /*
          * Cheats

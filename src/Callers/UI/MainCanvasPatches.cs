@@ -98,59 +98,63 @@ namespace NewSafetyHelp.Callers.UI
                             dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                         }
                         
-                        bool foundDayStrings = false;
-                        List<string> daysStrings = CustomCampaignGlobal.GetActiveModifierValue(
-                            c => c.DayTitleStrings, ref foundDayStrings,
+                        (bool foundModifier, List<string> value) daysStrings = CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.DayTitleStrings,
                             v => v != null && v.Count > 0);
                         
-                        bool foundUnlockDays = false;
-                        List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
-                            c => c.UnlockDays, ref foundUnlockDays,
+                        (bool foundModifier, List<int> value) unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.UnlockDays,
                             v => v != null && v.Count > 0);
-                        
+
                         // Modifier
-                        if (foundDayStrings && daysStrings != null)
+                        if (daysStrings.foundModifier)
                         {
-                            if (daysStrings.Count > 0)
+                            // If conditional days, but we don't have enough day strings for amount of unlocked days.
+                            // (And only if the campaign didn't provide one)
+                            if (unlockDays.value != null
+                                && daysStrings.value.Count != unlockDays.value.Count
+                                && string.IsNullOrEmpty(dayString))
                             {
-                                if (unlockDays != null                              // If conditional days, but we don't have enough day strings for amount of unlocked days. (And only if the campaign didn't provide one)
-                                    && daysStrings.Count != unlockDays.Count 
-                                    && string.IsNullOrEmpty(dayString))
+                                LoggingHelper.WarningLog(
+                                    "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                    " Using default values.");
+                                dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                            }
+                            else
+                            {
+                                // General Days, we simply display what we can.
+                                if (unlockDays.value == null) 
                                 {
-                                    LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                                             " Using default values.");
-                                    dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
-                                }
-                                else
-                                {
-                                    if (unlockDays == null) // General Days, we simply display what we can.
+                                    if (currentCustomCampaign.CampaignDays > daysStrings.value.Count)
                                     {
-                                        if (currentCustomCampaign.CampaignDays > daysStrings.Count)
-                                        {
-                                            LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                                                     " Using modulated values.");
-                                        }
-                                        
-                                        dayString = daysStrings[(GlobalVariables.currentDay - 1) % daysStrings.Count]; // We simply pick what best fits.
+                                        LoggingHelper.WarningLog(
+                                            "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                            " Using modulated values.");
                                     }
-                                    else // Not General (Conditional Modifier)
+
+                                    // We simply pick what best fits.
+                                    dayString = daysStrings.value[
+                                        (GlobalVariables.currentDay - 1) %
+                                        daysStrings.value.Count]; 
+                                }
+                                else // Not General (Conditional Modifier)
+                                {
+                                    // If we don't have enough to show.
+                                    if (daysStrings.value.Count != unlockDays.value.Count) 
                                     {
-                                        if (daysStrings.Count != unlockDays.Count) // If we don't have enough to show.
+                                        LoggingHelper.WarningLog(
+                                            "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                            " Using modulated values.");
+                                        dayString = daysStrings.value[(GlobalVariables.currentDay - 1) % daysStrings.value.Count];
+                                    }
+                                    else // We do have enough days.
+                                    {
+                                        int indexUnlockDay = unlockDays.value.IndexOf(GlobalVariables.currentDay);
+
+                                        if (indexUnlockDay != -1)
                                         {
-                                            LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                                                     " Using modulated values.");
-                                            dayString = daysStrings[(GlobalVariables.currentDay - 1) % daysStrings.Count];
+                                            dayString = daysStrings.value[indexUnlockDay];
                                         }
-                                        else // We do have enough days.
-                                        {
-                                            int indexUnlockDay = unlockDays.IndexOf(GlobalVariables.currentDay);
-                                        
-                                            if (indexUnlockDay != -1)
-                                            {
-                                                dayString = daysStrings[indexUnlockDay];
-                                            }
-                                        }
-                                        
                                     }
                                 }
                             }

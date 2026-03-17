@@ -38,16 +38,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper
                     {
                         return true;
                     }
-
-                    bool showDefaultAccuracyTextFound = false;
-                    bool showDefaultUIAccuracyText = CustomCampaignGlobal.GetActiveModifierValue(
+                    
+                    (bool foundModifier, bool value) showDefaultUIAccuracyText = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.ShowDefaultUIAccuracyText,
-                        ref showDefaultAccuracyTextFound,
                         specialPredicate: m => m.ShowDefaultUIAccuracyTextChanged);
 
-                    if (showDefaultAccuracyTextFound)
+                    if (showDefaultUIAccuracyText.foundModifier)
                     {
-                        if (!showDefaultUIAccuracyText)
+                        if (!showDefaultUIAccuracyText.value)
                         {
                             __instance.gameObject.SetActive(false);
                         }

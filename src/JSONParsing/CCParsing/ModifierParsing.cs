@@ -105,10 +105,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Icons
             Sprite mailBoxIcon = null; // Mail Box Icon on Desktop
+
             Sprite entryBrowserIcon = null; // Entry Browser Icon on Desktop
+            
             Sprite optionsIcon = null; // Options Icon on Desktop
+            
             Sprite artbookIcon = null; // Artbook Icon on Desktop
+            
             Sprite arcadeIcon = null; // Arcade Icon on Desktop
+            
             Sprite scorecardIcon = null; // Weekly Report Icon on Desktop
 
             // Credits
@@ -139,6 +144,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Cheats
             bool showDefaultUIAccuracyText = false; // If to show the accuracy UI text string from the base game.
             bool showDefaultUIAccuracyTextChanged = false; // If boolean was updated.
+            bool disableDesktopLoading = false; // If to skip the initial desktop loading portion.
 
             /*
              * Modifier Parsing
@@ -171,8 +177,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon",
                 ref renameMainGameDesktopIcon);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref mainGameDesktopIconSprite,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool mainGameDesktopIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed,
+                "main_game_desktop_icon_path", ref mainGameDesktopIconSprite, jsonFolderPath, usermodFolderPath,
+                customCampaignName);
 
             if (jObjectParsed.TryGetValue("desktop_backgrounds", out JToken customCampaignDesktopBackgrounds))
             {
@@ -201,8 +208,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",
                 ref blackBackgroundOnAnimatedBackground);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "game_finished_desktop_background",
-                ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool gameFinishedBackgroundChanged = ParsingHelper.TryAssignSprite(jObjectParsed,
+                "game_finished_desktop_background", ref gameFinishedBackgroundSprite, jsonFolderPath,
+                usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
@@ -240,8 +248,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_logo_image_name", ref backgroundLogo,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool backgroundLogoChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_logo_image_name",
+                ref backgroundLogo, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
@@ -250,26 +258,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram,
                 ref hideDiscordProgramChanged);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_credits_image_name", ref creditsIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool creditsIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_credits_image_name",
+                ref creditsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_mailbox_image_name", ref mailBoxIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool mailBoxIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_mailbox_image_name",
+                ref mailBoxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_entry_browser_image_name", ref entryBrowserIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool entryBrowserIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed,
+                "desktop_entry_browser_image_name", ref entryBrowserIcon, jsonFolderPath, usermodFolderPath,
+                customCampaignName);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_options_image_name", ref optionsIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool optionsIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_options_image_name",
+                ref optionsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_artbook_image_name", ref artbookIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool artbookIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_artbook_image_name",
+                ref artbookIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_arcade_image_name", ref arcadeIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool arcadeIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_arcade_image_name",
+                ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_scorecard_image_name", ref scorecardIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            bool scorecardIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_scorecard_image_name",
+                ref scorecardIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
@@ -296,6 +305,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Cheats
             ParsingHelper.TryAssignWithBool(jObjectParsed, "show_accuracy_display",
                 ref showDefaultUIAccuracyText, ref showDefaultUIAccuracyTextChanged);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
 
             return new CustomModifier
             {
@@ -309,13 +320,18 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
                 MainGameDesktopIcon = mainGameDesktopIconSprite,
-
+                MainGameDesktopIconChanged = mainGameDesktopIconChanged,
+                
                 DesktopBackgrounds = backgroundSprites,
+                
                 GameFinishedBackground = gameFinishedBackgroundSprite,
+                GameFinishedBackgroundChanged = gameFinishedBackgroundChanged,
+                
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,
-
+                
                 CustomBackgroundLogo = backgroundLogo,
+                CustomBackgroundLogoChanged = backgroundLogoChanged,
                 DisableDesktopLogo = disableBackgroundLogo,
                 BackgroundLogoTransparency = backgroundLogoTransparency,
 
@@ -326,14 +342,26 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 HideDiscordProgram = hideDiscordProgram,
 
                 MailBoxIcon = mailBoxIcon,
+                MailBoxIconChanged =  mailBoxIconChanged,
+                
                 EntryBrowserIcon = entryBrowserIcon,
+                EntryBrowserIconChanged = entryBrowserIconChanged,
+                
                 OptionsIcon = optionsIcon,
+                OptionsIconChanged = optionsIconChanged,
+                
                 ArtbookIcon = artbookIcon,
+                ArtbookIconChanged = artbookIconChanged,
+                
                 ArcadeIcon = arcadeIcon,
+                ArcadeIconChanged = arcadeIconChanged,
+                
                 ScorecardIcon = scorecardIcon,
+                ScorecardIconChanged = scorecardIconChanged,
 
                 DesktopCredits = desktopCredits,
                 CreditsIcon = creditsIcon,
+                CreditsIconChanged = creditsIconChanged,
 
                 DayTitleStrings = dayTitleStrings,
 
@@ -350,7 +378,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ArcadeChanged = arcadeChanged,
                 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
-                ShowDefaultUIAccuracyTextChanged = showDefaultUIAccuracyTextChanged
+                ShowDefaultUIAccuracyTextChanged = showDefaultUIAccuracyTextChanged,
+                
+                DisableDesktopLoading = disableDesktopLoading
             };
         }
     }

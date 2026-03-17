@@ -45,25 +45,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                         disableGreenColorBackground = true;
                     }
                     
-                    bool disableColorBackgroundFound = false;
-                    bool disableColorBackground = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.DisableColorBackground,
-                        ref disableColorBackgroundFound);
+                    (bool foundModifier, bool value) disableColorBackground = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DisableColorBackground);
                     
-                    bool desktopBackgroundColorFound = false;
-                    Color? modifierDesktopBackgroundColor = CustomCampaignGlobal.GetActiveModifierValue(
+                    (bool foundModifier, Color? value) modifierDesktopBackgroundColor = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.DesktopBackgroundColor,
-                        ref desktopBackgroundColorFound,
                         v => v != null);
 
-                    if (disableColorBackgroundFound && disableColorBackground)
+                    if (disableColorBackground.foundModifier && disableColorBackground.value)
                     {
                         disableGreenColorBackground = true;
                     }
 
-                    if (desktopBackgroundColorFound && modifierDesktopBackgroundColor != null)
+                    if (modifierDesktopBackgroundColor.foundModifier)
                     {
-                        desktopBackgroundColor = modifierDesktopBackgroundColor;
+                        desktopBackgroundColor = modifierDesktopBackgroundColor.value;
                     }
                     
                     if (disableGreenColorBackground)
@@ -111,46 +107,41 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             }
                         }
                     }
-
-                    bool desktopBackgroundsFound = false;
-                    List<Sprite> desktopBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
+                    
+                    (bool foundModifier, List<Sprite> value) desktopBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.DesktopBackgrounds,
-                        ref desktopBackgroundsFound,
                         v => v != null && v.Count > 0);
                     
-                    bool gameFinishedBackgroundFound = false;
-                    Sprite gameFinishedBackground = CustomCampaignGlobal.GetActiveModifierValue(
+                    (bool foundModifier, Sprite value) gameFinishedBackground = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.GameFinishedBackground,
-                        ref gameFinishedBackgroundFound,
-                        v => v != null);
+                        specialPredicate: cM => cM.GameFinishedBackgroundChanged);
                     
-                    bool unlockDaysFound = false;
-                    List<int> unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
+                    (bool foundModifier, List<int> value) unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.UnlockDays,
-                        ref unlockDaysFound,
                         v => v != null && v.Count > 0);
                     
-                    // Modifier
-                    if (desktopBackgroundsFound
-                        && desktopBackgrounds != null
-                        && desktopBackgrounds.Count > 0) // Valid backgrounds given.
+                    // Valid backgrounds given.
+                    if (desktopBackgrounds.foundModifier) 
                     {
                         // Game Finished
                         if (GlobalVariables.saveManagerScript.savedGameFinishedDisplay == 1 
                             || customCampaign.SavedGameFinishedDisplay == 1)
                         {
-                            if (gameFinishedBackgroundFound && gameFinishedBackground != null)
+                            if (gameFinishedBackground.foundModifier)
                             {
                                 // Check if we are allowed to change it.
-                                if (!unlockDaysFound || unlockDays == null || unlockDays.Count <= 0) // General Case. Always allowed.
+                                // General Case. Always allowed.
+                                if (!unlockDays.foundModifier 
+                                    || unlockDays.value == null 
+                                    || unlockDays.value.Count <= 0) 
                                 {
-                                    setBackgroundSprite = gameFinishedBackground;
+                                    setBackgroundSprite = gameFinishedBackground.value;
                                 }
                                 else // Conditional (Days) Case:
                                 {
-                                    if (unlockDays.Contains(GlobalVariables.currentDay))
+                                    if (unlockDays.value.Contains(GlobalVariables.currentDay))
                                     {
-                                        setBackgroundSprite = gameFinishedBackground;
+                                        setBackgroundSprite = gameFinishedBackground.value;
                                     }
                                 }
                             }
@@ -158,23 +149,24 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                         else // Not final day. 
                         {
                             // General Case:
-                            if (!unlockDaysFound || unlockDays == null)
+                            if (!unlockDays.foundModifier || unlockDays.value == null)
                             {
-                                if (desktopBackgrounds.Count > 0 
-                                    && GlobalVariables.currentDay <= desktopBackgrounds.Count) // Valid amount of backgrounds.
+                                // Valid amount of backgrounds.
+                                if (desktopBackgrounds.value.Count > 0 
+                                    && GlobalVariables.currentDay <= desktopBackgrounds.value.Count) 
                                 {
-                                    setBackgroundSprite = desktopBackgrounds[(GlobalVariables.currentDay - 1) % desktopBackgrounds.Count];
+                                    setBackgroundSprite = desktopBackgrounds.value[(GlobalVariables.currentDay - 1) % desktopBackgrounds.value.Count];
                                 }
                                 // The else statement is handled already above,
                                 // so we don't need to override it accidentally.
                             }
-                            else if (unlockDays.Count > 0) // Conditional (Days) Case:
+                            else if (unlockDays.value.Count > 0) // Conditional (Days) Case:
                             {
-                                for (int i = 0; i < unlockDays.Count; i++)
+                                for (int i = 0; i < unlockDays.value.Count; i++)
                                 {
-                                    if (GlobalVariables.currentDay == unlockDays[i])
+                                    if (GlobalVariables.currentDay == unlockDays.value[i])
                                     {
-                                        setBackgroundSprite = desktopBackgrounds[i % desktopBackgrounds.Count];
+                                        setBackgroundSprite = desktopBackgrounds.value[i % desktopBackgrounds.value.Count];
                                     }
                                 }
                             }
@@ -190,50 +182,48 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                         __instance.myImage.sprite = __instance.spritesPerDay[0];
                     }
                     
-                    bool animatedBackgroundsFound = false;
-                    List<string> animatedBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
+                    (bool foundModifier, List<string> value) animatedBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.AnimatedDesktopBackgrounds,
-                        ref animatedBackgroundsFound,
                         v => v != null && v.Count > 0);
                     
-                    bool removeBackgroundOnAnimatedBackgroundFound = false;
-                    bool removeBackgroundOnAnimatedBackground = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.BlackBackgroundOnAnimatedBackground,
-                        ref removeBackgroundOnAnimatedBackgroundFound);
+                    (bool foundModifier, bool value) removeBackgroundOnAnimatedBackground = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.BlackBackgroundOnAnimatedBackground);
 
-                    if (animatedBackgroundsFound)
+                    if (animatedBackgrounds.foundModifier)
                     {
-                        if (removeBackgroundOnAnimatedBackgroundFound && removeBackgroundOnAnimatedBackground)
+                        if (removeBackgroundOnAnimatedBackground.foundModifier 
+                            && removeBackgroundOnAnimatedBackground.value)
                         {
                             __instance.myImage.sprite = null;
 
-                            if (!desktopBackgroundColorFound)
+                            if (!modifierDesktopBackgroundColor.foundModifier)
                             {
                                 __instance.myImage.color = Color.black;
                             }
                         }
                         
                         // General Case:
-                        if (!unlockDaysFound || unlockDays == null)
+                        if (!unlockDays.foundModifier || unlockDays.value == null)
                         {
                             // We require a valid amount of backgrounds.
-                            if (animatedBackgrounds.Count > 0 
-                                && GlobalVariables.currentDay <= animatedBackgrounds.Count) 
+                            if (animatedBackgrounds.value.Count > 0 
+                                && GlobalVariables.currentDay <= animatedBackgrounds.value.Count) 
                             {
                                 AnimatedImageHelper.SetVideoUrl(
-                                    animatedBackgrounds[(GlobalVariables.currentDay - 1) % animatedBackgrounds.Count],
+                                    animatedBackgrounds.value[(GlobalVariables.currentDay - 1) % animatedBackgrounds.value.Count],
                                     animatedVideoBackground
                                 );
                             }
                         }
-                        else if (unlockDays.Count > 0) // Conditional (Days) Case:
+                        // Conditional (Days) Case:
+                        else if (unlockDays.value.Count > 0) 
                         {
-                            for (int i = 0; i < unlockDays.Count; i++)
+                            for (int i = 0; i < unlockDays.value.Count; i++)
                             {
-                                if (GlobalVariables.currentDay == unlockDays[i])
+                                if (GlobalVariables.currentDay == unlockDays.value[i])
                                 {
                                     AnimatedImageHelper.SetVideoUrl(
-                                        animatedBackgrounds[i % animatedBackgrounds.Count],
+                                        animatedBackgrounds.value[i % animatedBackgrounds.value.Count],
                                         animatedVideoBackground);
                                 }
                             }

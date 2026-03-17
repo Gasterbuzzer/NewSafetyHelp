@@ -11,7 +11,8 @@ namespace NewSafetyHelp.JSONParsing
     public static class ReloadJSONParsing
     {
         /// <summary>
-        /// Loads all JSON files again and resets any loaded value to default values before.
+        /// Hot reloads all JSON files again
+        /// and resets any loaded value to default values from before we overwrote values.
         /// </summary>
         public static void ReloadAllJSONFiles(GameObject resetButton)
         {

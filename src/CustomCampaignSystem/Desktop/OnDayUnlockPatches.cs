@@ -263,11 +263,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool enableEntryBrowser = false;
-
-                bool entryBrowserFound = false;
-                bool entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
+                
+                (bool foundModifier, bool value) entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.EntryBrowserActive,
-                    ref entryBrowserFound,
                     specialPredicate: m => m.EntryBrowserChanged);
 
                 // If always on. We just leave them on.
@@ -276,10 +274,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     enableEntryBrowser = true;
                 }
 
-                if (entryBrowserFound)
+                if (entryBrowser.foundModifier)
                 {
                     modifierApplied = true;
-                    enableEntryBrowser = entryBrowser;
+                    enableEntryBrowser = entryBrowser.value;
                 }
 
                 return enableEntryBrowser;
@@ -309,11 +307,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool enableScorecard = false;
-
-                bool scorecardFound = false;
-                bool scorecard = CustomCampaignGlobal.GetActiveModifierValue(
+                
+                (bool foundModifier, bool value) scorecard = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.ScorecardActive,
-                    ref scorecardFound,
                     specialPredicate: m => m.ScorecardChanged);
 
                 // If always on. We just leave them on.
@@ -322,10 +318,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     enableScorecard = true;
                 }
 
-                if (scorecardFound)
+                if (scorecard.foundModifier)
                 {
                     modifierApplied = true;
-                    enableScorecard = scorecard;
+                    enableScorecard = scorecard.value;
                 }
 
                 return enableScorecard;
@@ -355,11 +351,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool artBookEnabled = false;
-
-                bool artbookFound = false;
-                bool artbook = CustomCampaignGlobal.GetActiveModifierValue(
+                
+                (bool foundModifier, bool value) artbook = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.ArtbookActive,
-                    ref artbookFound,
                     specialPredicate: m => m.ArtbookChanged);
 
                 // If always on. We just leave them on.
@@ -368,10 +362,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     artBookEnabled = true;
                 }
 
-                if (artbookFound)
+                if (artbook.foundModifier)
                 {
                     modifierApplied = true;
-                    artBookEnabled = artbook;
+                    artBookEnabled = artbook.value;
                 }
 
                 return artBookEnabled;
@@ -401,11 +395,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool arcadeEnabled = false;
-
-                bool arcadeFound = false;
-                bool arcade = CustomCampaignGlobal.GetActiveModifierValue(
+                
+                (bool foundModifier, bool value) arcade = CustomCampaignGlobal.GetActiveModifierValue(
                     c => c.ArcadeActive,
-                    ref arcadeFound,
                     specialPredicate: m => m.ArcadeChanged);
 
                 // If always on. We just leave them on.
@@ -414,10 +406,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     arcadeEnabled = true;
                 }
 
-                if (arcadeFound)
+                if (arcade.foundModifier)
                 {
                     modifierApplied = true;
-                    arcadeEnabled = arcade;
+                    arcadeEnabled = arcade.value;
                 }
 
                 return arcadeEnabled;
