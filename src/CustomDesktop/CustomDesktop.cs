@@ -441,9 +441,9 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.DisableDefaultVideos();
                     }
 
-                    if (customCampaign.AllDesktopVideos.Count > 0)
+                    if (customCampaign.CustomVideos.Count > 0)
                     {
-                        foreach (CustomVideo customVideo in customCampaign.AllDesktopVideos)
+                        foreach (CustomVideo customVideo in customCampaign.CustomVideos)
                         {
                             VideoHelper.CreateCustomVideoFileProgram(customVideo);
                         }

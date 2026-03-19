@@ -89,7 +89,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                                   $"Total accuracy is '{GetCorrectAccuracy(true)}'.",
                 LoggingHelper.LoggingCategory.SKIPPED_CALLER);
             
-            foreach (AccuracyType accuracyType in currentCaller.AccuracyChecks)
+            foreach (CallerAccuracyType accuracyType in currentCaller.AccuracyChecks)
             {
                 float currentAccuracy = GetCorrectAccuracy(accuracyType.UseTotalAccuracy, 
                     currentCaller.CountEveryCallerForLocalAccuracy);

@@ -7,9 +7,11 @@ using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
+using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.LoggingSystem;
+using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem
 {
@@ -70,7 +72,8 @@ namespace NewSafetyHelp.CustomCampaignSystem
                 return null;
             }
             
-            return customCampaign.CustomCallersInCampaign.Find(customCaller => customCaller.OrderInCampaign == orderID);
+            return customCampaign.CustomCallersInCampaign.Find(
+                customCaller => customCaller.OrderInCampaign == orderID);
         }
         
         /// <summary>
@@ -89,6 +92,25 @@ namespace NewSafetyHelp.CustomCampaignSystem
             }
             
             return customCampaign.CustomMusic.Find(customMusic => customMusic.MusicClip == musicToFind);
+        }
+        
+        /// <summary>
+        /// Gets the custom video from custom campaign.
+        /// </summary>
+        /// <param name="videoGameObject">Video GameObject to find the custom video for.</param>
+        /// <returns>CustomVideo object of the found object. If not found, default.</returns>
+        [CanBeNull]
+        public static CustomVideo GetCustomVideoFromActiveCampaign(GameObject videoGameObject)
+        {
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
+            
+            if (customCampaign == null)
+            {
+                return null;
+            }
+            
+            return customCampaign.CustomVideos.Find(
+                customVideo => customVideo.ReferenceToCreatedVideo == videoGameObject);
         }
         
         /// <summary>

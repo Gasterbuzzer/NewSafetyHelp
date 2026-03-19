@@ -180,7 +180,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // Video Programs
         public bool DisableAllDefaultVideos = true;
         
-        public List<CustomVideo> AllDesktopVideos = new List<CustomVideo>();
+        public List<CustomVideo> CustomVideos = new List<CustomVideo>();
 
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> SavedDayScores = new List<float>();

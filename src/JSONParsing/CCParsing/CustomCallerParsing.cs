@@ -172,7 +172,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Accuracy Caller
             bool isAccuracyCaller = false; // If this caller is an accuracy caller.
-            List<AccuracyType> accuracyChecks = new List<AccuracyType>(); // How it should be checked for.
+            List<CallerAccuracyType> accuracyChecks = new List<CallerAccuracyType>(); // How it should be checked for.
             bool countEveryCallerForLocalAccuracy = false;
             // If the accuracy check should consider every caller for the day.
             

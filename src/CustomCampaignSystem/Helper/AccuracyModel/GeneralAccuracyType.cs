@@ -2,7 +2,7 @@
 
 namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel
 {
-    public class EmailAccuracyType
+    public class GeneralAccuracyType
     {
         // Day when this accuracy to be checked with.
         public int? CheckDay = null;

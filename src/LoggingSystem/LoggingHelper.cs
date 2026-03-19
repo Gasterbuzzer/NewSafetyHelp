@@ -11,7 +11,8 @@ namespace NewSafetyHelp.LoggingSystem
             SKIPPED_CALLER,
             THEME,
             RINGTONE,
-            EMAIL
+            EMAIL,
+            VIDEO
         }
 
         private enum LoggingLevel
@@ -68,6 +69,13 @@ namespace NewSafetyHelp.LoggingSystem
                     
                     case LoggingCategory.EMAIL:
                         if (!NewSafetyHelpMainClass.ShowEmailDebugLog.Value)
+                        {
+                            return false;
+                        }
+                        break;
+                    
+                    case LoggingCategory.VIDEO:
+                        if (!NewSafetyHelpMainClass.ShowVideoDebugLog.Value)
                         {
                             return false;
                         }

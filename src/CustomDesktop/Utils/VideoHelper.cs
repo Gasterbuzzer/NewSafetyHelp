@@ -8,19 +8,22 @@ namespace NewSafetyHelp.CustomDesktop.Utils
 {
     public static class VideoHelper
     {
+        private static readonly FieldInfo DayUnlockScript = typeof(VideoExecutableFile).GetField("dayUnlockScript",
+            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
         /// <summary>
         /// Disables all default video programs on the desktop.
         /// </summary>
         public static GameObject CreateCustomVideoFileProgram(CustomVideo customVideo)
         {
-            GameObject trailerFileOriginal = CustomDesktopHelper.GetLeftPrograms().transform.Find("TrailerFile").gameObject;
+            GameObject trailerFileOriginal =
+                CustomDesktopHelper.GetLeftPrograms().transform.Find("TrailerFile").gameObject;
 
             GameObject newCustomVideo = Object.Instantiate(trailerFileOriginal, trailerFileOriginal.transform.parent);
 
             if (string.IsNullOrEmpty(customVideo.DesktopName))
             {
-                LoggingHelper.ErrorLog("No filename provided for video to be created!" +
-                                       " Can lead to crashes or unwanted failures.");
+                LoggingHelper.ErrorLog("No filename provided for video to be created!");
             }
 
             newCustomVideo.name = customVideo.DesktopName + customVideo.VideoURL;
@@ -35,28 +38,31 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             OnDayUnlock onDayUnlock = newCustomVideo.GetComponent<OnDayUnlock>();
             onDayUnlock.unlockDay = customVideo.UnlockDay;
 
-            if (customVideo.UnlockDay <= GlobalVariables.currentDay)
+            // Simple check old check.
+            if (customVideo.IgnoreAccuracyChecks)
             {
-                newCustomVideo.SetActive(true);
+                if (customVideo.UnlockDay <= GlobalVariables.currentDay)
+                {
+                    newCustomVideo.SetActive(true);
+                }
             }
 
             // Fix References
-
             VideoExecutableFile videoExecutableFile = newCustomVideo.GetComponent<VideoExecutableFile>();
 
             videoExecutableFile.videoClip = null;
 
             // Update on day unlock script to point at the correct onDayUnlock.
-            FieldInfo _onDayUnlock = typeof(VideoExecutableFile).GetField("dayUnlockScript",
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-
-            if (_onDayUnlock == null)
+            if (DayUnlockScript == null)
             {
-                LoggingHelper.ErrorLog("Could not find OnDayUnlock script for VideoExecutableFile!");
+                LoggingHelper.ReflectionError(nameof(DayUnlockScript));
+                customVideo.ReferenceToCreatedVideo = null;
                 return null;
             }
 
-            _onDayUnlock.SetValue(videoExecutableFile, onDayUnlock);
+            DayUnlockScript.SetValue(videoExecutableFile, onDayUnlock);
+
+            customVideo.ReferenceToCreatedVideo = newCustomVideo;
 
             return newCustomVideo;
         }

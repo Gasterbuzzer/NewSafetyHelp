@@ -3,25 +3,28 @@ using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 {
-    public static class AccuracyEmailHelper
+    public static class AccuracyVideoHelper
     {
         /// <summary>
-        /// Checks if the given EmailAccuracyDay can even be checked (unlock day is valid).
+        /// Checks if the given Accuracy day can even be checked (unlock day is valid).
         /// </summary>
+        /// <param name="accuracyType">Accuracy element.</param>
+        /// <param name="video">CustomVideo to check with.</param>
         /// <returns>(Bool) True: Day is valid. False: Day is not reached yet.</returns>
-        private static bool CheckIfDayValid(GeneralAccuracyType accuracyType, CustomEmail email)
+        private static bool CheckIfDayValid(GeneralAccuracyType accuracyType, CustomVideo video)
         {
             int? unlockDay = accuracyType.CheckDay;
 
             if (accuracyType.CheckDay == null)
             {
-                unlockDay = email.UnlockDay - 1;
+                unlockDay = video.UnlockDay - 1;
             }
 
             if (unlockDay <= 0
@@ -30,10 +33,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                 return true;
             }
 
-            LoggingHelper.DebugLog($"Checking accuracy day of '{unlockDay}' " +
+            LoggingHelper.DebugLog($"Checking video accuracy day of '{unlockDay}' " +
                                    $"on day '{GlobalVariables.currentDay}'. " +
                                    $"(Accuracy type check day: '{accuracyType.CheckDay}')",
-                LoggingHelper.LoggingCategory.EMAIL);
+                LoggingHelper.LoggingCategory.VIDEO);
 
             return false;
         }
@@ -42,20 +45,20 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         /// Gets the accuracy of a provided day.
         /// </summary>
         /// <param name="unlockDay">Day to check for.</param>
-        /// <param name="email"> Email to be checked. </param>
+        /// <param name="video"> Video to be checked. </param>
         /// <returns>(Float?) If found, will return the score of that day. If not, it will return null.</returns>
-        private static float? GetAccuracyOfDay(int? unlockDay, CustomEmail email)
+        private static float? GetAccuracyOfDay(int? unlockDay, CustomVideo video)
         {
             if (unlockDay == null)
             {
-                unlockDay = email.UnlockDay - 1;
+                unlockDay = video.UnlockDay - 1;
             }
 
             if (unlockDay <= 0)
             {
-                LoggingHelper.WarningLog("Unable of getting accuracy for any day that isn't the first. " +
+                LoggingHelper.WarningLog("Unable of getting video accuracy for any day that isn't the first. " +
                                          $"Unlock day '{unlockDay}' with unlock day of " +
-                                         $"'{email.UnlockDay}' is thus invalid.");
+                                         $"'{video.UnlockDay}' is thus invalid.");
                 return null;
             }
 
@@ -87,32 +90,32 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         /// <summary>
         /// Checks if all accuracy requirements are met.
         /// </summary>
-        /// <param name="customEmail">CustomEmail to check for.</param>
+        /// <param name="customVideo">CustomVideo to check for.</param>
         /// <returns>(Bool) True: Passed all checks; False: Failed a check.</returns>
-        private static bool CheckAllAccuracyRequirements(CustomEmail customEmail)
+        private static bool CheckAllAccuracyRequirements(CustomVideo customVideo)
         {
             // No accuracies given, we can say it will be shown, since no check exists.
-            if (customEmail.UnlockAccuracy == null)
+            if (customVideo.UnlockAccuracy == null)
             {
                 return true;
             }
 
-            foreach (GeneralAccuracyType accuracyType in customEmail.UnlockAccuracy)
+            foreach (GeneralAccuracyType accuracyType in customVideo.UnlockAccuracy)
             {
                 // If the day of to unlock is even reached.
-                if (!CheckIfDayValid(accuracyType, customEmail))
+                if (!CheckIfDayValid(accuracyType, customVideo))
                 {
                     LoggingHelper.DebugLog(() => "Accuracy day not reached.",
                         LoggingHelper.LoggingCategory.EMAIL);
                     return false;
                 }
 
-                float? currentAccuracyWithNull = GetAccuracyOfDay(accuracyType.CheckDay, customEmail);
+                float? currentAccuracyWithNull = GetAccuracyOfDay(accuracyType.CheckDay, customVideo);
 
                 if (currentAccuracyWithNull == null)
                 {
                     LoggingHelper.WarningLog("Unable of getting accuracy of a day. " +
-                                             "Possible logic error? Not showing email.");
+                                             "Possible logic error? Not showing video.");
                     return false;
                 }
 
@@ -121,10 +124,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 
                 LoggingHelper.DebugLog(() =>
                     $"The current accuracy is '{currentAccuracy}' of day '{accuracyType.CheckDay}' " +
-                    $"(Email Unlock Day: '{customEmail.UnlockDay}') " +
+                    $"(Video Unlock Day: '{customVideo.UnlockDay}') " +
                     $"with check type: '{accuracyType.AccuracyCheck.ToString()}'. " +
                     $"With required accuracy of '{accuracyType.RequiredAccuracy}'.",
-                    LoggingHelper.LoggingCategory.EMAIL);
+                    LoggingHelper.LoggingCategory.VIDEO);
 
                 // The switch statements all look for the opposite of the current statement,
                 // since it only matters if we fail one of them and not if all check are true.
@@ -171,17 +174,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         }
 
         /// <summary>
-        /// Checks if the provided customEmail has the accuracy to be allowed to be shown.
-        /// Please note, if you have an customEmail that uses the old system, then don't use this function.
+        /// Checks if the provided customVideo has the accuracy to be allowed to be shown.
         /// </summary>
-        /// <param name="customEmail">Email to be checked.</param>
+        /// <param name="customVideo">Video to be checked.</param>
         /// <returns>(True) Passed all checks. (False) Failed a check.</returns>
-        public static bool CheckIfEmailAccuracyType(CustomEmail customEmail)
+        public static bool CheckIfVideoAccuracyType(CustomVideo customVideo)
         {
-            LoggingHelper.DebugLog("Checking customEmail accuracy type.", LoggingHelper.LoggingCategory.EMAIL);
+            LoggingHelper.DebugLog("Checking customVideo accuracy type.", LoggingHelper.LoggingCategory.VIDEO);
 
-            // If the customEmail is only allowed to be unlocked after the game has been finished, we check that first.
-            if (customEmail.UnlockWhenGameFinished)
+            // If the email is only allowed to be unlocked after the game has been finished, we check that first.
+            if (customVideo.UnlockWhenGameFinished)
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -196,25 +198,26 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                     if (customCampaign.SavedGameFinished != 1
                         && customCampaign.SavedGameFinishedDisplay != 1)
                     {
-                        LoggingHelper.DebugLog("Email will not be shown. Game has not been finished.",
-                            LoggingHelper.LoggingCategory.EMAIL);
+                        LoggingHelper.DebugLog("Video will not be shown. Game has not been finished.",
+                            LoggingHelper.LoggingCategory.VIDEO);
                         return false;
                     }
                 }
             }
 
-            if (customEmail.UnlockRequiredCallers != null
-                && customEmail.UnlockRequiredCallers.Count > 0)
+            if (customVideo.UnlockRequiredCallers != null
+                && customVideo.UnlockRequiredCallers.Count > 0)
             {
-                if (!AccuracyHelper.CheckIfCallerRequirementsAreMet(customEmail.UnlockRequiredCallers))
+                if (!AccuracyHelper.CheckIfCallerRequirementsAreMet(customVideo.UnlockRequiredCallers,
+                        LoggingHelper.LoggingCategory.VIDEO))
                 {
-                    LoggingHelper.DebugLog("Email will not be shown. A caller requirement was not met.",
-                        LoggingHelper.LoggingCategory.EMAIL);
+                    LoggingHelper.DebugLog("Video will not be shown. A caller requirement was not met.",
+                        LoggingHelper.LoggingCategory.VIDEO);
                     return false;
                 }
             }
 
-            if (!CheckAllAccuracyRequirements(customEmail))
+            if (!CheckAllAccuracyRequirements(customVideo))
             {
                 return false;
             }

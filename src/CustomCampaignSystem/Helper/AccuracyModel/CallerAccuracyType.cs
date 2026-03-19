@@ -2,7 +2,7 @@
 
 namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel
 {
-    public class AccuracyType
+    public class CallerAccuracyType
     {
         // If this caller is an accuracy caller, this is the required accuracy.
         public float RequiredAccuracy = -1; 

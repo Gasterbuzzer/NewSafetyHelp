@@ -147,8 +147,9 @@
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCallerHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyEmailHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\AccuracyType.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\EmailAccuracyType.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyVideoHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\CallerAccuracyType.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\GeneralAccuracyType.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs" />

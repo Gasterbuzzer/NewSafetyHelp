@@ -308,7 +308,7 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="target">Targets to write the value to.</param>
-        public static void TryAssignListAccuracyType(JObject jObjectParsed, ref List<AccuracyType> target)
+        public static void TryAssignListAccuracyType(JObject jObjectParsed, ref List<CallerAccuracyType> target)
         {
             if (!jObjectParsed.TryGetValue(AccuracyCheckTypeString, out _))
             {
@@ -317,7 +317,7 @@ namespace NewSafetyHelp.JSONParsing
 
             if (target == null)
             {
-                target = new List<AccuracyType>();
+                target = new List<CallerAccuracyType>();
             }
 
             List<bool> isTotalAccuracyList = new List<bool>();
@@ -356,11 +356,11 @@ namespace NewSafetyHelp.JSONParsing
 
             for (int i = 0; i < accuracyCheckType.Count; i++)
             {
-                AccuracyType newAccuracyType = new AccuracyType();
+                CallerAccuracyType newCallerAccuracyType = new CallerAccuracyType();
 
                 if (!string.IsNullOrEmpty(accuracyCheckType[i]))
                 {
-                    newAccuracyType.AccuracyCheck = TryAssignSingleAccuracyType(accuracyCheckType[i]);
+                    newCallerAccuracyType.AccuracyCheck = TryAssignSingleAccuracyType(accuracyCheckType[i]);
                 }
                 else
                 {
@@ -371,61 +371,66 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     if ((bool)providedSingleValueTA && isTotalAccuracyList.Count > 0)
                     {
-                        newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[0];
+                        newCallerAccuracyType.UseTotalAccuracy = isTotalAccuracyList[0];
                     }
                     else if (i < isTotalAccuracyList.Count)
                     {
-                        newAccuracyType.UseTotalAccuracy = isTotalAccuracyList[i];
+                        newCallerAccuracyType.UseTotalAccuracy = isTotalAccuracyList[i];
                     }
                 }
 
-                newAccuracyType.RequiredAccuracy = accuracyRequiredList[i];
+                newCallerAccuracyType.RequiredAccuracy = accuracyRequiredList[i];
 
-                target.Add(newAccuracyType);
+                target.Add(newCallerAccuracyType);
             }
         }
 
         /// <summary>
-        /// Attempts to parse the check option for emails.
+        /// Attempts to parse the check option for a given general accuracy type list.
         /// </summary>
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="target">Targets to write the value to.</param>
         /// <param name="isUsingOldSystem">(Ref Bool) if we found at least one element for the new system.</param>
-        public static void TryAssignListEmailAccuracyType(JObject jObjectParsed, ref List<EmailAccuracyType> target,
-            ref bool isUsingOldSystem)
+        /// <param name="requiredAccuracyKey">Key for the required accuracy list or element.</param>
+        /// <param name="accuracyDaysKey">Key for the different days that the accuracy checks for.</param>
+        /// <param name="accuracyCheckTypesKey">Key for the different check types.</param>
+        public static void TryAssignListGeneralAccuracyType(JObject jObjectParsed, ref List<GeneralAccuracyType> target,
+            ref bool isUsingOldSystem,
+            string requiredAccuracyKey = "email_required_accuracy", string accuracyDaysKey = "email_accuracy_days", 
+            string accuracyCheckTypesKey = "email_accuracy_check_type")
         {
             isUsingOldSystem = true;
 
-            if (!jObjectParsed.TryGetValue("email_required_accuracy", out _))
+            if (!jObjectParsed.TryGetValue(requiredAccuracyKey, out _))
             {
                 return;
             }
 
             if (target == null)
             {
-                target = new List<EmailAccuracyType>();
+                target = new List<GeneralAccuracyType>();
             }
 
             List<int> differentAccuracyDays = new List<int>();
-            bool? hasOnlyOneAccuracyDay = TryAssignListOrSingleElement(jObjectParsed, "email_accuracy_days",
+            bool? hasOnlyOneAccuracyDay = TryAssignListOrSingleElement(jObjectParsed, accuracyDaysKey,
                 ref differentAccuracyDays);
 
             List<float> accuracyRequiredList = new List<float>();
-            TryAssignListOrSingleElement(jObjectParsed, "email_required_accuracy", ref accuracyRequiredList);
+            TryAssignListOrSingleElement(jObjectParsed, requiredAccuracyKey, ref accuracyRequiredList);
 
             List<string> accuracyCheckType = new List<string>();
-            TryAssignListOrSingleElement(jObjectParsed, "email_accuracy_check_type", ref accuracyCheckType);
+            TryAssignListOrSingleElement(jObjectParsed, accuracyCheckTypesKey, ref accuracyCheckType);
 
             if (accuracyRequiredList.Count != accuracyCheckType.Count)
             {
-                LoggingHelper.ErrorLog("Provided email accuracy lists must all have equal length. " +
+                LoggingHelper.ErrorLog("Provided accuracy lists must all have equal length. " +
                                        "Unable of parsing accuracy checks.");
                 return;
             }
 
             if (differentAccuracyDays.Count > accuracyCheckType.Count)
             {
-                LoggingHelper.ErrorLog("Provided email accuracy days list has too many elements. " +
+                LoggingHelper.ErrorLog("Provided accuracy days list has too many elements. " +
                                        "Unable of parsing accuracy checks.");
                 return;
             }
@@ -439,7 +444,7 @@ namespace NewSafetyHelp.JSONParsing
 
             for (int i = 0; i < accuracyCheckType.Count; i++)
             {
-                EmailAccuracyType newAccuracyType = new EmailAccuracyType();
+                GeneralAccuracyType newAccuracyType = new GeneralAccuracyType();
 
                 if (!string.IsNullOrEmpty(accuracyCheckType[i]))
                 {
@@ -447,7 +452,7 @@ namespace NewSafetyHelp.JSONParsing
                 }
                 else
                 {
-                    LoggingHelper.WarningLog("Provided email accuracy type is invalid. " +
+                    LoggingHelper.WarningLog("Provided general accuracy type is invalid. " +
                                              "Defaulting to 'greater or equal'.");
                     newAccuracyType.AccuracyCheck = AccuracyHelper.CheckOptions.GreaterThanOrEqualTo;
                 }
@@ -471,7 +476,7 @@ namespace NewSafetyHelp.JSONParsing
         }
 
         /// <summary>
-        /// Attempts to parse the check option for emails.
+        /// Attempts to parse the check option.
         /// </summary>
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="target">Targets to write the value to.</param>
@@ -497,6 +502,13 @@ namespace NewSafetyHelp.JSONParsing
             List<bool> callerCorrectness = new List<bool>();
             bool? singleCorrectness =
                 TryAssignListOrSingleElement(jObjectParsed, callerCorrectnessKey, ref callerCorrectness);
+
+            if (callerCorrectness.Count > callerRequirementIDs.Count)
+            {
+                LoggingHelper.WarningLog("Too many caller correctness given, " +
+                                         "the given caller requirement will not use all elements." +
+                                         "If this is intentional, then no action is required.");
+            }
 
             for (int i = 0; i < callerRequirementIDs.Count; i++)
             {

@@ -36,7 +36,7 @@ namespace NewSafetyHelp.Emails
         public int EmailPriority = 0;
 
         public float UnlockThreshold = 0;
-        [CanBeNull] public List<EmailAccuracyType> UnlockAccuracy = null;
+        [CanBeNull] public List<GeneralAccuracyType> UnlockAccuracy = null;
         public bool UseOldAccuracyChecks = true;
 
         // For this email to appear, it may require some callers to be correct or false.

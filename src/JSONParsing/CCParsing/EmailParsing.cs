@@ -89,7 +89,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             List<CallerRequirement> unlockRequiredCallers = null;
             
             // New Unlock System
-            List<EmailAccuracyType> unlockAccuracy = null;
+            List<GeneralAccuracyType> unlockAccuracy = null;
             bool useOldAccuracyChecks = true;
 
             ParsingHelper.TryAssign(jObjectParsed, "email_in_main_campaign", ref inMainCampaign);
@@ -105,7 +105,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
             
-            ParsingHelper.TryAssignListEmailAccuracyType(jObjectParsed, ref unlockAccuracy, ref useOldAccuracyChecks);
+            ParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref useOldAccuracyChecks);
 
             ParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
                 usermodFolderPath, customCampaignName);

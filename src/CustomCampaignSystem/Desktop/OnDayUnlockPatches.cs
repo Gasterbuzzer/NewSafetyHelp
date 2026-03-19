@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -86,19 +87,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                         __instance.gameObject.SetActive(false);
 
                         LoggingHelper.DebugLog(() =>
-                            $"Day to unlock ({__instance.unlockDay}) has not been reached." +
-                            $" Disabling this GameObject ('{__instance.gameObject.name}')." +
-                            " (Main and Custom Campaign)." +
-                            $" Current day: {GlobalVariables.currentDay}.\n");
+                            $"Day to unlock ({__instance.unlockDay}) has not been reached. " +
+                            $"Disabling this GameObject ('{__instance.gameObject.name}'). " +
+                            "(Main and Custom Campaign). " +
+                            $"Current day: {GlobalVariables.currentDay}.\n");
                     }
                     else // Unlock Day has been reached.
                     {
                         if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                         {
-                            if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1).ToString()))
+                            if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1)))
                             {
-                                if (PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()) <
-                                    (double)__instance.scoreThresholdToUnlock)
+                                if (PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1)) 
+                                    < (double)__instance.scoreThresholdToUnlock)
                                 {
                                     __instance.gameObject.SetActive(false);
                                 }
@@ -108,17 +109,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                         $"[UNITY]: Email unlocked: {__instance.gameObject.name}| " +
                                         $"Day Checked: {(__instance.unlockDay - 1).ToString()}" +
                                         "| Day Score: " +
-                                        $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1).ToString()).ToString(CultureInfo.InvariantCulture)}");
+                                        $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1)).ToString(CultureInfo.InvariantCulture)}"
+                                        );
                                 }
                             }
                         }
                         else // Custom Campaign
                         {
-                            CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
-                            if (currentCampaign == null)
+                            if (customCampaign == null)
                             {
-                                LoggingHelper.CampaignNullError();
                                 return true;
                             }
 
@@ -132,17 +133,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             LoggingHelper.DebugLog(() =>
                                 $"This object unlocks on day: {__instance.unlockDay} (Current Day is {GlobalVariables.currentDay})." +
                                 $" The threshold is: {__instance.scoreThresholdToUnlock}." +
-                                $" The current score for the day {__instance.unlockDay-1} is {currentCampaign.SavedDayScores[unlockDay]}." +
+                                $" The current score for the day {__instance.unlockDay-1} is {customCampaign.SavedDayScores[unlockDay]}." +
                                 $" (For GameObject: '{__instance.gameObject.name}')" +
                                 $" Is threshold over 0? '{__instance.scoreThresholdToUnlock > 0.0f}'");
 
-                            // Mostly only emails have a threshold.
-                            // Has a set value other than the default.
+                            // Only emails have a threshold.
+                            // This first check, checks if the threshold was set anything other than the default value.
                             if (__instance.scoreThresholdToUnlock > 0.0f)
                             {
                                 EmailListingBehavior emailComponent = __instance.gameObject.GetComponent<EmailListingBehavior>();
                                 
-                                LoggingHelper.DebugLog($"Checking if GameObject is email. Is email null? '{emailComponent == null}'", LoggingHelper.LoggingCategory.EMAIL);
+                                LoggingHelper.DebugLog("Checking if GameObject is email. " +
+                                                       $"Is email null? '{emailComponent == null}'",
+                                    LoggingHelper.LoggingCategory.EMAIL);
                                 
                                 if (emailComponent != null)
                                 {
@@ -167,7 +170,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                             else // Checks failed.
                                             {
                                                 LoggingHelper.DebugLog("One of the checks failed," +
-                                                                       " deactivating GameObject.",
+                                                                       " deactivating email.",
                                                     LoggingHelper.LoggingCategory.EMAIL);
                                                 __instance.gameObject.SetActive(false);
                                                 return false;
@@ -179,13 +182,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                 // If the email checks failed, or it wasn't an email, we use the old system:
                                 
                                 // If the threshold was not reached (score too low).
-                                if (currentCampaign.SavedDayScores[unlockDay] <
+                                if (customCampaign.SavedDayScores[unlockDay] <
                                     (double)__instance.scoreThresholdToUnlock)
                                 {
                                     LoggingHelper.DebugLog(() =>
-                                        $"The score {currentCampaign.SavedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock." +
-                                        $" Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject." +
-                                        $" Disabling this GameObject '{__instance.gameObject.name}'.\n");
+                                        $"The score {customCampaign.SavedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. " +
+                                        $"Required for Score: '{__instance.scoreThresholdToUnlock}' for this GameObject. " +
+                                        $"Disabling this GameObject '{__instance.gameObject.name}'.\n");
 
                                     __instance.gameObject.SetActive(false);
                                 }
@@ -194,8 +197,38 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                     LoggingHelper.DebugLog(() =>
                                         $"[UNITY] Email unlocked: {__instance.gameObject.name}| " +
                                         $"Day Checked: {unlockDay.ToString()}| Day Score: " +
-                                        $"{currentCampaign.SavedDayScores[unlockDay]}.\n",
+                                        $"{customCampaign.SavedDayScores[unlockDay]}.\n",
                                         LoggingHelper.LoggingCategory.EMAIL);
+                                }
+                            }
+                            
+                            // Now we check if the given GameObject is a video.
+                            if (__instance.gameObject.TryGetComponent(out VideoExecutableFile _))
+                            {
+                                CustomVideo customVideo = CustomCampaignGlobal.GetCustomVideoFromActiveCampaign(__instance.gameObject);
+
+                                if (customVideo != null)
+                                {
+                                    LoggingHelper.DebugLog($"Found video on desktop '{customVideo.DesktopName}'.",
+                                        LoggingHelper.LoggingCategory.VIDEO);
+                                    
+                                    if (!customVideo.IgnoreAccuracyChecks)
+                                    {
+                                        if (AccuracyVideoHelper.CheckIfVideoAccuracyType(customVideo))
+                                        {
+                                            LoggingHelper.DebugLog("Video allowed to be shown.",
+                                                LoggingHelper.LoggingCategory.VIDEO);
+                                            return false;
+                                        }
+                                        else
+                                        {
+                                            LoggingHelper.DebugLog("One of the checks failed," +
+                                                                   " deactivating video.",
+                                                LoggingHelper.LoggingCategory.VIDEO);
+                                            __instance.gameObject.SetActive(false);
+                                            return false;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -209,12 +242,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             __instance.xmasUnlock && GlobalVariables.isXmasDLC)
                         {
                             LoggingHelper.DebugLog(() =>
-                                $"GameObject '{__instance.gameObject.name}' is unlocked!" +
-                                " This may be due to it always being unlocked or by beating the game or being in winter DLC." +
-                                $" BeatGameUnlock: '{__instance.beatGameUnlock}'." +
-                                $" SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'." +
-                                $" SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'." +
-                                $" XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
+                                $"GameObject '{__instance.gameObject.name}' is unlocked! " +
+                                "This may be due to it always being unlocked or by beating the game or being in winter DLC. " +
+                                $"BeatGameUnlock: '{__instance.beatGameUnlock}'. " +
+                                $"SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'. " +
+                                $"SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. " +
+                                $"XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
                             return false;
                         }
                         else // If any of the above criteria wasn't met.
