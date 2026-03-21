@@ -77,12 +77,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                         return false;
                     }
 
+                    // We haven't reached that point yet. (Not the correct day for example)
                     if (callerID >= customCampaign.SavedCallersCorrectAnswer.Count)
                     {
-                        LoggingHelper.WarningLog(
-                            "Provided caller requirement can't be met. " +
-                            "Possibly missing a caller in between? " +
-                            "Unable to check. Hiding GameObject.");
                         return false;
                     }
 

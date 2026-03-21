@@ -61,5 +61,12 @@ namespace NewSafetyHelp.InGameSettings
             
             return toggleValue;
         }
+        
+        public static bool OnEntryLogToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.ShowEntryDebugLog.Value = toggleValue;
+            
+            return toggleValue;
+        }
     }
 }

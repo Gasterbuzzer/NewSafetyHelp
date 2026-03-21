@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using NewSafetyHelp.Callers.CallerModel;
-using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+﻿using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
-using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -179,6 +176,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         public static bool CheckIfEmailAccuracyType(CustomEmail customEmail)
         {
             LoggingHelper.DebugLog("Checking customEmail accuracy type.", LoggingHelper.LoggingCategory.EMAIL);
+
+            if (customEmail.UnlockDay > GlobalVariables.currentDay)
+            {
+                return false;
+            }
 
             // If the customEmail is only allowed to be unlocked after the game has been finished, we check that first.
             if (customEmail.UnlockWhenGameFinished)

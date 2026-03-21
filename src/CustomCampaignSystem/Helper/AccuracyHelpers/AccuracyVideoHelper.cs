@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using NewSafetyHelp.Callers.CallerModel;
-using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+﻿using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
-using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.CustomVideos;
-using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -182,6 +178,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         {
             LoggingHelper.DebugLog("Checking customVideo accuracy type.", LoggingHelper.LoggingCategory.VIDEO);
 
+            if (customVideo.UnlockDay > GlobalVariables.currentDay)
+            {
+                return false;
+            }
+            
             // If the email is only allowed to be unlocked after the game has been finished, we check that first.
             if (customVideo.UnlockWhenGameFinished)
             {

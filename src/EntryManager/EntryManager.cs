@@ -28,7 +28,8 @@ namespace NewSafetyHelp.EntryManager
                 {
                     LoggingHelper.DebugLog(() => 
                         $"Adding (New Name: {newProfile.monsterName}, " +
-                        $"New ID: {newProfile.monsterID}) to profile: {profileName}.");
+                        $"New ID: {newProfile.monsterID}) to profile: {profileName}.",
+                        LoggingHelper.LoggingCategory.ENTRY);
                 }
 
                 // Before adding we check if the ID already exists. And if yes, we replace it.
@@ -37,7 +38,8 @@ namespace NewSafetyHelp.EntryManager
                 if (profileName != "NO_PRINT")
                 {
                     LoggingHelper.DebugLog(
-                        $"Checking IDs with monster profile array of size {monsterProfiles.Length}.");
+                        $"Checking IDs with monster profile array of size {monsterProfiles.Length}.",
+                        LoggingHelper.LoggingCategory.ENTRY);
                 }
 
                 // Check if it is a duplicate. Not done for permission adds.

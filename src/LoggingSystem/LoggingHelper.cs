@@ -12,7 +12,8 @@ namespace NewSafetyHelp.LoggingSystem
             THEME,
             RINGTONE,
             EMAIL,
-            VIDEO
+            VIDEO,
+            ENTRY
         }
 
         private enum LoggingLevel
@@ -76,6 +77,13 @@ namespace NewSafetyHelp.LoggingSystem
                     
                     case LoggingCategory.VIDEO:
                         if (!NewSafetyHelpMainClass.ShowVideoDebugLog.Value)
+                        {
+                            return false;
+                        }
+                        break;
+                    
+                    case LoggingCategory.ENTRY:
+                        if (!NewSafetyHelpMainClass.ShowEntryDebugLog.Value)
                         {
                             return false;
                         }
