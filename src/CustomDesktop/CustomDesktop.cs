@@ -123,6 +123,9 @@ namespace NewSafetyHelp.CustomDesktop
                     
                 InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipLoadingScreenToggle,
                     "Skip Desktop Loading Screen", NewSafetyHelpMainClass.SkipLoadingScreen.Value);
+                
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipDayClockInToggle,
+                    "Skip Clock In Screen", NewSafetyHelpMainClass.SkipDayClockIn.Value);
                     
                 InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnDebugLogToggle,
                     "Enable Debug Logs", NewSafetyHelpMainClass.ShowDebugLogs.Value);

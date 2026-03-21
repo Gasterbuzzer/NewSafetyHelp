@@ -25,6 +25,8 @@ namespace NewSafetyHelp
         public static MelonPreferences_Entry<bool> SkipComputerScene; // If to skip the initial computer scene.
 
         public static MelonPreferences_Entry<bool> SkipLoadingScreen; // If to skip the loading texts part.
+        
+        public static MelonPreferences_Entry<bool> SkipDayClockIn; // If to skip the clock in part.
 
         public static MelonPreferences_Entry<bool> ShowDebugLogs; // If to show the debug logs at all.
 
@@ -48,6 +50,8 @@ namespace NewSafetyHelp
             SkipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
 
             SkipLoadingScreen = mainModSettings.CreateEntry("SkipLoadingScreen", false);
+            
+            SkipDayClockIn = mainModSettings.CreateEntry("SkipDayClockIn", false);
 
             ShowDebugLogs = mainModSettings.CreateEntry("ShowDebugLogs", false);
             ShowSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);

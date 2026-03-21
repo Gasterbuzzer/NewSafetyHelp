@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.Audio.Music.Intermission;
@@ -37,8 +36,9 @@ namespace NewSafetyHelp.Callers.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref string __result)
             {
-                List<string> defaultDayNames = new List<string>() {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-                
+                List<string> defaultDayNames = new List<string>()
+                    { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
                 if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.arcadeMode)
@@ -47,7 +47,6 @@ namespace NewSafetyHelp.Callers.UI
                     }
 
                     __result = defaultDayNames[GlobalVariables.currentDay - 1];
-
                 }
                 else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -56,15 +55,15 @@ namespace NewSafetyHelp.Callers.UI
                         case 1:
                             __result = "3 Days Until Christmas";
                             break;
-                        
+
                         case 2:
                             __result = "2 Days Until Christmas";
                             break;
-                        
+
                         case 3:
                             __result = "1 Day Until Christmas";
                             break;
-                        
+
                         case 4:
                             __result = "Christmas Day";
                             break;
@@ -77,31 +76,34 @@ namespace NewSafetyHelp.Callers.UI
                     if (currentCustomCampaign != null)
                     {
                         string dayString;
-                        
+
                         // Campaign find campaign.
                         if (currentCustomCampaign.CampaignDayStrings.Count > 0)
                         {
-                            if (GlobalVariables.currentDay > currentCustomCampaign.CampaignDayStrings.Count 
+                            if (GlobalVariables.currentDay > currentCustomCampaign.CampaignDayStrings.Count
                                 || currentCustomCampaign.CampaignDays > currentCustomCampaign.CampaignDayStrings.Count)
                             {
-                                LoggingHelper.WarningLog("Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                                         " Using default values.");
+                                LoggingHelper.WarningLog(
+                                    "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
+                                    " Using default values.");
                                 dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                             }
                             else
                             {
-                                dayString = currentCustomCampaign.CampaignDayStrings[(GlobalVariables.currentDay - 1) % currentCustomCampaign.CampaignDayStrings.Count];
+                                dayString = currentCustomCampaign.CampaignDayStrings[
+                                    (GlobalVariables.currentDay - 1) % currentCustomCampaign.CampaignDayStrings.Count];
                             }
                         }
                         else
                         {
                             dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                         }
-                        
-                        (bool foundModifier, List<string> value) daysStrings = CustomCampaignGlobal.GetActiveModifierValue(
-                            c => c.DayTitleStrings,
-                            v => v != null && v.Count > 0);
-                        
+
+                        (bool foundModifier, List<string> value) daysStrings =
+                            CustomCampaignGlobal.GetActiveModifierValue(
+                                c => c.DayTitleStrings,
+                                v => v != null && v.Count > 0);
+
                         (bool foundModifier, List<int> value) unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
                             c => c.UnlockDays,
                             v => v != null && v.Count > 0);
@@ -123,7 +125,7 @@ namespace NewSafetyHelp.Callers.UI
                             else
                             {
                                 // General Days, we simply display what we can.
-                                if (unlockDays.value == null) 
+                                if (unlockDays.value == null)
                                 {
                                     if (currentCustomCampaign.CampaignDays > daysStrings.value.Count)
                                     {
@@ -135,17 +137,18 @@ namespace NewSafetyHelp.Callers.UI
                                     // We simply pick what best fits.
                                     dayString = daysStrings.value[
                                         (GlobalVariables.currentDay - 1) %
-                                        daysStrings.value.Count]; 
+                                        daysStrings.value.Count];
                                 }
                                 else // Not General (Conditional Modifier)
                                 {
                                     // If we don't have enough to show.
-                                    if (daysStrings.value.Count != unlockDays.value.Count) 
+                                    if (daysStrings.value.Count != unlockDays.value.Count)
                                     {
                                         LoggingHelper.WarningLog(
                                             "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
                                             " Using modulated values.");
-                                        dayString = daysStrings.value[(GlobalVariables.currentDay - 1) % daysStrings.value.Count];
+                                        dayString = daysStrings.value[
+                                            (GlobalVariables.currentDay - 1) % daysStrings.value.Count];
                                     }
                                     else // We do have enough days.
                                     {
@@ -159,13 +162,14 @@ namespace NewSafetyHelp.Callers.UI
                                 }
                             }
                         }
-                        
+
                         if (string.IsNullOrEmpty(dayString)) // If empty, we provide a default one.
                         {
                             dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
                         }
-                        
-                        if (!string.IsNullOrEmpty(dayString)) // Update if not empty. It should if nothing went wrong always work.
+
+                        if (!string.IsNullOrEmpty(
+                                dayString)) // Update if not empty. It should if nothing went wrong always work.
                         {
                             __result = dayString;
                         }
@@ -174,24 +178,34 @@ namespace NewSafetyHelp.Callers.UI
                     {
                         LoggingHelper.WarningLog("Was unable of finding the current campaign." +
                                                  " Defaulting to default values.");
-                        
+
                         __result = defaultDayNames[GlobalVariables.currentDay - 1];
                     }
-                    
                 }
                 else
                 {
                     __result = "Default";
                 }
-                
+
                 return false; // Skip function with false.
             }
         }
-        
-        
+
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "StartSoftwareRoutine")]
         public static class SoftwareRoutinePatches
         {
+            private static readonly MethodInfo LoadVarsMethod = typeof(MainCanvasBehavior).GetMethod("LoadVars",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+            private static readonly MethodInfo PopulateEntriesListMethod = typeof(MainCanvasBehavior).GetMethod(
+                "PopulateEntriesList",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+            private static readonly MethodInfo WriteDayStringMethod = typeof(MainCanvasBehavior).GetMethod(
+                "WriteDayString",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             /// <summary>
             /// Patches start software routine to work better with custom campaigns.
             /// </summary>
@@ -201,38 +215,33 @@ namespace NewSafetyHelp.Callers.UI
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 EndDayRoutinePatch.IsDayEnding = false; // Reset it, if not reset yet.
-                
+
                 __result = StartSoftwareRoutine(__instance);
-                
+
                 return false; // Skip function with false.
             }
 
             private static IEnumerator StartSoftwareRoutine(MainCanvasBehavior __instance)
             {
-                // Get Private Methods
-                Type mainCanvasBehaviorType = typeof(MainCanvasBehavior);
-                
-                MethodInfo loadVarsMethod = mainCanvasBehaviorType.GetMethod("LoadVars", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                MethodInfo populateEntriesListMethod = mainCanvasBehaviorType.GetMethod("PopulateEntriesList", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                MethodInfo writeDayStringMethod = mainCanvasBehaviorType.GetMethod("WriteDayString", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                if (loadVarsMethod == null || populateEntriesListMethod == null || writeDayStringMethod == null)
+                if (LoadVarsMethod == null || PopulateEntriesListMethod == null || WriteDayStringMethod == null)
                 {
-                    LoggingHelper.ErrorLog("loadVarsMethod or populateEntriesListMethod or writeDayStringMethod is null!");
+                    LoggingHelper.ReflectionError(nameof(LoadVarsMethod),
+                        nameof(PopulateEntriesListMethod), nameof(WriteDayStringMethod));
                     yield break;
                 }
-                
+
                 MainCanvasBehavior mainCanvasBehavior = __instance;
-                
+
                 yield return null;
 
-                loadVarsMethod.Invoke(mainCanvasBehavior, null);
-                populateEntriesListMethod.Invoke(mainCanvasBehavior, null);
-                
-                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
+                LoadVarsMethod.Invoke(mainCanvasBehavior, null);
+                PopulateEntriesListMethod.Invoke(mainCanvasBehavior, null);
+
+                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 &&
+                    !CustomCampaignGlobal.InCustomCampaign)
                 {
-                  mainCanvasBehavior.trialScreen.SetActive(true);
-                  mainCanvasBehavior.postProcessVolume.profile = mainCanvasBehavior.scaryProcessProfile;
+                    mainCanvasBehavior.trialScreen.SetActive(true);
+                    mainCanvasBehavior.postProcessVolume.profile = mainCanvasBehavior.scaryProcessProfile;
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign Last Day
                 {
@@ -243,7 +252,7 @@ namespace NewSafetyHelp.Callers.UI
                 {
                     GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
                 }
-                  
+
                 GlobalVariables.introIsPlaying = true;
                 mainCanvasBehavior.clockedIn = false;
                 GlobalVariables.callerControllerScript.callersToday = 0;
@@ -254,62 +263,81 @@ namespace NewSafetyHelp.Callers.UI
                 {
                     AccuracyCallerHelper.StartOfDayCallerID = GlobalVariables.callerControllerScript.currentCallerID;
                 }
-                
+
                 if (!GlobalVariables.arcadeMode)
                 {
-                  GlobalVariables.fade.FadeIn(1f, (string) writeDayStringMethod.Invoke(mainCanvasBehavior, null));
+                    GlobalVariables.fade.FadeIn(1f, (string)WriteDayStringMethod.Invoke(mainCanvasBehavior, null));
                 }
                 else
                 {
-                  GlobalVariables.fade.FadeIn(1f);
-                  mainCanvasBehavior.arcadeStartPanel.SetActive(true);
-                  GlobalVariables.fade.FadeOut(1f);
+                    GlobalVariables.fade.FadeIn(1f);
+                    mainCanvasBehavior.arcadeStartPanel.SetActive(true);
+                    GlobalVariables.fade.FadeOut(1f);
                 }
-                
+
+                if (NewSafetyHelpMainClass.SkipDayClockIn.Value)
+                {
+                    GlobalVariables.fade.FadeIn(1f);
+
+                    //mainCanvasBehavior.logoPanel.SetActive(false);
+                    mainCanvasBehavior.clockInPanel.SetActive(false);
+                    mainCanvasBehavior.clockOutElements.SetActive(false);
+                    mainCanvasBehavior.clockInElements.SetActive(false);
+                    mainCanvasBehavior.clockInButton.SetActive(false);
+
+                    GlobalVariables.fade.FadeOut(1f);
+                }
+
                 if (!GlobalVariables.arcadeMode)
                 {
-                  yield return new WaitForSeconds(6f);
-                  
-                  mainCanvasBehavior.softwareStartupPanel.SetActive(true);
-                  mainCanvasBehavior.clockInPanel.SetActive(false);
-                  mainCanvasBehavior.logoPanel.SetActive(false);
-                  GlobalVariables.fade.FadeOut(1f);
-                  
-                  yield return new WaitForSeconds(1f);
-                  
-                  mainCanvasBehavior.logoPanel.SetActive(true);
-                  mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.computerFanSpin, GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource));
-                  
-                  yield return new WaitForSeconds(6f);
-                  
-                  GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
-                  
-                  if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
-                  {
-                    mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
-                    GlobalVariables.fade.FadeIn();
-                    
-                    yield return new WaitForSeconds(0.2f);
-                    
-                    GlobalVariables.fade.FadeOut();
-                  }
-                  else if (CustomCampaignGlobal.InCustomCampaign) // Just Skip
-                  {
-                      // Skip
-                  }
-                  
-                  mainCanvasBehavior.logoPanel.SetActive(false);
-                  mainCanvasBehavior.clockInPanel.SetActive(true);
-                  mainCanvasBehavior.clockOutElements.SetActive(false);
-                  mainCanvasBehavior.clockInElements.SetActive(true);
-                  mainCanvasBehavior.clockInButton.SetActive(true);
-                  
-                  while (!mainCanvasBehavior.clockedIn)
-                  {
-                      yield return null;
-                  }
-                    
-                  yield return new WaitForSeconds(5f);
+                    if (!NewSafetyHelpMainClass.SkipDayClockIn.Value)
+                    {
+                        yield return new WaitForSeconds(6f);
+
+                        mainCanvasBehavior.softwareStartupPanel.SetActive(true);
+                        mainCanvasBehavior.clockInPanel.SetActive(false);
+                        mainCanvasBehavior.logoPanel.SetActive(false);
+                        GlobalVariables.fade.FadeOut(1f);
+
+                        yield return new WaitForSeconds(1f);
+
+                        mainCanvasBehavior.logoPanel.SetActive(true);
+                        mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
+                            GlobalVariables.UISoundControllerScript.computerFanSpin,
+                            GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource));
+
+                        yield return new WaitForSeconds(6f);
+
+                        GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
+                            .correctSound);
+
+                        if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
+                        {
+                            mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
+                            GlobalVariables.fade.FadeIn();
+
+                            yield return new WaitForSeconds(0.2f);
+
+                            GlobalVariables.fade.FadeOut();
+                        }
+                        else if (CustomCampaignGlobal.InCustomCampaign) // Just Skip
+                        {
+                            // Skip
+                        }
+
+                        mainCanvasBehavior.logoPanel.SetActive(false);
+                        mainCanvasBehavior.clockInPanel.SetActive(true);
+                        mainCanvasBehavior.clockOutElements.SetActive(false);
+                        mainCanvasBehavior.clockInElements.SetActive(true);
+                        mainCanvasBehavior.clockInButton.SetActive(true);
+
+                        while (!mainCanvasBehavior.clockedIn)
+                        {
+                            yield return null;
+                        }
+
+                        yield return new WaitForSeconds(5f);
+                    }
                 }
                 else
                 {
@@ -318,56 +346,55 @@ namespace NewSafetyHelp.Callers.UI
                         yield return null;
                     }
                 }
-                
+
                 mainCanvasBehavior.softwareStartupPanel.SetActive(false);
-                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
-                
-                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
+                GlobalVariables.UISoundControllerScript.PlayUISound(
+                    GlobalVariables.UISoundControllerScript.correctSound);
+
+                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 &&
+                    !CustomCampaignGlobal.InCustomCampaign)
                 {
-                  yield return new WaitForSeconds(0.4f);
-                  
-                  mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
-                  GlobalVariables.fade.FadeIn();
-                  
-                  yield return new WaitForSeconds(0.2f);
-                  
-                  GlobalVariables.fade.FadeOut();
-                  GlobalVariables.musicControllerScript.StartTrialMusic();
+                    yield return new WaitForSeconds(0.4f);
+
+                    mainCanvasBehavior.cameraAnimator.SetTrigger(Glitch);
+                    GlobalVariables.fade.FadeIn();
+
+                    yield return new WaitForSeconds(0.2f);
+
+                    GlobalVariables.fade.FadeOut();
+                    GlobalVariables.musicControllerScript.StartTrialMusic();
                 }
                 else if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     // Skip
                 }
-                
+
                 if (GlobalVariables.arcadeMode)
                 {
-                  mainCanvasBehavior.callTimer.SetActive(true);
-                  
-                  yield return new WaitForSeconds(1f);
-                  
-                  GlobalVariables.fade.FadeOut();
+                    mainCanvasBehavior.callTimer.SetActive(true);
+
+                    yield return new WaitForSeconds(1f);
+
+                    GlobalVariables.fade.FadeOut();
                 }
-                
+
                 // Custom Enables
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
-                    if (customCampaign == null)
-                    {
-                        LoggingHelper.CampaignNullError();
-                    }
-                    else if (customCampaign.AlwaysSkipCallButton)
+                    if (customCampaign != null
+                        && customCampaign.AlwaysSkipCallButton)
                     {
                         CustomDesktopHelper.GetCallSkipButton().SetActive(true);
                     }
                 }
-                
+
                 GlobalVariables.callerControllerScript.StartCallRoutine();
                 GlobalVariables.introIsPlaying = false;
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndDayRoutine")]
         public static class EndDayRoutinePatch
         {
@@ -383,33 +410,34 @@ namespace NewSafetyHelp.Callers.UI
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 LoggingHelper.DebugLog("Calling EndDayRoutine.");
-                
+
                 __result = EndDayRoutineChanged(__instance);
-                
+
                 return false; // Skip function with false.
             }
-            
+
             private static IEnumerator EndDayRoutineChanged(MainCanvasBehavior __instance)
             {
                 if (IsDayEnding)
                 {
                     LoggingHelper.DebugLog("Skipping EndDayRoutine.");
-                    
+
                     yield break;
                 }
 
                 IsDayEnding = true;
-                
+
                 MainCanvasBehavior mainCanvasBehavior = __instance;
                 mainCanvasBehavior.clockedOut = false;
-                
+
                 IntermissionMusicHelper.StopIntermissionMusicRoutine();
-                
+
                 yield return new WaitForSeconds(5f);
-                
+
                 mainCanvasBehavior.inputBlocker.SetActive(false);
-                
-                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
+
+                GlobalVariables.UISoundControllerScript.PlayUISound(
+                    GlobalVariables.UISoundControllerScript.correctSound);
                 GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                 mainCanvasBehavior.softwareStartupPanel.SetActive(true);
                 mainCanvasBehavior.clockInPanel.SetActive(true);
@@ -417,37 +445,43 @@ namespace NewSafetyHelp.Callers.UI
                 mainCanvasBehavior.clockOutElements.SetActive(true);
                 mainCanvasBehavior.clockOutButton.SetActive(true);
                 mainCanvasBehavior.clockInElements.SetActive(false);
-                
+
                 IsDayEnding = false;
                 while (!mainCanvasBehavior.clockedOut)
                 {
                     yield return null;
                 }
-                    
+
                 yield return new WaitForSeconds(6f);
-                
+
                 if (!GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod("UnlockDailySteamAchievement", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                    MethodInfo unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod(
+                        "UnlockDailySteamAchievement",
+                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                     if (unlockDailySteamAchievement == null)
                     {
-                        LoggingHelper.CriticalErrorLog("Method 'UnlockDailySteamAchievement' was null. Catastrophic failure!");
+                        LoggingHelper.CriticalErrorLog(
+                            "Method 'UnlockDailySteamAchievement' was null. Catastrophic failure!");
                         yield break;
                     }
 
                     // OLD: mainCanvasBehavior.UnlockDailySteamAchievement();
-                    unlockDailySteamAchievement.Invoke(mainCanvasBehavior, null); 
+                    unlockDailySteamAchievement.Invoke(mainCanvasBehavior, null);
                 }
-                    
+
                 GlobalVariables.fade.FadeIn(2f);
-                mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource));
-                
+                mainCanvasBehavior.StartCoroutine(
+                    GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript
+                        .myFanSpinLoopingSource));
+
                 yield return new WaitForSeconds(2f);
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
-                    PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(), GlobalVariables.callerControllerScript.GetScore());
+                    PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(),
+                        GlobalVariables.callerControllerScript.GetScore());
                 }
                 else // Custom Campaign
                 {
@@ -459,18 +493,20 @@ namespace NewSafetyHelp.Callers.UI
                         yield break;
                     }
 
-                    customCampaign.SavedDayScores[GlobalVariables.currentDay] = GlobalVariables.callerControllerScript.GetScore();
+                    customCampaign.SavedDayScores[GlobalVariables.currentDay] =
+                        GlobalVariables.callerControllerScript.GetScore();
                 }
-                
-                FieldInfo progressDay = typeof(MainCanvasBehavior).GetField("progressDay", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                FieldInfo progressDay = typeof(MainCanvasBehavior).GetField("progressDay",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (progressDay == null)
                 {
                     LoggingHelper.CriticalErrorLog("Field 'progressDay' was null. Catastrophic failure!");
                     yield break;
                 }
-                
-                if (!(bool) progressDay.GetValue(mainCanvasBehavior)) // !mainCanvasBehavior.progressDay
+
+                if (!(bool)progressDay.GetValue(mainCanvasBehavior)) // !mainCanvasBehavior.progressDay
                 {
                     ++GlobalVariables.currentDay;
                     progressDay.SetValue(mainCanvasBehavior, true); // mainCanvasBehavior.progressDay = true;
@@ -479,10 +515,12 @@ namespace NewSafetyHelp.Callers.UI
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     GlobalVariables.saveManagerScript.savedDay = GlobalVariables.currentDay;
-                    GlobalVariables.saveManagerScript.savedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
+                    GlobalVariables.saveManagerScript.savedCurrentCaller =
+                        GlobalVariables.callerControllerScript.currentCallerID + 1;
                     GlobalVariables.saveManagerScript.savedEntryTier = GlobalVariables.entryUnlockScript.currentTier;
-                    
-                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers",
+                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                     if (saveCallerAnswers == null)
                     {
@@ -490,7 +528,7 @@ namespace NewSafetyHelp.Callers.UI
                                                        " Catastrophic failure!");
                         yield break;
                     }
-                    
+
                     saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
                 }
                 else // Custom Campaign
@@ -502,43 +540,44 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.CampaignNullError();
                         yield break;
                     }
-                    
+
                     customCampaign.CurrentDay = GlobalVariables.currentDay;
                     customCampaign.SavedCurrentCaller = GlobalVariables.callerControllerScript.currentCallerID + 1;
-                    customCampaign.CurrentPermissionTier  = GlobalVariables.entryUnlockScript.currentTier;
-                    
+                    customCampaign.CurrentPermissionTier = GlobalVariables.entryUnlockScript.currentTier;
+
                     List<bool> flagArray = new List<bool>();
-                    
+
                     // Create missing values.
                     for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
                     {
                         flagArray.Add(false);
                     }
-                    
+
                     for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
                     {
-                        if (GlobalVariables.callerControllerScript.callers[index] != null) // Sanity check in case there were some unset callers.
+                        if (GlobalVariables.callerControllerScript.callers[index] !=
+                            null) // Sanity check in case there were some unset callers.
                         {
                             flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
                         }
                     }
-                    
+
                     customCampaign.SavedCallersCorrectAnswer = flagArray;
                     customCampaign.SavedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
                 }
-                
+
                 GlobalVariables.saveManagerScript.SaveGameProgress();
-                
+
                 yield return null;
-                
+
                 LoggingHelper.DebugLog("Ending the EndDayRoutine.");
-                
+
                 mainCanvasBehavior.ExitToMenu();
-                
+
                 mainCanvasBehavior.StartCoroutine(mainCanvasBehavior.StartSoftwareRoutine());
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine")]
         public static class EndingCutsceneRoutinePatch
         {
@@ -551,10 +590,10 @@ namespace NewSafetyHelp.Callers.UI
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 __result = EndingCutsceneRoutineChanged(__instance);
-                
+
                 return false; // Skip function with false.
             }
-            
+
             private static IEnumerator EndingCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
@@ -564,22 +603,26 @@ namespace NewSafetyHelp.Callers.UI
                     LoggingHelper.CriticalErrorLog("Camera was null. Catastrophic failure!");
                     yield break;
                 }
-                
-                if (mainCanvasBehavior.videoPlayer.isPlaying || Camera.main.gameObject.GetComponent<Animator>().GetBool(Shake))
+
+                if (mainCanvasBehavior.videoPlayer.isPlaying ||
+                    Camera.main.gameObject.GetComponent<Animator>().GetBool(Shake))
                 {
                     LoggingHelper.InfoLog("INFO: Ending cutscene is already playing. Not calling again.");
                     yield break;
                 }
-                
+
                 if (!GlobalVariables.isXmasDLC)
                 {
-                    
                     Camera.main.gameObject.GetComponent<Animator>().SetBool(Shake, true);
-                    mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.screenShakeLoop, GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
-                    
+                    mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
+                        GlobalVariables.UISoundControllerScript.screenShakeLoop,
+                        GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
+
                     yield return new WaitForSeconds(6f);
-                    
-                    mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+
+                    mainCanvasBehavior.StartCoroutine(
+                        GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(
+                            GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
                     GlobalVariables.musicControllerScript.StopTrialMusic();
                 }
 
@@ -587,15 +630,16 @@ namespace NewSafetyHelp.Callers.UI
                 {
                     GlobalVariables.saveManagerScript.savedGameFinished = 1;
                     GlobalVariables.saveManagerScript.savedGameFinishedDisplay = 1;
-                
-                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers",
+                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                     if (saveCallerAnswers == null)
                     {
                         LoggingHelper.CriticalErrorLog("Method 'SaveCallerAnswers' was null. Catastrophic failure!");
                         yield break;
                     }
-                    
+
                     saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
                 }
                 else // Custom Campaign
@@ -607,12 +651,12 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.CampaignNullError();
                         yield break;
                     }
-                    
+
                     customCampaign.SavedGameFinished = 1;
                     customCampaign.SavedGameFinishedDisplay = 1;
-                    
+
                     List<bool> flagArray = new List<bool>();
-                    
+
                     // Create missing values.
                     for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
                     {
@@ -623,24 +667,24 @@ namespace NewSafetyHelp.Callers.UI
                     {
                         flagArray[index] = GlobalVariables.callerControllerScript.callers[index].answeredCorrectly;
                     }
-                    
+
                     customCampaign.SavedCallersCorrectAnswer = flagArray;
                     customCampaign.SavedCallerArrayLength = GlobalVariables.callerControllerScript.callers.Length;
                 }
-                
+
                 // Works for both custom campaigns and main campaign.
                 GlobalVariables.saveManagerScript.SaveGameProgress();
                 GlobalVariables.saveManagerScript.SaveGameFinished();
-                
+
                 GlobalVariables.fade.FadeIn(3f);
-                
+
                 yield return new WaitForSeconds(4f);
-                
+
                 GlobalVariables.fade.FadeOut();
                 mainCanvasBehavior.cutsceneCanvas.SetActive(true);
-                
+
                 yield return new WaitForSeconds(0.5f);
-                
+
                 // Inject custom end clip here.
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -669,12 +713,12 @@ namespace NewSafetyHelp.Callers.UI
                         mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
                     }
                 }
-                
+
                 mainCanvasBehavior.videoPlayer.Play();
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
-                    yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                    yield return new WaitForSeconds((float)mainCanvasBehavior.videoPlayer.clip.length);
                 }
                 else // Custom Campaign
                 {
@@ -685,31 +729,34 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.CampaignNullError();
                         yield break;
                     }
-                    
+
                     if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) // If provided
                     {
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();
-                        
+
                         while (mainCanvasBehavior.videoPlayer.isPlaying) // While playing we don't continue.
                         {
                             yield return null;
                         }
-                        
+
                         // Afterward we load all main game values.
                         CustomCampaignSceneSwitcher.BackToMainGame(false);
                     }
                     else // If not, we show the default one.
                     {
-                        yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                        yield return new WaitForSeconds((float)mainCanvasBehavior.videoPlayer.clip.length);
                     }
                 }
-                
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&!CustomCampaignGlobal.InCustomCampaign) // Disable Achievement in Custom Campaign
+
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&
+                    !CustomCampaignGlobal.InCustomCampaign) // Disable Achievement in Custom Campaign
                 {
                     SteamUserStats.SetAchievement("GameFinished");
-                    
-                    MethodInfo _achievedHundredPercentAccuracyRating = typeof(MainCanvasBehavior).GetMethod("AchievedHundredPercentAccuracyRating", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                    MethodInfo _achievedHundredPercentAccuracyRating =
+                        typeof(MainCanvasBehavior).GetMethod("AchievedHundredPercentAccuracyRating",
+                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                     if (_achievedHundredPercentAccuracyRating == null)
                     {
@@ -717,21 +764,23 @@ namespace NewSafetyHelp.Callers.UI
                                                        " Catastrophic failure!");
                         yield break;
                     }
-                    
-                    if ((bool) _achievedHundredPercentAccuracyRating.Invoke(mainCanvasBehavior, null)) // mainCanvasBehavior.AchievedHundredPercentAccuracyRating()
+
+                    if ((bool)_achievedHundredPercentAccuracyRating.Invoke(mainCanvasBehavior,
+                            null)) // mainCanvasBehavior.AchievedHundredPercentAccuracyRating()
                     {
                         SteamUserStats.SetAchievement("PerfectGame");
                         LoggingHelper.DebugLog("[UNITY] PerfectGame Achievement unlocked.");
                     }
+
                     SteamUserStats.StoreStats();
                 }
-                
+
                 yield return new WaitForSeconds(2f);
-                
+
                 mainCanvasBehavior.ExitToStartMenu();
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "IsNetworkDown")]
         public static class IsNetworkDownPatch
         {
@@ -743,13 +792,12 @@ namespace NewSafetyHelp.Callers.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref bool __result)
             {
-
                 if (GlobalVariables.arcadeMode)
                 {
                     if (GlobalVariables.callerControllerScript.downedNetworkCall)
                     {
                         __result = true;
-                        return false;  // Skip function with false.
+                        return false; // Skip function with false.
                     }
                 }
                 else
@@ -761,14 +809,16 @@ namespace NewSafetyHelp.Callers.UI
                             if (downedNetworkCall == GlobalVariables.callerControllerScript.currentCallerID)
                             {
                                 __result = true;
-                                return false;  // Skip function with false.
+                                return false; // Skip function with false.
                             }
                         }
                     }
                     else // Custom Campaign
                     {
-                        CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
-                        
+                        CustomCCaller customCCaller =
+                            CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables
+                                .callerControllerScript.currentCallerID);
+
                         if (customCCaller == null)
                         {
                             LoggingHelper.ErrorLog("Custom campaign caller was null." +
@@ -777,19 +827,20 @@ namespace NewSafetyHelp.Callers.UI
                             return true;
                         }
 
-                        if (customCCaller.DownedNetworkCaller) // This is set to true if the caller is allowed to down the network.
+                        if (customCCaller
+                            .DownedNetworkCaller) // This is set to true if the caller is allowed to down the network.
                         {
                             __result = true;
                             return false;
                         }
                     }
                 }
-                
+
                 __result = false;
                 return false; // Skip function with false.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine")]
         public static class GameOverCutsceneRoutinePatch
         {
@@ -802,46 +853,51 @@ namespace NewSafetyHelp.Callers.UI
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
                 __result = GameOverCutsceneRoutineChanged(__instance);
-                
+
                 return false; // Skip function with false.
             }
 
             private static IEnumerator GameOverCutsceneRoutineChanged(MainCanvasBehavior __instance)
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
-                
-                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
                 if (shakeAnimationString == null)
                 {
                     LoggingHelper.CriticalErrorLog("shakeAnimationString is null! Catastrophic failure!");
                     yield break;
                 }
-                
-                mainCanvasBehavior.cameraAnimator.SetBool((string) shakeAnimationString.GetValue(__instance), true); // mainCanvasBehavior.shakeAnimationString
-                
-                mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(GlobalVariables.UISoundControllerScript.screenShakeLoop,
+
+                mainCanvasBehavior.cameraAnimator.SetBool((string)shakeAnimationString.GetValue(__instance),
+                    true); // mainCanvasBehavior.shakeAnimationString
+
+                mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
+                    GlobalVariables.UISoundControllerScript.screenShakeLoop,
                     GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
-                
+
                 GlobalVariables.fade.FadeIn(6f);
-                
+
                 if (GlobalVariables.musicControllerScript.myTrialMusicSource.isPlaying)
                 {
                     GlobalVariables.musicControllerScript.StopTrialMusic();
                 }
-                
+
                 yield return new WaitForSeconds(6f);
-                
-                mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
-                
+
+                mainCanvasBehavior.StartCoroutine(
+                    GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(
+                        GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+
                 yield return new WaitForSeconds(1f);
-                
+
                 mainCanvasBehavior.cutsceneCanvas.SetActive(true);
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Not in custom campaign
                 {
                     mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
-                
+
                     if (GlobalVariables.isXmasDLC)
                     {
                         mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.xmasGameOverClip;
@@ -866,16 +922,16 @@ namespace NewSafetyHelp.Callers.UI
                         mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
                     }
                 }
-                
+
                 mainCanvasBehavior.videoPlayer.Play();
-                
+
                 yield return new WaitForSeconds(1f);
-                
+
                 GlobalVariables.fade.FadeOut(3f);
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Game
                 {
-                    yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                    yield return new WaitForSeconds((float)mainCanvasBehavior.videoPlayer.clip.length);
                 }
                 else // Custom Campaign
                 {
@@ -886,12 +942,12 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.CampaignNullError();
                         yield break;
                     }
-                    
+
                     if (!string.IsNullOrEmpty(customCampaign.GameOverCutsceneVideoName)) // If provided
                     {
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();
-                        
+
                         while (mainCanvasBehavior.videoPlayer.isPlaying) // While playing we don't continue.
                         {
                             yield return null;
@@ -899,25 +955,26 @@ namespace NewSafetyHelp.Callers.UI
                     }
                     else // If not, we show the default one.
                     {
-                        yield return new WaitForSeconds((float) mainCanvasBehavior.videoPlayer.clip.length);
+                        yield return new WaitForSeconds((float)mainCanvasBehavior.videoPlayer.clip.length);
                     }
                 }
-                
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Don't show fired achievement in custom campaign.
+
+                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&
+                    !CustomCampaignGlobal.InCustomCampaign) // Don't show fired achievement in custom campaign.
                 {
                     SteamUserStats.SetAchievement("Fired");
                     SteamUserStats.StoreStats();
                 }
-                
+
                 GlobalVariables.fade.FadeIn(2f);
-                
+
                 yield return new WaitForSeconds(2f);
-                
+
                 mainCanvasBehavior.RestartDay();
             }
         }
-        
-        
+
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "LoadCallerAnswers")]
         public static class LoadCallerAnswersPatch
         {
@@ -928,19 +985,21 @@ namespace NewSafetyHelp.Callers.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance)
             {
-                if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length != GlobalVariables.callerControllerScript.callers.Length)
+                if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length !=
+                    GlobalVariables.callerControllerScript.callers.Length)
                 {
                     return false;
                 }
-                
+
                 for (int index = 0; index < GlobalVariables.callerControllerScript.callers.Length; ++index)
                 {
                     if (GlobalVariables.callerControllerScript.callers[index] != null)
                     {
-                        GlobalVariables.callerControllerScript.callers[index].answeredCorrectly = GlobalVariables.saveManagerScript.savedCallerCorrectAnswers[index];
+                        GlobalVariables.callerControllerScript.callers[index].answeredCorrectly =
+                            GlobalVariables.saveManagerScript.savedCallerCorrectAnswers[index];
                     }
                 }
-                
+
                 return false; // Skip function with false.
             }
         }
@@ -959,9 +1018,9 @@ namespace NewSafetyHelp.Callers.UI
                 {
                     IntermissionMusicHelper.StopIntermissionMusicRoutine();
                 }
-                
+
                 GlobalVariables.arcadeMode = false;
-                
+
                 if (!GlobalVariables.isXmasDLC)
                 {
                     SceneManager.LoadScene("MainMenuScene");
@@ -970,10 +1029,9 @@ namespace NewSafetyHelp.Callers.UI
                 {
                     SceneManager.LoadScene("MainMenuSceneXmas");
                 }
-                
+
                 return false; // Skip function with false.
             }
         }
-        
     }
 }

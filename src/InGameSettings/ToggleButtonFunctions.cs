@@ -68,5 +68,12 @@ namespace NewSafetyHelp.InGameSettings
             
             return toggleValue;
         }
+        
+        public static bool OnSkipDayClockInToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.SkipDayClockIn.Value = toggleValue;
+            
+            return toggleValue;
+        }
     }
 }
