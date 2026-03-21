@@ -21,6 +21,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
 
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
             SceneManager.LoadScene("MainMenuScene");
+            LoggingHelper.DebugLog("Finished changing into custom campaign.");
         }
 
         public static void BackToMainGame(bool alsoLoadMainMenu = true)

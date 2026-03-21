@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
@@ -42,6 +43,13 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             if (customVideo.IgnoreAccuracyChecks)
             {
                 if (customVideo.UnlockDay <= GlobalVariables.currentDay)
+                {
+                    newCustomVideo.SetActive(true);
+                }
+            }
+            else
+            {
+                if (AccuracyVideoHelper.CheckIfVideoAccuracyType(customVideo))
                 {
                     newCustomVideo.SetActive(true);
                 }

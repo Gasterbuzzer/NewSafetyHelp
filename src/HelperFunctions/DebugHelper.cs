@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using MelonLoader.Utils;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Debug = System.Diagnostics.Debug;
 
 namespace NewSafetyHelp.HelperFunctions
 {
@@ -62,6 +63,46 @@ namespace NewSafetyHelp.HelperFunctions
                         $"Hit: {result.gameObject.name} | Depth: {result.depth} | Distance: {result.distance}");
                 }
             }
+        }
+
+        /// <summary>
+        /// Copies the latest MelonLoader log files to clipboard.
+        /// </summary>
+        public static void CopyLatestLogs()
+        {
+            string logPath = Path.Combine(MelonEnvironment.MelonLoaderDirectory, "Latest.log");
+
+            if (!File.Exists(logPath))
+            {
+                LoggingHelper.ErrorLog($"Log file does not exist at '{logPath}'. Unable of copying log files!");
+                return;
+            }
+
+            try
+            {
+                string contentsOfFile;
+                
+                FileStream fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+                using (StreamReader streamReader = new StreamReader(fs))
+                {
+                    contentsOfFile = streamReader.ReadToEnd();
+                }
+
+                if (!string.IsNullOrEmpty(contentsOfFile))
+                {
+                    GUIUtility.systemCopyBuffer = contentsOfFile;
+                }
+            }
+            catch (IOException e)
+            {
+                LoggingHelper.ErrorLog("Unable of reading log file, possibly already opened? " +
+                                       "Please close any application that has the log files opened. " +
+                                       $"For more details:\n'{e}'.");
+                return;
+            }
+            
+            LoggingHelper.InfoLog("Copied log files to clipboard.", consoleColor: ConsoleColor.Green);
         }
     }
 }

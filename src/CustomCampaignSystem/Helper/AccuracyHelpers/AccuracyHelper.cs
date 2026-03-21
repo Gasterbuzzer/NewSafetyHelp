@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
-using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
-using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.LoggingSystem;
-using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 {

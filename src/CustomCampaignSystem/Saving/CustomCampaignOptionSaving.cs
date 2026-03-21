@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.CustomCampaignSystem.Saving
@@ -9,13 +10,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
         /// <summary>
         /// Initializes the custom campaign options once.
         /// </summary>
-        private static void initializeCustomCampaignOptionsOnce()
+        private static void initializeCustomCampaignOptionsOnce(bool saveAfterInit = true)
         {
             CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -167,7 +167,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 currentCampaign.CampaignSaveCategory.CreateEntry("themeShownOnce", false);
             }
 
-            MelonPreferences.Save();
+            if (saveAfterInit)
+            {
+                MelonPreferences.Save();
+            }
         }
 
         /// <summary>
@@ -175,6 +178,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
         /// </summary>
         public static void SaveCustomCampaignOptions()
         {
+            if (ReloadJSONParsing.IsInHotReload)
+            {
+                LoggingHelper.DebugLog("In Hot Reload. Prevented saving of options.");
+                return;
+            }
+            
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 LoggingHelper.WarningLog("Called save custom campaign but there is no campaign active.");
@@ -185,7 +194,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             if (currentCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
             
@@ -495,7 +503,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             if (currentCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -509,9 +516,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             }
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
-            initializeCustomCampaignOptionsOnce();
+            initializeCustomCampaignOptionsOnce(false);
             
-            LoggingHelper.DebugLog($"Saved color themes ({currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).");
+            LoggingHelper.DebugLog(() => 
+                    $"Saved color themes ({currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value}).",
+                LoggingHelper.LoggingCategory.THEME);
             
             // Load all values first into the currentCampaign instance.
             
@@ -635,7 +644,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             {
                 GlobalVariables.colorPaletteController.UpdateColorTheme();
             }
-
+            
             // Finished loading.
             LoggingHelper.InfoLog("Finished loading all custom campaign settings/options.");
         }

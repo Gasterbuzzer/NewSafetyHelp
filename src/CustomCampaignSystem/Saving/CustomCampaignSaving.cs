@@ -17,7 +17,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             if (currentCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -88,11 +87,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 return;
             }
 
+            LoggingHelper.DebugLog("Saving Custom Campaign Info.");
+            
             CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -232,8 +232,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                     }
                     else
                     {
-                        LoggingHelper.WarningLog($"Provided index {i} is not available." +
-                                                 $" (SavedDayScore doesn't exist)");
+                        LoggingHelper.WarningLog($"Provided index {i} is not available. " +
+                                                 "(SavedDayScore doesn't exist)");
                     }
                 }
                 else
@@ -273,7 +273,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             if (currentCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
@@ -285,7 +284,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
                     currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
-
+            
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOnce();
 
@@ -431,14 +430,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             if (currentCampaign == null)
             {
-                LoggingHelper.CampaignNullError();
                 return;
             }
 
             // Custom Campaigns
 
-            if (currentCampaign.CampaignSaveCategory == null) // We haven't loaded it in?
+            // We haven't loaded it in?
+            if (currentCampaign.CampaignSaveCategory == null) 
             {
+                LoggingHelper.DebugLog("Loading values before saving.");
                 LoadFromFileCustomCampaignInfo();
             }
 

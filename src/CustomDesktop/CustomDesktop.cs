@@ -8,6 +8,7 @@ using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
+using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
@@ -137,6 +138,9 @@ namespace NewSafetyHelp.CustomDesktop
                     
                 InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEmailLogToggle,
                     "Enable Email Logs", NewSafetyHelpMainClass.ShowEmailDebugLog.Value);
+                
+                InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnVideoLogToggle,
+                    "Enable Video Logs", NewSafetyHelpMainClass.ShowVideoDebugLog.Value);
 
                 InGameSettingHelper.CreateButton(developerSettings, (e) =>
                 {
@@ -147,7 +151,14 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     return e;
                 }, "Reload all JSON files", "Reload all JSON files");
-
+                
+                InGameSettingHelper.CreateButton(developerSettings, o =>
+                    {
+                        DebugHelper.CopyLatestLogs();
+                        return o;
+                    }, 
+                    "Copy Log File", "Copies the log file for debug purposes");
+                
                 // Plays beginning segment to desktop.
                 __instance.StartCoroutine(StartupRoutine(__instance));
 
@@ -462,9 +473,16 @@ namespace NewSafetyHelp.CustomDesktop
 
             private static IEnumerator StartupRoutine(MainMenuCanvasBehavior __instance)
             {
+                // We check if null AND if destroyed. Since we might not be initialized.
+                // Later the reference might be destroyed, as such we also need to check if destroyed.
+                while (GlobalVariables.UISoundControllerScript ==null)
+                {
+                    yield return null;
+                }
+                
                 if (NewSafetyHelpMainClass.SkipLoadingScreen.Value)
                 {
-                    __instance.loginText.transform.parent.gameObject.SetActive(false);
+                    GlobalVariables.fade.FadeOut(0.0001f);
                     yield break;
                 }
 
@@ -483,16 +501,9 @@ namespace NewSafetyHelp.CustomDesktop
                     if (disableDesktopLoading.foundModifier 
                         && disableDesktopLoading.value)
                     {
-                        __instance.loginText.transform.parent.gameObject.SetActive(false);
+                        GlobalVariables.fade.FadeOut(0.0001f);
                         yield break;
                     }
-                }
-                
-                // We check if null AND if destroyed. Since we might not be initialized.
-                // Later the reference might be destroyed, as such we also need to check if destroyed.
-                while (GlobalVariables.UISoundControllerScript ==null)
-                {
-                    yield return null;
                 }
                 
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.computerStartup);

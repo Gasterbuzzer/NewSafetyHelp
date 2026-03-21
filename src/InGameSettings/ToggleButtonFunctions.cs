@@ -48,6 +48,13 @@ namespace NewSafetyHelp.InGameSettings
             return toggleValue;
         }
         
+        public static bool OnVideoLogToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.ShowVideoDebugLog.Value = toggleValue;
+            
+            return toggleValue;
+        }
+        
         public static bool OnSkipLoadingScreenToggle(bool toggleValue)
         {
             NewSafetyHelpMainClass.SkipLoadingScreen.Value = toggleValue;

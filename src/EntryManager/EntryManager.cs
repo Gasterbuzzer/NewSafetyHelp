@@ -3,9 +3,6 @@ using NewSafetyHelp.EntryManager.EntryUnlocker;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
-
 namespace NewSafetyHelp.EntryManager
 {
     public static class EntryManager
@@ -27,24 +24,21 @@ namespace NewSafetyHelp.EntryManager
             }
             else
             {
-                #if DEBUG
                 if (profileName != "NO_PRINT")
                 {
-                    LoggingHelper.InfoLog(
-                        $"Adding (New Name: {newProfile.monsterName}, New ID: {newProfile.monsterID}) to profile: {profileName}.");
+                    LoggingHelper.DebugLog(() => 
+                        $"Adding (New Name: {newProfile.monsterName}, " +
+                        $"New ID: {newProfile.monsterID}) to profile: {profileName}.");
                 }
-                #endif
 
                 // Before adding we check if the ID already exists. And if yes, we replace it.
                 int idToCheck = newProfile.monsterID;
 
-                #if DEBUG
                 if (profileName != "NO_PRINT")
                 {
                     LoggingHelper.DebugLog(
-                        $"Checking IDS with monster profile array of size {monsterProfiles.Length}.");
+                        $"Checking IDs with monster profile array of size {monsterProfiles.Length}.");
                 }
-                #endif
 
                 // Check if it is a duplicate. Not done for permission adds.
                 if (!isPermissionAdd && monsterProfiles.Length > 0 && idToCheck != -1)
@@ -53,16 +47,16 @@ namespace NewSafetyHelp.EntryManager
                     {
                         if (monsterProfiles[i].monsterID == idToCheck) // Duplicate
                         {
-                            if (profileName != "NONE" &&
-                                profileName !=
-                                "NO_PRINT") // Not display it if we are just readding things that are more than welcome to replace entries.
+                            // Not display it if we are just readding things that are more than welcome to replace entries.
+                            if (profileName != "NONE" 
+                                && profileName != "NO_PRINT") 
                             {
                                 LoggingHelper.WarningLog(
-                                    "An existing entry was overriden (Old Name: {monsterProfiles[i].name}," +
-                                    " Old ID: {monsterProfiles[i].monsterID})" +
-                                    " (New Name: {newProfile.monsterName}, " +
-                                    "New ID: {newProfile.monsterID})." +
-                                    "\n If this was intentional, you can safely ignore it.");
+                                    $"An existing entry was overriden (Old Name: {monsterProfiles[i].name}, " +
+                                    $"Old ID: {monsterProfiles[i].monsterID})" +
+                                    $"(New Name: {newProfile.monsterName}, " +
+                                    $"New ID: {newProfile.monsterID}).\n " +
+                                    "If this was intentional, you can safely ignore it.");
                             }
 
                             monsterProfiles[i] = newProfile;
@@ -181,7 +175,8 @@ namespace NewSafetyHelp.EntryManager
         /// </summary>
         /// <param name="monsterName"> Name of the monster to show. </param>
         /// <param name="monsterDescription"> Description of the monster, see examples to understand formatting. ("<b>Works</b>") </param>
-        /// <param name="monsterID"> ID of the monster, if provided an already existing, it will replace it. To make sure no duplicate exist it is best to use the length of the monsters size. </param>
+        /// <param name="monsterID"> ID of the monster, if provided an already existing, it will replace it.
+        /// To make sure no duplicate exist it is best to use the length of the monsters size. </param>
         /// <param name="monsterPortrait"> Sprite image of the monster to show. </param>
         /// <param name="monsterAudioClip"> RichAudioClip to play the monsters sound. Use the provided function for creating a rich audio clip. </param>
         /// <param name="arcadeCalls"> Array of strings that contain different types of calls for the monster in arcade mode. </param>
@@ -217,7 +212,8 @@ namespace NewSafetyHelp.EntryManager
             newMonster.tightSpace = tightSpacePhobia;
 
             // Arcade Calls (Which do not have a voice-over)
-            newMonster.arcadeCalls = arcadeCalls; // Must be done correctly or else it will fail.
+            // Must be done correctly or else it will fail.
+            newMonster.arcadeCalls = arcadeCalls; 
 
             return newMonster;
         }
@@ -255,8 +251,8 @@ namespace NewSafetyHelp.EntryManager
                 if ((entryProfile.monsterName == monsterName && monsterName != "SKIP_MONSTER_NAME_TO_SEARCH") ||
                     (entryProfile.monsterID == monsterID && monsterID >= 0))
                 {
-                    return
-                        entryProfile; // Correction, this seems to be a real reference     OLD: --Please note, this is a copy.--
+                    // This seems to be a reference.
+                    return entryProfile;
                 }
             }
 
@@ -291,7 +287,8 @@ namespace NewSafetyHelp.EntryManager
         public static void SortMonsterProfiles(ref MonsterProfile[] monsterProfiles)
         {
             Array.Sort(monsterProfiles,
-                (x, y) => String.Compare(x.monsterName, y.monsterName, StringComparison.InvariantCulture));
+                (x, y) => 
+                    String.Compare(x.monsterName, y.monsterName, StringComparison.InvariantCulture));
         }
     }
 }

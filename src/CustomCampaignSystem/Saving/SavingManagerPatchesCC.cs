@@ -90,6 +90,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
         [HarmonyLib.HarmonyPatch(typeof(SaveManagerBehavior), "Load")]
         public static class LoadPatch
         {
+            private static readonly MethodInfo LoadXmas = typeof(SaveManagerBehavior).GetMethod("LoadXmas",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
             /// <summary>
             /// Changes the load function to respect custom campaigns.
             /// </summary>
@@ -102,20 +105,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
                     // Load custom campaign values.
+                    LoggingHelper.DebugLog("Loading values due to game loading values.");
                     CustomCampaignSaving.LoadFromFileCustomCampaignInfo();
                 }
                 else if (GlobalVariables.isXmasDLC) // DLC
                 {
-                    MethodInfo _loadXmas = typeof(SaveManagerBehavior).GetMethod("LoadXmas",
-                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                    if (_loadXmas == null)
+                    if (LoadXmas == null)
                     {
-                        LoggingHelper.ErrorLog("Method 'LoadXmas' was null. Calling normal function.");
+                        LoggingHelper.ReflectionError(nameof(LoadXmas));
                         return true;
                     }
 
-                    _loadXmas.Invoke(__instance, null); // __instance.LoadXmas();
+                    // OLD: __instance.LoadXmas();
+                    LoadXmas.Invoke(__instance, null); 
                 }
 
                 /*

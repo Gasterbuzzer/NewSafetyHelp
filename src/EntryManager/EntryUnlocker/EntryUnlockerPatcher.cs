@@ -108,7 +108,6 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                 
                 if (customCampaign == null)
                 {
-                    LoggingHelper.ErrorLog("No active custom campaign!");
                     return;
                 }
 
@@ -117,14 +116,16 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     if (MainClassForMonsterEntries.CopyMonsterProfiles != null)
                     {
                         // We have the copies. So we can check if to enable it.
-                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(profileToCheck)) // A default entry to show. We return true.
+                        // A default entry to show. We return true.
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(profileToCheck)) 
                         {
                             __result = true;
                         }
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog("Copy of entry profiles does not exist! Possibly called before initialization.");
+                        LoggingHelper.ErrorLog("Copy of entry profiles does not exist! " +
+                                               "Possibly called before initialization.");
                     }
                 }
             }
