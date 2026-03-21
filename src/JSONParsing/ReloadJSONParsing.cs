@@ -118,6 +118,8 @@ namespace NewSafetyHelp.JSONParsing
             else
             {
                 SceneManager.LoadScene("MainMenuScene");
+
+                IsInHotReload = false;
             }
         }
 
