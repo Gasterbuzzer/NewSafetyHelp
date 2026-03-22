@@ -169,7 +169,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 
         /// <summary>
         /// Checks if the provided customEmail has the accuracy to be allowed to be shown.
-        /// Please note, if you have an customEmail that uses the old system, then don't use this function.
         /// </summary>
         /// <param name="customEmail">Email to be checked.</param>
         /// <returns>(True) Passed all checks. (False) Failed a check.</returns>
@@ -180,6 +179,37 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
             if (customEmail.UnlockDay > GlobalVariables.currentDay)
             {
                 return false;
+            }
+
+            if (customEmail.UseOldAccuracyChecks)
+            {
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        return false;
+                    }
+                    
+                    int unlockDay = customEmail.UnlockDay - 1;
+
+                    if (unlockDay < 0)
+                    {
+                        unlockDay = 0;
+                    }
+
+                    LoggingHelper.DebugLog("This email is using the old accuracy system. " +
+                                           $"Unlock Threshold: '{customEmail.UnlockThreshold}' " +
+                                           $"with that day '{unlockDay}' score " +
+                                           $"'{customCampaign.SavedDayScores[unlockDay]}'.");
+
+                    if (customCampaign.SavedDayScores[unlockDay] < customEmail.UnlockThreshold)
+                    {
+                        return false;
+                    }
+                }
+                
             }
 
             // If the customEmail is only allowed to be unlocked after the game has been finished, we check that first.

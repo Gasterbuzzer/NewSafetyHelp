@@ -14,7 +14,7 @@ namespace NewSafetyHelp.ImportFiles
         {
             if (!File.Exists(imagePath))
             {
-                LoggingHelper.ErrorLog($"Image file not found at path: {imagePath}.");
+                LoggingHelper.ErrorLog($"Image file not found at path: '{imagePath}'.");
                 return null;
             }
 
@@ -25,7 +25,7 @@ namespace NewSafetyHelp.ImportFiles
             Texture2D texture = new Texture2D(2, 2);
             if (!texture.LoadImage(imageData))
             {
-                LoggingHelper.ErrorLog($"Failed to load image {imagePath} data into texture.");
+                LoggingHelper.ErrorLog($"Failed to load image '{imagePath}' data into texture.");
                 return null;
             }
 
@@ -48,7 +48,8 @@ namespace NewSafetyHelp.ImportFiles
         {
             if (!File.Exists(imagePath) && !File.Exists(fallbackImagePath))
             {
-                LoggingHelper.ErrorLog($"Image file could not be found in either: {imagePath} or {fallbackImagePath}");
+                LoggingHelper.ErrorLog("Image file could not be found in either: " +
+                                       $"'{imagePath}' or '{fallbackImagePath}'.");
                 return null;
             }
 
@@ -67,7 +68,7 @@ namespace NewSafetyHelp.ImportFiles
             Texture2D texture = new Texture2D(2, 2);
             if (!texture.LoadImage(imageData))
             {
-                LoggingHelper.ErrorLog($"Failed to load image {imagePathToUse} data into texture.");
+                LoggingHelper.ErrorLog($"Failed to load image '{imagePathToUse}' data into texture.");
                 return null;
             }
 

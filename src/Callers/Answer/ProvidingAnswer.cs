@@ -418,8 +418,7 @@ namespace NewSafetyHelp.Callers.Answer
                         int checkResult = CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
-                            LoggingHelper.DebugLog("Calling end day routine from submit answer.",
-                                consoleColor: ConsoleColor.DarkYellow);
+                            LoggingHelper.DebugLog("Calling end day routine from submit answer.");
                             
                             // In case the intermission music is playing, we stop it.
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());

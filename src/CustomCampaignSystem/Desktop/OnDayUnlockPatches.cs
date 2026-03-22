@@ -131,59 +131,55 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             }
                             
                             LoggingHelper.DebugLog(() =>
-                                $"This object unlocks on day: {__instance.unlockDay} (Current Day is {GlobalVariables.currentDay})." +
-                                $" The threshold is: {__instance.scoreThresholdToUnlock}." +
-                                $" The current score for the day {__instance.unlockDay-1} is {customCampaign.SavedDayScores[unlockDay]}." +
-                                $" (For GameObject: '{__instance.gameObject.name}')" +
-                                $" Is threshold over 0? '{__instance.scoreThresholdToUnlock > 0.0f}'");
+                                $"This GameObject (For GameObject: '{__instance.gameObject.name}') " +
+                                $"unlocks on day: {__instance.unlockDay} (Current Day is {GlobalVariables.currentDay}). " +
+                                $"The threshold is: {__instance.scoreThresholdToUnlock}. " +
+                                $"The current score for the day {__instance.unlockDay-1} is {customCampaign.SavedDayScores[unlockDay]}. " +
+                                $"Is threshold over 0? '{__instance.scoreThresholdToUnlock > 0.0f}'.");
+                            
+                            EmailListingBehavior emailComponent = __instance.gameObject.GetComponent<EmailListingBehavior>();
+                            
+                            LoggingHelper.DebugLog("Checking if GameObject is email. " +
+                                                   $"Is email null? '{emailComponent == null}'",
+                                LoggingHelper.LoggingCategory.EMAIL);
 
                             // Only emails have a threshold.
-                            // This first check, checks if the threshold was set anything other than the default value.
-                            if (__instance.scoreThresholdToUnlock > 0.0f)
+                            // This checks if we have an email or not.
+                            if (emailComponent != null)
                             {
-                                EmailListingBehavior emailComponent = __instance.gameObject.GetComponent<EmailListingBehavior>();
-                                
-                                LoggingHelper.DebugLog("Checking if GameObject is email. " +
-                                                       $"Is email null? '{emailComponent == null}'",
+                                LoggingHelper.DebugLog("Found Email to be unlocked.",
                                     LoggingHelper.LoggingCategory.EMAIL);
-                                
-                                if (emailComponent != null)
-                                {
-                                    LoggingHelper.DebugLog("Found Email to be unlocked.",
-                                        LoggingHelper.LoggingCategory.EMAIL);
                                     
-                                    CustomEmail email = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(emailComponent.myEmail);
+                                CustomEmail email = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(emailComponent.myEmail);
 
-                                    // If we found an email, it means it is a custom email.
-                                    // If we don't find any email, it either isn't an email or from the main campaign.
-                                    if (email != null)
+                                // If we found an email, it means it is a custom email.
+                                // If we don't find any email, it either isn't an email or from the main campaign.
+                                if (email != null)
+                                {
+                                    // We check each condition.
+                                    if (AccuracyEmailHelper.CheckIfEmailAccuracyType(email))
                                     {
-                                        if (!email.UseOldAccuracyChecks) // New Check System.
-                                        {
-                                            // We check each condition.
-                                            if (AccuracyEmailHelper.CheckIfEmailAccuracyType(email))
-                                            {
-                                                LoggingHelper.DebugLog("Email allowed to be shown.",
-                                                    LoggingHelper.LoggingCategory.EMAIL);
-                                                return false;
-                                            }
-                                            else // Checks failed.
-                                            {
-                                                LoggingHelper.DebugLog("One of the checks failed," +
-                                                                       " deactivating email.",
-                                                    LoggingHelper.LoggingCategory.EMAIL);
-                                                __instance.gameObject.SetActive(false);
-                                                return false;
-                                            }
-                                        }
+                                        LoggingHelper.DebugLog("Email allowed to be shown.",
+                                            LoggingHelper.LoggingCategory.EMAIL);
+                                                
+                                        return false;
+                                    }
+                                    else // Checks failed.
+                                    {
+                                        LoggingHelper.DebugLog("One of the checks failed," +
+                                                               " deactivating email.",
+                                            LoggingHelper.LoggingCategory.EMAIL);
+                                        __instance.gameObject.SetActive(false);
+                                        return false;
                                     }
                                 }
-                                
-                                // If the email checks failed, or it wasn't an email, we use the old system:
-                                
+                            }
+
+                            // If the given game object wasn't an email, we use the old system:
+                            if (__instance.scoreThresholdToUnlock > 0.0f)
+                            {
                                 // If the threshold was not reached (score too low).
-                                if (customCampaign.SavedDayScores[unlockDay] <
-                                    (double)__instance.scoreThresholdToUnlock)
+                                if (customCampaign.SavedDayScores[unlockDay] < (double)__instance.scoreThresholdToUnlock)
                                 {
                                     LoggingHelper.DebugLog(() =>
                                         $"The score {customCampaign.SavedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. " +
@@ -195,9 +191,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                 else // Threshold was enough.
                                 {
                                     LoggingHelper.DebugLog(() =>
-                                        $"[UNITY] Email unlocked: {__instance.gameObject.name}| " +
-                                        $"Day Checked: {unlockDay.ToString()}| Day Score: " +
-                                        $"{customCampaign.SavedDayScores[unlockDay]}.\n",
+                                            $"[UNITY] GameObject unlocked: {__instance.gameObject.name}| " +
+                                            $"Day Checked: {unlockDay.ToString()}| Day Score: " +
+                                            $"{customCampaign.SavedDayScores[unlockDay]}.\n",
                                         LoggingHelper.LoggingCategory.EMAIL);
                                 }
                             }

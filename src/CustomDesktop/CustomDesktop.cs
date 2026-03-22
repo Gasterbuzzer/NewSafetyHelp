@@ -542,7 +542,9 @@ namespace NewSafetyHelp.CustomDesktop
         [HarmonyLib.HarmonyPatch(typeof(DateTextController), "Start")]
         public static class StartDateTextPatch
         {
-            private static FieldInfo myText = typeof(DateTextController).GetField("myText", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            private static readonly FieldInfo MyText = typeof(DateTextController).
+                GetField("myText",
+                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             
             /// <summary>
             /// Hooks into the Start function of the date function to allow for more robust days in custom campaigns.
@@ -553,18 +555,18 @@ namespace NewSafetyHelp.CustomDesktop
             {
                 LoggingHelper.DebugLog("Handling day format.");
 
-                if (myText == null)
+                if (MyText == null)
                 {
                     LoggingHelper.ErrorLog("'MyText' Field of 'DateTextController' is null! Calling original.");
                     return true;
                 }
                 
                 // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
-                myText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); 
+                MyText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>()); 
                 
                 if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Main Campaign
                 {
-                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); // __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI) MyText.GetValue(__instance); // __instance.myText
                     
                     string[] strArray = new string[5];
                     
@@ -593,7 +595,7 @@ namespace NewSafetyHelp.CustomDesktop
                 else if (!CustomCampaignGlobal.InCustomCampaign) // XMAS DLC
                 {
                     // __instance.myText
-                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); 
+                    TextMeshProUGUI text = (TextMeshProUGUI) MyText.GetValue(__instance); 
                     
                     string[] strArray = new string[5];
                     
@@ -623,7 +625,7 @@ namespace NewSafetyHelp.CustomDesktop
                 {
                     LoggingHelper.DebugLog("Handling custom day format..");
                     
-                    TextMeshProUGUI text = (TextMeshProUGUI) myText.GetValue(__instance); // __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI) MyText.GetValue(__instance); // __instance.myText
                     
                     // Get our stored values
 
@@ -636,7 +638,7 @@ namespace NewSafetyHelp.CustomDesktop
                     }
                     
                     // Handle the dates
-                    List<int> dateList = new List<int>() {4, 23, 1996};
+                    List<int> dateList = new List<int> {4, 23, 1996};
 
                     if (customCampaign.DesktopDateStartDay != -1)
                     {
