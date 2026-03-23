@@ -141,6 +141,7 @@
     <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomRingtone\RingtoneHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\OnDayUnlockPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Abstract\CustomCampaignElement.cs" />

@@ -90,7 +90,6 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 
@@ -253,8 +252,14 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
+                    }
+
+                    foreach (CustomMusic customMusic in customMusicList)
+                    {
+                        LoggingHelper.ErrorLog($"Custom Music: {customMusic.MusicClip != null}" +
+                                               $"OnlyPlayOnUnlockDay {customMusic.OnlyPlayOnUnlockDay}." +
+                                               $"IsIntermissionMusic {customMusic.IsIntermissionMusic}.");
                     }
 
                     if (playCustomMusic)

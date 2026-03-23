@@ -1,8 +1,12 @@
-﻿using MelonLoader;
+﻿using System.Collections.Generic;
+using System.Linq;
+using MelonLoader;
+using NewSafetyHelp.Audio.AudioPatches;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomRingtone;
 using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.Callers.IncomingCallWindow
@@ -69,18 +73,58 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
-                    if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
+
+                    // Ringtone
+                    if (customCampaign.CustomRingtones != null 
+                        && customCampaign.CustomRingtones.Count > 0)
                     {
-                        CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID + 1);
+                        List<CustomRingtone> validRingtonesNormal = new List<CustomRingtone>();
+                        List<CustomRingtone> validRingtonesGlitched = new List<CustomRingtone>();
+
+                        // For each ringtone that is valid for this current day, attempt to find all valid.
+                        foreach (CustomRingtone customRingtone in customCampaign.CustomRingtones.Where(c => c.UnlockDay <= GlobalVariables.currentDay))
+                        {
+                            // If we are only allowed to play on the unlock day.
+                            // Then the unlock day must be equal to the current day.
+                            
+                            if (customRingtone.OnlyOnUnlockDay 
+                                && customRingtone.UnlockDay != GlobalVariables.currentDay)
+                            {
+                                continue;
+                            }
+                            
+                            if (customRingtone.IsGlitchedVersion)
+                            {
+                                validRingtonesGlitched.Add(customRingtone);
+                            }
+                            else
+                            {
+                                validRingtonesNormal.Add(customRingtone);
+                            }
+                        }
                         
+                        // Now for each valid ringtone we try to pick one valid.
+                        GlobalVariables.UISoundControllerScript.phoneCall = RingtoneHelper.ReplacePhoneRingtoneIfValid(ref validRingtonesNormal,
+                            customCampaign.DoNotAccountDefaultRingtone, ref UISoundPatch.StartPatch.DefaultRingtone);
+
+                        GlobalVariables.UISoundControllerScript.phoneCallWarped = RingtoneHelper.ReplacePhoneRingtoneIfValid(ref validRingtonesGlitched,
+                            customCampaign.DoNotAccountDefaultRingtone, ref UISoundPatch.StartPatch.DefaultWarpedRingtone);
+                    }
+
+                    if (GlobalVariables.callerControllerScript.currentCallerID + 1 <=
+                        GlobalVariables.callerControllerScript.callers.Length)
+                    {
+                        CustomCCaller customCCaller =
+                            CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(
+                                GlobalVariables.callerControllerScript.currentCallerID + 1);
+
                         if (customCCaller == null)
                         {
-                            LoggingHelper.ErrorLog("Custom campaign caller was null. Unable of checking for downed network parameter." +
-                                                   " Calling original function.");
+                            LoggingHelper.ErrorLog(
+                                "Custom campaign caller was null. Unable of checking for downed network parameter." +
+                                " Calling original function.");
                             return true;
                         }
                         

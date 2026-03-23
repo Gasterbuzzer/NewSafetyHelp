@@ -135,7 +135,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             if (jsonObjectParsed.TryGetValue("attached_custom_campaign_name", out var attachedCustomCampaignName))
             {
-                LoggingHelper.DebugLog("Found an entry that is custom campaign only.");
+                LoggingHelper.DebugLog("Found an entry that is custom campaign only.",
+                    LoggingHelper.LoggingCategory.ENTRY);
                 
                 customCampaignName = attachedCustomCampaignName.Value<string>();
                 inCustomCampaign = true;
@@ -1056,7 +1057,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     break;
             }
 
-            LoggingHelper.DebugLog($"Finished parsing entry: {newMonster.monsterName}.");
+            LoggingHelper.DebugLog($"Finished parsing entry: {newMonster.monsterName}.",
+                LoggingHelper.LoggingCategory.ENTRY);
         }
     }
 }

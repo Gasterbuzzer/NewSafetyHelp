@@ -68,13 +68,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
 
             // Add to correct campaign.
-            CustomCampaign foundCustomCampaign =
+            CustomCampaign customCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
 
-            if (foundCustomCampaign != null)
+            if (customCampaign != null)
             {
-                foundCustomCampaign.CustomRingtones.Add(customCustomRingtone);
+                customCampaign.CustomRingtones.Add(customCustomRingtone);
             }
             else
             {
@@ -96,6 +96,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool isGlitchedVersion = false;
 
             bool appendRingtone = false; // If this is an append ringtone caller.
+            float playChance = 1.0f; // Chance for this Ringtone to play, only if set to append.
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
@@ -105,14 +106,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Unlock Day
             ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
 
-            if (unlockDay == 0)
+            if (unlockDay <= 0)
             {
                 onlyOnUnlockDay = false;
             }
             
             ParsingHelper.TryAssign(jObjectParsed, "only_play_on_unlock_day", ref onlyOnUnlockDay);
             ParsingHelper.TryAssign(jObjectParsed, "is_glitched_version", ref isGlitchedVersion);
+            
             ParsingHelper.TryAssign(jObjectParsed, "is_append_ringtone", ref appendRingtone);
+            if (appendRingtone)
+            {
+                ParsingHelper.TryAssign(jObjectParsed, "ringtone_chance", ref playChance);
+            }
 
             return new CustomRingtone()
             {
@@ -126,7 +132,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 
                 IsGlitchedVersion = isGlitchedVersion,
                 
-                AppendRingtone = appendRingtone
+                AppendRingtone = appendRingtone,
+                PlayChance = playChance
             };
         }
     }

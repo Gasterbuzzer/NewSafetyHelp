@@ -94,7 +94,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     }
                     else // Unlock Day has been reached.
                     {
-                        if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
+                        // Main Campaign
+                        if (!CustomCampaignGlobal.InCustomCampaign) 
                         {
                             if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1)))
                             {

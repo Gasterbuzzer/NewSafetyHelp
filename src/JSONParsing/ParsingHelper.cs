@@ -232,8 +232,8 @@ namespace NewSafetyHelp.JSONParsing
                 if (!File.Exists(usermodFolderPath + "\\" + audioPath))
                 {
                     LoggingHelper.WarningLog($"Could not find provided audio file for key '{key}' at " +
-                                             $"'{jsonFolderPath}'" +
-                                             $" {(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"for {customCallerName}" : "")}.");
+                                             $"'{jsonFolderPath}' (For Audio '{audioPath}') " +
+                                             $"{(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"for {customCallerName}" : "")}.");
                 }
                 else
                 {
