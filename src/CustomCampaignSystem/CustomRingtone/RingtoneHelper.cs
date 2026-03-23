@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -14,11 +13,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomRingtone
         /// <param name="validRingtones"></param>
         /// <param name="doNotAccountDefaultRingtone"></param>
         /// <param name="gameDefaultRingtone"></param>
-        /// <returns></returns>
-        [CanBeNull]
+        /// <returns>Ringtone to play.</returns>
         public static RichAudioClip ReplacePhoneRingtoneIfValid(ref List<CustomRingtone> validRingtones,
             bool doNotAccountDefaultRingtone, ref RichAudioClip gameDefaultRingtone)
             {
+                LoggingHelper.DebugLog($"Finding valid ringtone with '{validRingtones.Count > 0}' ringtones available. " +
+                                       $"Do we include the default ringtone? '{doNotAccountDefaultRingtone}'.",
+                    LoggingHelper.LoggingCategory.RINGTONE);
+                
                 if (validRingtones.Count > 0)
                 {
                     List<CustomRingtone> appendRingtones = validRingtones.Where(r => r.AppendRingtone).ToList();
@@ -65,7 +67,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomRingtone
                     return validRingtones[0].RingtoneClip;
                 }
 
-                return null;
+                return gameDefaultRingtone;
             }
     }
 }

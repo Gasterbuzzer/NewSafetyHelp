@@ -1,5 +1,5 @@
 ﻿using System;
-using NewSafetyHelp.Callers.IncomingCallWindow;
+using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.LoggingSystem;
 
@@ -25,7 +25,7 @@ namespace NewSafetyHelp.Callers.UI
                 if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.arcadeMode)
                 {
                     // If the next caller is the last, and we skip it (Consequence caller that we got right).
-                    if (CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript) > 0)
+                    if (CallerSkipping.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript) > 0)
                     {
                         LoggingHelper.DebugLog("DEBUG: Last caller was the last one. Already ending the day.",
                             consoleColor: ConsoleColor.DarkYellow);

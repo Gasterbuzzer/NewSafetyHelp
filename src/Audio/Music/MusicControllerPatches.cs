@@ -255,13 +255,6 @@ namespace NewSafetyHelp.Audio.Music
                         return true;
                     }
 
-                    foreach (CustomMusic customMusic in customMusicList)
-                    {
-                        LoggingHelper.ErrorLog($"Custom Music: {customMusic.MusicClip != null}" +
-                                               $"OnlyPlayOnUnlockDay {customMusic.OnlyPlayOnUnlockDay}." +
-                                               $"IsIntermissionMusic {customMusic.IsIntermissionMusic}.");
-                    }
-
                     if (playCustomMusic)
                     {
                         if (customMusicList.Count > 0 

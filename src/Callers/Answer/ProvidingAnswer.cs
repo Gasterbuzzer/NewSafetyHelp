@@ -3,7 +3,7 @@ using System.Collections;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
-using NewSafetyHelp.Callers.IncomingCallWindow;
+using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -415,7 +415,7 @@ namespace NewSafetyHelp.Callers.Answer
                     if (CustomCampaignGlobal.InCustomCampaign
                         && !GlobalVariables.arcadeMode)
                     {
-                        int checkResult = CloseButtonPatches.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                        int checkResult = CallerSkipping.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
                             LoggingHelper.DebugLog("Calling end day routine from submit answer.");
@@ -437,11 +437,11 @@ namespace NewSafetyHelp.Callers.Answer
 
                         if (customCampaign == null)
                         {
-                            LoggingHelper.CampaignNullError();
                             return true;
                         }
     
                         // A dynamic caller. We can play intermission music.
+                        // For non-dynamic callers, we play the music differently.
                         if (monsterID == null)
                         {
                             if (customCampaign.CustomIntermissionMusic.Count >= 0)

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.AudioPatches;
 using NewSafetyHelp.Audio.Music.Intermission;
+using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
@@ -13,6 +15,9 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
     public static class CallWindowStartPatches
     {
+        private static readonly FieldInfo FirstCaller = typeof(CallerController).
+            GetField("firstCaller", BindingFlags.NonPublic | BindingFlags.Instance);
+        
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "OnEnable")]
         public static class OnEnablePatch
         {
@@ -116,9 +121,32 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <=
                         GlobalVariables.callerControllerScript.callers.Length)
                     {
-                        CustomCCaller customCCaller =
-                            CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(
-                                GlobalVariables.callerControllerScript.currentCallerID + 1);
+                        int currentCallerID = GlobalVariables.callerControllerScript.currentCallerID;
+                        int checkResult = CallerSkipping.GetCallersSkippedAmount(GlobalVariables.callerControllerScript);
+
+                        int callersLookedAhead = 1;
+
+                        if (checkResult > 0)
+                        {
+                            callersLookedAhead = checkResult + 1;
+                        }
+
+                        if ((bool) FirstCaller.GetValue(GlobalVariables.callerControllerScript))
+                        {
+                            LoggingHelper.DebugLog("First caller of the day. Callers ahead will be set to 0.",
+                                LoggingHelper.LoggingCategory.RINGTONE);
+                            callersLookedAhead = 0;
+                        }
+
+                        int callerToBeCalledID = currentCallerID + callersLookedAhead;
+
+                        LoggingHelper.DebugLog(() =>
+                                $"Checking the ringtone for the caller with ID: '{callerToBeCalledID}' " +
+                                $"Check Result: '{checkResult}'. " +
+                                $"(Look ahead '{callersLookedAhead}').",
+                            LoggingHelper.LoggingCategory.RINGTONE);
+                        
+                        CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(callerToBeCalledID);
 
                         if (customCCaller == null)
                         {
@@ -134,13 +162,12 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
                         }
                         
-                        if (!GlobalVariables.isXmasDLC && customCCaller.DownedNetworkCaller)
+                        if (!GlobalVariables.isXmasDLC 
+                            && customCCaller.DownedNetworkCaller)
                         {
-
-                            LoggingHelper.DebugLog("Custom caller is set to play warped phone call sound" +
-                                                   $" (INFO: Downed Network? {customCCaller.DownedNetworkCaller};" +
-                                                   $" Caller Name: {customCCaller.CallerName}" +
-                                                   ").");
+                            LoggingHelper.DebugLog("Custom caller is set to play warped phone call sound " +
+                                                   $"(INFO: Downed Network? {customCCaller.DownedNetworkCaller}; " +
+                                                   $"Caller Name: {customCCaller.CallerName}).");
                             
                             GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.phoneCallWarped);
                             return false;
