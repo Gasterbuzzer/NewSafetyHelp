@@ -120,7 +120,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ParsingHelper.TryAssign(jObjectParsed, "ringtone_chance", ref playChance);
             }
 
-            return new CustomRingtone()
+            return new CustomRingtone
             {
                 CustomCampaignName = customCampaignName,
 
