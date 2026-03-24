@@ -199,14 +199,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                         unlockDay = 0;
                     }
 
-                    LoggingHelper.DebugLog("This email is using the old accuracy system. " +
-                                           $"Unlock Threshold: '{customEmail.UnlockThreshold}' " +
-                                           $"with that day '{unlockDay}' score " +
-                                           $"'{customCampaign.SavedDayScores[unlockDay]}'.");
-
-                    if (customCampaign.SavedDayScores[unlockDay] < customEmail.UnlockThreshold)
+                    if (customEmail.UnlockThreshold > 0)
                     {
-                        return false;
+                        LoggingHelper.DebugLog("This email is using the old accuracy system (for accuracy). " +
+                                               $"Unlock Threshold: '{customEmail.UnlockThreshold}' " +
+                                               $"with that day '{unlockDay}' score " +
+                                               $"'{customCampaign.SavedDayScores[unlockDay]}'.");
+
+                        if (customCampaign.SavedDayScores[unlockDay] < customEmail.UnlockThreshold)
+                        {
+                            return false;
+                        }
                     }
                 }
                 

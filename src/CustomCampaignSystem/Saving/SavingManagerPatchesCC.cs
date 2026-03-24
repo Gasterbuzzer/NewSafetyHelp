@@ -13,6 +13,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
         [HarmonyLib.HarmonyPatch(typeof(SaveManagerBehavior), "SaveGameProgress")]
         public static class SaveGameProgressPatch
         {
+            private static readonly MethodInfo SaveXmasGameProgress = typeof(SaveManagerBehavior).
+                GetMethod("SaveXmasGameProgress",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
             /// <summary>
             /// Changes the save function to respect custom campaigns.
             /// </summary>
@@ -25,16 +29,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 }
                 else if (GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo saveXmasGameProgress = typeof(SaveManagerBehavior).GetMethod("SaveXmasGameProgress",
-                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                    if (saveXmasGameProgress == null)
+                    if (SaveXmasGameProgress == null)
                     {
-                        LoggingHelper.ErrorLog("Method 'SaveXmasGameProgress' was null. Calling normal function.");
+                        LoggingHelper.ReflectionError(nameof(SaveXmasGameProgress));
                         return true;
                     }
 
-                    saveXmasGameProgress.Invoke(__instance, null); // __instance.SaveXmasGameProgress();
+                    // OLD: __instance.SaveXmasGameProgress();
+                    SaveXmasGameProgress.Invoke(__instance, null);
                 }
                 else
                 {
@@ -53,6 +55,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
         [HarmonyLib.HarmonyPatch(typeof(SaveManagerBehavior), "SaveGameFinished")]
         public static class SaveGameFinishedPatch
         {
+            private static readonly MethodInfo SaveXmasGameFinished = typeof(SaveManagerBehavior).
+                GetMethod("SaveXmasGameFinished",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
             /// <summary>
             /// Changes the save function to respect custom campaigns.
             /// </summary>
@@ -65,16 +71,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 }
                 else if (GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo saveXmasGameFinished = typeof(SaveManagerBehavior).GetMethod("SaveXmasGameFinished",
-                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                    if (saveXmasGameFinished == null)
+                    if (SaveXmasGameFinished == null)
                     {
-                        LoggingHelper.ErrorLog("Method 'SaveXmasGameFinished' was null. Calling normal function.");
+                        LoggingHelper.ReflectionError(nameof(SaveXmasGameFinished));
                         return true;
                     }
 
-                    saveXmasGameFinished.Invoke(__instance, null); // __instance.SaveXmasGameFinished();
+                    // OLD: __instance.SaveXmasGameFinished();
+                    SaveXmasGameFinished.Invoke(__instance, null); 
                 }
                 else
                 {
@@ -385,6 +389,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
         [HarmonyLib.HarmonyPatch(typeof(SaveManagerBehavior), "DeleteGameProgress")]
         public static class DeleteGameProgressPatch
         {
+            private static readonly MethodInfo DeleteXmasGameProgress = typeof(SaveManagerBehavior).
+                GetMethod("DeleteXmasGameProgress",
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            
             /// <summary>
             /// Changes the delete save function to delete the custom campaign if called in a custom campaign.
             /// </summary>
@@ -398,17 +406,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 }
                 else if (GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo _deleteXmasGameProgress = typeof(SaveManagerBehavior).GetMethod("DeleteXmasGameProgress",
-                        BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
-
-                    if (_deleteXmasGameProgress == null)
+                    if (DeleteXmasGameProgress == null)
                     {
-                        LoggingHelper.ErrorLog("DeleteXmasGameProgress method was not found. " +
-                                               "Calling default function.");
+                        LoggingHelper.ReflectionError(nameof(DeleteXmasGameProgress));
                         return true;
                     }
 
-                    _deleteXmasGameProgress.Invoke(__instance, null); // __instance.DeleteXmasGameProgress();
+                    // OLD: __instance.DeleteXmasGameProgress();
+                    DeleteXmasGameProgress.Invoke(__instance, null); 
                 }
                 else
                 {

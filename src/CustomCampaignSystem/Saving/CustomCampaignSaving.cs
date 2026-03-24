@@ -64,7 +64,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 currentCampaign.CampaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
             }
             
-            for (int i = 0; i < currentCampaign.CampaignDays; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
             {
                 if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
@@ -217,18 +217,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             }
 
             // Day score
-            for (int i = 0; i < currentCampaign.CampaignDays; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
             {
                 if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
                     MelonPreferences_Entry<float> savedCallerCorrectAnswers =
                         currentCampaign.CampaignSaveCategory.CreateEntry($"SavedDayScore{i}", 0.0f);
 
-                    if (currentCampaign.SavedDayScores.Count >
-                        i) // If we have enough values for "i". It should be but who knows.
+                    // If we have enough values for "i". It should be but who knows.
+                    if (currentCampaign.SavedDayScores.Count > i)
                     {
-                        savedCallerCorrectAnswers.Value =
-                            currentCampaign.SavedDayScores[i]; // Whatever value where have at that index.
+                        // Whatever value where have at that index.
+                        savedCallerCorrectAnswers.Value = currentCampaign.SavedDayScores[i]; 
                     }
                     else
                     {
@@ -238,11 +238,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 }
                 else
                 {
-                    if (currentCampaign.SavedDayScores.Count >
-                        i) // If we have enough values for "i". It should be but who knows.
+                    // If we have enough values for "i". It should be but who knows.
+                    if (currentCampaign.SavedDayScores.Count > i)
                     {
+                        // Whatever value where have at that index.
                         currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value =
-                            currentCampaign.SavedDayScores[i]; // Whatever value where have at that index.
+                            currentCampaign.SavedDayScores[i]; 
                     }
                     else
                     {
@@ -320,7 +321,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             }
 
             // Saved Day Scores
-            for (int i = 0; i < currentCampaign.CampaignDays; i++)
+            // We do +1, since the game never uses day 0 and instead prefers days to start at 1.
+            // We could fix this, by simply writing the correct values "-1" day, but this seems simpler.
+            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
             {
                 if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") != null)
                 {
@@ -329,8 +332,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 }
                 else
                 {
-                    LoggingHelper.WarningLog($"While loading all saved caller answers, 'SavedDayScore{i}' does not exist!" +
-                                             $" Setting to false for {i}.");
+                    LoggingHelper.WarningLog("While loading all saved caller answers, " +
+                                             $"'SavedDayScore{i}' was not found! " +
+                                             $"Setting score to 0.0f for {i}.");
                     currentCampaign.SavedDayScores.Add(0.0f);
                 }
             }
@@ -371,7 +375,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             GlobalVariables.saveManagerScript.savedGameFinished = currentCampaign.SavedGameFinished;
             GlobalVariables.saveManagerScript.savedGameFinishedDisplay = currentCampaign.SavedGameFinishedDisplay;
 
-            for (int i = 0; i < Mathf.Min(7, currentCampaign.CampaignDays); ++i)
+            for (int i = 0; i < Mathf.Min(7, currentCampaign.CampaignDays+1); ++i)
             {
                 switch (i)
                 {
@@ -478,7 +482,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             // Reset daily score
             currentCampaign.SavedDayScores = new List<float>();
-            for (int i = 0; i < currentCampaign.CampaignDays; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
             {
                 currentCampaign.CampaignSaveCategory.DeleteEntry($"SavedDayScore{i}");
             }

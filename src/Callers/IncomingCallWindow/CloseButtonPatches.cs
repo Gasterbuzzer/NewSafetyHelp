@@ -4,6 +4,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.Callers.IncomingCallWindow
@@ -31,6 +32,17 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
 
                         GlobalVariables.callerControllerScript
                             .callers[GlobalVariables.callerControllerScript.currentCallerID].answeredCorrectly = true;
+                        
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign != null)
+                        {
+                            customCampaign.SavedDayScores[GlobalVariables.currentDay] =
+                                GlobalVariables.callerControllerScript.GetScore();
+                    
+                            LoggingHelper.DebugLog($"(Custom Ending) Saving day score of day '{GlobalVariables.currentDay}'. " +
+                                                   $"With the score of '{customCampaign.SavedDayScores[GlobalVariables.currentDay]}'.");
+                        }
 
                         GlobalVariables.mainCanvasScript.PlayEndingCutscene();
                     }

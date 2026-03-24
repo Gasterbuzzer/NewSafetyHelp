@@ -400,6 +400,17 @@ namespace NewSafetyHelp.Callers.UI
         {
             // To avoid duplicate day ending.
             public static bool IsDayEnding;
+            
+            private static readonly MethodInfo SaveCallerAnswers = typeof(MainCanvasBehavior).
+                GetMethod("SaveCallerAnswers",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
+            private static readonly MethodInfo UnlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod(
+                "UnlockDailySteamAchievement",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
+            private static readonly FieldInfo ProgressDay = typeof(MainCanvasBehavior).GetField("progressDay",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
             /// <summary>
             /// Patches the EndDayRoutine coroutine to work better with custom campaigns.
@@ -421,7 +432,6 @@ namespace NewSafetyHelp.Callers.UI
                 if (IsDayEnding)
                 {
                     LoggingHelper.DebugLog("Skipping EndDayRoutine.");
-
                     yield break;
                 }
 
@@ -456,19 +466,14 @@ namespace NewSafetyHelp.Callers.UI
 
                 if (!GlobalVariables.isXmasDLC)
                 {
-                    MethodInfo unlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod(
-                        "UnlockDailySteamAchievement",
-                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                    if (unlockDailySteamAchievement == null)
+                    if (UnlockDailySteamAchievement == null)
                     {
-                        LoggingHelper.CriticalErrorLog(
-                            "Method 'UnlockDailySteamAchievement' was null. Catastrophic failure!");
+                        LoggingHelper.ReflectionError(nameof(UnlockDailySteamAchievement));
                         yield break;
                     }
 
                     // OLD: mainCanvasBehavior.UnlockDailySteamAchievement();
-                    unlockDailySteamAchievement.Invoke(mainCanvasBehavior, null);
+                    UnlockDailySteamAchievement.Invoke(mainCanvasBehavior, null);
                 }
 
                 GlobalVariables.fade.FadeIn(2f);
@@ -480,7 +485,7 @@ namespace NewSafetyHelp.Callers.UI
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
-                    PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay.ToString(),
+                    PlayerPrefs.SetFloat("SavedDayScore" + GlobalVariables.currentDay,
                         GlobalVariables.callerControllerScript.GetScore());
                 }
                 else // Custom Campaign
@@ -489,27 +494,29 @@ namespace NewSafetyHelp.Callers.UI
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
                     customCampaign.SavedDayScores[GlobalVariables.currentDay] =
                         GlobalVariables.callerControllerScript.GetScore();
+                    
+                    LoggingHelper.DebugLog($"Saving day score of day '{GlobalVariables.currentDay}'." +
+                                           $"With the score of '{customCampaign.SavedDayScores[GlobalVariables.currentDay]}'.");
                 }
 
-                FieldInfo progressDay = typeof(MainCanvasBehavior).GetField("progressDay",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                if (progressDay == null)
+                if (ProgressDay == null)
                 {
-                    LoggingHelper.CriticalErrorLog("Field 'progressDay' was null. Catastrophic failure!");
+                    LoggingHelper.ReflectionError(nameof(ProgressDay));
                     yield break;
                 }
 
-                if (!(bool)progressDay.GetValue(mainCanvasBehavior)) // !mainCanvasBehavior.progressDay
+                // OLD: !mainCanvasBehavior.progressDay
+                if (!(bool)ProgressDay.GetValue(mainCanvasBehavior)) 
                 {
                     ++GlobalVariables.currentDay;
-                    progressDay.SetValue(mainCanvasBehavior, true); // mainCanvasBehavior.progressDay = true;
+                    
+                    // OLD: mainCanvasBehavior.progressDay = true;
+                    ProgressDay.SetValue(mainCanvasBehavior, true); 
                 }
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
@@ -519,17 +526,14 @@ namespace NewSafetyHelp.Callers.UI
                         GlobalVariables.callerControllerScript.currentCallerID + 1;
                     GlobalVariables.saveManagerScript.savedEntryTier = GlobalVariables.entryUnlockScript.currentTier;
 
-                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers",
-                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                    if (saveCallerAnswers == null)
+                    if (SaveCallerAnswers == null)
                     {
-                        LoggingHelper.CriticalErrorLog("Method 'SaveCallerAnswers' was null." +
-                                                       " Catastrophic failure!");
+                        LoggingHelper.ReflectionError(nameof(SaveCallerAnswers));
                         yield break;
                     }
 
-                    saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
+                    // OLD: mainCanvasBehavior.SaveCallerAnswers();
+                    SaveCallerAnswers.Invoke(mainCanvasBehavior, null);
                 }
                 else // Custom Campaign
                 {
@@ -537,7 +541,6 @@ namespace NewSafetyHelp.Callers.UI
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
