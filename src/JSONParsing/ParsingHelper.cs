@@ -308,11 +308,11 @@ namespace NewSafetyHelp.JSONParsing
         /// </summary>
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="target">Targets to write the value to.</param>
-        public static void TryAssignListAccuracyType(JObject jObjectParsed, ref List<CallerAccuracyType> target)
+        public static bool TryAssignListAccuracyType(JObject jObjectParsed, ref List<CallerAccuracyType> target)
         {
             if (!jObjectParsed.TryGetValue(AccuracyCheckTypeString, out _))
             {
-                return;
+                return false;
             }
 
             if (target == null)
@@ -337,21 +337,21 @@ namespace NewSafetyHelp.JSONParsing
             {
                 LoggingHelper.ErrorLog("Provided accuracy lists are empty or could not be parsed. " +
                                        "Unable of parsing accuracy checks.");
-                return;
+                return false;
             }
 
             if (accuracyRequiredList.Count != accuracyCheckType.Count)
             {
                 LoggingHelper.ErrorLog("Provided accuracy lists must all have equal length. " +
                                        "Unable of parsing accuracy checks.");
-                return;
+                return false;
             }
 
             if (isTotalAccuracyList.Count > accuracyCheckType.Count)
             {
                 LoggingHelper.ErrorLog("Provided list of total accuracy is larger than available accuracy checks. " +
                                        "Unable of parsing accuracy checks.");
-                return;
+                return false;
             }
 
             for (int i = 0; i < accuracyCheckType.Count; i++)
@@ -383,6 +383,8 @@ namespace NewSafetyHelp.JSONParsing
 
                 target.Add(newCallerAccuracyType);
             }
+
+            return true;
         }
 
         /// <summary>

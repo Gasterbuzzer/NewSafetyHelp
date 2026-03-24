@@ -219,9 +219,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "gameover_caller_day", ref gameOverCallDay);
             
             // Accuracy Caller Section
+
+            bool isAccuracyCallerChanged = false;
+            ParsingHelper.TryAssignWithBool(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller,
+                ref isAccuracyCallerChanged);
             
-            ParsingHelper.TryAssign(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller);
-            ParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
+            bool doWeHaveAccuracyCall = ParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
+            if (!isAccuracyCallerChanged 
+                && doWeHaveAccuracyCall)
+            {
+                isAccuracyCaller = true;
+            }
             
             ParsingHelper.TryAssign(jObjectParsed, "accuracy_caller_count_total_day_instead",
                 ref countEveryCallerForLocalAccuracy);
