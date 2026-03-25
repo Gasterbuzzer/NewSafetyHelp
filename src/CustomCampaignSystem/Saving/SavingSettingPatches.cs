@@ -7,6 +7,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 {
     public static class SavingSettingPatches
     {
+        private static readonly MethodInfo SaveXmasOptions = typeof(SaveManagerBehavior).
+            GetMethod("SaveXmasOptions",
+            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        
         [HarmonyLib.HarmonyPatch(typeof(SaveManagerBehavior), "SaveOptions")]
         public static class SaveOptionsPatch
         {
@@ -34,16 +38,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 
                 if (GlobalVariables.isXmasDLC) // DLC
                 {
-                    MethodInfo saveXmasOptions = typeof(SaveManagerBehavior).GetMethod("SaveXmasOptions",
-                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-                    if (saveXmasOptions == null)
+                    if (SaveXmasOptions == null)
                     {
-                        LoggingHelper.ErrorLog("SaveXmasOptions method was not found. Calling original function.");
+                        LoggingHelper.ReflectionError(nameof(SaveXmasOptions));
                         return true;
                     }
 
-                    saveXmasOptions.Invoke(__instance, null); //__instance.SaveXmasOptions();
+                    // OLD: __instance.SaveXmasOptions();
+                    SaveXmasOptions.Invoke(__instance, null); 
                 }
 
                 if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
@@ -220,14 +222,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
                     Screen.SetResolution(customCampaign.SavedScreenWidth, customCampaign.SavedScreenHeight,
                         customCampaign.SavedFullScreenToggle, customCampaign.SavedRefreshRate);
                     
-                    QualitySettings.vSyncCount = 0;
+                    if (NewSafetyHelpMainClass.Vsync.Value)
+                    {
+                        QualitySettings.vSyncCount = 1;
+                    }
+                    else
+                    {
+                        QualitySettings.vSyncCount = 0;
+                    }
+                    
                     Application.targetFrameRate = customCampaign.SavedRefreshRate;
                     
                     LoggingHelper.DebugLog($"Load video settings: {customCampaign.SavedScreenHeight} and {customCampaign.SavedScreenWidth} and {customCampaign.SavedFullScreenToggle}.");

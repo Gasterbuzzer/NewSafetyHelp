@@ -1,4 +1,5 @@
 ﻿using NewSafetyHelp.LoggingSystem;
+using UnityEngine;
 
 namespace NewSafetyHelp.InGameSettings
 {
@@ -72,6 +73,22 @@ namespace NewSafetyHelp.InGameSettings
         public static bool OnSkipDayClockInToggle(bool toggleValue)
         {
             NewSafetyHelpMainClass.SkipDayClockIn.Value = toggleValue;
+            
+            return toggleValue;
+        }
+        
+        public static bool OnVsyncToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.Vsync.Value = toggleValue;
+            
+            if (NewSafetyHelpMainClass.Vsync.Value)
+            {
+                QualitySettings.vSyncCount = 1;
+            }
+            else
+            {
+                QualitySettings.vSyncCount = 0;
+            }
             
             return toggleValue;
         }

@@ -21,6 +21,8 @@ namespace NewSafetyHelp
         public static MelonPreferences_Category PersistantEntrySave;
 
         private static MelonPreferences_Category mainModSettings;
+        
+        public static MelonPreferences_Entry<bool> Vsync;
 
         public static MelonPreferences_Entry<bool> SkipComputerScene; // If to skip the initial computer scene.
 
@@ -46,6 +48,8 @@ namespace NewSafetyHelp
 
             // Settings
             mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
+            
+            Vsync = mainModSettings.CreateEntry("Vsync", false);
 
             SkipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
 
@@ -131,7 +135,7 @@ namespace NewSafetyHelp
                 if (isInitializedMainOnce)
                 {
                     // We already added them once, no need to add them again.
-                    LoggingHelper.InfoLog("Custom Entries were already added. " +
+                    LoggingHelper.DebugLog("Custom Entries were already added. " +
                                           "Skipping adding them again. (This happens on scene reload).");
                     return;
                 }

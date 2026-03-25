@@ -119,6 +119,11 @@ namespace NewSafetyHelp.CustomDesktop
                 // Add custom settings
                 if (!GlobalVariables.isXmasDLC)
                 {
+                    // Add vsync option
+                    InGameSettingHelper.CreateNewToggle(InGameSettingHelper.GetVideoOptionsSection(),
+                        ToggleButtonFunctions.OnVsyncToggle,
+                        "Enable VSYNC", NewSafetyHelpMainClass.Vsync.Value);
+                    
                     GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings",
                         "Mod settings to show more information and also allow skipping the initial load scene.");
 

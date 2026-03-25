@@ -32,7 +32,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -51,6 +50,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
         [HarmonyLib.HarmonyPatch(typeof(ScreenResolutions), "Start")]
         public static class ScreenResolutionsStartPatch
         {
+            private static readonly FieldInfo ResolutionsField = typeof(ScreenResolutions).GetField("resolutions",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            private static readonly MethodInfo ResToString = typeof(ScreenResolutions).GetMethod("ResToString",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static);
+            private static readonly MethodInfo SetSteamDeckResolution = typeof(ScreenResolutions).
+                GetMethod("SetSteamDeckResolution", BindingFlags.NonPublic | BindingFlags.Instance);
+            private static readonly FieldInfo JustStarted = typeof(ScreenResolutions).GetField("justStarted", BindingFlags.NonPublic | BindingFlags.Static);
+            
             /// <summary>
             /// ScreenResolutions start patch to allow the options to also affect the custom campaign stored values.
             /// </summary>
@@ -58,19 +65,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ScreenResolutions __instance)
             {
-                FieldInfo resolutionsField = typeof(ScreenResolutions).GetField("resolutions", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                MethodInfo resToString = typeof(ScreenResolutions).GetMethod("ResToString", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static);
-                MethodInfo setSteamDeckResolution = typeof(ScreenResolutions).GetMethod("SetSteamDeckResolution", BindingFlags.NonPublic | BindingFlags.Instance);
-                FieldInfo justStarted = typeof(ScreenResolutions).GetField("justStarted", BindingFlags.NonPublic | BindingFlags.Static);
-
-                if (resolutionsField == null || resToString == null || justStarted == null || setSteamDeckResolution == null)
+                if (ResolutionsField == null 
+                    || ResToString == null 
+                    || JustStarted == null 
+                    || SetSteamDeckResolution == null)
                 {
-                    LoggingHelper.ErrorLog("Field 'resolutions' or Method 'ResToString' or Field 'justStarted' or Method 'setSteamDeckResolution' was null." +
-                                           " Calling normal function.");
+                    LoggingHelper.ReflectionError(nameof(ResolutionsField), nameof(ResToString),
+                        nameof(SetSteamDeckResolution), nameof(JustStarted));
                     return true;
                 }
                 
-                Resolution[] resolutions = (Resolution[]) resolutionsField.GetValue(__instance);
+                Resolution[] resolutions = (Resolution[]) ResolutionsField.GetValue(__instance);
                 
                 __instance.dropdownMenu.options.Clear();
 
@@ -79,7 +84,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                     for (int index = 0; index < resolutions.Length; ++index)
                     {
                         // OLD:  __instance.ResToString()
-                        string label = (string) resToString.Invoke(__instance, new object[] { resolutions[index] });
+                        string label = (string) ResToString.Invoke(__instance, new object[] { resolutions[index] });
                     
                         __instance.dropdownMenu.options.Add(new TMP_Dropdown.OptionData(label)); 
                     
@@ -99,13 +104,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
                     for (int index = 0; index < resolutions.Length; ++index)
                     {
-                        string label = (string) resToString.Invoke(__instance, new object[] { resolutions[index] });
+                        string label = (string) ResToString.Invoke(__instance, new object[] { resolutions[index] });
                     
                         __instance.dropdownMenu.options.Add(new TMP_Dropdown.OptionData(label)); 
                     
@@ -126,9 +130,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         resolutions[__instance.dropdownMenu.value].height,
                         resolutions[__instance.dropdownMenu.value].refreshRate));
                 
-                justStarted.SetValue(__instance, false); // ScreenResolutions.justStarted = false;
+                // OLD: ScreenResolutions.justStarted = false;
+                JustStarted.SetValue(__instance, false); 
                 
-                setSteamDeckResolution.Invoke(__instance, null); // __instance.SetSteamDeckResolution();
+                // OLD: __instance.SetSteamDeckResolution();
+                SetSteamDeckResolution.Invoke(__instance, null);
                 
                 return false; // Skip original function.
             }
@@ -149,8 +155,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                     {
                         Screen.SetResolution(GlobalVariables.screenWidthSetting, GlobalVariables.screenHeightSetting,
                             GlobalVariables.isFullScreen, GlobalVariables.refreshRateSetting);
+
+                        if (NewSafetyHelpMainClass.Vsync.Value)
+                        {
+                            QualitySettings.vSyncCount = 1;
+                        }
+                        else
+                        {
+                            QualitySettings.vSyncCount = 0;
+                        }
                         
-                        QualitySettings.vSyncCount = 0;
                         Application.targetFrameRate = GlobalVariables.refreshRateSetting;
                         
                         LoggingHelper.DebugLog("Saved Resolution:" +
@@ -166,7 +180,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -175,7 +188,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         Screen.SetResolution(customCampaign.SavedScreenWidth, customCampaign.SavedScreenHeight, 
                             customCampaign.SavedFullScreenToggle, customCampaign.SavedRefreshRate);
 
-                        QualitySettings.vSyncCount = 0;
+                        if (NewSafetyHelpMainClass.Vsync.Value)
+                        {
+                            QualitySettings.vSyncCount = 1;
+                        }
+                        else
+                        {
+                            QualitySettings.vSyncCount = 0;
+                        }
+                        
                         Application.targetFrameRate = customCampaign.SavedRefreshRate;
                         
                         LoggingHelper.DebugLog("Saved Resolution:" +
@@ -195,6 +216,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             typeof(int), typeof(int))]
         public static class SetDropdownResolutionPatch
         {
+            private static readonly FieldInfo ResolutionsField = typeof(ScreenResolutions).GetField("resolutions",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            private static readonly FieldInfo JustStartedField = typeof(ScreenResolutions).GetField("justStarted",
+                BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public);
+            
             /// <summary>
             /// SetDropdownResolution start patch to allow the options to also affect the custom campaign stored values.
             /// </summary>
@@ -205,24 +231,23 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ScreenResolutions __instance, ref int width, ref int height, ref int refresh)
             {
-                FieldInfo resolutionsField = typeof(ScreenResolutions).GetField("resolutions", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                FieldInfo justStartedField = typeof(ScreenResolutions).GetField("justStarted", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public);
-                
-                if (resolutionsField == null || justStartedField == null)
+                if (ResolutionsField == null || JustStartedField == null)
                 {
-                    LoggingHelper.ErrorLog("Field 'resolutions' or Field 'justStarted' was null. " +
-                                           "Calling normal function.");
+                    LoggingHelper.ReflectionError(nameof(ResolutionsField),
+                        nameof(JustStartedField));
                     return true;
                 }
                 
-                Resolution[] resolutions = (Resolution[]) resolutionsField.GetValue(__instance);
+                Resolution[] resolutions = (Resolution[]) ResolutionsField.GetValue(__instance);
                 
-                if ((bool) justStartedField.GetValue(__instance)) //ScreenResolutions.justStarted
+                // OLD: ScreenResolutions.justStarted
+                if ((bool) JustStartedField.GetValue(__instance)) 
                 {
                     return false;
                 }
                 
-                if (!CustomCampaignGlobal.InCustomCampaign) // Main game
+                // Main game
+                if (!CustomCampaignGlobal.InCustomCampaign) 
                 {
                     for (int index = 0; index < resolutions.Length; ++index)
                     {
@@ -242,13 +267,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         }
                     }
                 }
-                else // Custom Campaign
+                // Custom Campaign
+                else 
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     

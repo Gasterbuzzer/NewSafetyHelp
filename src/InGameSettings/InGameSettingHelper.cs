@@ -8,6 +8,24 @@ namespace NewSafetyHelp.InGameSettings
 {
     public static class InGameSettingHelper
     {
+        /// <summary>
+        /// Gets the video options section in the settings.
+        /// </summary>
+        /// <returns>Null if we failed to find. The video options section if found.</returns>
+        public static GameObject GetVideoOptionsSection()
+        {
+            GameObject contentSection = GetContentSettings();
+
+            if (contentSection != null)
+            {
+                GameObject videoOptionsSection = contentSection.transform.Find("VideoOptions").gameObject;
+
+                return videoOptionsSection;
+            }
+            
+            return null;
+        }
+        
         private static GameObject GetPhobiasTogglesSection()
         {
             GameObject contentSection = GetContentSettings();
