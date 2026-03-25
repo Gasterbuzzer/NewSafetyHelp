@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
-using NewSafetyHelp.LoggingSystem;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.Desktop
@@ -27,7 +27,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
                     
@@ -109,16 +108,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     }
                     
                     (bool foundModifier, List<Sprite> value) desktopBackgrounds = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.DesktopBackgrounds,
-                        v => v != null && v.Count > 0);
+                        c => c.DesktopBackgrounds, v => v != null && v.Count > 0);
                     
-                    (bool foundModifier, Sprite value) gameFinishedBackground = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.GameFinishedBackground,
-                        specialPredicate: cM => cM.GameFinishedBackgroundChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) gameFinishedBackground = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.GameFinishedBackground, vCs => vCs.HasChanged);
                     
                     (bool foundModifier, List<int> value) unlockDays = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.UnlockDays,
-                        v => v != null && v.Count > 0);
+                        c => c.UnlockDays, v => v != null && v.Count > 0);
                     
                     // Valid backgrounds given.
                     if (desktopBackgrounds.foundModifier) 
@@ -135,13 +131,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                     || unlockDays.value == null 
                                     || unlockDays.value.Count <= 0) 
                                 {
-                                    setBackgroundSprite = gameFinishedBackground.value;
+                                    setBackgroundSprite = gameFinishedBackground.value.Data;
                                 }
                                 else // Conditional (Days) Case:
                                 {
                                     if (unlockDays.value.Contains(GlobalVariables.currentDay))
                                     {
-                                        setBackgroundSprite = gameFinishedBackground.value;
+                                        setBackgroundSprite = gameFinishedBackground.value.Data;
                                     }
                                 }
                             }

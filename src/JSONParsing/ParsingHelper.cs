@@ -9,6 +9,7 @@ using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.ImportFiles;
@@ -173,6 +174,26 @@ namespace NewSafetyHelp.JSONParsing
             wasAssigned = true;
             target = token.Value<T>();
         }
+        
+        /// <summary>
+        /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
+        /// This version takes in a bool that updates to "true" if updated.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <typeparam name="T">Type of the target.</typeparam>
+        public static void TryAssignWithChangedBool<T>(JObject jObjectParsed, string key, ref VariableChanged<T> target)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                target.HasChanged = false;
+                return;
+            }
+
+            target.HasChanged = true;
+            target.Data = token.Value<T>();
+        }
 
         /// <summary>
         /// Tries to assign the target with the image from the given JSON at the given key.
@@ -196,8 +217,8 @@ namespace NewSafetyHelp.JSONParsing
 
             if (string.IsNullOrEmpty(imagePath))
             {
-                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}." +
-                                       $" Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
+                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}. " +
+                                       $"Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
             }
             else
             {
@@ -206,6 +227,45 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             return true;
+        }
+        
+        /// <summary>
+        /// Tries to assign the target with the image from the given JSON at the given key.
+        /// If not found or if any problems happen, it will not write.
+        /// It will use the VariableChanged generic class.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
+        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
+        /// <param name="customCampaignName">(Optional) Name of the custom campaign. Used to display errors.</param>
+        public static void TryAssignSpriteChanged(JObject jObjectParsed, string key, ref VariableChanged<Sprite> target,
+            string jsonFolderPath, string usermodFolderPath, string customCampaignName = null)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return;
+            }
+
+            string imagePath = token.Value<string>();
+
+            target = new VariableChanged<Sprite>();
+
+            if (string.IsNullOrEmpty(imagePath))
+            {
+                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}. " +
+                                       $"Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
+            }
+            else
+            {
+                Sprite parsedSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath, usermodFolderPath + "\\" + imagePath);
+                if (parsedSprite != null)
+                {
+                    target.HasChanged = true;
+                    target.Data = parsedSprite;
+                }
+            }
         }
 
         /// <summary>

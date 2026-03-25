@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using JetBrains.Annotations;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace NewSafetyHelp.ImportFiles
         /// Function for loading in an image from a provided path and converting it into a Sprite.
         /// </summary>
         /// <param name="imagePath"> Path to the image file. (Includes the image itself in the path) </param>
+        [CanBeNull]
         public static Sprite LoadImage(string imagePath)
         {
             if (!File.Exists(imagePath))
@@ -44,6 +46,7 @@ namespace NewSafetyHelp.ImportFiles
         /// </summary>
         /// <param name="imagePath"> Path to the image file. (Includes the image itself in the path) </param>
         /// <param name="fallbackImagePath"> Path to the image file. (Includes the image itself in the path) </param>
+        [CanBeNull]
         public static Sprite LoadImage(string imagePath, string fallbackImagePath)
         {
             if (!File.Exists(imagePath) && !File.Exists(fallbackImagePath))

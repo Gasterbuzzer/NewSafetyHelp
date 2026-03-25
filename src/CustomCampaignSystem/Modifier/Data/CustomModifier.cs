@@ -21,14 +21,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public string UsernameText = string.Empty; // Name of the player shown on the desktop.
         
         public string RenameMainGameDesktopIcon = string.Empty; // Renames the main desktop icon.
-        public Sprite MainGameDesktopIcon = null; // Icon of the main game desktop program.
-        public bool MainGameDesktopIconChanged = false;
+        
+        // Icon of the main game desktop program.
+        public VariableChanged<Sprite> MainGameDesktopIcon = new VariableChanged<Sprite>(); 
         
         // Backgrounds
         public List<Sprite> DesktopBackgrounds = new List<Sprite>(); // Desktop Backgrounds
         
-        public Sprite GameFinishedBackground = null; // Desktop Background (Finished the game)
-        public bool GameFinishedBackgroundChanged = false;
+        // Desktop Background (Finished the game)
+        public VariableChanged<Sprite> GameFinishedBackground = new VariableChanged<Sprite>(); 
         
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();
@@ -42,72 +43,74 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // Disables the desktop logo "Home Safety Hotline" from the background (Also disables custom ones)
         public bool DisableDesktopLogo = false;
         
-        public Sprite CustomBackgroundLogo = null; // Logo to show in desktop (if not disabled)
-        public bool CustomBackgroundLogoChanged = false;
+        // Logo to show in desktop (if not disabled)
+        public VariableChanged<Sprite> CustomBackgroundLogo = new VariableChanged<Sprite>(); 
         
         public float BackgroundLogoTransparency = 0.2627f;
         
-        public bool HideDiscordProgramChanged = false; // (If it was changed) (It means if to take into consideration)
-        public bool HideDiscordProgram = false; // For those who want more immersion. Should not be recommended.
+        // For those who want more immersion. Should not be recommended.
+        public VariableChanged<bool> HideDiscordProgram = new VariableChanged<bool>(); 
 
         // Program Icons
         
-        public Sprite MailBoxIcon = null; // Mail Box Icon on Desktop
-        public bool MailBoxIconChanged = false;
+        // OLD: public Sprite MailBoxIcon = null; 
+        public VariableChanged<Sprite> MailBoxIcon = new VariableChanged<Sprite>(); // Mail Box Icon on Desktop
         
-        public Sprite EntryBrowserIcon = null; // Entry Browser Icon on Desktop
-        public bool EntryBrowserIconChanged = false;
+        public VariableChanged<Sprite> EntryBrowserIcon = new VariableChanged<Sprite>(); // Entry Browser Icon on Desktop
         
-        public Sprite OptionsIcon = null; // Options Icon on Desktop
-        public bool OptionsIconChanged = false;
+        public VariableChanged<Sprite> OptionsIcon = new VariableChanged<Sprite>(); // Options Icon on Desktop
         
-        public Sprite ArtbookIcon = null; // Artbook Icon on Desktop
-        public bool ArtbookIconChanged = false;
+        public VariableChanged<Sprite> ArtbookIcon = new VariableChanged<Sprite>(); // Artbook Icon on Desktop
         
-        public Sprite ArcadeIcon = null; // Arcade Icon on Desktop
-        public bool ArcadeIconChanged = false;
+        public VariableChanged<Sprite> ArcadeIcon = new VariableChanged<Sprite>(); // Arcade Icon on Desktop
         
-        public Sprite ScorecardIcon = null; // Weekly Report Icon on Desktop
-        public bool ScorecardIconChanged = false;
+        public VariableChanged<Sprite> ScorecardIcon = new VariableChanged<Sprite>(); // Weekly Report Icon on Desktop
         
         // Credits
         [CanBeNull] public string DesktopCredits = null;
-        public Sprite CreditsIcon = null; // Credits Icon on Desktop
-        public bool CreditsIconChanged = false;
+        public VariableChanged<Sprite> CreditsIcon = new VariableChanged<Sprite>(); // Credits Icon on Desktop
         
         /*
          * Enable Scorecard and such.
          */
         
-        public bool EntryBrowserActive = false;
-        // If this setting was changed at all. Is used when checking.
-        // If this is true and the "active" is false, it will disable the entry browser for example.
-        public bool EntryBrowserChanged = false; 
+        public VariableChanged<bool> EntryBrowserActive = new VariableChanged<bool>
+        {
+            Data = false
+        };
         
-        public bool ScorecardActive = false;
-        public bool ScorecardChanged = false; // See entryBrowserChanged for explanation.
+        public VariableChanged<bool> ScorecardActive = new VariableChanged<bool>
+        {
+            Data = false
+        };
         
-        public bool ArtbookActive = false;
-        public bool ArtbookChanged = false; // See entryBrowserChanged for explanation.
+        public VariableChanged<bool> ArtbookActive = new VariableChanged<bool>
+        {
+            Data = false
+        };
         
-        public bool ArcadeActive = false;
-        public bool ArcadeChanged = false; // See entryBrowserChanged for explanation.
+        public VariableChanged<bool> ArcadeActive = new VariableChanged<bool>()
+        {
+            Data = false
+        };
         
         /*
          * Special Desktop Options
          */
         
         public List<string> DayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
-
-        // If to disable the desktop loading.
-        public bool DisableDesktopLoading = false;
         
         /*
          * Cheats
          */
+        // If to show the accuracy UI text string from the base game.
+        public VariableChanged<bool> ShowDefaultUIAccuracyText = new VariableChanged<bool>
+        {
+            Data = false
+        };
         
-        public bool ShowDefaultUIAccuracyText = false; // If to show the accuracy UI text string from the base game.
-        public bool ShowDefaultUIAccuracyTextChanged = false; // If boolean was updated.
+        // If to disable the desktop loading.
+        public bool DisableDesktopLoading = false;
         
         // Removed. The effort to add these are difficult. So for now, we simply ignore it, unless someone needs it.
         //public List<List<string>> loadingTexts = new List<List<string>>(); // Texts shown when entering the desktop.

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 
@@ -39,13 +40,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper
                         return true;
                     }
                     
-                    (bool foundModifier, bool value) showDefaultUIAccuracyText = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ShowDefaultUIAccuracyText,
-                        specialPredicate: m => m.ShowDefaultUIAccuracyTextChanged);
+                    (bool foundModifier, VariableChanged<bool> value) showDefaultUIAccuracyText = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ShowDefaultUIAccuracyText, vCb => vCb.HasChanged);
 
                     if (showDefaultUIAccuracyText.foundModifier)
                     {
-                        if (!showDefaultUIAccuracyText.value)
+                        if (!showDefaultUIAccuracyText.value.Data)
                         {
                             __instance.gameObject.SetActive(false);
                         }

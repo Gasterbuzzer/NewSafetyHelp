@@ -5,6 +5,7 @@ using System.Reflection;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
@@ -285,10 +286,9 @@ namespace NewSafetyHelp.CustomDesktop
                     (bool foundModifier, bool value) disableDesktopLogo =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.DisableDesktopLogo);
 
-                    (bool foundModifier, Sprite value) customBackgroundLogo =
+                    (bool foundModifier, VariableChanged<Sprite> value) customBackgroundLogo =
                         CustomCampaignGlobal.GetActiveModifierValue(
-                            c => c.CustomBackgroundLogo,
-                            specialPredicate: cM => cM.CustomBackgroundLogoChanged);
+                            c => c.CustomBackgroundLogo, vCs => vCs.HasChanged);
 
                     if (disableDesktopLogo.foundModifier
                         && disableDesktopLogo.value)
@@ -299,7 +299,7 @@ namespace NewSafetyHelp.CustomDesktop
                              && customBackgroundLogo.value != null)
                     {
                         modifierPreventsDisablingOfLogo = true;
-                        desktopLogo = customBackgroundLogo.value;
+                        desktopLogo = customBackgroundLogo.value.Data;
                     }
 
                     if (disableLogo
@@ -367,53 +367,53 @@ namespace NewSafetyHelp.CustomDesktop
 
                     // Desktop icons
 
-                    (bool foundModifier, Sprite value) entryBrowserIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.EntryBrowserIcon, specialPredicate: cM => cM.EntryBrowserIconChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) entryBrowserIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.EntryBrowserIcon, vCs => vCs.HasChanged);
 
                     if (entryBrowserIcon.foundModifier)
                     {
                         CustomDesktopHelper.GetEntryBrowserGameObject().GetComponent<Image>().sprite =
-                            entryBrowserIcon.value;
+                            entryBrowserIcon.value.Data;
                     }
 
-                    (bool foundModifier, Sprite value) mailBoxIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.MailBoxIcon, specialPredicate: cM => cM.MailBoxIconChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) mailBoxIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.MailBoxIcon, vCs => vCs.HasChanged);
 
                     if (mailBoxIcon.foundModifier)
                     {
-                        CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite = mailBoxIcon.value;
+                        CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite = mailBoxIcon.value.Data;
                     }
 
-                    (bool foundModifier, Sprite value) optionsIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.OptionsIcon, specialPredicate: cM => cM.OptionsIconChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) optionsIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.OptionsIcon, vCs => vCs.HasChanged);
 
                     if (optionsIcon.foundModifier)
                     {
-                        CustomDesktopHelper.GetOptionsGameObject().GetComponent<Image>().sprite = optionsIcon.value;
+                        CustomDesktopHelper.GetOptionsGameObject().GetComponent<Image>().sprite = optionsIcon.value.Data;
                     }
 
-                    (bool foundModifier, Sprite value) artbookIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ArtbookIcon, specialPredicate: cM => cM.ArtbookIconChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) artbookIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArtbookIcon, vCs => vCs.HasChanged);
 
                     if (artbookIcon.foundModifier)
                     {
-                        CustomDesktopHelper.GetArtbookGameObject().GetComponent<Image>().sprite = artbookIcon.value;
+                        CustomDesktopHelper.GetArtbookGameObject().GetComponent<Image>().sprite = artbookIcon.value.Data;
                     }
 
-                    (bool foundModifier, Sprite value) scorecardIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ScorecardIcon, specialPredicate: cM => cM.ScorecardIconChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) scorecardIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ScorecardIcon, vCs => vCs.HasChanged);
 
                     if (scorecardIcon.foundModifier)
                     {
-                        CustomDesktopHelper.GetScorecardGameObject().GetComponent<Image>().sprite = scorecardIcon.value;
+                        CustomDesktopHelper.GetScorecardGameObject().GetComponent<Image>().sprite = scorecardIcon.value.Data;
                     }
 
-                    (bool foundModifier, Sprite value) arcadeIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ArcadeIcon, specialPredicate: cM => cM.ArcadeIconChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) arcadeIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArcadeIcon, vCs => vCs.HasChanged);
 
                     if (arcadeIcon.foundModifier)
                     {
-                        CustomDesktopHelper.GetArcadeGameObject().GetComponent<Image>().sprite = arcadeIcon.value;
+                        CustomDesktopHelper.GetArcadeGameObject().GetComponent<Image>().sprite = arcadeIcon.value.Data;
                     }
 
                     // Credits
@@ -428,24 +428,23 @@ namespace NewSafetyHelp.CustomDesktop
                             desktopCredits.value;
                     }
 
-                    (bool foundModifier, Sprite value) desktopCreditsIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.CreditsIcon, specialPredicate: cM => cM.CreditsIconChanged);
+                    (bool foundModifier, VariableChanged<Sprite> value) desktopCreditsIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.CreditsIcon, vCs => vCs.HasChanged);
 
                     if (desktopCreditsIcon.foundModifier)
                     {
                         CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite =
-                            desktopCreditsIcon.value;
+                            desktopCreditsIcon.value.Data;
                     }
 
-                    // Discord Icon
+                    // Discord Icon (Not recommended)
 
-                    (bool foundModifier, bool value) hideDiscordProgram = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.HideDiscordProgram,
-                        specialPredicate: v => v.HideDiscordProgramChanged);
+                    (bool foundModifier, VariableChanged<bool> value) hideDiscordProgram = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.HideDiscordProgram, vCb => vCb.HasChanged);
 
                     if (hideDiscordProgram.foundModifier)
                     {
-                        CustomDesktopHelper.GetNSEDiscordProgram().SetActive(!hideDiscordProgram.value);
+                        CustomDesktopHelper.GetNSEDiscordProgram().SetActive(!hideDiscordProgram.value.Data);
                     }
 
                     // Change main program icon if wanted.
@@ -457,13 +456,13 @@ namespace NewSafetyHelp.CustomDesktop
                         mainProgramIcon = customCampaign.ChangeMainGameDesktopIcon;
                     }
 
-                    (bool foundModifier, Sprite value) mainGameDesktopIcon =
+                    (bool foundModifier, VariableChanged<Sprite> value) mainGameDesktopIcon =
                         CustomCampaignGlobal.GetActiveModifierValue(
-                            c => c.MainGameDesktopIcon, specialPredicate: cM => cM.MainGameDesktopIconChanged);
+                            c => c.MainGameDesktopIcon, vCs => vCs.HasChanged);
 
                     if (mainGameDesktopIcon.foundModifier)
                     {
-                        mainProgramIcon = mainGameDesktopIcon.value;
+                        mainProgramIcon = mainGameDesktopIcon.value.Data;
                     }
 
                     if (mainProgramIcon != null)
@@ -496,6 +495,11 @@ namespace NewSafetyHelp.CustomDesktop
             }
 
 
+            /// <summary>
+            /// A coroutine for the fade in text animation on desktop.
+            /// </summary>
+            /// <param name="__instance">Instance of MainMenuCanvasBehavior.</param>
+            /// <returns>Coroutine to run.</returns>
             private static IEnumerator StartupRoutine(MainMenuCanvasBehavior __instance)
             {
                 // We check if null AND if destroyed. Since we might not be initialized.

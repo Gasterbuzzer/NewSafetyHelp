@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.LoggingSystem;
@@ -288,15 +289,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 
                 if (currentCampaign == null)
                 {
-                    LoggingHelper.CampaignNullError();
                     return false;
                 }
 
                 bool enableEntryBrowser = false;
                 
-                (bool foundModifier, bool value) entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.EntryBrowserActive,
-                    specialPredicate: m => m.EntryBrowserChanged);
+                (bool foundModifier, VariableChanged<bool> value) entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.EntryBrowserActive, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.EntryBrowserAlwaysActive)
@@ -307,7 +306,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 if (entryBrowser.foundModifier)
                 {
                     modifierApplied = true;
-                    enableEntryBrowser = entryBrowser.value;
+                    enableEntryBrowser = entryBrowser.value.Data;
                 }
 
                 return enableEntryBrowser;
@@ -332,15 +331,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 
                 if (currentCampaign == null)
                 {
-                    LoggingHelper.CampaignNullError();
                     return false;
                 }
 
                 bool enableScorecard = false;
                 
-                (bool foundModifier, bool value) scorecard = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.ScorecardActive,
-                    specialPredicate: m => m.ScorecardChanged);
+                (bool foundModifier, VariableChanged<bool> value) scorecard = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.ScorecardActive, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.ScorecardAlwaysActive)
@@ -351,7 +348,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 if (scorecard.foundModifier)
                 {
                     modifierApplied = true;
-                    enableScorecard = scorecard.value;
+                    enableScorecard = scorecard.value.Data;
                 }
 
                 return enableScorecard;
@@ -376,15 +373,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 
                 if (currentCampaign == null)
                 {
-                    LoggingHelper.CampaignNullError();
                     return false;
                 }
 
                 bool artBookEnabled = false;
                 
-                (bool foundModifier, bool value) artbook = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.ArtbookActive,
-                    specialPredicate: m => m.ArtbookChanged);
+                (bool foundModifier, VariableChanged<bool> value) artbook = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.ArtbookActive, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.ArtbookAlwaysActive)
@@ -395,7 +390,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 if (artbook.foundModifier)
                 {
                     modifierApplied = true;
-                    artBookEnabled = artbook.value;
+                    artBookEnabled = artbook.value.Data;
                 }
 
                 return artBookEnabled;
@@ -426,9 +421,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 
                 bool arcadeEnabled = false;
                 
-                (bool foundModifier, bool value) arcade = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.ArcadeActive,
-                    specialPredicate: m => m.ArcadeChanged);
+                (bool foundModifier, VariableChanged<bool> value) arcade = CustomCampaignGlobal.GetActiveModifierValue(
+                    c => c.ArcadeActive, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.ArcadeAlwaysActive)
@@ -439,7 +433,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 if (arcade.foundModifier)
                 {
                     modifierApplied = true;
-                    arcadeEnabled = arcade.value;
+                    arcadeEnabled = arcade.value.Data;
                 }
 
                 return arcadeEnabled;

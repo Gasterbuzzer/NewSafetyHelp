@@ -87,15 +87,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Main Program
             string renameMainGameDesktopIcon = "";
-            Sprite mainGameDesktopIconSprite = null;
+            VariableChanged<Sprite> mainGameDesktopIconSprite = new VariableChanged<Sprite>();
 
             // Backgrounds
             List<Sprite> backgroundSprites = new List<Sprite>();
-            Sprite gameFinishedBackgroundSprite = null;
+            
+            VariableChanged<Sprite> gameFinishedBackgroundSprite = new VariableChanged<Sprite>();
+            
             bool disableGreenColorBackground = false;
             Color? desktopBackgroundColor = null;
 
-            Sprite backgroundLogo = null;
+            VariableChanged<Sprite> backgroundLogo = new VariableChanged<Sprite>();
             bool disableBackgroundLogo = false;
             float backgroundLogoTransparency = 0.2627f;
 
@@ -104,46 +106,47 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool blackBackgroundOnAnimatedBackground = false;
 
             // Icons
-            Sprite mailBoxIcon = null; // Mail Box Icon on Desktop
+            // Mail Box Icon on Desktop
+            VariableChanged<Sprite> mailBoxIcon = new VariableChanged<Sprite>();
 
-            Sprite entryBrowserIcon = null; // Entry Browser Icon on Desktop
+            // Entry Browser Icon on Desktop
+            VariableChanged<Sprite> entryBrowserIcon = new VariableChanged<Sprite>(); 
             
-            Sprite optionsIcon = null; // Options Icon on Desktop
+            // Options Icon on Desktop
+            VariableChanged<Sprite> optionsIcon = new VariableChanged<Sprite>(); 
             
-            Sprite artbookIcon = null; // Artbook Icon on Desktop
+            // Artbook Icon on Desktop
+            VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>(); 
             
-            Sprite arcadeIcon = null; // Arcade Icon on Desktop
+            // Arcade Icon on Desktop
+            VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>(); 
             
-            Sprite scorecardIcon = null; // Weekly Report Icon on Desktop
+            // Weekly Report Icon on Desktop
+            VariableChanged<Sprite> scorecardIcon = new VariableChanged<Sprite>(); 
 
             // Credits
             string desktopCredits = null;
-            Sprite creditsIcon = null; // Credits Icon on Desktop
+            
+            // Credits Icon on Desktop
+            VariableChanged<Sprite> creditsIcon = new VariableChanged<Sprite>(); 
 
             // Desktop settings
-            bool entryBrowserActive = false;
-            // If this setting was changed at all. Is used when checking.
-            // If this is true and the "active" is false, it will disable the entry browser for example.
-            bool entryBrowserChanged = false;
+            VariableChanged<bool> entryBrowserActive = new VariableChanged<bool>();
 
-            bool scorecardActive = false;
-            bool scorecardChanged = false; // See entryBrowserChanged for explanation.
+            VariableChanged<bool> scorecardActive = new VariableChanged<bool>();
 
-            bool artbookActive = false;
-            bool artbookChanged = false; // See entryBrowserChanged for explanation.
+            VariableChanged<bool> artbookActive = new VariableChanged<bool>();
 
-            bool arcadeActive = false;
-            bool arcadeChanged = false; // See entryBrowserChanged for explanation.
-
-            bool hideDiscordProgramChanged = false;
-            bool hideDiscordProgram = false; // For those who want more immersion. Should not be recommended.
+            VariableChanged<bool> arcadeActive = new VariableChanged<bool>();
+            
+            VariableChanged<bool> hideDiscordProgram = new VariableChanged<bool>(); // Not recommended to use ever.
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
             
             // Cheats
-            bool showDefaultUIAccuracyText = false; // If to show the accuracy UI text string from the base game.
-            bool showDefaultUIAccuracyTextChanged = false; // If boolean was updated.
+            // If to show the accuracy UI text string from the base game.
+            VariableChanged<bool> showDefaultUIAccuracyText = new VariableChanged<bool>(); 
             bool disableDesktopLoading = false; // If to skip the initial desktop loading portion.
 
             /*
@@ -177,9 +180,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon",
                 ref renameMainGameDesktopIcon);
 
-            bool mainGameDesktopIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed,
-                "main_game_desktop_icon_path", ref mainGameDesktopIconSprite, jsonFolderPath, usermodFolderPath,
-                customCampaignName);
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "main_game_desktop_icon_path",
+                ref mainGameDesktopIconSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("desktop_backgrounds", out JToken customCampaignDesktopBackgrounds))
             {
@@ -208,9 +210,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",
                 ref blackBackgroundOnAnimatedBackground);
 
-            bool gameFinishedBackgroundChanged = ParsingHelper.TryAssignSprite(jObjectParsed,
-                "game_finished_desktop_background", ref gameFinishedBackgroundSprite, jsonFolderPath,
-                usermodFolderPath, customCampaignName);
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
+                ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
@@ -248,36 +249,34 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            bool backgroundLogoChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_logo_image_name",
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_logo_image_name",
                 ref backgroundLogo, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
 
-            ParsingHelper.TryAssignWithBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram,
-                ref hideDiscordProgramChanged);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
 
-            bool creditsIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_credits_image_name",
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_credits_image_name",
                 ref creditsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            bool mailBoxIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_mailbox_image_name",
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_mailbox_image_name",
                 ref mailBoxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            bool entryBrowserIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed,
-                "desktop_entry_browser_image_name", ref entryBrowserIcon, jsonFolderPath, usermodFolderPath,
-                customCampaignName);
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_entry_browser_image_name",
+                ref entryBrowserIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            bool optionsIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_options_image_name",
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_options_image_name",
                 ref optionsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            bool artbookIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_artbook_image_name",
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_artbook_image_name",
                 ref artbookIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            bool arcadeIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_arcade_image_name",
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
                 ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            bool scorecardIconChanged = ParsingHelper.TryAssignSprite(jObjectParsed, "desktop_scorecard_image_name",
+            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_scorecard_image_name",
                 ref scorecardIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
@@ -290,21 +289,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            ParsingHelper.TryAssignWithBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive,
-                ref entryBrowserChanged);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive);
 
-            ParsingHelper.TryAssignWithBool(jObjectParsed, "scorecard_state", ref scorecardActive,
-                ref scorecardChanged);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "scorecard_state", ref scorecardActive);
 
-            ParsingHelper.TryAssignWithBool(jObjectParsed, "artbook_state", ref artbookActive,
-                ref artbookChanged);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "artbook_state", ref artbookActive);
 
-            ParsingHelper.TryAssignWithBool(jObjectParsed, "arcade_state", ref arcadeActive,
-                ref arcadeChanged);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_state", ref arcadeActive);
             
             // Cheats
-            ParsingHelper.TryAssignWithBool(jObjectParsed, "show_accuracy_display",
-                ref showDefaultUIAccuracyText, ref showDefaultUIAccuracyTextChanged);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "show_accuracy_display",
+                ref showDefaultUIAccuracyText);
             
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
 
@@ -320,65 +315,50 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
                 MainGameDesktopIcon = mainGameDesktopIconSprite,
-                MainGameDesktopIconChanged = mainGameDesktopIconChanged,
                 
                 DesktopBackgrounds = backgroundSprites,
                 
                 GameFinishedBackground = gameFinishedBackgroundSprite,
-                GameFinishedBackgroundChanged = gameFinishedBackgroundChanged,
                 
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,
                 
                 CustomBackgroundLogo = backgroundLogo,
-                CustomBackgroundLogoChanged = backgroundLogoChanged,
+
                 DisableDesktopLogo = disableBackgroundLogo,
                 BackgroundLogoTransparency = backgroundLogoTransparency,
 
                 AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
                 BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
-
-                HideDiscordProgramChanged = hideDiscordProgramChanged,
+                
                 HideDiscordProgram = hideDiscordProgram,
 
                 MailBoxIcon = mailBoxIcon,
-                MailBoxIconChanged =  mailBoxIconChanged,
                 
                 EntryBrowserIcon = entryBrowserIcon,
-                EntryBrowserIconChanged = entryBrowserIconChanged,
                 
                 OptionsIcon = optionsIcon,
-                OptionsIconChanged = optionsIconChanged,
                 
                 ArtbookIcon = artbookIcon,
-                ArtbookIconChanged = artbookIconChanged,
                 
                 ArcadeIcon = arcadeIcon,
-                ArcadeIconChanged = arcadeIconChanged,
                 
                 ScorecardIcon = scorecardIcon,
-                ScorecardIconChanged = scorecardIconChanged,
 
                 DesktopCredits = desktopCredits,
                 CreditsIcon = creditsIcon,
-                CreditsIconChanged = creditsIconChanged,
 
                 DayTitleStrings = dayTitleStrings,
 
                 EntryBrowserActive = entryBrowserActive,
-                EntryBrowserChanged = entryBrowserChanged,
 
                 ScorecardActive = scorecardActive,
-                ScorecardChanged = scorecardChanged,
 
                 ArtbookActive = artbookActive,
-                ArtbookChanged = artbookChanged,
 
                 ArcadeActive = arcadeActive,
-                ArcadeChanged = arcadeChanged,
                 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
-                ShowDefaultUIAccuracyTextChanged = showDefaultUIAccuracyTextChanged,
                 
                 DisableDesktopLoading = disableDesktopLoading
             };
