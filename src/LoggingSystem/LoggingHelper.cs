@@ -196,7 +196,7 @@ namespace NewSafetyHelp.LoggingSystem
         public static void DebugLog(string loggingMessage, LoggingCategory loggingCategory = LoggingCategory.NONE,
             ConsoleColor? consoleColor = null)
         {
-            if (CheckLoggingCategory(loggingCategory))
+            if (CheckLoggingCategory(loggingCategory, checkDebugLog: true))
             {
                 Log(loggingMessage, LoggingLevel.DEBUG, consoleColor);
             }
