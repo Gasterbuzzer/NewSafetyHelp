@@ -108,23 +108,23 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             else
             {
                 // Add to correct campaign.
-                CustomCampaign foundCustomCampaign =
+                CustomCampaign customCampaign =
                     CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                         customCampaignSearch.CampaignName == customCampaignName);
 
-                if (foundCustomCampaign != null)
+                if (customCampaign != null)
                 {
                     if (customCCaller.IsGameOverCaller)
                     {
-                        foundCustomCampaign.CustomGameOverCallersInCampaign.Add(customCCaller);
+                        customCampaign.CustomGameOverCallersInCampaign.Add(customCCaller);
                     }
                     else if (customCCaller.IsWarningCaller)
                     {
-                        foundCustomCampaign.CustomWarningCallersInCampaign.Add(customCCaller);
+                        customCampaign.CustomWarningCallersInCampaign.Add(customCCaller);
                     }
                     else
                     {
-                        foundCustomCampaign.CustomCallersInCampaign.Add(customCCaller);
+                        customCampaign.CustomCallersInCampaign.Add(customCCaller);
                     }
                 }
                 else

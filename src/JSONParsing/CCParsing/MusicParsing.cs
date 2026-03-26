@@ -69,19 +69,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
 
             // Add to correct campaign.
-            CustomCampaign foundCustomCampaign =
+            CustomCampaign customCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
 
-            if (foundCustomCampaign != null)
+            if (customCampaign != null)
             {
                 if (customMusic.IsIntermissionMusic)
                 {
-                    foundCustomCampaign.CustomIntermissionMusic.Add(customMusic);
+                    customCampaign.CustomIntermissionMusic.Add(customMusic);
                 }
                 else
                 {
-                    foundCustomCampaign.CustomMusic.Add(customMusic);
+                    customCampaign.CustomMusic.Add(customMusic);
                 }
             }
             else

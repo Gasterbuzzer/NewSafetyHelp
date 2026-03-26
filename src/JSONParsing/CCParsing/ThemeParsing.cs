@@ -32,7 +32,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomTheme customTheme = ParseTheme(ref jObjectParsed, ref customCampaignName);
 
             // Add to correct campaign.
-            CustomCampaign foundCustomCampaign =
+            CustomCampaign customCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
             
@@ -42,15 +42,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                if (foundCustomCampaign != null)
+                if (customCampaign != null)
                 {
                     if (customTheme.UnlockDays == null)
                     {
-                        foundCustomCampaign.CustomThemesGeneral.Add(customTheme);
+                        customCampaign.CustomThemesGeneral.Add(customTheme);
                     }
                     else
                     {
-                        foundCustomCampaign.CustomThemesDays.Add(customTheme);
+                        customCampaign.CustomThemesDays.Add(customTheme);
                     }
                 }
                 else

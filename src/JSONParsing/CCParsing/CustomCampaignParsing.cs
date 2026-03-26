@@ -217,6 +217,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }
         
+        /// <summary>
+        /// Parses the custom campaign values.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object to parse.</param>
+        /// <param name="usermodFolderPath">Folder path the usermod.</param>
+        /// <param name="jsonFolderPath">Folder path wehre the json is located.</param>
+        /// <param name="customCampaignName">Name of the custom campaign.</param>
+        /// <returns>Newly created custom campaign.</returns>
         private static CustomCampaign ParseCampaignFile(ref JObject jObjectParsed,
             ref string usermodFolderPath, ref string jsonFolderPath, ref string customCampaignName)
         {

@@ -10,6 +10,7 @@ using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+
 // ReSharper disable RedundantAssignment
 
 namespace NewSafetyHelp.JSONParsing.EntryParsing
@@ -18,28 +19,29 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
     {
         private static void ParseEntry(ref JObject jsonObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry,
-            ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string monsterName, 
+            ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string monsterName,
             ref string monsterDescription, ref List<string> arcadeCalls, ref Sprite monsterPortrait,
             ref string monsterPortraitLocation, ref string monsterAudioClipLocation, ref bool deleteReplaceEntry,
-            ref bool inCustomCampaign, ref string customCampaignName, 
+            ref bool inCustomCampaign, ref string customCampaignName,
             ref string videoUrlPortrait, ref bool isVideoPortrait)
         {
-            /* 
+            /*
              * Monster Information
-            */
+             */
 
             ParsingHelper.TryAssign(jsonObjectParsed, "replace_entry", ref replaceEntry);
 
             // Monster Name
             if (jsonObjectParsed.TryGetValue("monster_name", out var monsterNameValue))
             {
-                monsterName = (string) monsterNameValue;
+                monsterName = (string)monsterNameValue;
             }
             else
             {
                 if (!replaceEntry)
                 {
-                    LoggingHelper.WarningLog($"No Monster name given for file in {usermodFolderPath}. Defaulting to NO_NAME.");
+                    LoggingHelper.WarningLog(
+                        $"No Monster name given for file in {usermodFolderPath}. Defaulting to NO_NAME.");
                 }
             }
 
@@ -52,7 +54,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 if (!replaceEntry)
                 {
-                    LoggingHelper.WarningLog($"No Monster description given for file in {usermodFolderPath}. Defaulting to NO_DESCRIPTION.");
+                    LoggingHelper.WarningLog(
+                        $"No Monster description given for file in {usermodFolderPath}. Defaulting to NO_DESCRIPTION.");
                 }
             }
 
@@ -60,17 +63,17 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // DLC
             ParsingHelper.TryAssign(jsonObjectParsed, "only_dlc", ref onlyDLC);
             ParsingHelper.TryAssign(jsonObjectParsed, "include_dlc", ref includeDLC);
-            
+
             // Main Game
             ParsingHelper.TryAssign(jsonObjectParsed, "include_campaign", ref includeMainCampaign);
-            
+
             // Access Level and Arcade Calls
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "access_level", ref accessLevel,
                 ref accessLevelAdded);
 
             if (jsonObjectParsed.TryGetValue("arcade_calls", out var arcadeCallsValue))
             {
-                JArray test = (JArray) arcadeCallsValue;
+                JArray test = (JArray)arcadeCallsValue;
 
                 foreach (JToken arcadeCustomCall in test)
                 {
@@ -81,10 +84,11 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 if (!replaceEntry)
                 {
-                    LoggingHelper.InfoLog($"No Arcade Calls given for file in {usermodFolderPath}. Defaulting to empty values.");
+                    LoggingHelper.InfoLog(
+                        $"No Arcade Calls given for file in {usermodFolderPath}. Defaulting to empty values.");
                 }
             }
-            
+
             // Image
             if (jsonObjectParsed.TryGetValue("monster_portrait_image_name", out var monsterPortraitImageNameValue))
             {
@@ -96,7 +100,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                     if (!replaceEntry)
                     {
-                        LoggingHelper.WarningLog($"No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
+                        LoggingHelper.WarningLog(
+                            $"No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
                     }
                 }
                 else
@@ -109,7 +114,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             {
                 if (!replaceEntry)
                 {
-                    LoggingHelper.WarningLog($"No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
+                    LoggingHelper.WarningLog(
+                        $"No monster portrait given for file in {usermodFolderPath}. No image will be shown.");
                 }
             }
 
@@ -120,77 +126,80 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (string.IsNullOrEmpty(monsterAudioClipLocation) && !replaceEntry)
                 {
-                    LoggingHelper.InfoLog($"No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
+                    LoggingHelper.InfoLog(
+                        $"No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
                 }
             }
             else
             {
                 if (!replaceEntry)
                 {
-                    LoggingHelper.InfoLog($"No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
+                    LoggingHelper.InfoLog(
+                        $"No monster audio given for file in {usermodFolderPath}. No audio will be shown.");
                 }
             }
-            
+
             // Custom Campaign
 
             if (jsonObjectParsed.TryGetValue("attached_custom_campaign_name", out var attachedCustomCampaignName))
             {
                 LoggingHelper.DebugLog("Found an entry that is custom campaign only.",
                     LoggingHelper.LoggingCategory.ENTRY);
-                
+
                 customCampaignName = attachedCustomCampaignName.Value<string>();
                 inCustomCampaign = true;
             }
-            
+
             // Parse if the "replace" entry should be deleted.
             ParsingHelper.TryAssign(jsonObjectParsed, "delete_entry", ref deleteReplaceEntry);
-            
+
             // Video Entry Portrait
-            isVideoPortrait = ParsingHelper.TryAssignVideoPath(jsonObjectParsed, "portrait_video_name", 
+            isVideoPortrait = ParsingHelper.TryAssignVideoPath(jsonObjectParsed, "portrait_video_name",
                 ref videoUrlPortrait, jsonFolderPath, usermodFolderPath);
         }
 
-        private static void ParsePhobias(ref JObject jsonObjectParsed, ref bool spiderPhobia, 
-            ref bool spiderPhobiaIncluded, ref bool darknessPhobia, ref bool darknessPhobiaIncluded, 
+        private static void ParsePhobias(ref JObject jsonObjectParsed, ref bool spiderPhobia,
+            ref bool spiderPhobiaIncluded, ref bool darknessPhobia, ref bool darknessPhobiaIncluded,
             ref bool dogPhobia, ref bool dogPhobiaIncluded, ref bool holesPhobia, ref bool holesPhobiaIncluded,
-            ref bool insectPhobia, ref bool insectPhobiaIncluded, ref bool watchingPhobia, 
+            ref bool insectPhobia, ref bool insectPhobiaIncluded, ref bool watchingPhobia,
             ref bool watchingPhobiaIncluded, ref bool tightSpacePhobia, ref bool tightSpacePhobiaIncluded)
         {
             // Phobias, they don't require to be warned, since they optional.
 
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "spider_phobia", ref spiderPhobia,
                 ref spiderPhobiaIncluded);
-            
+
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "darkness_phobia", ref darknessPhobia,
                 ref darknessPhobiaIncluded);
-            
+
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "dog_phobia", ref dogPhobia,
                 ref dogPhobiaIncluded);
-            
+
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "holes_phobia", ref holesPhobia,
                 ref holesPhobiaIncluded);
-            
+
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "insect_phobia", ref insectPhobia,
                 ref insectPhobiaIncluded);
-            
+
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "watching_phobia", ref watchingPhobia,
                 ref watchingPhobiaIncluded);
-            
+
             ParsingHelper.TryAssignWithBool(jsonObjectParsed, "tight_space_phobia", ref tightSpacePhobia,
                 ref tightSpacePhobiaIncluded);
         }
-        
+
         // ----------------------------------------------------------------------------------------------------------
         // ----------------------------------------------------------------------------------------------------------
         // ----------------------------------------------------------------------------------------------------------
-        
+
         /// <summary>
         /// Function for adding a single entry.
         /// </summary>
         /// <param name="jObjectParsed"> JSON Data for reading. </param>
         /// <param name="newID"> If we wish to provide the ID via parameter. </param>
         /// <param name="usermodFolderPath"> Folder path to the entries directory </param>
-        /// <param name="entryUnlockerInstance"> Instance of the EntryUnlockController. Needed for accessing and adding some entries. </param>
+        /// <param name="entryUnlockerInstance"> Instance of the EntryUnlockController.
+        /// Needed for accessing and adding some entries. </param>
         /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
         public static void CreateMonsterFromJSON(JObject jObjectParsed, int newID = -1, string usermodFolderPath = "",
             string jsonFolderPath = "",
@@ -245,7 +254,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             string customCampaignName = "NO_CUSTOM_CAMPAIGN_NAME";
 
             bool deleteReplaceEntry = false;
-            
+
             string videoUrlPortrait = String.Empty;
             bool isVideoPortrait = false;
 
@@ -283,11 +292,13 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref watchingPhobia, ref watchingPhobiaIncluded, ref tightSpacePhobia, ref tightSpacePhobiaIncluded);
 
             // Parse Default Caller
-            MainCampaignCallerParsing.ParseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref callerName,
+            MainCampaignCallerParsing.ParseCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath,
+                ref callerName,
                 ref callerTranscript, ref callerImageLocation, ref callerReplaceChance, ref callerRestartCallAgain,
                 ref callerPortrait);
 
-            MainCampaignCallerParsing.ParseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath,
+            MainCampaignCallerParsing.ParseConsequenceCaller(ref jObjectParsed, ref usermodFolderPath,
+                ref jsonFolderPath,
                 ref consequenceCallerName, ref consequenceCallerTranscript, ref consequenceCallerImageLocation,
                 ref consequenceCallerPortrait);
 
@@ -339,7 +350,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 }
                                 else
                                 {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip {callerAudioClipLocationLambdaCopy}.");
+                                    LoggingHelper.ErrorLog(
+                                        $"Failed to load audio clip {callerAudioClipLocationLambdaCopy}.");
                                 }
                             },
                             audioLocation)
@@ -356,14 +368,16 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (string.IsNullOrEmpty(consequenceCallerAudioClipLocation) && !replaceEntry)
                 {
-                    LoggingHelper.InfoLog($"No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
+                    LoggingHelper.InfoLog(
+                        $"No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(jsonFolderPath + "\\" + consequenceCallerAudioClipLocation) &&
                          !File.Exists(usermodFolderPath + "\\" + consequenceCallerAudioClipLocation))
                 {
-                    LoggingHelper.ErrorLog( $"Location {jsonFolderPath} does not contain {consequenceCallerAudioClipLocation}." +
-                                            " Unable to add audio.");
+                    LoggingHelper.ErrorLog(
+                        $"Location {jsonFolderPath} does not contain {consequenceCallerAudioClipLocation}." +
+                        " Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -387,7 +401,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                                 }
                                 else
                                 {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip {consequenceCallerAudioClipLocation}.");
+                                    LoggingHelper.ErrorLog(
+                                        $"Failed to load audio clip {consequenceCallerAudioClipLocation}.");
                                 }
                             },
                             audioLocation)
@@ -591,19 +606,18 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             }
             else if (inCustomCampaign) // In custom campaign.
             {
-                foundMonster =
-                    ScriptableObject
-                        .CreateInstance<
-                            MonsterProfile>(); // Create empty foundMonster to avoid replacing actual values.
+                // Create empty foundMonster to avoid replacing actual values.
+                foundMonster = ScriptableObject.CreateInstance<MonsterProfile>(); 
                 foundMonster.monsterID = newID;
                 foundMonster.monsterName = monsterName;
             }
 
             if ((foundMonster == null && !onlyDLC && !includeDLC) || (foundMonster == null && foundMonsterXMAS == null))
             {
-                LoggingHelper.WarningLog("Entry that was suppose to replace an entry failed. Information about the entry: " +
-                                         $"Was found: {foundMonster != null} and was found in DLC: {foundMonsterXMAS != null}. " +
-                                         $"Replacer Name: {monsterName} with Replacer ID: {newID}.");
+                LoggingHelper.WarningLog(
+                    "Entry that was suppose to replace an entry failed. Information about the entry: " +
+                    $"Was found: {foundMonster != null} and was found in DLC: {foundMonsterXMAS != null}. " +
+                    $"Replacer Name: {monsterName} with Replacer ID: {newID}.");
                 return;
             }
 
@@ -867,7 +881,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 {
                     string monsterNameCopy = foundMonster.monsterName;
 
-                    EntryMetadata extraEntryInfo = GlobalParsingVariables.EntriesMetadata.Find(item => item.Name == monsterNameCopy);
+                    EntryMetadata extraEntryInfo =
+                        GlobalParsingVariables.EntriesMetadata.Find(item => item.Name == monsterNameCopy);
                     if (extraEntryInfo != null) // Only if it exists.
                     {
                         extraEntryInfo.ReferenceCopyEntry = foundMonster;
@@ -876,26 +891,27 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                         string customCampaignNameCopy = customCampaignName;
 
-                        CustomCampaign currentCustomCampaign =
+                        CustomCampaign customCampaign =
                             CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                                 customCampaignSearch.CampaignName == customCampaignNameCopy);
 
-                        if (currentCustomCampaign == null)
+                        if (customCampaign == null)
                         {
-                            LoggingHelper.DebugLog("Custom Campaign replace entry found before custom campaign has been parsed." +
-                                                   " Adding to late add.");
+                            LoggingHelper.DebugLog(
+                                "Custom Campaign replace entry found before custom campaign has been parsed. " +
+                                "Adding to late add.");
 
                             GlobalParsingVariables.PendingCustomCampaignReplaceEntries.Add(extraEntryInfo);
 
                             return;
                         }
 
-                        currentCustomCampaign.EntryReplaceOnlyInCampaign.Add(extraEntryInfo);
+                        customCampaign.EntryReplaceOnlyInCampaign.Add(extraEntryInfo);
                     }
                 }
             }
         }
-        
+
         private static void CreateNewEntryFunction(ref EntryUnlockController entryUnlockerInstance, ref bool onlyDLC,
             ref bool includeDLC, ref string monsterName, ref int newID, ref Sprite monsterPortrait,
             ref string monsterDescription, ref List<string> arcadeCalls, ref int accessLevel,
@@ -945,27 +961,29 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 string customCampaignNameCopy = customCampaignName;
 
                 // Add to correct campaign.
-                CustomCampaign foundCustomCampaign =
+                CustomCampaign customCampaign =
                     CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                         customCampaignSearch.CampaignName == customCampaignNameCopy);
 
-                if (foundCustomCampaign != null)
+                if (customCampaign != null)
                 {
                     LoggingHelper.DebugLog("Adding found custom campaign entry to the custom campaign.");
 
                     if (extraEntryInfo != null)
                     {
-                        foundCustomCampaign.EntriesOnlyInCampaign.Add(extraEntryInfo);
+                        customCampaign.EntriesOnlyInCampaign.Add(extraEntryInfo);
                     }
                     else
                     {
-                        LoggingHelper.WarningLog("Entry that was suppose to be added in custom campaign does not exist as extra info." +
-                                                 " (Error Type: 1) ");
+                        LoggingHelper.WarningLog(
+                            "Entry that was suppose to be added in custom campaign does not exist as extra info. " +
+                            "(Error Type: 1) ");
                     }
                 }
                 else
                 {
-                    LoggingHelper.DebugLog("Found monster entry before the custom campaign was found / does not exist.");
+                    LoggingHelper.DebugLog(
+                        "Found monster entry before the custom campaign was found / does not exist.");
 
                     if (extraEntryInfo != null)
                     {
@@ -973,8 +991,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     }
                     else
                     {
-                        LoggingHelper.WarningLog("Entry that was suppose to be added in custom campaign does not exist as extra info. " +
-                                                  "(Error Type: 2) ");
+                        LoggingHelper.WarningLog(
+                            "Entry that was suppose to be added in custom campaign does not exist as extra info. " +
+                            "(Error Type: 2) ");
                     }
                 }
             }

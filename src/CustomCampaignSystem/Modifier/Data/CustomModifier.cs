@@ -70,6 +70,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         [CanBeNull] public string DesktopCredits = null;
         public VariableChanged<Sprite> CreditsIcon = new VariableChanged<Sprite>(); // Credits Icon on Desktop
         
+        public VariableChanged<bool> HideDesktopCredits = new VariableChanged<bool>
+        {
+            Data = false
+        };
+        
         /*
          * Enable Scorecard and such.
          */

@@ -436,6 +436,15 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite =
                             desktopCreditsIcon.value.Data;
                     }
+                    
+                    (bool foundModifier, VariableChanged<bool> value) hideDesktopCredits = 
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.HideDesktopCredits,
+                            vCb => vCb.HasChanged);
+
+                    if (hideDesktopCredits.foundModifier)
+                    {
+                        CustomDesktopHelper.GetCreditsGameObject().SetActive(!hideDesktopCredits.value.Data);
+                    }
 
                     // Discord Icon (Not recommended)
 

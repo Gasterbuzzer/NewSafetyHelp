@@ -72,6 +72,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
+        /// <summary>
+        /// Parses all keys for a modifier.
+        /// </summary>
+        /// <param name="jObjectParsed">Json Object.</param>
+        /// <param name="usermodFolderPath">Usermod folder.</param>
+        /// <param name="jsonFolderPath">Folder where the JSON is located at.</param>
+        /// <param name="customCampaignName">Name of the custom campaign.</param>
+        /// <returns>New CustomModifier</returns>
         private static CustomModifier ParseModifier(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
@@ -106,7 +114,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool blackBackgroundOnAnimatedBackground = false;
 
             // Icons
-            // Mail Box Icon on Desktop
+            // Mailbox Icon on Desktop
             VariableChanged<Sprite> mailBoxIcon = new VariableChanged<Sprite>();
 
             // Entry Browser Icon on Desktop
@@ -127,19 +135,40 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Credits
             string desktopCredits = null;
             
+            VariableChanged<bool> hideDesktopCredits = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            
             // Credits Icon on Desktop
             VariableChanged<Sprite> creditsIcon = new VariableChanged<Sprite>(); 
 
             // Desktop settings
-            VariableChanged<bool> entryBrowserActive = new VariableChanged<bool>();
+            VariableChanged<bool> entryBrowserActive = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
-            VariableChanged<bool> scorecardActive = new VariableChanged<bool>();
+            VariableChanged<bool> scorecardActive = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
-            VariableChanged<bool> artbookActive = new VariableChanged<bool>();
+            VariableChanged<bool> artbookActive = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
-            VariableChanged<bool> arcadeActive = new VariableChanged<bool>();
+            VariableChanged<bool> arcadeActive = new VariableChanged<bool>
+            {
+                Data = false
+            };
             
-            VariableChanged<bool> hideDiscordProgram = new VariableChanged<bool>(); // Not recommended to use ever.
+            // Not recommended to use ever.
+            VariableChanged<bool> hideDiscordProgram = new VariableChanged<bool>
+            {
+                Data = false
+            }; 
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
@@ -255,8 +284,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
-
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_desktop_credits", ref hideDesktopCredits);
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_credits_image_name",
                 ref creditsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
@@ -275,6 +303,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
                 ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_scorecard_image_name",
                 ref scorecardIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
@@ -347,6 +377,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DesktopCredits = desktopCredits,
                 CreditsIcon = creditsIcon,
+                HideDesktopCredits = hideDesktopCredits,
 
                 DayTitleStrings = dayTitleStrings,
 
