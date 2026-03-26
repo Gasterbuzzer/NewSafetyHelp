@@ -8,12 +8,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper
 {
     public static class AccuracyTextPatches
     {
+        private static readonly FieldInfo MyText = typeof(AccuracyTextUpdate).GetField("myText",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        
         [HarmonyLib.HarmonyPatch(typeof(AccuracyTextUpdate), "Start")]
         public static class AccuracyTextUpdateStartPatch
         {
-            private static readonly FieldInfo MyText = typeof(AccuracyTextUpdate).GetField("myText",
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            
             /// <summary>
             /// Patches the start function to also allow to enable this object, if the custom campaign asks for it.
             /// </summary>
@@ -23,8 +23,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper
             {
                 if (MyText == null)
                 {
-                    LoggingHelper.ErrorLog("'myText' is null, unable of executing function." +
-                                           " Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(MyText));
                     return true;
                 }
                 
@@ -38,6 +37,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper
                     if (customCampaign == null)
                     {
                         return true;
+                    }
+                    
+                    // Fix in case we have no valid callers, we simply set it to 100%.
+                    if (MyText != null)
+                    {
+                        TextMeshProUGUI textMeshProUGUIComponent = MyText.GetValue(__instance) as TextMeshProUGUI;
+                        if (textMeshProUGUIComponent != null 
+                            && textMeshProUGUIComponent.text.Equals("ACCURACY RATE: 50%")
+                            && GlobalVariables.callerControllerScript.callersToday <= 0)
+                        {
+                            textMeshProUGUIComponent.text = "ACCURACY RATE: 100%";
+                        }
                     }
                     
                     (bool foundModifier, VariableChanged<bool> value) showDefaultUIAccuracyText = CustomCampaignGlobal.GetActiveModifierValue(
@@ -62,6 +73,31 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper
                 }
                 
                 __instance.gameObject.SetActive(false);
+                
+                return false; // Skip original
+            }
+        }
+        
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "GetScore")]
+        public static class CallerControllerGetScorePatch
+        {
+            /// <summary>
+            /// Patches the GetScore function to not break if no correct callers exist.
+            /// </summary>
+            /// <param name="__result">Result of the function.</param>
+            /// <returns>If to skip the function.</returns>
+            // ReSharper disable once RedundantAssignment
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref float __result)
+            {
+                if (GlobalVariables.callerControllerScript.callersToday <= 0
+                    && GlobalVariables.callerControllerScript.correctCallsToday <= 0)
+                {
+                    __result = 100.0f;
+                    return false;
+                }
+                
+                __result = (float) ((double) GlobalVariables.callerControllerScript.correctCallsToday / GlobalVariables.callerControllerScript.callersToday * 100.0);
                 
                 return false; // Skip original
             }

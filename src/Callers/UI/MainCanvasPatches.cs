@@ -237,8 +237,8 @@ namespace NewSafetyHelp.Callers.UI
                 LoadVarsMethod.Invoke(mainCanvasBehavior, null);
                 PopulateEntriesListMethod.Invoke(mainCanvasBehavior, null);
 
-                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7 &&
-                    !CustomCampaignGlobal.InCustomCampaign)
+                if (!GlobalVariables.arcadeMode && GlobalVariables.currentDay == 7
+                                                && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     mainCanvasBehavior.trialScreen.SetActive(true);
                     mainCanvasBehavior.postProcessVolume.profile = mainCanvasBehavior.scaryProcessProfile;
@@ -278,8 +278,7 @@ namespace NewSafetyHelp.Callers.UI
                 if (NewSafetyHelpMainClass.SkipDayClockIn.Value)
                 {
                     GlobalVariables.fade.FadeIn(1f);
-
-                    //mainCanvasBehavior.logoPanel.SetActive(false);
+                    
                     mainCanvasBehavior.clockInPanel.SetActive(false);
                     mainCanvasBehavior.clockOutElements.SetActive(false);
                     mainCanvasBehavior.clockInElements.SetActive(false);
@@ -497,8 +496,16 @@ namespace NewSafetyHelp.Callers.UI
                         yield break;
                     }
 
-                    customCampaign.SavedDayScores[GlobalVariables.currentDay] =
-                        GlobalVariables.callerControllerScript.GetScore();
+                    float dayScore = GlobalVariables.callerControllerScript.GetScore();
+
+                    // No callers for that day, so we simply set it to 100%.
+                    if (float.IsNaN(dayScore) || float.IsInfinity(dayScore))
+                    {
+                        dayScore = 100.0f;
+                    }
+                    
+                    customCampaign.SavedDayScores[GlobalVariables.currentDay] = dayScore;
+                        
                     
                     LoggingHelper.DebugLog($"Saving day score of day '{GlobalVariables.currentDay}'." +
                                            $"With the score of '{customCampaign.SavedDayScores[GlobalVariables.currentDay]}'.");

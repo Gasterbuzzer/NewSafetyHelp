@@ -37,9 +37,16 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
 
                         if (customCampaign != null)
                         {
-                            customCampaign.SavedDayScores[GlobalVariables.currentDay] =
-                                GlobalVariables.callerControllerScript.GetScore();
-                    
+                            float dayScore = GlobalVariables.callerControllerScript.GetScore();
+
+                            // No callers for that day, so we simply set it to 100%.
+                            if (float.IsNaN(dayScore) || float.IsInfinity(dayScore))
+                            {
+                                dayScore = 100.0f;
+                            }
+                            
+                            customCampaign.SavedDayScores[GlobalVariables.currentDay] = dayScore;
+                                
                             LoggingHelper.DebugLog($"(Custom Ending) Saving day score of day '{GlobalVariables.currentDay}'. " +
                                                    $"With the score of '{customCampaign.SavedDayScores[GlobalVariables.currentDay]}'.");
                         }
