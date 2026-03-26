@@ -25,6 +25,7 @@ namespace NewSafetyHelp.JSONParsing
             Modifier,
             Theme,
             Ringtone,
+            TextProgram,
             Invalid
         }
 
@@ -132,6 +133,11 @@ namespace NewSafetyHelp.JSONParsing
                         case JSONParseTypes.Ringtone: // The provided JSON is a ringtone file (for custom campaigns).
                             LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a ringtone file.");
                             RingtoneParsing.CreateRingtone(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+                        
+                        case JSONParseTypes.TextProgram: // The provided JSON is a text file (for custom campaigns).
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a text file program.");
+                            TextProgramParsing.CreateTextProgram(jObjectParse, modFolderPath);
                             break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -244,6 +250,13 @@ namespace NewSafetyHelp.JSONParsing
             if (ParsingHelper.ContainsKeys(new List<string> { "ringtone_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Ringtone;
+            }
+            
+            // Text file program was provided
+            if (ParsingHelper.ContainsKeys(new List<string> { "text_file_desktop_name", "text_file_unlock_day",
+                    "text_file_contents", "text_file_unlock_when_game_finished" }, json))
+            {
+                return JSONParseTypes.TextProgram;
             }
             
             // Unknown JSON type or failed parsing the file.

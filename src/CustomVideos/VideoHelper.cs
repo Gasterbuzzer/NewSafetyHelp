@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
-using NewSafetyHelp.CustomVideos;
+using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
 
-namespace NewSafetyHelp.CustomDesktop.Utils
+namespace NewSafetyHelp.CustomVideos
 {
     public static class VideoHelper
     {
@@ -13,8 +13,10 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
         /// <summary>
-        /// Disables all default video programs on the desktop.
+        /// Create a custom video file program on the desktop.
         /// </summary>
+        /// <param name="customVideo">CustomVideo to be created.</param>
+        /// <returns>GameObject of the custom video</returns>
         public static GameObject CreateCustomVideoFileProgram(CustomVideo customVideo)
         {
             GameObject trailerFileOriginal =

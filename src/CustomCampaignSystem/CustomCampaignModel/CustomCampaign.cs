@@ -2,6 +2,7 @@
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -181,6 +182,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public bool DisableAllDefaultVideos = true;
         
         public List<CustomVideo> CustomVideos = new List<CustomVideo>();
+        
+        // Text Files
+        public List<CustomTextFile> CustomTextProgramFiles = new List<CustomTextFile>();
 
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> SavedDayScores = new List<float>();

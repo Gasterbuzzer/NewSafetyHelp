@@ -213,6 +213,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignRingtones,
                 ref customCampaign.CustomRingtones, customCampaignName, "ringtone");
             
+            // Check if any text files have to be added to a custom campaign.
+            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignTextFile,
+                ref customCampaign.CustomTextProgramFiles, customCampaignName, "text file");
+            
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }

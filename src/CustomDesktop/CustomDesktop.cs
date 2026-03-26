@@ -5,6 +5,7 @@ using System.Reflection;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
@@ -419,8 +420,7 @@ namespace NewSafetyHelp.CustomDesktop
                     // Credits
 
                     (bool foundModifier, string value) desktopCredits = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.DesktopCredits,
-                        v => !string.IsNullOrEmpty(v));
+                        c => c.DesktopCredits, v => !string.IsNullOrEmpty(v));
 
                     if (desktopCredits.foundModifier)
                     {
@@ -431,6 +431,12 @@ namespace NewSafetyHelp.CustomDesktop
                     (bool foundModifier, VariableChanged<Sprite> value) desktopCreditsIcon = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.CreditsIcon, vCs => vCs.HasChanged);
 
+                    // Get a copy of the text file icon before we overwrite it.
+                    if (CustomTextFileHelper.TextFileIcon == null)
+                    {
+                        CustomTextFileHelper.TextFileIcon = CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite;
+                    }
+                    
                     if (desktopCreditsIcon.foundModifier)
                     {
                         CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite =
@@ -490,6 +496,14 @@ namespace NewSafetyHelp.CustomDesktop
                         foreach (CustomVideo customVideo in customCampaign.CustomVideos)
                         {
                             VideoHelper.CreateCustomVideoFileProgram(customVideo);
+                        }
+                    }
+                    
+                    if (customCampaign.CustomTextProgramFiles.Count > 0)
+                    {
+                        foreach (CustomTextFile customTextFile in customCampaign.CustomTextProgramFiles)
+                        {
+                            CustomTextFileHelper.CreateCustomTextFile(customTextFile);
                         }
                     }
                 }

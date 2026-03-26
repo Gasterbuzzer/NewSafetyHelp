@@ -143,7 +143,8 @@
     <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\RingtoneHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFiles.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFile.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFileHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\OnDayUnlockPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Abstract\CustomCampaignElement.cs" />
@@ -176,9 +177,9 @@
     <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
     <Compile Include="src\CustomDesktop\Utils\EmailHelper.cs" />
     <Compile Include="src\CustomDesktop\Utils\ThemeProgramHelper.cs" />
-    <Compile Include="src\CustomDesktop\Utils\VideoHelper.cs" />
     <Compile Include="src\CustomThemes\ColorHelper.cs" />
     <Compile Include="src\CustomVideos\CustomVideo.cs" />
+    <Compile Include="src\CustomVideos\VideoHelper.cs" />
     <Compile Include="src\CustomVideos\VideoPatches.cs" />
     <Compile Include="src\Emails\CustomEmail.cs" />
     <Compile Include="src\EntryManager\EntryData\EntryMetadata.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\RingtoneParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\TextProgramParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\MainCampaignCallerParsing.cs" />
