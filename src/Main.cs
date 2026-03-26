@@ -40,6 +40,7 @@ namespace NewSafetyHelp
         public static MelonPreferences_Entry<bool> ShowEmailDebugLog; // If to show the logs for email info.
         public static MelonPreferences_Entry<bool> ShowVideoDebugLog; // If to show the logs for video info.
         public static MelonPreferences_Entry<bool> ShowEntryDebugLog; // If to show the logs for entry info.
+        public static MelonPreferences_Entry<bool> ShowTextFileDebugLog; // If to show the logs for text file info.
 
         public override void OnInitializeMelon()
         {
@@ -64,6 +65,7 @@ namespace NewSafetyHelp
             ShowEmailDebugLog = mainModSettings.CreateEntry("ShowEmailDebugLog", false);
             ShowVideoDebugLog = mainModSettings.CreateEntry("ShowVideoDebugLog", false);
             ShowEntryDebugLog = mainModSettings.CreateEntry("ShowEntryDebugLog", false);
+            ShowTextFileDebugLog = mainModSettings.CreateEntry("ShowTextFileDebugLog", false);
 
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;

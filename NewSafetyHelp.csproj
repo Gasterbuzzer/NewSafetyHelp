@@ -151,6 +151,7 @@
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCallerHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyEmailHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyTextFileHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyVideoHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\CallerAccuracyType.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\GeneralAccuracyType.cs" />

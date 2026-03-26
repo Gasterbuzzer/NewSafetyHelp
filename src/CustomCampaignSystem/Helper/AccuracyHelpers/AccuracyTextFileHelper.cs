@@ -1,26 +1,24 @@
 ﻿using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
-using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 {
-    public static class AccuracyVideoHelper
+    public static class AccuracyTextFileHelper
     {
         /// <summary>
-        /// Checks if the given Accuracy day can even be checked (unlock day is valid).
+        /// Checks if the given EmailAccuracyDay can even be checked (unlock day is valid).
         /// </summary>
-        /// <param name="accuracyType">Accuracy element.</param>
-        /// <param name="video">CustomVideo to check with.</param>
         /// <returns>(Bool) True: Day is valid. False: Day is not reached yet.</returns>
-        private static bool CheckIfDayValid(GeneralAccuracyType accuracyType, CustomVideo video)
+        private static bool CheckIfDayValid(GeneralAccuracyType accuracyType, CustomTextFile textFile)
         {
             int? unlockDay = accuracyType.CheckDay;
 
             if (accuracyType.CheckDay == null)
             {
-                unlockDay = video.UnlockDay - 1;
+                unlockDay = textFile.UnlockDay - 1;
             }
 
             if (unlockDay <= 0
@@ -29,10 +27,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                 return true;
             }
 
-            LoggingHelper.DebugLog($"Checking video accuracy day of '{unlockDay}' " +
+            LoggingHelper.DebugLog($"Checking accuracy day of '{unlockDay}' " +
                                    $"on day '{GlobalVariables.currentDay}'. " +
                                    $"(Accuracy type check day: '{accuracyType.CheckDay}')",
-                LoggingHelper.LoggingCategory.VIDEO);
+                LoggingHelper.LoggingCategory.TEXT_FILE);
 
             return false;
         }
@@ -41,20 +39,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         /// Gets the accuracy of a provided day.
         /// </summary>
         /// <param name="unlockDay">Day to check for.</param>
-        /// <param name="video"> Video to be checked. </param>
+        /// <param name="textFile">Text file to be checked. </param>
         /// <returns>(Float?) If found, will return the score of that day. If not, it will return null.</returns>
-        private static float? GetAccuracyOfDay(int? unlockDay, CustomVideo video)
+        private static float? GetAccuracyOfDay(int? unlockDay, CustomTextFile textFile)
         {
             if (unlockDay == null)
             {
-                unlockDay = video.UnlockDay - 1;
+                unlockDay = textFile.UnlockDay - 1;
             }
 
             if (unlockDay <= 0)
             {
-                LoggingHelper.WarningLog("Unable of getting video accuracy for any day that isn't the first. " +
+                LoggingHelper.WarningLog("Unable of getting accuracy for any day that isn't the first. " +
                                          $"Unlock day '{unlockDay}' with unlock day of " +
-                                         $"'{video.UnlockDay}' is thus invalid.");
+                                         $"'{textFile.UnlockDay}' is thus invalid.",
+                    LoggingHelper.LoggingCategory.TEXT_FILE);
                 return null;
             }
 
@@ -82,36 +81,36 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 
             return null;
         }
-        
+
         /// <summary>
         /// Checks if all accuracy requirements are met.
         /// </summary>
-        /// <param name="customVideo">CustomVideo to check for.</param>
+        /// <param name="customTextFile">CustomTextFile to check for.</param>
         /// <returns>(Bool) True: Passed all checks; False: Failed a check.</returns>
-        private static bool CheckAllAccuracyRequirements(CustomVideo customVideo)
+        private static bool CheckAllAccuracyRequirements(CustomTextFile customTextFile)
         {
             // No accuracies given, we can say it will be shown, since no check exists.
-            if (customVideo.UnlockAccuracy == null)
+            if (customTextFile.UnlockAccuracy == null)
             {
                 return true;
             }
 
-            foreach (GeneralAccuracyType accuracyType in customVideo.UnlockAccuracy)
+            foreach (GeneralAccuracyType accuracyType in customTextFile.UnlockAccuracy)
             {
                 // If the day of to unlock is even reached.
-                if (!CheckIfDayValid(accuracyType, customVideo))
+                if (!CheckIfDayValid(accuracyType, customTextFile))
                 {
-                    LoggingHelper.DebugLog(() => "Accuracy day not reached.",
-                        LoggingHelper.LoggingCategory.EMAIL);
+                    LoggingHelper.DebugLog(() => "Text file accuracy day not reached.",
+                        LoggingHelper.LoggingCategory.TEXT_FILE);
                     return false;
                 }
 
-                float? currentAccuracyWithNull = GetAccuracyOfDay(accuracyType.CheckDay, customVideo);
+                float? currentAccuracyWithNull = GetAccuracyOfDay(accuracyType.CheckDay, customTextFile);
 
                 if (currentAccuracyWithNull == null)
                 {
                     LoggingHelper.WarningLog("Unable of getting accuracy of a day. " +
-                                             "Possible logic error? Not showing video.");
+                                             "Possible logic error? Not showing text file.");
                     return false;
                 }
 
@@ -121,19 +120,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                 int? checkDay;
                 if (accuracyType.CheckDay == null)
                 {
-                    checkDay = customVideo.UnlockDay - 1;
+                    checkDay = customTextFile.UnlockDay - 1;
                 }
                 else
                 {
                     checkDay = accuracyType.CheckDay;
                 }
-                
+
                 LoggingHelper.DebugLog(() =>
-                    $"The current accuracy is '{currentAccuracy}' of day '{checkDay}' " +
-                    $"(Video Unlock Day: '{customVideo.UnlockDay}') " +
-                    $"with check type: '{accuracyType.AccuracyCheck.ToString()}'. " +
-                    $"With required accuracy of '{accuracyType.RequiredAccuracy}'.",
-                    LoggingHelper.LoggingCategory.VIDEO);
+                        $"The current accuracy is '{currentAccuracy}' of day '{checkDay}' " +
+                        $"(Text File Unlock Day: '{customTextFile.UnlockDay}') " +
+                        $"with check type: '{accuracyType.AccuracyCheck.ToString()}'. " +
+                        $"With required accuracy of '{accuracyType.RequiredAccuracy}'.",
+                    LoggingHelper.LoggingCategory.TEXT_FILE);
 
                 // The switch statements all look for the opposite of the current statement,
                 // since it only matters if we fail one of them and not if all check are true.
@@ -175,60 +174,62 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                         break;
                 }
             }
-            
+
             return true;
         }
 
         /// <summary>
-        /// Checks if the provided customVideo has the accuracy to be allowed to be shown.
+        /// Checks if the provided custom text file has the accuracy to be allowed to be shown.
         /// </summary>
-        /// <param name="customVideo">Video to be checked.</param>
+        /// <param name="customTextFile">Text File to be checked.</param>
         /// <returns>(True) Passed all checks. (False) Failed a check.</returns>
-        public static bool CheckIfVideoAccuracyType(CustomVideo customVideo)
+        public static bool CheckIfTextFilePassAccuracyChecks(CustomTextFile customTextFile)
         {
-            LoggingHelper.DebugLog("Checking customVideo accuracy type.", LoggingHelper.LoggingCategory.VIDEO);
+            LoggingHelper.DebugLog($"Checking custom text file ('{customTextFile.FileNameOnDesktop}') accuracy type.");
 
-            if (customVideo.UnlockDay > GlobalVariables.currentDay)
+            if (!CustomCampaignGlobal.InCustomCampaign)
+            {
+                return true;
+            }
+
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+            if (customCampaign == null)
             {
                 return false;
             }
-            
-            // If the email is only allowed to be unlocked after the game has been finished, we check that first.
-            if (customVideo.UnlockWhenGameFinished)
+
+            if (customTextFile.UnlockDay > GlobalVariables.currentDay)
             {
-                if (CustomCampaignGlobal.InCustomCampaign)
-                {
-                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-
-                    if (customCampaign == null)
-                    {
-                        return false;
-                    }
-
-                    // Game has not been finished. So the checks fail.
-                    if (customCampaign.SavedGameFinished != 1
-                        && customCampaign.SavedGameFinishedDisplay != 1)
-                    {
-                        LoggingHelper.DebugLog("Video will not be shown. Game has not been finished.",
-                            LoggingHelper.LoggingCategory.VIDEO);
-                        return false;
-                    }
-                }
+                return false;
             }
 
-            if (customVideo.UnlockRequiredCallers != null
-                && customVideo.UnlockRequiredCallers.Count > 0)
+            // If the text file is only allowed to be unlocked after the game has been finished, we check that first.
+            if (customTextFile.UnlockWhenGameFinished)
             {
-                if (!AccuracyHelper.CheckIfCallerRequirementsAreMet(customVideo.UnlockRequiredCallers,
-                        LoggingHelper.LoggingCategory.VIDEO))
+                // Game has not been finished. So the checks fail.
+                if (customCampaign.SavedGameFinished != 1
+                    && customCampaign.SavedGameFinishedDisplay != 1)
                 {
-                    LoggingHelper.DebugLog("Video will not be shown. A caller requirement was not met.",
-                        LoggingHelper.LoggingCategory.VIDEO);
+                    LoggingHelper.DebugLog("Text file will not be shown. Game has not been finished.",
+                        LoggingHelper.LoggingCategory.TEXT_FILE);
+                    return false;
+                }
+            }
+            
+            if (customTextFile.UnlockRequiredCallers != null
+                && customTextFile.UnlockRequiredCallers.Count > 0)
+            {
+                if (!AccuracyHelper.CheckIfCallerRequirementsAreMet(customTextFile.UnlockRequiredCallers,
+                        LoggingHelper.LoggingCategory.TEXT_FILE))
+                {
+                    LoggingHelper.DebugLog("Text file will not be shown. A caller requirement was not met.",
+                        LoggingHelper.LoggingCategory.TEXT_FILE);
                     return false;
                 }
             }
 
-            if (!CheckAllAccuracyRequirements(customVideo))
+            if (!CheckAllAccuracyRequirements(customTextFile))
             {
                 return false;
             }

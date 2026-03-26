@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomDesktop;
+﻿using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
@@ -45,15 +46,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
             TextFileExecutable textFileExecutable = newCustomTextFile.GetComponent<TextFileExecutable>();
 
             textFileExecutable.myContent = customTextFile.TextFileContents;
-
-            // Unlock Day
-            //OnDayUnlock onDayUnlock = newCustomTextFile.AddComponent<OnDayUnlock>();
-            //onDayUnlock.unlockDay = customTextFile.UnlockDay;
-
+            
             // We enable the text file and then check if we disable it.
             newCustomTextFile.SetActive(true);
 
-            if (customTextFile.UnlockDay > GlobalVariables.currentDay)
+            if (GlobalVariables.currentDay < customTextFile.UnlockDay)
+            {
+                newCustomTextFile.SetActive(false);
+            }
+
+            if (!AccuracyTextFileHelper.CheckIfTextFilePassAccuracyChecks(customTextFile))
             {
                 newCustomTextFile.SetActive(false);
             }

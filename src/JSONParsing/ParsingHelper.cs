@@ -485,9 +485,23 @@ namespace NewSafetyHelp.JSONParsing
 
             if (accuracyRequiredList.Count != accuracyCheckType.Count)
             {
-                LoggingHelper.ErrorLog("Provided accuracy lists must all have equal length. " +
-                                       "Unable of parsing accuracy checks.");
-                return;
+                if (accuracyRequiredList.Count < accuracyCheckType.Count)
+                {
+                    LoggingHelper.ErrorLog("Provided accuracy lists must all should have equal length. " +
+                                           "Unable of parsing accuracy checks.");
+                    return;
+                }
+
+                if (accuracyCheckType.Count >= 1)
+                {
+                    LoggingHelper.WarningLog("Provided accuracy lists must all should have equal length. " +
+                                             "Adding any missing accuracy checks with 'geq' (greater or equal).");
+                }
+
+                while (accuracyCheckType.Count < accuracyRequiredList.Count)
+                {
+                    accuracyCheckType.Add("geq");
+                }
             }
 
             if (differentAccuracyDays.Count > accuracyCheckType.Count)

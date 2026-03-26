@@ -13,6 +13,7 @@ namespace NewSafetyHelp.LoggingSystem
             RINGTONE,
             EMAIL,
             VIDEO,
+            TEXT_FILE,
             ENTRY
         }
 
@@ -84,6 +85,13 @@ namespace NewSafetyHelp.LoggingSystem
                     
                     case LoggingCategory.ENTRY:
                         if (!NewSafetyHelpMainClass.ShowEntryDebugLog.Value)
+                        {
+                            return false;
+                        }
+                        break;
+                    
+                    case LoggingCategory.TEXT_FILE:
+                        if (!NewSafetyHelpMainClass.ShowTextFileDebugLog.Value)
                         {
                             return false;
                         }

@@ -115,9 +115,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
 
                 // Valid accuracy.
                 float currentAccuracy = (float)currentAccuracyWithNull;
+                
+                int? checkDay;
+                if (accuracyType.CheckDay == null)
+                {
+                    checkDay = customEmail.UnlockDay - 1;
+                }
+                else
+                {
+                    checkDay = accuracyType.CheckDay;
+                }
 
                 LoggingHelper.DebugLog(() =>
-                    $"The current accuracy is '{currentAccuracy}' of day '{accuracyType.CheckDay}' " +
+                    $"The current accuracy is '{currentAccuracy}' of day '{checkDay}' " +
                     $"(Email Unlock Day: '{customEmail.UnlockDay}') " +
                     $"with check type: '{accuracyType.AccuracyCheck.ToString()}'. " +
                     $"With required accuracy of '{accuracyType.RequiredAccuracy}'.",

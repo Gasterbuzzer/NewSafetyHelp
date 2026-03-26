@@ -70,6 +70,13 @@ namespace NewSafetyHelp.InGameSettings
             return toggleValue;
         }
         
+        public static bool OnTextFileLogToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.ShowTextFileDebugLog.Value = toggleValue;
+            
+            return toggleValue;
+        }
+        
         public static bool OnSkipDayClockInToggle(bool toggleValue)
         {
             NewSafetyHelpMainClass.SkipDayClockIn.Value = toggleValue;

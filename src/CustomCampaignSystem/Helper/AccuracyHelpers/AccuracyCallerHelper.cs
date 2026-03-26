@@ -94,7 +94,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                 float currentAccuracy = GetCorrectAccuracy(accuracyType.UseTotalAccuracy, 
                     currentCaller.CountEveryCallerForLocalAccuracy);
                 
-                LoggingHelper.DebugLog(() => "DEBUG: Found" +
+                LoggingHelper.DebugLog(() => "Found" +
                                        $"Accuracy caller with current check '{accuracyType.AccuracyCheck.ToString()}' " +
                                        $"and required accuracy '{accuracyType.RequiredAccuracy}'. " +
                                        $"The current accuracy is: '{currentAccuracy}'.",

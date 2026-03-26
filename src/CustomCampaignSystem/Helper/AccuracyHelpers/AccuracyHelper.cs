@@ -45,6 +45,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         public static bool CheckIfCallerRequirementsAreMet(List<CallerRequirement> callerRequirements, 
             LoggingHelper.LoggingCategory loggingCategory = LoggingHelper.LoggingCategory.EMAIL)
         {
+            LoggingHelper.DebugLog("Checking caller requirements...", loggingCategory);
+            
             if (CustomCampaignGlobal.InCustomCampaign)
             {
                 CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -80,6 +82,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                     // We haven't reached that point yet. (Not the correct day for example)
                     if (callerID >= customCampaign.SavedCallersCorrectAnswer.Count)
                     {
+                        LoggingHelper.DebugLog("Caller requirement skipped, we have not reached the caller yet.",
+                            loggingCategory);
                         return false;
                     }
 

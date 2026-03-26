@@ -158,6 +158,9 @@ namespace NewSafetyHelp.CustomDesktop
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnVideoLogToggle,
                         "Enable Video Logs", NewSafetyHelpMainClass.ShowVideoDebugLog.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnTextFileLogToggle,
+                        "Enable Text File Logs", NewSafetyHelpMainClass.ShowTextFileDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEntryLogToggle,
                         "Enable Entry Logs", NewSafetyHelpMainClass.ShowEntryDebugLog.Value);
