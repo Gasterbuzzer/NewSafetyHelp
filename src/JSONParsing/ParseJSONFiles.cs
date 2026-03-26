@@ -153,8 +153,9 @@ namespace NewSafetyHelp.JSONParsing
                 }
                 catch (Exception e)
                 {
-                    LoggingHelper.ErrorLog($"ERROR: Failed in reading file '{jsonPathFile}'. " +
-                                           $"Error message: '{e.Message};{e.StackTrace}'.");
+                    LoggingHelper.ErrorLog($"ERROR: Failed reading the file '{jsonPathFile}'. \n---\n" +
+                                           $"Error message: '{e.Message}'. \n---\n" +
+                                           $"Error Stacktrace: \n'\n{e.StackTrace}\n'.");
                 }
             }
         }
