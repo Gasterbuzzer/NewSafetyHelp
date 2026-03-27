@@ -20,6 +20,12 @@ namespace NewSafetyHelp.Callers.Answer
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", typeof(MonsterProfile))]
         public static class ReplaceAnswerWithReplacedAnswer
         {
+            private static readonly FieldInfo DynamicCaller = typeof(CallerController).GetField("dynamicCaller",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
+            private static readonly MethodInfo TriggerXmasLight = typeof(CallerController).GetMethod("TriggerXmasLight",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            
             /// <summary>
             /// Patch the caller answer check to be the custom caller/entry.
             /// </summary>
@@ -28,18 +34,14 @@ namespace NewSafetyHelp.Callers.Answer
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
-                // Get DynamicCaller
-                Type callerController = typeof(CallerController);
-                FieldInfo dynamicCaller = callerController.GetField("dynamicCaller",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                if (dynamicCaller == null)
+                if (DynamicCaller == null)
                 {
-                    LoggingHelper.ErrorLog("CallerController.dynamicCaller is null!");
+                    LoggingHelper.ReflectionError(nameof(DynamicCaller));
                     return true;
                 }
 
-                if (monsterID != null) // Monster Valid
+                // Monster Valid
+                if (monsterID != null) 
                 {
                     ++__instance.callersToday;
 
@@ -86,7 +88,6 @@ namespace NewSafetyHelp.Callers.Answer
 
                             if (customCampaign == null)
                             {
-                                LoggingHelper.CampaignNullError();
                                 __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
                                 return false;
                             }
@@ -104,19 +105,17 @@ namespace NewSafetyHelp.Callers.Answer
                         else
                         {
                             __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
-                            if (GlobalVariables.isXmasDLC) // If wrong and DLC
+                            
+                            // If wrong and in DLC
+                            if (GlobalVariables.isXmasDLC) 
                             {
-                                // Get TriggerXMAS Lights
-                                MethodInfo triggerXmasLight = callerController.GetMethod("TriggerXmasLight",
-                                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                                if (triggerXmasLight == null)
+                                if (TriggerXmasLight == null)
                                 {
-                                    LoggingHelper.ErrorLog("triggerXmasLight is null! Calling original function.");
+                                    LoggingHelper.ReflectionError(nameof(TriggerXmasLight));
                                     return true;
                                 }
 
-                                triggerXmasLight.Invoke(__instance, new object[] { });
+                                TriggerXmasLight.Invoke(__instance, null);
 
                                 GlobalVariables.cheerMeterScript.UpdateMeterVisuals();
                             }
@@ -129,19 +128,20 @@ namespace NewSafetyHelp.Callers.Answer
                         }
                     }
                 }
-                else if
-                    (!(bool)dynamicCaller
-                         .GetValue(__instance)) // Monster not provided and a dynamic caller. So we set it to true.
+                // Monster not provided and a dynamic caller. So we set it to true.
+                else if (!(bool)DynamicCaller.GetValue(__instance)) 
                 {
                     __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
 
                     if (!CustomCampaignGlobal.InCustomCampaign)
                     {
-                        LoggingHelper.DebugLog("INFO: Dynamic Caller. No replacement possible. Always correct.");
+                        LoggingHelper.DebugLog("The current caller is a dynamic caller. " +
+                                               "No replacement effects will happen. " +
+                                               "The caller will also be marked as correct.");
                     }
                 }
 
-                dynamicCaller.SetValue(__instance, false);
+                DynamicCaller.SetValue(__instance, false);
 
                 return false; // Skip the original function
             }
@@ -204,9 +204,8 @@ namespace NewSafetyHelp.Callers.Answer
                     }
                     else
                     {
-                        LoggingHelper.DebugLog("[INFO] OnCallConcluded has no subscribers unable of executing." +
-                                               " Ignoring.");
-
+                        LoggingHelper.DebugLog("OnCallConcluded has no subscribers unable of executing. " +
+                                               "Will skip executing OnCallConcluded.");
                     }
                 }
 
@@ -281,8 +280,8 @@ namespace NewSafetyHelp.Callers.Answer
 
                         if (ColorLifeImages == null || CameraShake == null || ArcadeFailureRoutine == null)
                         {
-                            LoggingHelper.ReflectionError(nameof(ColorLifeImages), nameof(CameraShake),
-                                nameof(ArcadeFailureRoutine));
+                            LoggingHelper.ReflectionError(nameof(ColorLifeImages),
+                                nameof(CameraShake), nameof(ArcadeFailureRoutine));
                             return true;
                         }
 
@@ -301,6 +300,7 @@ namespace NewSafetyHelp.Callers.Answer
                         {
                             IEnumerator arcadeFailureRoutine =
                                 (IEnumerator)ArcadeFailureRoutine.Invoke(__instance, null);
+                            
                             // OLD: __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
                             __instance.StartCoroutine(arcadeFailureRoutine); 
                         }
@@ -358,7 +358,6 @@ namespace NewSafetyHelp.Callers.Answer
 
                                 if (customCampaign == null)
                                 {
-                                    LoggingHelper.CampaignNullError();
                                     return true;
                                 }
 
@@ -540,7 +539,6 @@ namespace NewSafetyHelp.Callers.Answer
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
                         
