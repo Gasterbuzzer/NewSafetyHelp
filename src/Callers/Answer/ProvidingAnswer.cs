@@ -16,6 +16,8 @@ namespace NewSafetyHelp.Callers.Answer
 {
     public static class ProvidingAnswer
     {
+        private static readonly int XmasTension = Animator.StringToHash("xmasTension");
+
         // Patches the caller to replace it with another with random chance.
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "CheckCallerAnswer", typeof(MonsterProfile))]
         public static class ReplaceAnswerWithReplacedAnswer
@@ -425,6 +427,16 @@ namespace NewSafetyHelp.Callers.Answer
                             
                             // In case the intermission music is playing, we stop it.
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
+
+                            for (int i = 1; i < checkResult + 1; i++)
+                            {
+                                int targetIndex = __instance.currentCallerID + i;
+                                
+                                if (targetIndex < __instance.callers.Length)
+                                {
+                                    __instance.callers[targetIndex].answeredCorrectly = true;
+                                }
+                            }
                             
                             // Increase caller ID, since we are skipping callers.
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult;
@@ -457,20 +469,18 @@ namespace NewSafetyHelp.Callers.Answer
                     // Next caller after providing an answer.
                     if (__instance.currentCallerID + 1 < __instance.callers.Length)
                     {
-                        __instance.StartCoroutine(
-                            newCallRoutineDefaultValues); //__instance.StartCoroutine(__instance.NewCallRoutine()); 
+                        // OLD: __instance.StartCoroutine(__instance.NewCallRoutine()); 
+                        __instance.StartCoroutine(newCallRoutineDefaultValues); 
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                     }
 
                     if (GlobalVariables.isXmasDLC && __instance.currentCallerID == __instance.callers.Length - 4)
                     {
-                        // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
-                        GlobalVariables.mainCanvasScript.cameraAnimator.SetBool("xmasTension", true);
+                        GlobalVariables.mainCanvasScript.cameraAnimator.SetBool(XmasTension, true);
                     }
                     else
                     {
-                        // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
-                        GlobalVariables.mainCanvasScript.cameraAnimator.SetBool("xmasTension", false);
+                        GlobalVariables.mainCanvasScript.cameraAnimator.SetBool(XmasTension, false);
                     }
                 }
                 

@@ -90,8 +90,20 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                             
                             // In case the intermission music is playing, we stop it.
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
+
+                            for (int i = 1; i < checkResult + 1; i++)
+                            {
+                                int targetIndex = GlobalVariables.callerControllerScript.currentCallerID + i;
+
+                                if (targetIndex < GlobalVariables.callerControllerScript.callers.Length)
+                                {
+                                    GlobalVariables.callerControllerScript.callers[targetIndex].answeredCorrectly = true;
+                                }
+                            }
                             
-                            GlobalVariables.callerControllerScript.currentCallerID += checkResult; // Increase caller ID, since we are skipping callers.
+                            // Increase caller ID, since we are skipping callers.
+                            GlobalVariables.callerControllerScript.currentCallerID += checkResult;
+                            
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript.EndDayRoutine());
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false; // Skip original function.
