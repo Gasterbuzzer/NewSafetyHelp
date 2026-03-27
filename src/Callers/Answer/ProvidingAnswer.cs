@@ -151,11 +151,31 @@ namespace NewSafetyHelp.Callers.Answer
         public static class SubmitAnswerPatch
         {
             // Some reflection.
+            private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+            
             private static readonly MethodInfo NewCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
             
             private static readonly FieldInfo LastDayNum = typeof(CallerController).GetField("lastDayNum",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            
+            private static readonly MethodInfo CheckCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+            
+            private static readonly FieldInfo CallerAudioSource = typeof(CallerController).GetField("callerAudioSource",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+            
+            private static readonly FieldInfo TriggerGameOver = typeof(CallerController).GetField("triggerGameOver",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+            
+            private static readonly MethodInfo ColorLifeImages = typeof(CallerController).GetMethod("ColorLifeImages",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+            private static readonly MethodInfo CameraShake = typeof(CallerController).GetMethod("CameraShake",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+            private static readonly MethodInfo ArcadeFailureRoutine = typeof(CallerController).
+                GetMethod("ArcadeFailureRoutine",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
             
             /// <summary>
             /// Changes the function to work with better with custom campaigns. By also increasing tier on last call if available.
@@ -167,17 +187,15 @@ namespace NewSafetyHelp.Callers.Answer
             {
                 LoggingHelper.DebugLog("SubmitAnswer Called.", LoggingHelper.LoggingCategory.SKIPPED_CALLER);
                 
-                FieldInfo onCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-                
-                if (onCallConcluded == null)
+                if (OnCallConcluded == null)
                 {
-                    LoggingHelper.ErrorLog("OnCallConcluded is null. Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(OnCallConcluded));
                     return true;
                 }
                 else // _onCallConcluded != null
                 {
-                    Delegate del = (Delegate) onCallConcluded.GetValue(null); // Since its static.
+                    // We use null, since it's static.
+                    Delegate del = (Delegate) OnCallConcluded.GetValue(null); 
 
                     if (del != null)
                     {
@@ -194,7 +212,7 @@ namespace NewSafetyHelp.Callers.Answer
 
                 if (NewCallRoutine == null)
                 {
-                    LoggingHelper.ErrorLog("NewCallRoutine is null. Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(NewCallRoutine));
                     return true;
                 }
 
@@ -203,25 +221,19 @@ namespace NewSafetyHelp.Callers.Answer
                 
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
 
-                FieldInfo _callerAudioSource = typeof(CallerController).GetField("callerAudioSource",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-
-                if (_callerAudioSource == null)
+                if (CallerAudioSource == null)
                 {
-                    LoggingHelper.ErrorLog("callerAudioSource is null. Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(CallerAudioSource));
                     return true;
                 }
 
-                FieldInfo triggerGameOver = typeof(CallerController).GetField("triggerGameOver",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-
-                if (triggerGameOver == null)
+                if (TriggerGameOver == null)
                 {
-                    LoggingHelper.ErrorLog("triggerGameOver is null. Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(TriggerGameOver));
                     return true;
                 }
 
-                AudioSource callerAudioSource = (AudioSource)_callerAudioSource.GetValue(__instance);
+                AudioSource callerAudioSource = (AudioSource)CallerAudioSource.GetValue(__instance);
                 
                 // OLD: __instance.callerAudioSource.Stop();
                 callerAudioSource.Stop(); 
@@ -267,24 +279,17 @@ namespace NewSafetyHelp.Callers.Answer
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                         ++__instance.currentStrikes;
 
-                        MethodInfo _colorLifeImages = typeof(CallerController).GetMethod("ColorLifeImages",
-                            BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-                        MethodInfo _cameraShake = typeof(CallerController).GetMethod("CameraShake",
-                            BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-                        MethodInfo _arcadeFailureRoutine = typeof(CallerController).GetMethod("ArcadeFailureRoutine",
-                            BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-
-                        if (_colorLifeImages == null || _cameraShake == null || _arcadeFailureRoutine == null)
+                        if (ColorLifeImages == null || CameraShake == null || ArcadeFailureRoutine == null)
                         {
-                            LoggingHelper.ErrorLog("ColorLifeImages or CameraShake or ArcadeFailureRoutine is null." +
-                                                   " Calling original function.");
+                            LoggingHelper.ReflectionError(nameof(ColorLifeImages), nameof(CameraShake),
+                                nameof(ArcadeFailureRoutine));
                             return true;
                         }
 
                         // OLD: __instance.ColorLifeImages();
-                        _colorLifeImages.Invoke(__instance, null); 
+                        ColorLifeImages.Invoke(__instance, null); 
 
-                        IEnumerator cameraShake = (IEnumerator)_cameraShake.Invoke(__instance, new object[] { 0.25f });
+                        IEnumerator cameraShake = (IEnumerator)CameraShake.Invoke(__instance, new object[] { 0.25f });
 
                         if (cameraShake != null)
                         {
@@ -295,7 +300,7 @@ namespace NewSafetyHelp.Callers.Answer
                         if (__instance.currentStrikes >= __instance.strikesToFailure)
                         {
                             IEnumerator arcadeFailureRoutine =
-                                (IEnumerator)_arcadeFailureRoutine.Invoke(__instance, null);
+                                (IEnumerator)ArcadeFailureRoutine.Invoke(__instance, null);
                             // OLD: __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
                             __instance.StartCoroutine(arcadeFailureRoutine); 
                         }
@@ -306,29 +311,27 @@ namespace NewSafetyHelp.Callers.Answer
                         }
                     }
                 }
-                else if ((bool)triggerGameOver.GetValue(__instance)) // __instance.triggerGameOver
+                // OLD: __instance.triggerGameOver
+                else if ((bool)TriggerGameOver.GetValue(__instance)) 
                 {
                     GlobalVariables.mainCanvasScript.PlayGameOverCutscene();
                 }
                 else // Not Arcade Mode
                 {
-                    MethodInfo checkCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer",
-                        BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-
-                    if (checkCallerAnswer == null)
+                    if (CheckCallerAnswer == null)
                     {
-                        LoggingHelper.ErrorLog("CheckCallerAnswer is null. Calling original function.");
+                        LoggingHelper.ReflectionError(nameof(CheckCallerAnswer));
                         return true;
                     }
 
                     // OLD: __instance.CheckCallerAnswer(monsterID);
-                    checkCallerAnswer.Invoke(__instance, new object[] { monsterID }); 
+                    CheckCallerAnswer.Invoke(__instance, new object[] { monsterID }); 
 
                     // Before checking, it is the last call of the day, we check if we can increase the tier.
 
-                    LoggingHelper.DebugLog("Increase tier?" +
-                                           $" (For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName})" +
-                                           $" {__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
+                    LoggingHelper.DebugLog("Increase tier? " +
+                                           $"(For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) " +
+                                           $"{__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
 
                     if (__instance.callers[__instance.currentCallerID].callerProfile.increaseTier)
                     {
@@ -391,11 +394,12 @@ namespace NewSafetyHelp.Callers.Answer
 
                         if (LastDayNum == null)
                         {
-                            LoggingHelper.ErrorLog("lastDayNum is null. Calling original function.");
+                            LoggingHelper.ReflectionError(nameof(LastDayNum));
                             return true;
                         }
 
-                        if (GlobalVariables.currentDay < (int)LastDayNum.GetValue(__instance)) //__instance.lastDayNum
+                        // OLD: __instance.lastDayNum
+                        if (GlobalVariables.currentDay < (int)LastDayNum.GetValue(__instance)) 
                         {
                             // OLD:
                             // GlobalVariables.mainCanvasScript.StartCoroutine(
