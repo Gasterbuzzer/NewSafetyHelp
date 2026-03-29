@@ -102,6 +102,32 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             VariableChanged<Sprite> gameFinishedBackgroundSprite = new VariableChanged<Sprite>();
             
+            // If the final cutscene should fade to black.
+            VariableChanged<bool> finalCutsceneFadeToBlack = new VariableChanged<bool>()
+            {
+                Data = true
+            };
+            
+            VariableChanged<bool> finalCutsceneShake = new VariableChanged<bool>
+            {
+                Data = true
+            };
+            
+            VariableChanged<bool> finalCutsceneGlitchSounds = new VariableChanged<bool>
+            {
+                Data = true
+            };
+            
+            VariableChanged<float> finalCutsceneFadeDuration = new VariableChanged<float>
+            {
+                Data = 3f
+            };
+            
+            VariableChanged<float> finalCutsceneFadePaddingDuration = new VariableChanged<float>
+            {
+                Data = 1f
+            };
+            
             bool disableGreenColorBackground = false;
             Color? desktopBackgroundColor = null;
 
@@ -241,7 +267,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
                 ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
-
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black",
+                ref finalCutsceneFadeToBlack);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_shake", ref finalCutsceneShake);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_glitch_sounds",
+                ref finalCutsceneGlitchSounds);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black_duration",
+                ref finalCutsceneFadeDuration);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_extra_fade_to_black_duration",
+                ref finalCutsceneFadePaddingDuration);
+            
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
@@ -332,7 +368,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref showDefaultUIAccuracyText);
             
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
-
+            
             return new CustomModifier
             {
                 CustomCampaignName = customCampaignName,
@@ -349,6 +385,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DesktopBackgrounds = backgroundSprites,
                 
                 GameFinishedBackground = gameFinishedBackgroundSprite,
+                
+                FinalCutsceneFadeToBlack = finalCutsceneFadeToBlack,
+                FinalCutsceneShake = finalCutsceneShake,
+                FinalCutsceneGlitchSounds = finalCutsceneGlitchSounds,
+                FinalCutsceneFadeDuration = finalCutsceneFadeDuration,
+                FinalCutsceneFadePaddingDuration = finalCutsceneFadePaddingDuration,
                 
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,

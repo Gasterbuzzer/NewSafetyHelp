@@ -6,6 +6,7 @@ using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.LoggingSystem;
@@ -25,6 +26,9 @@ namespace NewSafetyHelp.Callers.UI
         private static readonly int Glitch = Animator.StringToHash("glitch");
         private static readonly int Shake = Animator.StringToHash("shake");
 
+        private static readonly List<string> DefaultDayNames = new List<string>
+            { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "WriteDayString")]
         public static class WriteDayStringPatch
         {
@@ -36,9 +40,6 @@ namespace NewSafetyHelp.Callers.UI
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref string __result)
             {
-                List<string> defaultDayNames = new List<string>()
-                    { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-
                 if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.arcadeMode)
@@ -46,7 +47,7 @@ namespace NewSafetyHelp.Callers.UI
                         __result = "Arcade Mode";
                     }
 
-                    __result = defaultDayNames[GlobalVariables.currentDay - 1];
+                    __result = DefaultDayNames[GlobalVariables.currentDay - 1];
                 }
                 else if (GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -86,7 +87,7 @@ namespace NewSafetyHelp.Callers.UI
                                 LoggingHelper.WarningLog(
                                     "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
                                     " Using default values.");
-                                dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                                dayString = DefaultDayNames[(GlobalVariables.currentDay - 1) % DefaultDayNames.Count];
                             }
                             else
                             {
@@ -96,7 +97,7 @@ namespace NewSafetyHelp.Callers.UI
                         }
                         else
                         {
-                            dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                            dayString = DefaultDayNames[(GlobalVariables.currentDay - 1) % DefaultDayNames.Count];
                         }
 
                         (bool foundModifier, List<string> value) daysStrings =
@@ -120,7 +121,7 @@ namespace NewSafetyHelp.Callers.UI
                                 LoggingHelper.WarningLog(
                                     "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
                                     " Using default values.");
-                                dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                                dayString = DefaultDayNames[(GlobalVariables.currentDay - 1) % DefaultDayNames.Count];
                             }
                             else
                             {
@@ -165,7 +166,7 @@ namespace NewSafetyHelp.Callers.UI
 
                         if (string.IsNullOrEmpty(dayString)) // If empty, we provide a default one.
                         {
-                            dayString = defaultDayNames[(GlobalVariables.currentDay - 1) % defaultDayNames.Count];
+                            dayString = DefaultDayNames[(GlobalVariables.currentDay - 1) % DefaultDayNames.Count];
                         }
 
                         if (!string.IsNullOrEmpty(
@@ -179,7 +180,7 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.WarningLog("Was unable of finding the current campaign." +
                                                  " Defaulting to default values.");
 
-                        __result = defaultDayNames[GlobalVariables.currentDay - 1];
+                        __result = DefaultDayNames[GlobalVariables.currentDay - 1];
                     }
                 }
                 else
@@ -278,7 +279,7 @@ namespace NewSafetyHelp.Callers.UI
                 if (NewSafetyHelpMainClass.SkipDayClockIn.Value)
                 {
                     GlobalVariables.fade.FadeIn(1f);
-                    
+
                     mainCanvasBehavior.clockInPanel.SetActive(false);
                     mainCanvasBehavior.clockOutElements.SetActive(false);
                     mainCanvasBehavior.clockInElements.SetActive(false);
@@ -399,15 +400,15 @@ namespace NewSafetyHelp.Callers.UI
         {
             // To avoid duplicate day ending.
             public static bool IsDayEnding;
-            
-            private static readonly MethodInfo SaveCallerAnswers = typeof(MainCanvasBehavior).
-                GetMethod("SaveCallerAnswers",
+
+            private static readonly MethodInfo SaveCallerAnswers = typeof(MainCanvasBehavior).GetMethod(
+                "SaveCallerAnswers",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            
+
             private static readonly MethodInfo UnlockDailySteamAchievement = typeof(MainCanvasBehavior).GetMethod(
                 "UnlockDailySteamAchievement",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            
+
             private static readonly FieldInfo ProgressDay = typeof(MainCanvasBehavior).GetField("progressDay",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
@@ -472,7 +473,10 @@ namespace NewSafetyHelp.Callers.UI
                     }
 
                     // OLD: mainCanvasBehavior.UnlockDailySteamAchievement();
-                    UnlockDailySteamAchievement.Invoke(mainCanvasBehavior, null);
+                    if (!CustomCampaignGlobal.InCustomCampaign) // Only in main campaign
+                    {
+                        UnlockDailySteamAchievement.Invoke(mainCanvasBehavior, null);
+                    }
                 }
 
                 GlobalVariables.fade.FadeIn(2f);
@@ -503,10 +507,10 @@ namespace NewSafetyHelp.Callers.UI
                     {
                         dayScore = 100.0f;
                     }
-                    
+
                     customCampaign.SavedDayScores[GlobalVariables.currentDay] = dayScore;
-                        
-                    
+
+
                     LoggingHelper.DebugLog($"Saving day score of day '{GlobalVariables.currentDay}'." +
                                            $"With the score of '{customCampaign.SavedDayScores[GlobalVariables.currentDay]}'.");
                 }
@@ -518,12 +522,12 @@ namespace NewSafetyHelp.Callers.UI
                 }
 
                 // OLD: !mainCanvasBehavior.progressDay
-                if (!(bool)ProgressDay.GetValue(mainCanvasBehavior)) 
+                if (!(bool)ProgressDay.GetValue(mainCanvasBehavior))
                 {
                     ++GlobalVariables.currentDay;
-                    
+
                     // OLD: mainCanvasBehavior.progressDay = true;
-                    ProgressDay.SetValue(mainCanvasBehavior, true); 
+                    ProgressDay.SetValue(mainCanvasBehavior, true);
                 }
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
@@ -591,6 +595,14 @@ namespace NewSafetyHelp.Callers.UI
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "EndingCutsceneRoutine")]
         public static class EndingCutsceneRoutinePatch
         {
+            private static readonly MethodInfo SaveCallerAnswers = typeof(MainCanvasBehavior).GetMethod(
+                "SaveCallerAnswers",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+            private static readonly MethodInfo AchievedHundredPercentAccuracyRating =
+                typeof(MainCanvasBehavior).GetMethod("AchievedHundredPercentAccuracyRating",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             /// <summary>
             /// Patches the EndingCutsceneRoutine coroutine to work better with custom campaigns.
             /// </summary>
@@ -617,22 +629,71 @@ namespace NewSafetyHelp.Callers.UI
                 if (mainCanvasBehavior.videoPlayer.isPlaying ||
                     Camera.main.gameObject.GetComponent<Animator>().GetBool(Shake))
                 {
-                    LoggingHelper.InfoLog("INFO: Ending cutscene is already playing. Not calling again.");
+                    LoggingHelper.InfoLog("Ending cutscene is already playing. Not calling again.");
                     yield break;
                 }
 
                 if (!GlobalVariables.isXmasDLC)
                 {
-                    Camera.main.gameObject.GetComponent<Animator>().SetBool(Shake, true);
-                    mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
-                        GlobalVariables.UISoundControllerScript.screenShakeLoop,
-                        GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
+                    // Custom Campaign
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        (bool foundModifier, VariableChanged<bool> value) finalCutsceneShouldShake = 
+                            CustomCampaignGlobal.GetActiveModifierValue(
+                                c => c.FinalCutsceneShake, vCb => vCb.HasChanged);
+                    
+                        bool shouldCutsceneShake = true;
 
-                    yield return new WaitForSeconds(6f);
+                        if (finalCutsceneShouldShake.foundModifier)
+                        {
+                            shouldCutsceneShake = finalCutsceneShouldShake.value.Data;
+                        }
 
-                    mainCanvasBehavior.StartCoroutine(
-                        GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(
-                            GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+                        if (shouldCutsceneShake)
+                        {
+                            Camera.main.gameObject.GetComponent<Animator>().SetBool(Shake, true);
+                        }
+                        
+                        (bool foundModifier, VariableChanged<bool> value) finalCutsceneGlitchSoundEffect = 
+                            CustomCampaignGlobal.GetActiveModifierValue(
+                                c => c.FinalCutsceneGlitchSounds, vCb => vCb.HasChanged);
+                        
+                        bool shouldPlayGlitchSound = true;
+
+                        if (finalCutsceneGlitchSoundEffect.foundModifier)
+                        {
+                            shouldPlayGlitchSound = finalCutsceneGlitchSoundEffect.value.Data;
+                        }
+
+                        if (shouldPlayGlitchSound)
+                        {
+                            mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
+                                GlobalVariables.UISoundControllerScript.screenShakeLoop,
+                                GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
+                                
+                            yield return new WaitForSeconds(6f);
+                            
+                            mainCanvasBehavior.StartCoroutine(
+                                GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(
+                                    GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+                        }
+                    }
+                    // Main Campaign
+                    else
+                    {
+                        Camera.main.gameObject.GetComponent<Animator>().SetBool(Shake, true);
+                        
+                        mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
+                            GlobalVariables.UISoundControllerScript.screenShakeLoop,
+                            GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
+                        
+                        yield return new WaitForSeconds(6f);
+                        
+                        mainCanvasBehavior.StartCoroutine(
+                            GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(
+                                GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+                    }
+                    
                     GlobalVariables.musicControllerScript.StopTrialMusic();
                 }
 
@@ -641,16 +702,14 @@ namespace NewSafetyHelp.Callers.UI
                     GlobalVariables.saveManagerScript.savedGameFinished = 1;
                     GlobalVariables.saveManagerScript.savedGameFinishedDisplay = 1;
 
-                    MethodInfo saveCallerAnswers = typeof(MainCanvasBehavior).GetMethod("SaveCallerAnswers",
-                        BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                    if (saveCallerAnswers == null)
+                    if (SaveCallerAnswers == null)
                     {
-                        LoggingHelper.CriticalErrorLog("Method 'SaveCallerAnswers' was null. Catastrophic failure!");
+                        LoggingHelper.ReflectionError(nameof(SaveCallerAnswers));
                         yield break;
                     }
 
-                    saveCallerAnswers.Invoke(mainCanvasBehavior, null); // mainCanvasBehavior.SaveCallerAnswers();
+                    // OLD: mainCanvasBehavior.SaveCallerAnswers();
+                    SaveCallerAnswers.Invoke(mainCanvasBehavior, null);
                 }
                 else // Custom Campaign
                 {
@@ -658,7 +717,6 @@ namespace NewSafetyHelp.Callers.UI
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
@@ -686,13 +744,62 @@ namespace NewSafetyHelp.Callers.UI
                 GlobalVariables.saveManagerScript.SaveGameProgress();
                 GlobalVariables.saveManagerScript.SaveGameFinished();
 
-                GlobalVariables.fade.FadeIn(3f);
+                // Custom Campaign
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    (bool foundModifier, VariableChanged<bool> value) finalCutsceneFadeToBlack = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.FinalCutsceneFadeToBlack, vCb => vCb.HasChanged);
+                    
+                    bool shouldPlayFadeToBlack = true;
 
-                yield return new WaitForSeconds(4f);
+                    if (finalCutsceneFadeToBlack.foundModifier)
+                    {
+                        shouldPlayFadeToBlack = finalCutsceneFadeToBlack.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<float> value) finalCutsceneFadeDuration = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.FinalCutsceneFadeDuration, vCb => vCb.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<float> value) finalCutsceneFadePaddingDuration = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.FinalCutsceneFadePaddingDuration, vCb => vCb.HasChanged);
 
-                GlobalVariables.fade.FadeOut();
+                    float fadeDuration = 3f;
+                    float fadeOutPadding = 1f;
+
+                    if (finalCutsceneFadeDuration.foundModifier)
+                    {
+                        fadeDuration = finalCutsceneFadeDuration.value.Data;
+                    }
+                    
+                    if (finalCutsceneFadePaddingDuration.foundModifier)
+                    {
+                        fadeOutPadding = finalCutsceneFadePaddingDuration.value.Data;
+                    }
+                    
+                    if (shouldPlayFadeToBlack)
+                    {
+                        GlobalVariables.fade.FadeIn(fadeDuration);
+
+                        yield return new WaitForSeconds(fadeDuration+fadeOutPadding);
+
+                        GlobalVariables.fade.FadeOut();
+                    }
+                }
+                // Main Campaign
+                else
+                {
+                    GlobalVariables.fade.FadeIn(3f);
+
+                    yield return new WaitForSeconds(4f);
+
+                    GlobalVariables.fade.FadeOut();
+                }
+                
                 mainCanvasBehavior.cutsceneCanvas.SetActive(true);
-
+                
                 yield return new WaitForSeconds(0.5f);
 
                 // Inject custom end clip here.
@@ -710,7 +817,6 @@ namespace NewSafetyHelp.Callers.UI
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
@@ -759,24 +865,21 @@ namespace NewSafetyHelp.Callers.UI
                     }
                 }
 
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&
-                    !CustomCampaignGlobal.InCustomCampaign) // Disable Achievement in Custom Campaign
+                // Disabled in Custom Campaign
+                if (SteamManager.Initialized
+                    && !GlobalVariables.isXmasDLC
+                    && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     SteamUserStats.SetAchievement("GameFinished");
 
-                    MethodInfo _achievedHundredPercentAccuracyRating =
-                        typeof(MainCanvasBehavior).GetMethod("AchievedHundredPercentAccuracyRating",
-                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                    if (_achievedHundredPercentAccuracyRating == null)
+                    if (AchievedHundredPercentAccuracyRating == null)
                     {
-                        LoggingHelper.CriticalErrorLog("Method 'AchievedHundredPercentAccuracyRating' was null." +
-                                                       " Catastrophic failure!");
+                        LoggingHelper.ReflectionError(nameof(AchievedHundredPercentAccuracyRating));
                         yield break;
                     }
 
-                    if ((bool)_achievedHundredPercentAccuracyRating.Invoke(mainCanvasBehavior,
-                            null)) // mainCanvasBehavior.AchievedHundredPercentAccuracyRating()
+                    // OLD: mainCanvasBehavior.AchievedHundredPercentAccuracyRating()
+                    if ((bool)AchievedHundredPercentAccuracyRating.Invoke(mainCanvasBehavior, null))
                     {
                         SteamUserStats.SetAchievement("PerfectGame");
                         LoggingHelper.DebugLog("[UNITY] PerfectGame Achievement unlocked.");
@@ -831,14 +934,14 @@ namespace NewSafetyHelp.Callers.UI
 
                         if (customCCaller == null)
                         {
-                            LoggingHelper.ErrorLog("Custom campaign caller was null." +
-                                                   " Unable of checking for downed network parameter." +
-                                                   " Calling original function.");
+                            LoggingHelper.ErrorLog("Custom campaign caller was null. " +
+                                                   "Unable of checking for downed network parameter. " +
+                                                   "Calling original function.");
                             return true;
                         }
 
-                        if (customCCaller
-                            .DownedNetworkCaller) // This is set to true if the caller is allowed to down the network.
+                        // This is set to true if the caller is allowed to down the network.
+                        if (customCCaller.DownedNetworkCaller) 
                         {
                             __result = true;
                             return false;
@@ -854,6 +957,10 @@ namespace NewSafetyHelp.Callers.UI
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine")]
         public static class GameOverCutsceneRoutinePatch
         {
+            private static readonly FieldInfo ShakeAnimationString = typeof(MainCanvasBehavior).GetField(
+                "shakeAnimationString",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             /// <summary>
             /// Patches the game over cutscene coroutine to also be able to play custom game over cutscenes.
             /// </summary>
@@ -871,18 +978,23 @@ namespace NewSafetyHelp.Callers.UI
             {
                 MainCanvasBehavior mainCanvasBehavior = __instance;
 
-                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                if (shakeAnimationString == null)
+                if (ShakeAnimationString == null)
                 {
-                    LoggingHelper.CriticalErrorLog("shakeAnimationString is null! Catastrophic failure!");
+                    LoggingHelper.ReflectionError(nameof(ShakeAnimationString));
                     yield break;
                 }
 
-                mainCanvasBehavior.cameraAnimator.SetBool((string)shakeAnimationString.GetValue(__instance),
-                    true); // mainCanvasBehavior.shakeAnimationString
-
+                // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign)
+                {
+                    // OLD: mainCanvasBehavior.shakeAnimationString
+                    mainCanvasBehavior.cameraAnimator.SetBool((string)ShakeAnimationString.GetValue(__instance), true);
+                }
+                else
+                {
+                    mainCanvasBehavior.cameraAnimator.SetBool((string)ShakeAnimationString.GetValue(__instance), true);
+                }
+                
                 mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
                     GlobalVariables.UISoundControllerScript.screenShakeLoop,
                     GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
@@ -904,7 +1016,8 @@ namespace NewSafetyHelp.Callers.UI
 
                 mainCanvasBehavior.cutsceneCanvas.SetActive(true);
 
-                if (!CustomCampaignGlobal.InCustomCampaign) // Not in custom campaign
+                // Not in custom campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) 
                 {
                     mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
 
@@ -919,7 +1032,6 @@ namespace NewSafetyHelp.Callers.UI
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
@@ -949,7 +1061,6 @@ namespace NewSafetyHelp.Callers.UI
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
 
@@ -969,8 +1080,10 @@ namespace NewSafetyHelp.Callers.UI
                     }
                 }
 
-                if (SteamManager.Initialized && !GlobalVariables.isXmasDLC &&
-                    !CustomCampaignGlobal.InCustomCampaign) // Don't show fired achievement in custom campaign.
+                // Don't show fired achievement in custom campaign.
+                if (SteamManager.Initialized 
+                    && !GlobalVariables.isXmasDLC 
+                    && !CustomCampaignGlobal.InCustomCampaign) 
                 {
                     SteamUserStats.SetAchievement("Fired");
                     SteamUserStats.StoreStats();

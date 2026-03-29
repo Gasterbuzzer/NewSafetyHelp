@@ -31,6 +31,32 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // Desktop Background (Finished the game)
         public VariableChanged<Sprite> GameFinishedBackground = new VariableChanged<Sprite>(); 
         
+        // If the final cutscene should fade to black.
+        public VariableChanged<bool> FinalCutsceneFadeToBlack = new VariableChanged<bool>
+        {
+            Data = true
+        };
+        
+        public VariableChanged<bool> FinalCutsceneShake = new VariableChanged<bool>
+        {
+            Data = true
+        };
+        
+        public VariableChanged<bool> FinalCutsceneGlitchSounds = new VariableChanged<bool>
+        {
+            Data = true
+        };
+        
+        public VariableChanged<float> FinalCutsceneFadeDuration = new VariableChanged<float>
+        {
+            Data = 3f
+        };
+        
+        public VariableChanged<float> FinalCutsceneFadePaddingDuration = new VariableChanged<float>
+        {
+            Data = 1f
+        };
+        
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();
         public bool BlackBackgroundOnAnimatedBackground = false;
