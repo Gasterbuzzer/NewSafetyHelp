@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.LoggingSystem;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
@@ -17,11 +20,9 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
             /// <summary>
             /// Patches the close call button to play cutscenes only when in main campaign.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
-            // ReSharper disable once UnusedParameter.Local
-            private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance)
+            private static bool Prefix(CallWindowBehavior __instance)
             {
                 if (GlobalVariables.callerControllerScript.currentCallerID ==
                     GlobalVariables.callerControllerScript.callers.Length - 1)
@@ -49,6 +50,48 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                                 
                             LoggingHelper.DebugLog($"(Custom Ending) Saving day score of day '{GlobalVariables.currentDay}'. " +
                                                    $"With the score of '{customCampaign.SavedDayScores[GlobalVariables.currentDay]}'.");
+
+                            GameObject closeButton = __instance.gameObject.transform.Find("CurrentCall").Find("CloseButton").gameObject;
+
+                            if (closeButton != null)
+                            {
+                                if (closeButton.TryGetComponent(out Button closeButtonComponent))
+                                {
+                                    closeButtonComponent.interactable = false;
+                                }
+                                
+                                if (closeButton.TryGetComponent(out SwapCursorHoverDisplayer swapCursorHoverDisplayer))
+                                {
+                                    swapCursorHoverDisplayer.enabled = false;
+                                }
+                                
+                                GameObject buttonText = closeButton.transform.Find("Text (TMP)").gameObject;
+
+                                if (buttonText != null)
+                                {
+                                    if (buttonText.TryGetComponent(out TextMeshProUGUI textMeshProUGUIComponent))
+                                    {
+                                        textMeshProUGUIComponent.text = "...";
+                                    }
+                                }
+                                
+                                (bool foundModifier, VariableChanged<bool> value) finalCutsceneBlockInput = 
+                                    CustomCampaignGlobal.GetActiveModifierValue(
+                                        c => c.FinalCutscenePreventClicks,
+                                        vCb => vCb.HasChanged);
+
+                                bool blockInput = true;
+
+                                if (finalCutsceneBlockInput.foundModifier)
+                                {
+                                    blockInput = finalCutsceneBlockInput.value.Data;
+                                }
+
+                                if (blockInput)
+                                {
+                                    GlobalVariables.mainCanvasScript.inputBlocker.SetActive(true);
+                                }
+                            }
                         }
 
                         GlobalVariables.mainCanvasScript.PlayEndingCutscene();

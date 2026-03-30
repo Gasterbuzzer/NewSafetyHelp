@@ -47,6 +47,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = true
         };
         
+        public VariableChanged<bool> FinalCutscenePreventClicks = new VariableChanged<bool>
+        {
+            Data = false
+        };
+        
         public VariableChanged<float> FinalCutsceneFadeDuration = new VariableChanged<float>
         {
             Data = 3f
@@ -55,6 +60,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public VariableChanged<float> FinalCutsceneFadePaddingDuration = new VariableChanged<float>
         {
             Data = 1f
+        };
+        
+        // Final Cutscene Audio
+        public VariableChanged<RichAudioClip> FinalCutsceneAudio = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> FinalCutsceneAudioPath = new VariableChanged<string>
+        {
+            Data = null
         };
         
         // URLs to each animated background.

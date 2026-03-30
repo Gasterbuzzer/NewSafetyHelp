@@ -118,6 +118,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = true
             };
             
+            VariableChanged<bool> finalCutscenePreventClicks = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            
             VariableChanged<float> finalCutsceneFadeDuration = new VariableChanged<float>
             {
                 Data = 3f
@@ -273,6 +278,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_shake", ref finalCutsceneShake);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_glitch_sounds",
                 ref finalCutsceneGlitchSounds);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_prevent_clicks",
+                ref finalCutscenePreventClicks);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black_duration",
                 ref finalCutsceneFadeDuration);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_extra_fade_to_black_duration",
@@ -389,6 +396,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FinalCutsceneFadeToBlack = finalCutsceneFadeToBlack,
                 FinalCutsceneShake = finalCutsceneShake,
                 FinalCutsceneGlitchSounds = finalCutsceneGlitchSounds,
+                FinalCutscenePreventClicks = finalCutscenePreventClicks,
                 FinalCutsceneFadeDuration = finalCutsceneFadeDuration,
                 FinalCutsceneFadePaddingDuration = finalCutsceneFadePaddingDuration,
                 

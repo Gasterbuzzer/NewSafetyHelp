@@ -128,7 +128,6 @@
     <Compile Include="src\Callers\CallerHelpers\CallerSkipping.cs" />
     <Compile Include="src\Callers\CallerModel\CustomCCaller.cs" />
     <Compile Include="src\Callers\CallerPatches.cs" />
-    <Compile Include="src\Callers\GameOverPatches.cs" />
     <Compile Include="src\Callers\IncomingCallWindow\AnimatedCallerPortraitPatches.cs" />
     <Compile Include="src\Callers\IncomingCallWindow\CloseButtonPatches.cs" />
     <Compile Include="src\Callers\IncomingCallWindow\CallWindowStartPatches.cs" />
@@ -183,6 +182,8 @@
     <Compile Include="src\CustomVideos\VideoHelper.cs" />
     <Compile Include="src\CustomVideos\VideoPatches.cs" />
     <Compile Include="src\Emails\CustomEmail.cs" />
+    <Compile Include="src\EndingPatches\GameEndCutscene.cs" />
+    <Compile Include="src\EndingPatches\GameOverPatches.cs" />
     <Compile Include="src\EntryManager\EntryData\EntryMetadata.cs" />
     <Compile Include="src\EntryManager\EntryListing\EntryListingPatches.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
