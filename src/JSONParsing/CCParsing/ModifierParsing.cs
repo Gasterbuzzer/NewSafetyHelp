@@ -3,6 +3,7 @@ using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -34,10 +35,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomModifier customModifier = ParseModifier(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.FinalCutsceneAudioPath,
+                clip =>
+                {
+                    customModifier.FinalCutsceneAudio.Data = clip;
+                    customModifier.FinalCutsceneAudio.HasChanged = true;
+                }, 
+                jsonFolderPath, "final_cutscene_audio_name");
+
             // Add to correct campaign.
-            CustomCampaign customCampaign =
-                CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.CampaignName == customCampaignName);
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
 
             if (customCampaign != null)
             {
@@ -123,6 +130,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = false
             };
             
+            VariableChanged<bool> finalCutsceneStopAudioAfterFade = new VariableChanged<bool>
+            {
+                Data = true
+            };
+            
             VariableChanged<float> finalCutsceneFadeDuration = new VariableChanged<float>
             {
                 Data = 3f
@@ -132,6 +144,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = 1f
             };
+            
+            // Final Cutscene Audio
+            VariableChanged<RichAudioClip> finalCutsceneAudio = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            string finalCutsceneAudioPath = null;
             
             bool disableGreenColorBackground = false;
             Color? desktopBackgroundColor = null;
@@ -284,6 +304,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref finalCutsceneFadeDuration);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_extra_fade_to_black_duration",
                 ref finalCutsceneFadePaddingDuration);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_stop_audio_after_fade",
+                ref finalCutsceneStopAudioAfterFade);
+            
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name", 
+                ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
             
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
@@ -399,6 +424,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FinalCutscenePreventClicks = finalCutscenePreventClicks,
                 FinalCutsceneFadeDuration = finalCutsceneFadeDuration,
                 FinalCutsceneFadePaddingDuration = finalCutsceneFadePaddingDuration,
+                FinalCutsceneAudioPath = finalCutsceneAudioPath,
+                FinalCutsceneAudio = finalCutsceneAudio,
+                FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
                 
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,

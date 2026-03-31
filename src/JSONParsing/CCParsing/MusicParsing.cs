@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using MelonLoader;
-using NewSafetyHelp.Audio;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
@@ -34,44 +32,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add music clip
-            if (jObjectParsed.ContainsKey("music_audio_clip_name"))
-            {
-                if (string.IsNullOrEmpty(customMusic.MusicClipPath))
-                {
-                    LoggingHelper.WarningLog($"No valid music file given for file in {jsonFolderPath}." +
-                                             " No audio will be heard.");
-                }
-                // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customMusic.MusicClipPath))
-                {
-                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain '{customMusic.MusicClipPath}'." +
-                                            " Unable to add audio.");
-                }
-                else // Valid location, so we load in the value.
-                {
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    // Add the audio
-                                    customMusic.MusicClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                }
-                                else
-                                {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip {customMusic.MusicClipPath} for custom caller.");
-                                }
-                            },
-                            customMusic.MusicClipPath)
-                    );
-                }
-            }
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customMusic.MusicClipPath,
+                clip => customMusic.MusicClip = clip,
+                jsonFolderPath, "music_audio_clip_name");
 
             // Add to correct campaign.
-            CustomCampaign customCampaign =
-                CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.CampaignName == customCampaignName);
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
 
             if (customCampaign != null)
             {
@@ -108,7 +74,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
-            ParsingHelper.TryAssignAudioPath(jObjectParsed, "music_audio_clip_name", ref musicAudioPath,
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "music_audio_clip_name", ref musicAudioPath,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);

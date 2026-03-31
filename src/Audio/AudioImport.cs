@@ -12,7 +12,10 @@ namespace NewSafetyHelp.Audio
     public static class AudioImport
     {
         // List containing all audios currently loading.
-        public static List<string> CurrentLoadingAudios = new List<string>();
+        public static readonly List<string> CurrentLoadingAudios = new List<string>();
+        
+        private static readonly MethodInfo StartCallerController = typeof(CallerController).GetMethod("Start",
+            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
         
         // ReSharper disable once CommentTypo
         /// <summary>
@@ -84,24 +87,22 @@ namespace NewSafetyHelp.Audio
                 }
             }
         }
-
-
+        
         /// <summary>
-        /// Calls the CallerController Start to reload audio / imports again.
+        /// Calls the CallerController "Start" function to reload audio / imports again.
         /// </summary>
         public static void ReCallCallerListStart()
         {
-            MethodInfo startCallerController =  typeof(CallerController).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-            if (startCallerController == null)
+            if (StartCallerController == null)
             {
-                LoggingHelper.ErrorLog("Start of CallerController was not found!");
+                LoggingHelper.ReflectionError(nameof(StartCallerController));
                 return;
             }
 
             CallerController ccInstance = GameObject.Find("CallerController").GetComponent<CallerController>();
             
-            startCallerController.Invoke(ccInstance, null); // Call again.
+            // Call again.
+            StartCallerController.Invoke(ccInstance, null); 
         }
 
         /// <summary>

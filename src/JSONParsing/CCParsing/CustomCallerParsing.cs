@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -56,50 +55,24 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 customCCaller.MonsterNameAttached = customCallerMonsterName;
             }
 
-            // Custom Caller Audio Path (Later gets added with coroutine)
-            if (jObjectParsed.ContainsKey("custom_caller_audio_clip_name"))
-            {
-                if (string.IsNullOrEmpty(customCallerAudioPath))
-                {
-                    LoggingHelper.WarningLog($"No caller audio given for file in {jsonFolderPath}." +
-                                             " No audio will be heard.");
-                }
-                // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customCallerAudioPath))
-                {
-                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain '{customCallerAudioPath}'." +
-                                           " Unable to add audio.");
-                }
-                else // Valid location, so we load in the value.
-                {
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    // Add the audio
-                                    customCCaller.CallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    customCCaller.IsCallerClipLoaded = true;
-
-                                    if (AudioImport.CurrentLoadingAudios.Count <= 0)
-                                    {
-                                        // We finished loading all audios. We call the start function again.
-                                        AudioImport.ReCallCallerListStart();
-                                    }
-                                }
-                                else
-                                {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip {customCallerAudioPath} for custom caller.");
-                                }
-                            },
-                            customCallerAudioPath)
-                    );
-                }
-            }
+            // Custom Caller Audio Path (Later gets added with coroutine) 
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed,
+                customCCaller.CallerClipPath,
+                    clip =>
+                    {
+                        customCCaller.CallerClip = clip;
+                        customCCaller.IsCallerClipLoaded = true;
+                        
+                        // We finished loading all audios.
+                        // We call the start function again.
+                        if (AudioImport.CurrentLoadingAudios.Count <= 0)
+                        {
+                            AudioImport.ReCallCallerListStart();
+                        }
+                    }, 
+                    jsonFolderPath, "custom_caller_audio_clip_name");
 
             // Now after parsing all values, we add the custom caller to our map
-
             if (inMainCampaign)
             {
                 LoggingHelper.InfoLog("Found entry to add to the main game.");
@@ -108,9 +81,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             else
             {
                 // Add to correct campaign.
-                CustomCampaign customCampaign =
-                    CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                        customCampaignSearch.CampaignName == customCampaignName);
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
 
                 if (customCampaign != null)
                 {
@@ -201,7 +172,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_increases_tier", ref increasesTier);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_last_caller_day", ref isLastCallerOfDay);
 
-            ParsingHelper.TryAssignAudioPath(jObjectParsed, "custom_caller_audio_clip_name",
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "custom_caller_audio_clip_name",
                 ref customCallerAudioPath,  jsonFolderPath, usermodFolderPath, customCallerName);
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_consequence_caller_id",

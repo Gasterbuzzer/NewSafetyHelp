@@ -56,6 +56,18 @@ namespace NewSafetyHelp.CustomCampaignSystem
             
             return currentCustomCampaign;
         }
+        
+        /// <summary>
+        /// Returns the campaign of the given name.
+        /// </summary>
+        /// <param name="customCampaignName">Name of the custom campaign to find.</param>
+        /// <returns>CustomCampaign Object of the current activate custom campaign.</returns>
+        public static CustomCampaign GetNamedCustomCampaign(string customCampaignName)
+        {
+            return CustomCampaignsAvailable.Find(
+                customCampaignSearch => customCampaignSearch.CampaignName == customCampaignName
+                );
+        }
 
         /// <summary>
         /// Gets the custom caller by its order id provided. 

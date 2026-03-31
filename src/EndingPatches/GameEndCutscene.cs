@@ -83,21 +83,41 @@ namespace NewSafetyHelp.EndingPatches
                             CustomCampaignGlobal.GetActiveModifierValue(
                                 c => c.FinalCutsceneGlitchSounds, vCb => vCb.HasChanged);
                         
+                        (bool foundModifier, VariableChanged<RichAudioClip> value) finalCutsceneAudio = 
+                            CustomCampaignGlobal.GetActiveModifierValue(
+                                c => c.FinalCutsceneAudio, vCb => vCb.HasChanged);
+                        
                         bool shouldPlayGlitchSound = true;
+                        bool playCustomSound = false;
 
                         if (finalCutsceneGlitchSoundEffect.foundModifier)
                         {
                             shouldPlayGlitchSound = finalCutsceneGlitchSoundEffect.value.Data;
                         }
-
-                        if (shouldPlayGlitchSound)
+                        
+                        if (finalCutsceneAudio.foundModifier 
+                            && finalCutsceneAudio.value.Data != null)
                         {
-                            mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
-                                GlobalVariables.UISoundControllerScript.screenShakeLoop,
-                                GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
-                                
-                            yield return new WaitForSeconds(6f);
+                            shouldPlayGlitchSound = false;
+                            playCustomSound = true;
+                        }
+
+                        if (playCustomSound)
+                        {
+                            mainCanvasBehavior.StartCoroutine(
+                                GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
+                                    finalCutsceneAudio.value.Data,
+                                    GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
+                        }
+                        else if (shouldPlayGlitchSound)
+                        {
+                            mainCanvasBehavior.StartCoroutine(
+                                GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
+                                    GlobalVariables.UISoundControllerScript.screenShakeLoop,
+                                    GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
                             
+                            yield return new WaitForSeconds(6f);
+
                             mainCanvasBehavior.StartCoroutine(
                                 GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(
                                     GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
@@ -190,9 +210,15 @@ namespace NewSafetyHelp.EndingPatches
                     (bool foundModifier, VariableChanged<float> value) finalCutsceneFadePaddingDuration = 
                         CustomCampaignGlobal.GetActiveModifierValue(
                             c => c.FinalCutsceneFadePaddingDuration, vCb => vCb.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<bool> value) finalCutsceneStopAudioAfterFade = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.FinalCutsceneStopAudioAfterFade, vCb => vCb.HasChanged);
 
                     float fadeDuration = 3f;
                     float fadeOutPadding = 1f;
+                    
+                    bool stopAudioAfterFade = true;
 
                     if (finalCutsceneFadeDuration.foundModifier)
                     {
@@ -204,11 +230,24 @@ namespace NewSafetyHelp.EndingPatches
                         fadeOutPadding = finalCutsceneFadePaddingDuration.value.Data;
                     }
                     
+                    if (finalCutsceneStopAudioAfterFade.foundModifier)
+                    {
+                        stopAudioAfterFade = finalCutsceneStopAudioAfterFade.value.Data;
+                    }
+                    
                     if (shouldPlayFadeToBlack)
                     {
                         GlobalVariables.fade.FadeIn(fadeDuration);
 
                         yield return new WaitForSeconds(fadeDuration+fadeOutPadding);
+
+                        if (stopAudioAfterFade)
+                        {
+                            // Stop music if it is running
+                            mainCanvasBehavior.StartCoroutine(
+                                GlobalVariables.UISoundControllerScript.FadeOutLoopingSound(
+                                    GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.3f));
+                        }
 
                         GlobalVariables.fade.FadeOut();
                     }

@@ -62,16 +62,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = 1f
         };
         
+        public VariableChanged<bool> FinalCutsceneStopAudioAfterFade = new VariableChanged<bool>
+        {
+            Data = true
+        };
+        
         // Final Cutscene Audio
         public VariableChanged<RichAudioClip> FinalCutsceneAudio = new VariableChanged<RichAudioClip>
         {
             Data = null
         };
-        
-        public VariableChanged<string> FinalCutsceneAudioPath = new VariableChanged<string>
-        {
-            Data = null
-        };
+
+        public string FinalCutsceneAudioPath = null;
         
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();

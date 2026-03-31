@@ -1,9 +1,7 @@
-﻿using System.IO;
-using MelonLoader;
-using NewSafetyHelp.Audio;
-using NewSafetyHelp.CustomCampaignSystem;
+﻿using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomRingtone;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
@@ -29,58 +27,26 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            CustomRingtone customCustomRingtone = ParseRingtone(ref jObjectParsed, ref usermodFolderPath,
+            CustomRingtone customRingtone = ParseRingtone(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add ringtone clip
-            if (jObjectParsed.ContainsKey("ringtone_audio_clip_name"))
-            {
-                if (string.IsNullOrEmpty(customCustomRingtone.RingtoneClipPath))
-                {
-                    LoggingHelper.WarningLog($"No valid ringtone file given for file in {jsonFolderPath}.");
-                }
-                // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customCustomRingtone.RingtoneClipPath))
-                {
-                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain '{customCustomRingtone.RingtoneClipPath}'." +
-                                           " Unable to add audio.");
-                }
-                else // Valid location, so we load in the value.
-                {
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    // Add the audio
-                                    customCustomRingtone.RingtoneClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                }
-                                else
-                                {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip {customCustomRingtone.RingtoneClipPath}" +
-                                                           " for custom caller.");
-                                }
-                            },
-                            customCustomRingtone.RingtoneClipPath)
-                    );
-                }
-            }
-
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customRingtone.RingtoneClipPath,
+                clip => customRingtone.RingtoneClip = clip,
+                jsonFolderPath, "ringtone_audio_clip_name");
+            
             // Add to correct campaign.
-            CustomCampaign customCampaign =
-                CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.CampaignName == customCampaignName);
-
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
+            
             if (customCampaign != null)
             {
-                customCampaign.CustomRingtones.Add(customCustomRingtone);
+                customCampaign.CustomRingtones.Add(customRingtone);
             }
             else
             {
                 LoggingHelper.DebugLog("Found ringtone file before the custom campaign was found / does not exist.");
 
-                GlobalParsingVariables.PendingCustomCampaignRingtones.Add(customCustomRingtone);
+                GlobalParsingVariables.PendingCustomCampaignRingtones.Add(customRingtone);
             }
         }
 
@@ -100,7 +66,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
-            ParsingHelper.TryAssignAudioPath(jObjectParsed, "ringtone_audio_clip_name", ref ringtoneAudioPath,
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "ringtone_audio_clip_name", ref ringtoneAudioPath,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
 
             // Unlock Day

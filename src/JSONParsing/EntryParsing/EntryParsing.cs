@@ -7,6 +7,7 @@ using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -313,49 +314,38 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // Caller Audio Path (Later gets added with coroutine)
             if (jObjectParsed.TryGetValue("caller_audio_clip_name", out var callerAudioClipNameValue))
             {
-                string _callerAudioClipLocation = (string)callerAudioClipNameValue;
-                string callerAudioClipLocationLambdaCopy = _callerAudioClipLocation; // Create copy for lambda function.
+                string callerAudioClipLocation = (string) callerAudioClipNameValue;
 
-                if (string.IsNullOrEmpty(_callerAudioClipLocation) && !replaceEntry)
+                if (string.IsNullOrEmpty(callerAudioClipLocation) && !replaceEntry)
                 {
                     LoggingHelper.InfoLog($"No caller audio given for file in {jsonFolderPath}." +
                                           " No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(jsonFolderPath + "\\" + _callerAudioClipLocation) &&
-                         !File.Exists(usermodFolderPath + "\\" + _callerAudioClipLocation))
+                else if (!File.Exists(jsonFolderPath + "\\" + callerAudioClipLocation) &&
+                         !File.Exists(usermodFolderPath + "\\" + callerAudioClipLocation))
                 {
-                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain {_callerAudioClipLocation}." +
-                                           " Unable to add audio.");
+                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain {callerAudioClipLocation}. " +
+                                           "Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
                     // Use correct location.
-                    string audioLocation = jsonFolderPath + "\\" + _callerAudioClipLocation;
+                    string audioLocation = jsonFolderPath + "\\" + callerAudioClipLocation;
 
                     if (!File.Exists(audioLocation))
                     {
-                        audioLocation = usermodFolderPath + "\\" + _callerAudioClipLocation;
+                        audioLocation = usermodFolderPath + "\\" + callerAudioClipLocation;
                     }
 
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    // Add the audio
-                                    // ReSharper disable once AccessToModifiedClosure
-                                    newExtra.CallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                }
-                                else
-                                {
-                                    LoggingHelper.ErrorLog(
-                                        $"Failed to load audio clip {callerAudioClipLocationLambdaCopy}.");
-                                }
-                            },
-                            audioLocation)
-                    );
+                    AudioParsingHelper.UpdateAudioAtLocationNoKey(audioLocation,
+                        clip =>
+                        {
+                            // Add the audio
+                            // ReSharper disable once AccessToModifiedClosure
+                            newExtra.CallerClip = AudioImport.CreateRichAudioClip(clip.clip);
+                        }, 
+                        jsonFolderPath);
                 }
             }
 
@@ -389,30 +379,23 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         audioLocation = usermodFolderPath + "\\" + consequenceCallerAudioClipLocation;
                     }
 
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    // Add the audio
-                                    // ReSharper disable once AccessToModifiedClosure
-                                    newExtra.ConsequenceCallerClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                }
-                                else
-                                {
-                                    LoggingHelper.ErrorLog(
-                                        $"Failed to load audio clip {consequenceCallerAudioClipLocation}.");
-                                }
-                            },
-                            audioLocation)
-                    );
+                    AudioParsingHelper.UpdateAudioAtLocationNoKey(audioLocation,
+                        clip =>
+                        {
+                            // Add the audio
+                            // ReSharper disable once AccessToModifiedClosure
+                            newExtra.ConsequenceCallerClip = AudioImport.CreateRichAudioClip(clip.clip);
+                        }, 
+                        jsonFolderPath);
                 }
             }
 
             // Add the extra information entry.
-            if ((jObjectParsed.ContainsKey("caller_audio_clip_name") || includeMainCampaign || inCustomCampaign ||
-                 replaceEntry) && newExtra != null)
+            if ((jObjectParsed.ContainsKey("caller_audio_clip_name") 
+                 || includeMainCampaign 
+                 || inCustomCampaign 
+                 || replaceEntry) 
+                && newExtra != null)
             {
                 GlobalParsingVariables.EntriesMetadata.Add(newExtra);
             }
@@ -447,26 +430,21 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     {
                         audioLocation = usermodFolderPath + "\\" + monsterAudioClipLocation;
                     }
-
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
+                    
+                    AudioParsingHelper.UpdateAudioAtLocationNoKey(audioLocation,
+                        clip =>
+                        {
+                            if (foundMonster != null)
                             {
-                                if (myReturnValue != null)
-                                {
-                                    if (foundMonster != null)
-                                        foundMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                    if (foundMonsterXMAS != null)
-                                        foundMonsterXMAS.monsterAudioClip =
-                                            AudioImport.CreateRichAudioClip(myReturnValue);
-                                }
-                                else
-                                {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip {monsterAudioClipLocation}.");
-                                }
-                            },
-                            audioLocation)
-                    );
+                                foundMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
+                            }
+                            
+                            if (foundMonsterXMAS != null)
+                            {
+                                foundMonsterXMAS.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
+                            }
+                        }, 
+                        jsonFolderPath);
                 }
             }
             else // We add it instead of replacing the entry
@@ -489,22 +467,13 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     {
                         audioLocation = usermodFolderPath + "\\" + monsterAudioClipLocation;
                     }
-
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                }
-                                else
-                                {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip {monsterAudioClipLocation}.");
-                                }
-                            },
-                            audioLocation)
-                    );
+                    
+                    AudioParsingHelper.UpdateAudioAtLocationNoKey(audioLocation,
+                        clip =>
+                        {
+                            newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
+                        }, 
+                        jsonFolderPath);
                 }
             }
 

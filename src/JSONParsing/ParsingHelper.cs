@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MelonLoader;
-using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
@@ -96,33 +93,6 @@ namespace NewSafetyHelp.JSONParsing
 
             LoggingHelper.InfoLog($"Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
             LoggingHelper.InfoLog("(This is the intended and recommended way of providing the ID.)");
-        }
-
-        /// <summary>
-        /// Helper coroutine for updating the audio correctly for a monster clip.
-        /// </summary>
-        /// <param name="callback"> Callback function for returning values and doing stuff with it that require the coroutine to finish first. </param>
-        /// <param name="audioPath"> Path to the audio file. </param>
-        /// <param name="audioType"> Audio type to parse. </param>
-        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath,
-            AudioType audioType = AudioType.WAV)
-        {
-            AudioClip monsterSoundClip = null;
-
-            // Attempt to get the type
-            if (audioType != AudioType.UNKNOWN)
-            {
-                audioType = AudioImport.GetAudioType(audioPath);
-
-                yield return MelonCoroutines.Start(
-                    AudioImport.LoadAudio
-                    (
-                        myReturnValue => { monsterSoundClip = myReturnValue; },
-                        audioPath, audioType)
-                );
-            }
-
-            callback(monsterSoundClip);
         }
 
         /// <summary>
@@ -265,44 +235,6 @@ namespace NewSafetyHelp.JSONParsing
                     target.HasChanged = true;
                     target.Data = parsedSprite;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Attempts to assign the audio file path to the target string. But only if the audio file exists.
-        /// </summary>
-        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
-        /// <param name="key">Key to be found.</param>
-        /// <param name="target">Target to write the value to.</param>
-        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
-        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
-        /// <param name="customCallerName">(Optional) Name of the custom caller. Used to display errors.</param>
-        public static void TryAssignAudioPath(JObject jObjectParsed, string key, ref string target,
-            string jsonFolderPath, string usermodFolderPath, string customCallerName = null)
-        {
-            if (!jObjectParsed.TryGetValue(key, out var token))
-            {
-                return;
-            }
-
-            string audioPath = token.Value<string>();
-
-            if (!File.Exists(jsonFolderPath + "\\" + audioPath))
-            {
-                if (!File.Exists(usermodFolderPath + "\\" + audioPath))
-                {
-                    LoggingHelper.WarningLog($"Could not find provided audio file for key '{key}' at " +
-                                             $"'{jsonFolderPath}' (For Audio '{audioPath}') " +
-                                             $"{(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"for {customCallerName}" : "")}.");
-                }
-                else
-                {
-                    target = usermodFolderPath + "\\" + audioPath;
-                }
-            }
-            else
-            {
-                target = jsonFolderPath + "\\" + audioPath;
             }
         }
 
