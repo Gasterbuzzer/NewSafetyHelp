@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Reflection;
+using MelonLoader;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -14,9 +16,22 @@ namespace NewSafetyHelp.MainGameBugFixes
         private static readonly int ScreenLoad = Animator.StringToHash("ScreenLoad");
         private static readonly int Glitch = Animator.StringToHash("glitch");
 
+        private static object easterEggCoroutine;
+        private static bool hasActiveEasterEgg;
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "UpdateSelectedEntry", typeof(MonsterProfile))]
         public static class MainCanvasUpdateSelectedEntryPatch
         {
+            private static readonly MethodInfo IsNetworkDown = typeof(MainCanvasBehavior).
+                GetMethod("IsNetworkDown",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            private static readonly MethodInfo SelectMonsterPortrait = typeof(MainCanvasBehavior).
+                GetMethod("SelectMonsterPortrait",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            private static readonly MethodInfo UpdateLayoutGroupMethod = typeof(MainCanvasBehavior).
+                GetMethod("UpdateLayoutGroup",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            
             /// <summary>
             /// UpdateSelectedEntry patch to fix the double loading bug.
             /// </summary>
@@ -25,14 +40,10 @@ namespace NewSafetyHelp.MainGameBugFixes
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MainCanvasBehavior __instance, ref MonsterProfile profile)
             {
-                MethodInfo isNetworkDown = typeof(MainCanvasBehavior).GetMethod("IsNetworkDown", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-                MethodInfo selectMonsterPortrait = typeof(MainCanvasBehavior).GetMethod("SelectMonsterPortrait", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-                MethodInfo updateLayoutGroup = typeof(MainCanvasBehavior).GetMethod("UpdateLayoutGroup", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-
-                if (selectMonsterPortrait == null || isNetworkDown == null || updateLayoutGroup == null)
+                if (SelectMonsterPortrait == null || IsNetworkDown == null || UpdateLayoutGroupMethod == null)
                 {
-                    LoggingHelper.ErrorLog("'selectMonsterPortrait' or 'isNetworkDown' or 'updateLayoutGroup' method was not found." +
-                                           " Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(IsNetworkDown),
+                        nameof(SelectMonsterPortrait), nameof(UpdateLayoutGroupMethod));
                     return true;
                 }
                 
@@ -46,7 +57,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                 __instance.selectedMonsterProfile = profile;
                 
                 // Original: __instance.IsNetworkDown()
-                if ((bool) isNetworkDown.Invoke(__instance, null)) 
+                if ((bool) IsNetworkDown.Invoke(__instance, null)) 
                 {
                     profile = __instance.errorProfile;
                     __instance.cameraAnimator.SetTrigger(Glitch);
@@ -60,7 +71,23 @@ namespace NewSafetyHelp.MainGameBugFixes
                     __instance.selectedMonsterPortraitImage.gameObject.SetActive(true);
 
                     // Original: __instance.SelectMonsterPortrait(profile);
-                    __instance.selectedMonsterPortraitImage.sprite = (Sprite) selectMonsterPortrait.Invoke(__instance, new object[] {profile}); 
+                    __instance.selectedMonsterPortraitImage.sprite = (Sprite) SelectMonsterPortrait.Invoke(__instance, new object[] {profile});
+
+                    if (hasActiveEasterEgg)
+                    {
+                        __instance.selectedMonsterPortraitImage.color = Color.white;
+                        MelonCoroutines.Stop(easterEggCoroutine);
+                        hasActiveEasterEgg = false;
+                    }
+                    
+                    if (__instance.selectedMonsterProfile.name == "Boggart")
+                    {
+                        easterEggCoroutine = MelonCoroutines.Start(EasterEgg(() =>
+                        {
+                            LoggingHelper.DebugLog("Easter Egg!");
+                            __instance.selectedMonsterPortraitImage.color = Color.red;
+                        }));
+                    }
                 }
 
                 if (CustomCampaignGlobal.InCustomCampaign)
@@ -103,7 +130,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                 }
                 
                 // Original: __instance.UpdateLayoutGroup(__instance.mainEntryLayoutGroup)
-                IEnumerator UpdateLayoutGroup = (IEnumerator) updateLayoutGroup.Invoke(__instance, new object[] {__instance.mainEntryLayoutGroup});
+                IEnumerator UpdateLayoutGroup = (IEnumerator) UpdateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.mainEntryLayoutGroup});
                 __instance.StartCoroutine(UpdateLayoutGroup);
                 
                 if (GlobalVariables.UISoundControllerScript != null)
@@ -115,6 +142,15 @@ namespace NewSafetyHelp.MainGameBugFixes
                 
                 return false; // Skip original
             }
+
+            private static IEnumerator EasterEgg(Action updateSpriteAction)
+            {
+                hasActiveEasterEgg = true;
+                
+                yield return new WaitForSeconds(603);
+                
+                updateSpriteAction();
+            }
         }
         
         /// <summary>
@@ -123,6 +159,13 @@ namespace NewSafetyHelp.MainGameBugFixes
         [HarmonyLib.HarmonyPatch(typeof(EntryCanvasStandaloneBehavior), "UpdateSelectedEntry", typeof(MonsterProfile))]
         public static class EntryCanvasUpdateSelectedEntryPatch
         {
+            private static readonly MethodInfo SelectMonsterPortrait = typeof(EntryCanvasStandaloneBehavior).
+                GetMethod("SelectMonsterPortrait",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            private static readonly MethodInfo UpdateLayoutGroupMethod = typeof(EntryCanvasStandaloneBehavior).
+                GetMethod("UpdateLayoutGroup",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            
             /// <summary>
             /// UpdateSelectedEntry patch to fix the double loading bug.
             /// </summary>
@@ -131,13 +174,10 @@ namespace NewSafetyHelp.MainGameBugFixes
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(EntryCanvasStandaloneBehavior __instance, ref MonsterProfile profile)
             {
-                MethodInfo selectMonsterPortrait = typeof(EntryCanvasStandaloneBehavior).GetMethod("SelectMonsterPortrait", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-                MethodInfo updateLayoutGroup = typeof(EntryCanvasStandaloneBehavior).GetMethod("UpdateLayoutGroup", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-
-                if (selectMonsterPortrait == null || updateLayoutGroup == null)
+                if (SelectMonsterPortrait == null || UpdateLayoutGroupMethod == null)
                 {
-                    LoggingHelper.ErrorLog("'selectMonsterPortrait' or 'updateLayoutGroup' method was not found." +
-                                           " Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(SelectMonsterPortrait),
+                        nameof(UpdateLayoutGroupMethod));
                     return true;
                 }
 
@@ -157,7 +197,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                     __instance.selectedMonsterPortraitImage.gameObject.SetActive(true);
                     
                     // Original: __instance.SelectMonsterPortrait(profile);
-                    __instance.selectedMonsterPortraitImage.sprite = (Sprite) selectMonsterPortrait.Invoke(__instance, new object[] {profile});
+                    __instance.selectedMonsterPortraitImage.sprite = (Sprite) SelectMonsterPortrait.Invoke(__instance, new object[] {profile});
                 }
                 
                 if (CustomCampaignGlobal.InCustomCampaign)
@@ -199,7 +239,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                 }
                 
                 // Original: __instance.UpdateLayoutGroup(__instance.mainEntryLayoutGroup)
-                IEnumerator UpdateLayoutGroup = (IEnumerator) updateLayoutGroup.Invoke(__instance, new object[] {__instance.mainEntryLayoutGroup});
+                IEnumerator UpdateLayoutGroup = (IEnumerator) UpdateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.mainEntryLayoutGroup});
                 __instance.StartCoroutine(UpdateLayoutGroup);
                 
                 if (GlobalVariables.UISoundControllerScript != null)
