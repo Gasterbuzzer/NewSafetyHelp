@@ -237,10 +237,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Sprite customCampaignSprite = null;
                     
             // Initialize the strings empty.
-            List<List<string>> loadingTexts = new List<List<string>>()
+            List<List<string>> loadingTexts = new List<List<string>>
             {
-                new List<string>() {""}, // First inner list with one empty string
-                new List<string>() {""}  // Second inner list with one empty string
+                new List<string> {""}, // First inner list with one empty string
+                new List<string> {""}  // Second inner list with one empty string
             };
             
             // Date and Username
@@ -256,6 +256,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             List<string> customCampaignDaysNames = new List<string>();
                     
             bool removeAllExistingEntries = false;
+            
+            // If the starter entries are supposed to have the DLC entries.
+            bool useDLCEntries = false;
 
             bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0. (Also hides NEW tag from entry name)
 
@@ -334,6 +337,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "use_europe_date_format", ref useEuropeDateFormat);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_days", ref customCampaignDays);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_remove_main_entries", ref removeAllExistingEntries);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "use_dlc_entries", ref useDLCEntries);
             
             if (jObjectParsed.TryGetValue("custom_campaign_empty_main_entries_permission", out var customCampaignEmptyMainEntriesPermissionValue))
             {
@@ -469,6 +474,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CampaignDesktopName = customCampaignDesktopName,
 
                 RemoveExistingEntries = removeAllExistingEntries,
+                UseDLCEntries = useDLCEntries,
                 ResetDefaultEntriesPermission = resetDefaultEntriesPermission,
                 DoShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
                 

@@ -25,30 +25,42 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(EntryListingBehavior __instance)
             {
+                if (HasClickedField == null)
+                {
+                    LoggingHelper.ReflectionError(nameof(HasClickedField));
+                    return;
+                }
+                
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return;
                     }
 
-                    if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission &&
-                        !customCampaign.DoShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
+                    // If allowed to hide the name, we do it. 
+                    if (!customCampaign.RemoveExistingEntries 
+                        && customCampaign.ResetDefaultEntriesPermission 
+                        && !customCampaign.DoShowNewTagForMainGameEntries) 
                     {
-                        if (MainClassForMonsterEntries.CopyMonsterProfiles
-                            .Contains(__instance.myProfile)) // Contained in main campaign.
+                        if (customCampaign.UseDLCEntries)
                         {
-                            if (HasClickedField == null)
-                            {
-                                LoggingHelper.ReflectionError(nameof(HasClickedField));
-                            }
-                            else
+                            // Contained in DLC.
+                            if (GlobalVariables.entryUnlockScript.allXmasEntries.monsterProfiles.Contains(__instance.myProfile)) 
                             {
                                 HasClickedField.SetValue(__instance, true);
+                                
+                                // Set name to normal.
+                                __instance.myText.text = __instance.myProfile.monsterName;
                             }
+                        }
+                        
+                        // Contained in main campaign.
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(__instance.myProfile)) 
+                        {
+                            HasClickedField.SetValue(__instance, true);
 
                             // Set name to normal.
                             __instance.myText.text = __instance.myProfile.monsterName;

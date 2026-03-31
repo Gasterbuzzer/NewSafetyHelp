@@ -190,7 +190,7 @@ namespace NewSafetyHelp
                 {
                     return;
                 }
-
+                
                 if (customCampaign.RemoveExistingEntries)
                 {
                     // Remove all entries.
@@ -198,7 +198,16 @@ namespace NewSafetyHelp
                 }
                 else // Else we replace our current entries with the original copy and add the entries to that.
                 {
-                    __instance.allEntries.monsterProfiles = CopyMonsterProfiles;
+                    // If to use the DLC entries instead.
+                    if (customCampaign.UseDLCEntries)
+                    {
+                        LoggingHelper.DebugLog("Using DLC monster profiles.");
+                        __instance.allEntries.monsterProfiles = __instance.allXmasEntries.monsterProfiles;
+                    }
+                    else
+                    {
+                        __instance.allEntries.monsterProfiles = CopyMonsterProfiles;
+                    }
                 }
 
                 LoggingHelper.InfoLog("Entries are now being added... (Custom Campaign)",

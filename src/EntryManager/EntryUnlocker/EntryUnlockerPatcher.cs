@@ -111,7 +111,8 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                     return;
                 }
 
-                if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission)
+                if (!customCampaign.RemoveExistingEntries 
+                    && customCampaign.ResetDefaultEntriesPermission)
                 {
                     if (MainClassForMonsterEntries.CopyMonsterProfiles != null)
                     {
@@ -120,6 +121,14 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
                         if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(profileToCheck)) 
                         {
                             __result = true;
+                        }
+                        
+                        if (customCampaign.UseDLCEntries)
+                        {
+                            if (GlobalVariables.entryUnlockScript.allXmasEntries.monsterProfiles.Contains(profileToCheck)) 
+                            {
+                                __result = true;
+                            }
                         }
                     }
                     else

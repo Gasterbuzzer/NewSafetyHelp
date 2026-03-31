@@ -45,7 +45,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         public List<string> CampaignDayStrings = new List<string>();
 
-        public bool RemoveExistingEntries = false; // Removes all existing entries and only shows custom entries.
+        // Removes all existing entries and only shows custom entries.
+        public bool RemoveExistingEntries = false;
+
+        // If to use the DLCs entries instead of just the main campaign entries.
+        public bool UseDLCEntries = false;
 
         // Resets all default entries to not needing any permission to be viewed. (Like a continuation of the main game)
         public bool ResetDefaultEntriesPermission = false;
