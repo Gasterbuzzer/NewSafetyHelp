@@ -401,7 +401,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             }
 
             // Generate new ID if not provided.
-            ParsingHelper.GenerateNewID(ref newExtra, ref newID, ref replaceEntry, ref jsonFolderPath,
+            IDParsingHelper.GenerateNewID(ref newExtra, ref newID, ref replaceEntry, ref jsonFolderPath,
                 ref onlyDLC, ref includeDLC, ref entryUnlockerInstance, ref inCustomCampaign);
 
             if (replaceEntry) // We replace an Entry
