@@ -401,6 +401,9 @@ namespace NewSafetyHelp.CustomDesktop
                     
                     (bool foundModifier, VariableChanged<string> value) artbookRename = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.ArtbookRename, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, List<Sprite> value) artbookPages = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArtbookPages, vCs => vCs != null && vCs.Count > 0);
 
                     if (artbookIcon.foundModifier)
                     {
@@ -410,6 +413,26 @@ namespace NewSafetyHelp.CustomDesktop
                     if (artbookRename.foundModifier)
                     {
                         CustomDesktopHelper.GetArtbookGameObject().transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = artbookRename.value.Data;
+                    }
+
+                    if (artbookPages.foundModifier)
+                    {
+                        //artbookPages.value;
+
+                        ArtbookPage[] artbookPageArray = new ArtbookPage[artbookPages.value.Count];
+
+                        for (int i = 0; i < artbookPageArray.Length; i++)
+                        {
+                            artbookPageArray[i] = ScriptableObject.CreateInstance<ArtbookPage>();
+                            
+                            artbookPageArray[i].title = "NO TITLE";
+                            artbookPageArray[i].description = "NO DESCRIPTION";
+                            artbookPageArray[i].image = artbookPages.value[i];
+                            artbookPageArray[i].image2 = artbookPages.value[i];
+                        }
+
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup")
+                            .GetComponent<ArtbookPopupBehavior>().artbookPages = artbookPageArray;
                     }
 
                     (bool foundModifier, VariableChanged<Sprite> value) scorecardIcon = CustomCampaignGlobal.GetActiveModifierValue(

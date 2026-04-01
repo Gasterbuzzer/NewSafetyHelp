@@ -373,6 +373,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_artbook_program",
                 ref artbookRename);
+            
+            ImageParsingHelper.TryAssignSpriteList(jObjectParsed, "artbook_image_pages",
+                ref artbookPages, jsonFolderPath, usermodFolderPath);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
                 ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);

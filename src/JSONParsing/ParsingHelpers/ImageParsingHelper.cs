@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+﻿using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -37,6 +38,46 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             {
                 target = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
                     usermodFolderPath + "\\" + imagePath);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to assign the target list with the images from the given JSON at the given key.
+        /// If not found or if any problems happen, it will not add to the list.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
+        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
+        public static bool TryAssignSpriteList(JObject jObjectParsed, string key, ref List<Sprite> target,
+            string jsonFolderPath, string usermodFolderPath)
+        {
+            if (!jObjectParsed.TryGetValue(key, out JToken token))
+            {
+                return false;
+            }
+
+            JArray pathImages = (JArray)token;
+
+            foreach (JToken imageName in pathImages)
+            {
+                string imagePath = imageName.Value<string>();
+
+                if (string.IsNullOrEmpty(imageName.Value<string>()))
+                {
+                    LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}.");
+                }
+                else
+                {
+                    target.Add(
+                        
+                        ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
+                            usermodFolderPath + "\\" + imagePath)
+                    );
+                }
             }
 
             return true;
