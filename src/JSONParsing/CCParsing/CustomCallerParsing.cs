@@ -163,7 +163,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_transcript", ref customCallerTranscript);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_caller_image_name", ref customCallerImage,
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_caller_image_name", ref customCallerImage,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "order_in_campaign", ref orderInCampaign);

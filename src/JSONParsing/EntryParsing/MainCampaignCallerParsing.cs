@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using NewSafetyHelp.JSONParsing.ParsingHelpers;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.EntryParsing
@@ -15,7 +16,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             // Caller Image
             ParsingHelper.TryAssign(jsonObjectParsed, "caller_image_name", ref callerImageLocation);
-            ParsingHelper.TryAssignSprite(jsonObjectParsed, "caller_image_name", ref callerPortrait,
+            ImageParsingHelper.TryAssignSprite(jsonObjectParsed, "caller_image_name", ref callerPortrait,
                 jsonFolderPath, usermodFolderPath, callerName);
 
             ParsingHelper.TryAssign(jsonObjectParsed, "caller_chance", ref callerReplaceChance);
@@ -37,7 +38,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             
             // Consequence Caller Image
             ParsingHelper.TryAssign(jsonObjectParsed, "consequence_caller_image_name", ref consequenceCallerImageLocation);
-            ParsingHelper.TryAssignSprite(jsonObjectParsed, "caller_image_name", ref consequenceCallerPortrait,
+            ImageParsingHelper.TryAssignSprite(jsonObjectParsed, "caller_image_name", ref consequenceCallerPortrait,
                 jsonFolderPath, usermodFolderPath, consequenceCallerName);
         }
     }

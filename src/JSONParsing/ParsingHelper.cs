@@ -9,10 +9,8 @@ using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.HelperFunctions;
-using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing
 {
@@ -163,79 +161,6 @@ namespace NewSafetyHelp.JSONParsing
 
             target.HasChanged = true;
             target.Data = token.Value<T>();
-        }
-
-        /// <summary>
-        /// Tries to assign the target with the image from the given JSON at the given key.
-        /// If not found or if any problems happen, it will not write.
-        /// </summary>
-        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
-        /// <param name="key">Key to be found.</param>
-        /// <param name="target">Target to write the value to.</param>
-        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
-        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
-        /// <param name="customCampaignName">(Optional) Name of the custom campaign. Used to display errors.</param>
-        public static bool TryAssignSprite(JObject jObjectParsed, string key, ref Sprite target, string jsonFolderPath,
-            string usermodFolderPath, string customCampaignName = null)
-        {
-            if (!jObjectParsed.TryGetValue(key, out var token))
-            {
-                return false;
-            }
-
-            string imagePath = token.Value<string>();
-
-            if (string.IsNullOrEmpty(imagePath))
-            {
-                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}. " +
-                                       $"Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-            }
-            else
-            {
-                target = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
-                    usermodFolderPath + "\\" + imagePath);
-            }
-
-            return true;
-        }
-        
-        /// <summary>
-        /// Tries to assign the target with the image from the given JSON at the given key.
-        /// If not found or if any problems happen, it will not write.
-        /// It will use the VariableChanged generic class.
-        /// </summary>
-        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
-        /// <param name="key">Key to be found.</param>
-        /// <param name="target">Target to write the value to.</param>
-        /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
-        /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
-        /// <param name="customCampaignName">(Optional) Name of the custom campaign. Used to display errors.</param>
-        public static void TryAssignSpriteChanged(JObject jObjectParsed, string key, ref VariableChanged<Sprite> target,
-            string jsonFolderPath, string usermodFolderPath, string customCampaignName = null)
-        {
-            if (!jObjectParsed.TryGetValue(key, out var token))
-            {
-                return;
-            }
-
-            string imagePath = token.Value<string>();
-
-            target = new VariableChanged<Sprite>();
-
-            if (string.IsNullOrEmpty(imagePath))
-            {
-                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}. " +
-                                       $"Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
-            }
-            else
-            {
-                Sprite parsedSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath, usermodFolderPath + "\\" + imagePath);
-                if (parsedSprite != null)
-                {
-                    target.HasChanged = true;
-                    target.Data = parsedSprite;
-                }
-            }
         }
 
         /// <summary>

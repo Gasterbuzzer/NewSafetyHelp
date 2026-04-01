@@ -106,6 +106,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         
         public VariableChanged<Sprite> ArtbookIcon = new VariableChanged<Sprite>(); // Artbook Icon on Desktop
         public VariableChanged<string> ArtbookRename = new VariableChanged<string>();
+        public List<Sprite> ArtbookPages = new List<Sprite>();
         
         public VariableChanged<Sprite> ArcadeIcon = new VariableChanged<Sprite>(); // Arcade Icon on Desktop
         
@@ -139,7 +140,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = false
         };
         
-        public VariableChanged<bool> ArcadeActive = new VariableChanged<bool>()
+        public VariableChanged<bool> ArcadeActive = new VariableChanged<bool>
         {
             Data = false
         };

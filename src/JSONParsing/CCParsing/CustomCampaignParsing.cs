@@ -6,6 +6,7 @@ using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -366,7 +367,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_icon_image_name", ref customCampaignSprite, jsonFolderPath,
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_icon_image_name", ref customCampaignSprite, jsonFolderPath,
                 usermodFolderPath, customCampaignName);
             
             if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text1", out var customCampaignLoadingDesktopText1Value))
@@ -420,7 +421,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "disable_main_campaign_videos", ref disableDefaultVideos);
             ParsingHelper.TryAssign(jObjectParsed, "remove_default_emails", ref removeAllDefaultEmails);
             
-            ParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref changeMainProgramSprite,
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref changeMainProgramSprite,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
             
             if (jObjectParsed.TryGetValue("custom_campaign_desktop_backgrounds", out var customCampaignDesktopBackgrounds))
@@ -442,8 +443,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_desktop_game_finished_background", ref backgroundFinishedGameSprite,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_desktop_game_finished_background",
+                ref backgroundFinishedGameSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableDesktopLogo);
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
@@ -451,7 +452,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "skip_callers_correctly", ref skipCallersCorrectly);
             ParsingHelper.TryAssign(jObjectParsed, "game_over_immunity", ref gameOverImmunity);
             
-            ParsingHelper.TryAssignSprite(jObjectParsed, "custom_desktop_logo_name", ref customDesktopLogo,
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_desktop_logo_name", ref customDesktopLogo,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssign(jObjectParsed, "defaultTheme", ref defaultTheme);

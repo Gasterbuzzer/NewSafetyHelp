@@ -177,6 +177,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Artbook Icon on Desktop
             VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>();
             VariableChanged<string> artbookRename = new VariableChanged<string>();
+            List<Sprite> artbookPages = new List<Sprite>();
 
             // Arcade Icon on Desktop
             VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>();
@@ -261,7 +262,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon",
                 ref renameMainGameDesktopIcon);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "main_game_desktop_icon_path",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "main_game_desktop_icon_path",
                 ref mainGameDesktopIconSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("desktop_backgrounds", out JToken customCampaignDesktopBackgrounds))
@@ -272,8 +273,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (string.IsNullOrEmpty(backgroundName.Value<string>()))
                     {
-                        LoggingHelper.ErrorLog($"Did not find '{backgroundName.Value<string>()}'." +
-                                               " Adding no background.");
+                        LoggingHelper.ErrorLog($"Did not find '{backgroundName.Value<string>()}'. " +
+                                               "Adding no background.");
                         backgroundSprites.Add(null);
                     }
                     else
@@ -291,7 +292,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",
                 ref blackBackgroundOnAnimatedBackground);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
                 ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black",
@@ -347,7 +348,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_logo_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_logo_image_name",
                 ref backgroundLogo, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
@@ -355,30 +356,30 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_desktop_credits", ref hideDesktopCredits);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_credits_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_credits_image_name",
                 ref creditsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_mailbox_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_mailbox_image_name",
                 ref mailBoxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_entry_browser_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_entry_browser_image_name",
                 ref entryBrowserIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_options_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_options_image_name",
                 ref optionsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_artbook_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_artbook_image_name",
                 ref artbookIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_artbook_program",
                 ref artbookRename);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
                 ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
 
-            ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_scorecard_image_name",
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_scorecard_image_name",
                 ref scorecardIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
@@ -453,6 +454,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 ArtbookIcon = artbookIcon,
                 ArtbookRename = artbookRename,
+                ArtbookPages = artbookPages,
 
                 ArcadeIcon = arcadeIcon,
 
