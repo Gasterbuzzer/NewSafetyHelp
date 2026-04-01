@@ -398,10 +398,18 @@ namespace NewSafetyHelp.CustomDesktop
 
                     (bool foundModifier, VariableChanged<Sprite> value) artbookIcon = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.ArtbookIcon, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) artbookRename = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArtbookRename, vCs => vCs.HasChanged);
 
                     if (artbookIcon.foundModifier)
                     {
                         CustomDesktopHelper.GetArtbookGameObject().GetComponent<Image>().sprite = artbookIcon.value.Data;
+                    }
+
+                    if (artbookRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetArtbookGameObject().transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = artbookRename.value.Data;
                     }
 
                     (bool foundModifier, VariableChanged<Sprite> value) scorecardIcon = CustomCampaignGlobal.GetActiveModifierValue(

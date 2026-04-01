@@ -40,7 +40,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     customModifier.FinalCutsceneAudio.Data = clip;
                     customModifier.FinalCutsceneAudio.HasChanged = true;
-                }, 
+                },
                 jsonFolderPath, "final_cutscene_audio_name");
 
             // Add to correct campaign.
@@ -92,7 +92,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         {
             // When the modifier is unlocked. If null, it is a general modifier.
             List<int> unlockDays = null;
-            
+
             bool onlyIfGameFinished = false;
 
             /*
@@ -106,45 +106,45 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Backgrounds
             List<Sprite> backgroundSprites = new List<Sprite>();
-            
+
             VariableChanged<Sprite> gameFinishedBackgroundSprite = new VariableChanged<Sprite>();
-            
+
             // If the final cutscene should fade to black.
             VariableChanged<bool> finalCutsceneFadeToBlack = new VariableChanged<bool>()
             {
                 Data = true
             };
-            
+
             VariableChanged<bool> finalCutsceneShake = new VariableChanged<bool>
             {
                 Data = true
             };
-            
+
             VariableChanged<bool> finalCutsceneGlitchSounds = new VariableChanged<bool>
             {
                 Data = true
             };
-            
+
             VariableChanged<bool> finalCutscenePreventClicks = new VariableChanged<bool>
             {
                 Data = false
             };
-            
+
             VariableChanged<bool> finalCutsceneStopAudioAfterFade = new VariableChanged<bool>
             {
                 Data = true
             };
-            
+
             VariableChanged<float> finalCutsceneFadeDuration = new VariableChanged<float>
             {
                 Data = 3f
             };
-            
+
             VariableChanged<float> finalCutsceneFadePaddingDuration = new VariableChanged<float>
             {
                 Data = 1f
             };
-            
+
             // Final Cutscene Audio
             VariableChanged<RichAudioClip> finalCutsceneAudio = new VariableChanged<RichAudioClip>
             {
@@ -152,7 +152,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
 
             string finalCutsceneAudioPath = null;
-            
+
             bool disableGreenColorBackground = false;
             Color? desktopBackgroundColor = null;
 
@@ -169,30 +169,31 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             VariableChanged<Sprite> mailBoxIcon = new VariableChanged<Sprite>();
 
             // Entry Browser Icon on Desktop
-            VariableChanged<Sprite> entryBrowserIcon = new VariableChanged<Sprite>(); 
-            
+            VariableChanged<Sprite> entryBrowserIcon = new VariableChanged<Sprite>();
+
             // Options Icon on Desktop
-            VariableChanged<Sprite> optionsIcon = new VariableChanged<Sprite>(); 
-            
+            VariableChanged<Sprite> optionsIcon = new VariableChanged<Sprite>();
+
             // Artbook Icon on Desktop
-            VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>(); 
-            
+            VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> artbookRename = new VariableChanged<string>();
+
             // Arcade Icon on Desktop
-            VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>(); 
-            
+            VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>();
+
             // Weekly Report Icon on Desktop
-            VariableChanged<Sprite> scorecardIcon = new VariableChanged<Sprite>(); 
+            VariableChanged<Sprite> scorecardIcon = new VariableChanged<Sprite>();
 
             // Credits
             string desktopCredits = null;
-            
+
             VariableChanged<bool> hideDesktopCredits = new VariableChanged<bool>
             {
                 Data = false
             };
-            
+
             // Credits Icon on Desktop
-            VariableChanged<Sprite> creditsIcon = new VariableChanged<Sprite>(); 
+            VariableChanged<Sprite> creditsIcon = new VariableChanged<Sprite>();
 
             // Desktop settings
             VariableChanged<bool> entryBrowserActive = new VariableChanged<bool>
@@ -214,19 +215,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = false
             };
-            
+
             // Not recommended to use ever.
             VariableChanged<bool> hideDiscordProgram = new VariableChanged<bool>
             {
                 Data = false
-            }; 
+            };
 
             // Day Strings
             List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
-            
+
             // Cheats
             // If to show the accuracy UI text string from the base game.
-            VariableChanged<bool> showDefaultUIAccuracyText = new VariableChanged<bool>(); 
+            VariableChanged<bool> showDefaultUIAccuracyText = new VariableChanged<bool>();
             bool disableDesktopLoading = false; // If to skip the initial desktop loading portion.
 
             /*
@@ -235,7 +236,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "modifier_custom_campaign_attached",
                 ref customCampaignName);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "only_if_game_beaten", ref onlyIfGameFinished);
 
             if (jObjectParsed.TryGetValue("unlock_day", out JToken unlockDayValue))
@@ -292,7 +293,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
                 ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black",
                 ref finalCutsceneFadeToBlack);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_shake", ref finalCutsceneShake);
@@ -306,10 +307,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref finalCutsceneFadePaddingDuration);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_stop_audio_after_fade",
                 ref finalCutsceneStopAudioAfterFade);
-            
-            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name", 
+
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
                 ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
@@ -368,10 +369,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_artbook_image_name",
                 ref artbookIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_artbook_program",
+                ref artbookRename);
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
                 ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
 
             ParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_scorecard_image_name",
@@ -394,30 +398,30 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "artbook_state", ref artbookActive);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_state", ref arcadeActive);
-            
+
             // Cheats
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "show_accuracy_display",
                 ref showDefaultUIAccuracyText);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
-            
+
             return new CustomModifier
             {
                 CustomCampaignName = customCampaignName,
 
                 UnlockDays = unlockDays,
-                
+
                 OnlyIfGameFinished = onlyIfGameFinished,
 
                 UsernameText = username,
 
                 RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
                 MainGameDesktopIcon = mainGameDesktopIconSprite,
-                
+
                 DesktopBackgrounds = backgroundSprites,
-                
+
                 GameFinishedBackground = gameFinishedBackgroundSprite,
-                
+
                 FinalCutsceneFadeToBlack = finalCutsceneFadeToBlack,
                 FinalCutsceneShake = finalCutsceneShake,
                 FinalCutsceneGlitchSounds = finalCutsceneGlitchSounds,
@@ -427,10 +431,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FinalCutsceneAudioPath = finalCutsceneAudioPath,
                 FinalCutsceneAudio = finalCutsceneAudio,
                 FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
-                
+
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,
-                
+
                 CustomBackgroundLogo = backgroundLogo,
 
                 DisableDesktopLogo = disableBackgroundLogo,
@@ -438,19 +442,20 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
                 BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
-                
+
                 HideDiscordProgram = hideDiscordProgram,
 
                 MailBoxIcon = mailBoxIcon,
-                
+
                 EntryBrowserIcon = entryBrowserIcon,
-                
+
                 OptionsIcon = optionsIcon,
-                
+
                 ArtbookIcon = artbookIcon,
-                
+                ArtbookRename = artbookRename,
+
                 ArcadeIcon = arcadeIcon,
-                
+
                 ScorecardIcon = scorecardIcon,
 
                 DesktopCredits = desktopCredits,
@@ -466,9 +471,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ArtbookActive = artbookActive,
 
                 ArcadeActive = arcadeActive,
-                
+
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
-                
+
                 DisableDesktopLoading = disableDesktopLoading
             };
         }

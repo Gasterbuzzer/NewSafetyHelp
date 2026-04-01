@@ -98,13 +98,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // Program Icons
         
         // OLD: public Sprite MailBoxIcon = null; 
-        public VariableChanged<Sprite> MailBoxIcon = new VariableChanged<Sprite>(); // Mail Box Icon on Desktop
+        public VariableChanged<Sprite> MailBoxIcon = new VariableChanged<Sprite>(); // Mailbox Icon on Desktop
         
         public VariableChanged<Sprite> EntryBrowserIcon = new VariableChanged<Sprite>(); // Entry Browser Icon on Desktop
         
         public VariableChanged<Sprite> OptionsIcon = new VariableChanged<Sprite>(); // Options Icon on Desktop
         
         public VariableChanged<Sprite> ArtbookIcon = new VariableChanged<Sprite>(); // Artbook Icon on Desktop
+        public VariableChanged<string> ArtbookRename = new VariableChanged<string>();
         
         public VariableChanged<Sprite> ArcadeIcon = new VariableChanged<Sprite>(); // Arcade Icon on Desktop
         
