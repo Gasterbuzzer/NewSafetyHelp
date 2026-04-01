@@ -79,7 +79,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 "text_file_required_accuracy", "text_file_accuracy_days",
                 "text_file_accuracy_check_type");
 
-            ParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers,
+            CallerRequirementParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers,
                 "text_file_caller_requirement_ids",
                 "text_file_caller_requirement_should_be_correct");
 

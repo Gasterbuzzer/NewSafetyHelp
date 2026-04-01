@@ -81,7 +81,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 "video_required_accuracy", "video_accuracy_days",
                 "video_accuracy_check_type");
             
-            ParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers,
+            CallerRequirementParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers,
                 "video_caller_requirement_ids",
                 "video_caller_requirement_should_be_correct");
             

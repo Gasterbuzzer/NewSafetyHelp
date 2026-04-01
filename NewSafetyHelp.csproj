@@ -212,6 +212,7 @@
     <Compile Include="src\JSONParsing\ParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\AccuracyParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\CallerRequirementParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\IDParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\ImageParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\PendingParsingHelper.cs" />

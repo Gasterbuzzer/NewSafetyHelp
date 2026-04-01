@@ -102,7 +102,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "unlock_when_game_finished", ref unlockWhenGameFinished);
             ParsingHelper.TryAssign(jObjectParsed, "email_priority", ref emailPriority);
             
-            ParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers);
+            CallerRequirementParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers);
             
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
             
