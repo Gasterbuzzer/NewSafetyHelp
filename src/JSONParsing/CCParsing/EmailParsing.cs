@@ -114,7 +114,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool hasAnimatedVideo = VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "email_animated_image",
                 ref emailAnimatedVideo, jsonFolderPath, usermodFolderPath);
             
-            ParsingHelper.TryAssignURL(jObjectParsed, "email_click_url", ref emailClickUrl);
+            URLParsingHelper.TryAssignURL(jObjectParsed, "email_click_url", ref emailClickUrl);
 
             return new CustomEmail
             {
