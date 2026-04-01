@@ -4,6 +4,7 @@ using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
@@ -74,7 +75,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "text_file_contents", ref textFileContents);
 
-            ParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref ignoreAccuracyChecks,
+            AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref ignoreAccuracyChecks,
                 "text_file_required_accuracy", "text_file_accuracy_days",
                 "text_file_accuracy_check_type");
 

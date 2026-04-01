@@ -4,6 +4,7 @@ using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.CustomVideos;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
@@ -76,7 +77,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignVideoPath(jObjectParsed, "video_file_name", ref videoFilePath,
                 jsonFolderPath, usermodFolderPath);
             
-            ParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref ignoreAccuracyChecks,
+            AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref ignoreAccuracyChecks,
                 "video_required_accuracy", "video_accuracy_days",
                 "video_accuracy_check_type");
             

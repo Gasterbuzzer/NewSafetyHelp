@@ -195,7 +195,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithBool(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller,
                 ref isAccuracyCallerChanged);
             
-            bool doWeHaveAccuracyCall = ParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
+            bool doWeHaveAccuracyCall = AccuracyParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
             if (!isAccuracyCallerChanged 
                 && doWeHaveAccuracyCall)
             {

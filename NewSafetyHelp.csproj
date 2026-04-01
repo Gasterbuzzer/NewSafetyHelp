@@ -210,6 +210,7 @@
     <Compile Include="src\JSONParsing\GlobalParsingVariables.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\JSONParsing\ParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\AccuracyParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\ImageParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ReloadJSONParsing.cs" />
