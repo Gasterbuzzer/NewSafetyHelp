@@ -68,22 +68,22 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
 
             // Check if any entries have to be added to this campaign.
-            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEntries,
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEntries,
                 ref customCampaign.EntriesOnlyInCampaign, customCampaignName, "entries");
 
             // Check if any entries have to be added to this campaign.
-            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignReplaceEntries,
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignReplaceEntries,
                 ref customCampaign.EntryReplaceOnlyInCampaign, customCampaignName, "replace-entries");
 
             // Check if any emails have to be added to a custom campaign.
-            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEmails,
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEmails,
                 ref customCampaign.Emails, customCampaignName, "emails");
             
             // Sort by unlock day. This is to prevent some oddities where some emails that appear later, appear in the list sooner.
             CustomCampaignGlobal.SortEmailsInCustomCampaign(customCampaign);
             
             // Check if any videos have to be added to a custom campaign.
-            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
                 ref customCampaign.CustomVideos, customCampaignName, "videos");
             
             // Check if any music has to be added to a custom campaign.
@@ -211,11 +211,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             
             // Check if any ringtone has to be added to a custom campaign.
-            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignRingtones,
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignRingtones,
                 ref customCampaign.CustomRingtones, customCampaignName, "ringtone");
             
             // Check if any text files have to be added to a custom campaign.
-            ParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignTextFile,
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignTextFile,
                 ref customCampaign.CustomTextProgramFiles, customCampaignName, "text file");
             
             // We finished adding all missing values and now add the campaign as available.
