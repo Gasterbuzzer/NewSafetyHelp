@@ -206,7 +206,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref countEveryCallerForLocalAccuracy);
 
             // Animated Portrait
-            bool callerHasAnimatedPortrait = ParsingHelper.TryAssignVideoPath(jObjectParsed,
+            bool callerHasAnimatedPortrait = VideoParsingHelper.TryAssignVideoPath(jObjectParsed,
                 "custom_caller_animated_portrait_name",
                 ref callerAnimatedPortraitURL, jsonFolderPath, usermodFolderPath);
 

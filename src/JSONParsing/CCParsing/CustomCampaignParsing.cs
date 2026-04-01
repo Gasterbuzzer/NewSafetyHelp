@@ -404,10 +404,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
-            ParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_end_cutscene_video_name",
+            VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_end_cutscene_video_name",
                 ref endCutscenePath, jsonFolderPath, usermodFolderPath);
             
-            ParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_gameover_cutscene_video_name",
+            VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_gameover_cutscene_video_name",
                 ref gameOverCutscenePath, jsonFolderPath, usermodFolderPath);
             
             ParsingHelper.TryAssign(jObjectParsed, "always_randomize_music", ref useRandomMusic);

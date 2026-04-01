@@ -286,7 +286,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            ParsingHelper.TryAssignUrlListOrSingleUrl(jObjectParsed, "animated_desktop_backgrounds",
+            VideoParsingHelper.TryAssignUrlListOrSingleUrl(jObjectParsed, "animated_desktop_backgrounds",
                 ref animatedDesktopBackgrounds, jsonFolderPath, usermodFolderPath);
 
             ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",

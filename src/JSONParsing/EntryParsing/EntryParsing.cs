@@ -155,7 +155,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ParsingHelper.TryAssign(jsonObjectParsed, "delete_entry", ref deleteReplaceEntry);
 
             // Video Entry Portrait
-            isVideoPortrait = ParsingHelper.TryAssignVideoPath(jsonObjectParsed, "portrait_video_name",
+            isVideoPortrait = VideoParsingHelper.TryAssignVideoPath(jsonObjectParsed, "portrait_video_name",
                 ref videoUrlPortrait, jsonFolderPath, usermodFolderPath);
         }
 

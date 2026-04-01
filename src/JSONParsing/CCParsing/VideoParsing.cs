@@ -74,7 +74,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
             ParsingHelper.TryAssign(jObjectParsed, "video_unlock_day", ref videoUnlockDay);
 
-            ParsingHelper.TryAssignVideoPath(jObjectParsed, "video_file_name", ref videoFilePath,
+            VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "video_file_name", ref videoFilePath,
                 jsonFolderPath, usermodFolderPath);
             
             AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref ignoreAccuracyChecks,
