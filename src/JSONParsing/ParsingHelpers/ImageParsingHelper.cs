@@ -51,10 +51,11 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="target">Targets to write the value to.</param>
         /// <param name="jsonFolderPath">Path where the JSON is located at.</param>
         /// <param name="usermodFolderPath">Path where the usermod is located at.</param>
+        /// <param name="ignoreIfNull">If to ignore if a given image is empty or null.</param>
         /// <returns>(Bool) If the parsed value was an array (false) or a single image (true).
         /// Null if we failed parsing.</returns>
         public static bool? TryAssignImageListOrSingleImage(JObject jObjectParsed, string key, ref List<Sprite> target,
-            string jsonFolderPath, string usermodFolderPath)
+            string jsonFolderPath, string usermodFolderPath, bool ignoreIfNull = false)
         {
             if (!jObjectParsed.TryGetValue(key, out var token))
             {
@@ -68,8 +69,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             if (token.Type == JTokenType.Array)
             {
-                TryAssignSpriteList(jObjectParsed, key, ref target, jsonFolderPath, usermodFolderPath);
-
+                TryAssignSpriteList(jObjectParsed, key, ref target, jsonFolderPath, usermodFolderPath, ignoreIfNull);
                 return false;
             }
             else
@@ -99,8 +99,9 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="target">Target to write the value to.</param>
         /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
         /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
+        /// <param name="ignoreIfNull">Ignores if the given image is null.</param>
         public static bool TryAssignSpriteList(JObject jObjectParsed, string key, ref List<Sprite> target,
-            string jsonFolderPath, string usermodFolderPath)
+            string jsonFolderPath, string usermodFolderPath, bool ignoreIfNull = false)
         {
             if (!jObjectParsed.TryGetValue(key, out JToken token))
             {
@@ -113,9 +114,16 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             {
                 string imagePath = imageName.Value<string>();
 
-                if (string.IsNullOrEmpty(imageName.Value<string>()))
+                if (string.IsNullOrEmpty(imagePath))
                 {
-                    LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}.");
+                    if (ignoreIfNull)
+                    {
+                        target.Add(null);
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}.");
+                    }
                 }
                 else
                 {
