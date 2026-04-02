@@ -167,27 +167,37 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Icons
             // Mailbox Icon on Desktop
             VariableChanged<Sprite> mailBoxIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> mailBoxRename = new VariableChanged<string>();
+            VariableChanged<string> applicationMailBoxTitle = new VariableChanged<string>();
 
             // Entry Browser Icon on Desktop
             VariableChanged<Sprite> entryBrowserIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> entryBrowserRename = new VariableChanged<string>();
+            VariableChanged<string> applicationEntryBrowserTitle = new VariableChanged<string>();
 
             // Options Icon on Desktop
             VariableChanged<Sprite> optionsIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> optionsRename = new VariableChanged<string>();
+            VariableChanged<string> applicationOptionsTitle = new VariableChanged<string>();
 
             // Artbook Icon on Desktop
             VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>();
             VariableChanged<string> artbookRename = new VariableChanged<string>();
+            VariableChanged<string> applicationArtbookTitle = new VariableChanged<string>();
             List<ArtbookPage> artbookPages = new List<ArtbookPage>();
 
             // Arcade Icon on Desktop
             VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> arcadeRename = new VariableChanged<string>();
 
             // Weekly Report Icon on Desktop
             VariableChanged<Sprite> scorecardIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> scorecardRename = new VariableChanged<string>();
+            VariableChanged<string> applicationScorecardTitle = new VariableChanged<string>();
 
             // Credits
             string desktopCredits = null;
-
+            VariableChanged<string> creditsRename = new VariableChanged<string>();
             VariableChanged<bool> hideDesktopCredits = new VariableChanged<bool>
             {
                 Data = false
@@ -232,9 +242,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool disableDesktopLoading = false; // If to skip the initial desktop loading portion.
 
             /*
-             * Modifier Parsing
+             * Modifier Conditions
              */
-
+            
             ParsingHelper.TryAssign(jObjectParsed, "modifier_custom_campaign_attached",
                 ref customCampaignName);
 
@@ -256,15 +266,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     }
                 }
             }
+            
+            /*
+             * Username
+             */
 
             ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref username);
 
+            /*
+             * Main Game Desktop Program (Start Day Program)
+             */
+            
             ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon",
                 ref renameMainGameDesktopIcon);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "main_game_desktop_icon_path",
                 ref mainGameDesktopIconSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
 
+            /*
+             * Desktop Backgrounds
+             */
+            
             if (jObjectParsed.TryGetValue("desktop_backgrounds", out JToken customCampaignDesktopBackgrounds))
             {
                 JArray backgroundNames = (JArray)customCampaignDesktopBackgrounds;
@@ -295,6 +317,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
                 ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
 
+            /*
+             * Final Cutscene
+             */
+            
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black",
                 ref finalCutsceneFadeToBlack);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_shake", ref finalCutsceneShake);
@@ -312,6 +338,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
                 ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
 
+            /*
+             * Desktop Background
+             */
+            
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
             if (jObjectParsed.TryGetValue("desktop_background_color", out var _desktopBackgroundColor))
@@ -348,41 +378,119 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
+            /*
+             * Desktop Logo
+             */
+            
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_logo_image_name",
                 ref backgroundLogo, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
-            ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_desktop_credits", ref hideDesktopCredits);
-
-            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_credits_image_name",
-                ref creditsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
-
+            
+            /*
+             * Mailbox
+             */
+            
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_mailbox_image_name",
                 ref mailBoxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_mailbox_program",
+                ref mailBoxRename);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_mailbox_program_title",
+                ref applicationMailBoxTitle);
 
+            /*
+             * Entry Browser
+             */
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive);
+            
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_entry_browser_image_name",
                 ref entryBrowserIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_entry_browser_program",
+                ref entryBrowserRename);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_entry_browser_program_title",
+                ref applicationEntryBrowserTitle);
 
+            /*
+             * Options
+             */
+            
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_options_image_name",
                 ref optionsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_options_program",
+                ref optionsRename);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_options_program_title",
+                ref applicationOptionsTitle);
+            
+            /*
+             * Artbook
+             */
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "artbook_state", ref artbookActive);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_artbook_image_name",
                 ref artbookIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_artbook_program_title",
+                ref applicationArtbookTitle);
             
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_artbook_program",
                 ref artbookRename);
             
             ArtbookParsingHelper.ParseArtbookPages(jObjectParsed, ref artbookPages, jsonFolderPath, usermodFolderPath);
 
+            /*
+             * Arcade
+             */
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_state", ref arcadeActive);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_arcade_program",
+                ref arcadeRename);
+            
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
                 ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
-
+            /*
+             * Scorecard
+             */
+            
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_scorecard_image_name",
                 ref scorecardIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_scorecard_program",
+                ref scorecardRename);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_scorecard_program_title",
+                ref applicationScorecardTitle);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "scorecard_state", ref scorecardActive);
+            
+            /*
+             * Credits
+             */
+            
+            ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_desktop_credits", ref hideDesktopCredits);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_credits_program",
+                ref creditsRename);
+            
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_credits_image_name",
+                ref creditsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            /*
+             * Extra
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
@@ -394,20 +502,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive);
-
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "scorecard_state", ref scorecardActive);
-
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "artbook_state", ref artbookActive);
-
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_state", ref arcadeActive);
-
-            // Cheats
+            /*
+             * Cheats / Settings
+             */
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "show_accuracy_display",
                 ref showDefaultUIAccuracyText);
 
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
 
+            
+            // Return newly created modifier:
+            
             return new CustomModifier
             {
                 CustomCampaignName = customCampaignName,
@@ -449,20 +554,31 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 HideDiscordProgram = hideDiscordProgram,
 
                 MailBoxIcon = mailBoxIcon,
+                MailBoxRename = mailBoxRename,
+                ApplicationMailBoxTitle = applicationMailBoxTitle,
 
                 EntryBrowserIcon = entryBrowserIcon,
+                EntryBrowserRename = entryBrowserRename,
+                ApplicationEntryBrowserTitle = applicationEntryBrowserTitle,
 
                 OptionsIcon = optionsIcon,
+                OptionsRename = optionsRename,
+                ApplicationOptionsTitle = applicationOptionsTitle,
 
                 ArtbookIcon = artbookIcon,
                 ArtbookRename = artbookRename,
+                ApplicationArtbookTitle = applicationArtbookTitle,
                 ArtbookPages = artbookPages,
 
                 ArcadeIcon = arcadeIcon,
+                ArcadeRename = arcadeRename,
 
                 ScorecardIcon = scorecardIcon,
+                ScorecardRename = scorecardRename,
+                ApplicationScorecardTitle = applicationScorecardTitle,
 
                 DesktopCredits = desktopCredits,
+                CreditsRename = creditsRename,
                 CreditsIcon = creditsIcon,
                 HideDesktopCredits = hideDesktopCredits,
 

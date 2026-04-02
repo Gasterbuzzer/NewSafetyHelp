@@ -186,7 +186,10 @@ namespace NewSafetyHelp.CustomDesktop
                 // Plays beginning segment to desktop.
                 __instance.StartCoroutine(StartupRoutine(__instance));
 
-                if (!CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Main Campaign
+                // Add custom campaign icons and add back to main game buttons:
+                
+                // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) 
                 {
                     foreach (CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
                     {
@@ -210,7 +213,8 @@ namespace NewSafetyHelp.CustomDesktop
                     // Hide DLC Button
                     CustomDesktopHelper.EnableWinterDlcProgram();
                 }
-                else if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) // Custom Campaign
+                // Custom Campaign
+                else if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) 
                 {
                     CustomCampaignProgramHelper.CreateBackToMainGameButton();
 
@@ -218,18 +222,20 @@ namespace NewSafetyHelp.CustomDesktop
                     CustomDesktopHelper.DisableWinterDlcProgram();
                 }
 
-                // Change username text if available
+                // Update desktop values via modifiers.
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 
-                    // Setting username
+                    /*
+                     * Username Section
+                     */
+                    
                     string username = null;
                     bool customCampaignUsernameChange = false;
 
@@ -256,6 +262,9 @@ namespace NewSafetyHelp.CustomDesktop
                         }
                     }
 
+                    /*
+                     * Custom Email Section
+                     */
 
                     // Add custom emails.
                     if (customCampaign.Emails.Count > 0) // If we have custom emails.
@@ -272,7 +281,9 @@ namespace NewSafetyHelp.CustomDesktop
                         EmailHelper.RemoveMainGameEmails();
                     }
 
-                    // Hide Logo
+                    /*
+                     * Logo Section
+                     */
 
                     bool disableLogo = false;
                     bool modifierPreventsDisablingOfLogo = false;
@@ -316,8 +327,6 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetLogo().GetComponent<Image>().sprite = desktopLogo;
                     }
 
-                    // Adjust Logo
-
                     float logoTransparency = 0.2627f;
 
                     // If we have a Custom Transparency
@@ -344,7 +353,256 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetLogo().GetComponent<Image>().color = tempColorCopy;
                     }
 
-                    // Rename main program if wanted
+                    /*
+                     * Entry Browser Section
+                     */
+
+                    (bool foundModifier, VariableChanged<Sprite> value) entryBrowserIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.EntryBrowserIcon, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) entryBrowserRename = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.EntryBrowserRename, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) entryBrowserApplicationRename = 
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.ApplicationEntryBrowserTitle,
+                            vCs => vCs.HasChanged);
+
+                    if (entryBrowserIcon.foundModifier)
+                    {
+                        CustomDesktopHelper.GetEntryBrowserGameObject().GetComponent<Image>().sprite =
+                            entryBrowserIcon.value.Data;
+                    }
+                    
+                    if (entryBrowserRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetEntryBrowserGameObject().transform.GetChild(0).GetChild(0).
+                                GetComponent<TextMeshProUGUI>().text = entryBrowserRename.value.Data;
+                    }
+                    
+                    if (entryBrowserApplicationRename.foundModifier)
+                    {
+                        GlobalVariables.entryCanvasScript.gameObject.transform.GetChild(0).GetChild(0).GetChild(2).
+                            GetComponent<TextMeshProUGUI>().text = entryBrowserApplicationRename.value.Data;
+                    }
+                    
+                    /*
+                     * Email / Mailbox Section
+                     */
+
+                    (bool foundModifier, VariableChanged<Sprite> value) mailBoxIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.MailBoxIcon, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) mailBoxRename = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.MailBoxRename, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) mailBoxProgramTitle = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ApplicationMailBoxTitle, vCs => vCs.HasChanged);
+
+                    if (mailBoxIcon.foundModifier)
+                    {
+                        CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite = mailBoxIcon.value.Data;
+                    }
+                    
+                    if (mailBoxRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetMailboxGameObject().transform.GetChild(0).GetChild(0).
+                            GetComponent<TextMeshProUGUI>().text = mailBoxRename.value.Data;
+                    }
+                    
+                    if (mailBoxProgramTitle.foundModifier)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(3).
+                            GetComponent<TextMeshProUGUI>().text = mailBoxRename.value.Data;
+                    }
+
+                    /*
+                     * Options Section
+                     */
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) optionsIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.OptionsIcon, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) optionsRename = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.OptionsRename, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) optionsApplicationRename = 
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.ApplicationOptionsTitle,
+                            vCs => vCs.HasChanged);
+
+                    if (optionsIcon.foundModifier)
+                    {
+                        CustomDesktopHelper.GetOptionsGameObject().GetComponent<Image>().sprite = optionsIcon.value.Data;
+                    }
+                    
+                    if (optionsRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetOptionsGameObject().transform.GetChild(0).GetChild(0).
+                            GetComponent<TextMeshProUGUI>().text = optionsRename.value.Data;
+                    }
+                    
+                    if (optionsApplicationRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("OptionsPopup").GetChild(0).GetChild(3).
+                            GetComponent<TextMeshProUGUI>().text = optionsApplicationRename.value.Data;
+                    }
+
+                    /*
+                     * Artbook Section
+                     */
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) artbookIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArtbookIcon, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) artbookRename = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArtbookRename, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) artbookApplicationRename = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ApplicationArtbookTitle, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, List<ArtbookPage> value) artbookPages = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArtbookPages, vCs => vCs != null && vCs.Count > 0);
+
+                    if (artbookIcon.foundModifier)
+                    {
+                        CustomDesktopHelper.GetArtbookGameObject().GetComponent<Image>().sprite = artbookIcon.value.Data;
+                    }
+
+                    if (artbookRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetArtbookGameObject().transform.GetChild(0).GetChild(0).
+                            GetComponent<TextMeshProUGUI>().text = artbookRename.value.Data;
+                    }
+
+                    if (artbookPages.foundModifier)
+                    {
+                        ArtbookPage[] artbookPageArray = artbookPages.value.ToArray();
+                        
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup")
+                            .GetComponent<ArtbookPopupBehavior>().artbookPages = artbookPageArray;
+                    }
+                    
+                    if (artbookApplicationRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup").GetChild(0).GetChild(3)
+                            .GetComponent<TextMeshProUGUI>().text = artbookApplicationRename.value.Data;
+                    }
+
+                    /*
+                     * Scorecard Section
+                     */
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) scorecardIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ScorecardIcon, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) scorecardRename = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.ScorecardRename, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) scorecardApplicationRename = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.ApplicationScorecardTitle, vCs => vCs.HasChanged);
+
+                    if (scorecardIcon.foundModifier)
+                    {
+                        CustomDesktopHelper.GetScorecardGameObject().GetComponent<Image>().sprite = scorecardIcon.value.Data;
+                    }
+                    
+                    if (scorecardRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetScorecardGameObject().transform.GetChild(0).GetChild(0).
+                            GetComponent<TextMeshProUGUI>().text = scorecardRename.value.Data;
+                    }
+                    
+                    if (scorecardApplicationRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ScorecardPopup").GetChild(0).GetChild(3)
+                            .GetComponent<TextMeshProUGUI>().text = scorecardApplicationRename.value.Data;
+                    }
+
+                    /*
+                     * Arcade Section
+                     */
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) arcadeIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArcadeIcon, vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<string> value) arcadeRename = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.ArcadeRename, vCs => vCs.HasChanged);
+
+                    if (arcadeIcon.foundModifier)
+                    {
+                        CustomDesktopHelper.GetArcadeGameObject().GetComponent<Image>().sprite = arcadeIcon.value.Data;
+                    }
+                    
+                    if (arcadeRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetArcadeGameObject().transform.GetChild(0).GetChild(0).
+                            GetComponent<TextMeshProUGUI>().text = arcadeRename.value.Data;
+                    }
+
+                    /*
+                     * Credits Section
+                     */
+                    
+                    // Get a copy of the text file icon before we overwrite it.
+                    // Since credits are a text file, we need to do it here.
+                    if (CustomTextFileHelper.TextFileIcon == null)
+                    {
+                        CustomTextFileHelper.TextFileIcon = CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite;
+                    }
+
+                    (bool foundModifier, string value) desktopCredits = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DesktopCredits, v => !string.IsNullOrEmpty(v));
+                    
+                    (bool foundModifier, VariableChanged<string> value) creditsRename = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.CreditsRename, vCs => vCs.HasChanged);
+
+                    if (desktopCredits.foundModifier)
+                    {
+                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<TextFileExecutable>().myContent =
+                            desktopCredits.value;
+                    }
+                    
+                    if (creditsRename.foundModifier)
+                    {
+                        CustomDesktopHelper.GetCreditsGameObject().transform.GetChild(0).GetChild(0).
+                            GetComponent<TextMeshProUGUI>().text = creditsRename.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) desktopCreditsIcon = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.CreditsIcon, vCs => vCs.HasChanged);
+                    
+                    if (desktopCreditsIcon.foundModifier)
+                    {
+                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite =
+                            desktopCreditsIcon.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<bool> value) hideDesktopCredits = 
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.HideDesktopCredits,
+                            vCb => vCb.HasChanged);
+
+                    if (hideDesktopCredits.foundModifier)
+                    {
+                        CustomDesktopHelper.GetCreditsGameObject().SetActive(!hideDesktopCredits.value.Data);
+                    }
+
+                    /*
+                     * Discord Section
+                     */
+
+                    (bool foundModifier, VariableChanged<bool> value) hideDiscordProgram = CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.HideDiscordProgram, vCb => vCb.HasChanged);
+
+                    if (hideDiscordProgram.foundModifier)
+                    {
+                        CustomDesktopHelper.GetNSEDiscordProgram().SetActive(!hideDiscordProgram.value.Data);
+                    }
+
+                    /*
+                     * Main Program Section
+                     */
 
                     string renamedMainGameDesktopIcon = String.Empty;
 
@@ -368,124 +626,7 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetMainGameProgram().transform.Find("TextBackground").Find("ExecutableName")
                             .GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
                     }
-
-                    // Desktop icons
-
-                    (bool foundModifier, VariableChanged<Sprite> value) entryBrowserIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.EntryBrowserIcon, vCs => vCs.HasChanged);
-
-                    if (entryBrowserIcon.foundModifier)
-                    {
-                        CustomDesktopHelper.GetEntryBrowserGameObject().GetComponent<Image>().sprite =
-                            entryBrowserIcon.value.Data;
-                    }
-
-                    (bool foundModifier, VariableChanged<Sprite> value) mailBoxIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.MailBoxIcon, vCs => vCs.HasChanged);
-
-                    if (mailBoxIcon.foundModifier)
-                    {
-                        CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite = mailBoxIcon.value.Data;
-                    }
-
-                    (bool foundModifier, VariableChanged<Sprite> value) optionsIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.OptionsIcon, vCs => vCs.HasChanged);
-
-                    if (optionsIcon.foundModifier)
-                    {
-                        CustomDesktopHelper.GetOptionsGameObject().GetComponent<Image>().sprite = optionsIcon.value.Data;
-                    }
-
-                    (bool foundModifier, VariableChanged<Sprite> value) artbookIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ArtbookIcon, vCs => vCs.HasChanged);
                     
-                    (bool foundModifier, VariableChanged<string> value) artbookRename = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ArtbookRename, vCs => vCs.HasChanged);
-                    
-                    (bool foundModifier, List<ArtbookPage> value) artbookPages = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ArtbookPages, vCs => vCs != null && vCs.Count > 0);
-
-                    if (artbookIcon.foundModifier)
-                    {
-                        CustomDesktopHelper.GetArtbookGameObject().GetComponent<Image>().sprite = artbookIcon.value.Data;
-                    }
-
-                    if (artbookRename.foundModifier)
-                    {
-                        CustomDesktopHelper.GetArtbookGameObject().transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = artbookRename.value.Data;
-                    }
-
-                    if (artbookPages.foundModifier)
-                    {
-                        ArtbookPage[] artbookPageArray = artbookPages.value.ToArray();
-                        
-                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup")
-                            .GetComponent<ArtbookPopupBehavior>().artbookPages = artbookPageArray;
-                    }
-
-                    (bool foundModifier, VariableChanged<Sprite> value) scorecardIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ScorecardIcon, vCs => vCs.HasChanged);
-
-                    if (scorecardIcon.foundModifier)
-                    {
-                        CustomDesktopHelper.GetScorecardGameObject().GetComponent<Image>().sprite = scorecardIcon.value.Data;
-                    }
-
-                    (bool foundModifier, VariableChanged<Sprite> value) arcadeIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.ArcadeIcon, vCs => vCs.HasChanged);
-
-                    if (arcadeIcon.foundModifier)
-                    {
-                        CustomDesktopHelper.GetArcadeGameObject().GetComponent<Image>().sprite = arcadeIcon.value.Data;
-                    }
-
-                    // Credits
-
-                    (bool foundModifier, string value) desktopCredits = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.DesktopCredits, v => !string.IsNullOrEmpty(v));
-
-                    if (desktopCredits.foundModifier)
-                    {
-                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<TextFileExecutable>().myContent =
-                            desktopCredits.value;
-                    }
-
-                    (bool foundModifier, VariableChanged<Sprite> value) desktopCreditsIcon = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.CreditsIcon, vCs => vCs.HasChanged);
-
-                    // Get a copy of the text file icon before we overwrite it.
-                    if (CustomTextFileHelper.TextFileIcon == null)
-                    {
-                        CustomTextFileHelper.TextFileIcon = CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite;
-                    }
-                    
-                    if (desktopCreditsIcon.foundModifier)
-                    {
-                        CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite =
-                            desktopCreditsIcon.value.Data;
-                    }
-                    
-                    (bool foundModifier, VariableChanged<bool> value) hideDesktopCredits = 
-                        CustomCampaignGlobal.GetActiveModifierValue(c => c.HideDesktopCredits,
-                            vCb => vCb.HasChanged);
-
-                    if (hideDesktopCredits.foundModifier)
-                    {
-                        CustomDesktopHelper.GetCreditsGameObject().SetActive(!hideDesktopCredits.value.Data);
-                    }
-
-                    // Discord Icon (Not recommended)
-
-                    (bool foundModifier, VariableChanged<bool> value) hideDiscordProgram = CustomCampaignGlobal.GetActiveModifierValue(
-                        c => c.HideDiscordProgram, vCb => vCb.HasChanged);
-
-                    if (hideDiscordProgram.foundModifier)
-                    {
-                        CustomDesktopHelper.GetNSEDiscordProgram().SetActive(!hideDiscordProgram.value.Data);
-                    }
-
-                    // Change main program icon if wanted.
-
                     Sprite mainProgramIcon = null;
 
                     if (customCampaign.ChangeMainGameDesktopIcon != null)
@@ -507,7 +648,10 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
                     }
 
-                    // Disable default videos.
+                    /*
+                     * Custom Videos Section
+                     */
+                    
                     if (customCampaign.DisableAllDefaultVideos)
                     {
                         CustomDesktopHelper.DisableDefaultVideos();
@@ -520,6 +664,10 @@ namespace NewSafetyHelp.CustomDesktop
                             VideoHelper.CreateCustomVideoFileProgram(customVideo);
                         }
                     }
+                    
+                    /*
+                     * Custom Text Files Section
+                     */
                     
                     if (customCampaign.CustomTextProgramFiles.Count > 0)
                     {
