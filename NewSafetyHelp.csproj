@@ -159,6 +159,7 @@
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs" />
+    <Compile Include="src\CustomCampaignSystem\Modifier\Data\DesktopModifierSnapshot.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\ModifierSource.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\VariableChanged.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignOptionSaving.cs" />

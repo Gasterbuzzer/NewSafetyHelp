@@ -393,6 +393,236 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// <summary>
         /// Iterates through all modifier types and tries finding a valid value to use.
         /// </summary>
+        /// <returns>(Tuple) Returns as the first parameter, if we found any value.
+        /// The second value is the actual picked value.</returns>
+        public static DesktopModifierSnapshot GetModifierDesktopSnapshot()
+        {
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                return null;
+            }
+
+            DesktopModifierSnapshot newModifierSnapshot = new DesktopModifierSnapshot();
+
+            // Loops through each modifier source and selects the value that fits the criteria.
+            // If multiple exist, it will pick the first valid value of that modifier source type.
+            // The list is ordered based on priority, elements that come first have the smallest priority, while
+            // elements that come later have higher priority.
+            foreach (ModifierSource modifierSource in customCampaign.ModifierSources)
+            {
+                if (modifierSource == null
+                    || modifierSource.Modifiers == null
+                    || modifierSource.Modifiers.Count == 0)
+                {
+                    continue;
+                }
+
+                if (!modifierSource.SourceCondition(customCampaign))
+                {
+                    continue;
+                }
+
+                foreach (CustomModifier modifier in modifierSource.Modifiers)
+                {
+                    /*
+                     * Username Section
+                     */
+                    
+                    if (modifier.UsernameText.HasChanged)
+                    {
+                        newModifierSnapshot.UsernameText = (true, modifier.UsernameText);
+                    }
+
+                    /*
+                     * Desktop Logo Section
+                     */
+                    if (modifier.DisableDesktopLogo.HasChanged)
+                    {
+                        newModifierSnapshot.DisableDesktopLogo = (true, modifier.DisableDesktopLogo);
+                    }
+
+                    if (modifier.CustomBackgroundLogo.HasChanged)
+                    {
+                        newModifierSnapshot.CustomBackgroundLogo = (true, modifier.CustomBackgroundLogo);
+                    }
+
+                    if (modifier.BackgroundLogoTransparency.HasChanged)
+                    {
+                        newModifierSnapshot.BackgroundLogoTransparency = (true, modifier.BackgroundLogoTransparency);
+                    }
+
+                    /*
+                     * Entry Browser Section
+                     */
+                    
+                    if (modifier.EntryBrowserIcon.HasChanged)
+                    {
+                        newModifierSnapshot.EntryBrowserIcon = (true, modifier.EntryBrowserIcon);
+                    }
+
+                    if (modifier.EntryBrowserRename.HasChanged)
+                    {
+                        newModifierSnapshot.EntryBrowserRename = (true, modifier.EntryBrowserRename);
+                    }
+
+                    if (modifier.ApplicationEntryBrowserTitle.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationEntryBrowserTitle = (true, modifier.ApplicationEntryBrowserTitle);
+                    }
+                    
+                    /*
+                     * Mailbox Section
+                     */
+                    
+                    if (modifier.MailBoxIcon.HasChanged)
+                    {
+                        newModifierSnapshot.MailBoxIcon = (true, modifier.MailBoxIcon);
+                    }
+
+                    if (modifier.MailBoxRename.HasChanged)
+                    {
+                        newModifierSnapshot.MailBoxRename = (true, modifier.MailBoxRename);
+                    }
+
+                    if (modifier.ApplicationMailBoxTitle.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationMailBoxTitle = (true, modifier.ApplicationMailBoxTitle);
+                    }
+                    
+                    /*
+                     * Options Section
+                     */
+                    
+                    if (modifier.OptionsIcon.HasChanged)
+                    {
+                        newModifierSnapshot.OptionsIcon = (true, modifier.OptionsIcon);
+                    }
+
+                    if (modifier.OptionsRename.HasChanged)
+                    {
+                        newModifierSnapshot.OptionsRename = (true, modifier.OptionsRename);
+                    }
+
+                    if (modifier.ApplicationOptionsTitle.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationOptionsTitle = (true, modifier.ApplicationOptionsTitle);
+                    }
+                    
+                    /*
+                     * Artbook Section
+                     */
+                    
+                    if (modifier.ArtbookIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ArtbookIcon = (true, modifier.ArtbookIcon);
+                    }
+
+                    if (modifier.ArtbookRename.HasChanged)
+                    {
+                        newModifierSnapshot.ArtbookRename = (true, modifier.ArtbookRename);
+                    }
+
+                    if (modifier.ApplicationArtbookTitle.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationArtbookTitle = (true, modifier.ApplicationArtbookTitle);
+                    }
+                    
+                    if (modifier.ArtbookPages != null 
+                        && modifier.ArtbookPages.Count > 0)
+                    {
+                        newModifierSnapshot.ArtbookPages = (true, modifier.ArtbookPages);
+                    }
+                    
+                    /*
+                     * Scorecard Section
+                     */
+                    
+                    if (modifier.ScorecardIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ScorecardIcon = (true, modifier.ScorecardIcon);
+                    }
+
+                    if (modifier.ScorecardRename.HasChanged)
+                    {
+                        newModifierSnapshot.ScorecardRename = (true, modifier.ScorecardRename);
+                    }
+
+                    if (modifier.ApplicationScorecardTitle.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationScorecardTitle = (true, modifier.ApplicationScorecardTitle);
+                    }
+                    
+                    /*
+                     * Arcade Section
+                     */
+                    
+                    if (modifier.ArcadeIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ArcadeIcon = (true, modifier.ArcadeIcon);
+                    }
+
+                    if (modifier.ArcadeRename.HasChanged)
+                    {
+                        newModifierSnapshot.ArcadeRename = (true, modifier.ArcadeRename);
+                    }
+                    
+                    /*
+                     * Credits Section
+                     */
+                    
+                    if (modifier.DesktopCredits.HasChanged)
+                    {
+                        newModifierSnapshot.DesktopCredits = (true, modifier.DesktopCredits);
+                    }
+
+                    if (modifier.CreditsRename.HasChanged)
+                    {
+                        newModifierSnapshot.CreditsRename = (true, modifier.CreditsRename);
+                    }
+                    
+                    if (modifier.CreditsIcon.HasChanged)
+                    {
+                        newModifierSnapshot.CreditsIcon = (true, modifier.CreditsIcon);
+                    }
+                    
+                    if (modifier.HideDesktopCredits.HasChanged)
+                    {
+                        newModifierSnapshot.HideDesktopCredits = (true, modifier.HideDesktopCredits);
+                    }
+                    
+                    /*
+                     * Discord Section
+                     */
+                    
+                    if (modifier.HideDiscordProgram.HasChanged)
+                    {
+                        newModifierSnapshot.HideDiscordProgram = (true, modifier.HideDiscordProgram);
+                    }
+                    
+                    /*
+                     * Main Game Desktop program
+                     */
+                    
+                    if (modifier.RenameMainGameDesktopIcon.HasChanged)
+                    {
+                        newModifierSnapshot.RenameMainGameDesktopIcon = (true, modifier.RenameMainGameDesktopIcon);
+                    }
+                    
+                    if (modifier.MainGameDesktopIcon.HasChanged)
+                    {
+                        newModifierSnapshot.MainGameDesktopIcon = (true, modifier.MainGameDesktopIcon);
+                    }
+                }
+            }
+
+            return newModifierSnapshot;
+        }
+
+        /// <summary>
+        /// Iterates through all modifier types and tries finding a valid value to use.
+        /// </summary>
         /// <param name="selector">Function that selects the value from the modifier.</param>
         /// <param name="predicate">Requirement for the picked value.</param>
         /// <param name="specialPredicate">Requirement for the modifier.</param>

@@ -21,7 +21,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         /*
          * Username Section (Desktop username)
          */
-        public string UsernameText = string.Empty; 
+        public VariableChanged<string> UsernameText = new VariableChanged<string>
+        {
+            Data = string.Empty
+        };
         
         /*
          * Desktop Background Section
@@ -46,12 +49,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
          */
         
         // Disables the desktop logo "Home Safety Hotline" from the background (Also disables custom ones)
-        public bool DisableDesktopLogo = false;
+        public VariableChanged<bool> DisableDesktopLogo = new VariableChanged<bool>
+        {
+            Data = false
+        };
         
         // Logo to show in desktop (if not disabled)
         public VariableChanged<Sprite> CustomBackgroundLogo = new VariableChanged<Sprite>(); 
         
-        public float BackgroundLogoTransparency = 0.2627f;
+        public VariableChanged<float> BackgroundLogoTransparency = new VariableChanged<float>
+        {
+            Data = 0.2627f
+        };
         
         // For those who want more immersion. Should not be recommended.
         public VariableChanged<bool> HideDiscordProgram = new VariableChanged<bool>(); 
@@ -61,7 +70,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
          */
         
         // Main Game Desktop Program
-        public string RenameMainGameDesktopIcon = string.Empty;
+        public VariableChanged<string> RenameMainGameDesktopIcon = new VariableChanged<string>
+        {
+            Data = string.Empty
+        };
         public VariableChanged<Sprite> MainGameDesktopIcon = new VariableChanged<Sprite>(); 
         
         // Mailbox Icon on Desktop
@@ -111,7 +123,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         };
         
         // Credits
-        [CanBeNull] public string DesktopCredits = null;
+        public VariableChanged<string> DesktopCredits = new VariableChanged<string>
+        {
+            Data = null
+        };
         public VariableChanged<Sprite> CreditsIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> CreditsRename = new VariableChanged<string>();
         public VariableChanged<bool> HideDesktopCredits = new VariableChanged<bool>

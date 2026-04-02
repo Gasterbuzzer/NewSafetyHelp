@@ -98,10 +98,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             /*
              * Desktop Settings
              */
-            string username = string.Empty;
+            VariableChanged<string> username = new VariableChanged<string>
+            {
+                Data = string.Empty
+            };
 
             // Main Program
-            string renameMainGameDesktopIcon = "";
+            VariableChanged<string> renameMainGameDesktopIcon = new VariableChanged<string>
+            {
+                Data = string.Empty
+            };
             VariableChanged<Sprite> mainGameDesktopIconSprite = new VariableChanged<Sprite>();
 
             // Backgrounds
@@ -157,8 +163,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Color? desktopBackgroundColor = null;
 
             VariableChanged<Sprite> backgroundLogo = new VariableChanged<Sprite>();
-            bool disableBackgroundLogo = false;
-            float backgroundLogoTransparency = 0.2627f;
+            VariableChanged<bool> disableDesktopLogo = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            VariableChanged<float> backgroundLogoTransparency = new VariableChanged<float>
+            {
+                Data = 0.2627f
+            };
 
             // Animated Backgrounds
             List<string> animatedDesktopBackgrounds = new List<string>();
@@ -196,7 +208,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             VariableChanged<string> applicationScorecardTitle = new VariableChanged<string>();
 
             // Credits
-            string desktopCredits = null;
+            VariableChanged<string> desktopCredits = new VariableChanged<string>
+            {
+                Data = null
+            };
             VariableChanged<string> creditsRename = new VariableChanged<string>();
             VariableChanged<bool> hideDesktopCredits = new VariableChanged<bool>
             {
@@ -271,13 +286,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Username
              */
 
-            ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref username);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_username_text", ref username);
 
             /*
              * Main Game Desktop Program (Start Day Program)
              */
             
-            ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon",
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_main_game_desktop_icon",
                 ref renameMainGameDesktopIcon);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "main_game_desktop_icon_path",
@@ -385,8 +400,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_logo_image_name",
                 ref backgroundLogo, jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableBackgroundLogo);
-            ParsingHelper.TryAssign(jObjectParsed, "desktop_logo_transparency", ref backgroundLogoTransparency);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_desktop_logo", ref disableDesktopLogo);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_logo_transparency",
+                ref backgroundLogoTransparency);
             
             /*
              * Mailbox
@@ -477,7 +493,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Credits
              */
             
-            ParsingHelper.TryAssign(jObjectParsed, "desktop_credits", ref desktopCredits);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_credits", ref desktopCredits);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_desktop_credits", ref hideDesktopCredits);
             
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_credits_program",
@@ -545,7 +561,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 CustomBackgroundLogo = backgroundLogo,
 
-                DisableDesktopLogo = disableBackgroundLogo,
+                DisableDesktopLogo = disableDesktopLogo,
                 BackgroundLogoTransparency = backgroundLogoTransparency,
 
                 AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,

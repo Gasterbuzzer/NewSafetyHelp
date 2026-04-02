@@ -8,6 +8,6 @@
     public class VariableChanged<T>
     {
         public bool HasChanged = false;
-        public T Data;
+        public T Data = default;
     }
 }
