@@ -138,6 +138,7 @@
     <Compile Include="src\Callers\UI\MainCanvasPatches.cs" />
     <Compile Include="src\Callers\UI\NextCaller.cs" />
     <Compile Include="src\Callers\UI\UIFallbacks.cs" />
+    <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />
@@ -211,6 +212,7 @@
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\JSONParsing\ParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\AccuracyParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\ArtbookParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\CallerRequirementParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\IDParsingHelper.cs" />

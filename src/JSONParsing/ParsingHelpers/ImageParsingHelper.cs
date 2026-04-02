@@ -44,6 +44,53 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         }
 
         /// <summary>
+        /// Attempts to parse the key for an image list.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        /// <param name="jsonFolderPath">Path where the JSON is located at.</param>
+        /// <param name="usermodFolderPath">Path where the usermod is located at.</param>
+        /// <returns>(Bool) If the parsed value was an array (false) or a single image (true).
+        /// Null if we failed parsing.</returns>
+        public static bool? TryAssignImageListOrSingleImage(JObject jObjectParsed, string key, ref List<Sprite> target,
+            string jsonFolderPath, string usermodFolderPath)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return null;
+            }
+
+            if (target == null)
+            {
+                target = new List<Sprite>();
+            }
+
+            if (token.Type == JTokenType.Array)
+            {
+                TryAssignSpriteList(jObjectParsed, key, ref target, jsonFolderPath, usermodFolderPath);
+
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    Sprite value = token.Value<Sprite>();
+                    target.Add(value);
+
+                    return true;
+                }
+                catch
+                {
+                    LoggingHelper.ErrorLog($"For provided key '{key}' " +
+                                           "we were unable of assigning any value, as the wrong value was given.");
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
         /// Tries to assign the target list with the images from the given JSON at the given key.
         /// If not found or if any problems happen, it will not add to the list.
         /// </summary>
@@ -73,7 +120,6 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 else
                 {
                     target.Add(
-                        
                         ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
                             usermodFolderPath + "\\" + imagePath)
                     );

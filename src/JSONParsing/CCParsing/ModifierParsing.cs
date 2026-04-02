@@ -177,7 +177,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Artbook Icon on Desktop
             VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>();
             VariableChanged<string> artbookRename = new VariableChanged<string>();
-            List<Sprite> artbookPages = new List<Sprite>();
+            List<ArtbookPage> artbookPages = new List<ArtbookPage>();
 
             // Arcade Icon on Desktop
             VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>();
@@ -374,8 +374,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_artbook_program",
                 ref artbookRename);
             
-            ImageParsingHelper.TryAssignSpriteList(jObjectParsed, "artbook_image_pages",
-                ref artbookPages, jsonFolderPath, usermodFolderPath);
+            ArtbookParsingHelper.ParseArtbookPages(jObjectParsed, ref artbookPages, jsonFolderPath, usermodFolderPath);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_arcade_image_name",
                 ref arcadeIcon, jsonFolderPath, usermodFolderPath, customCampaignName);

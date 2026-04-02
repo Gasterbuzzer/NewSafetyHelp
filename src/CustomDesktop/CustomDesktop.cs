@@ -402,7 +402,7 @@ namespace NewSafetyHelp.CustomDesktop
                     (bool foundModifier, VariableChanged<string> value) artbookRename = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.ArtbookRename, vCs => vCs.HasChanged);
                     
-                    (bool foundModifier, List<Sprite> value) artbookPages = CustomCampaignGlobal.GetActiveModifierValue(
+                    (bool foundModifier, List<ArtbookPage> value) artbookPages = CustomCampaignGlobal.GetActiveModifierValue(
                         c => c.ArtbookPages, vCs => vCs != null && vCs.Count > 0);
 
                     if (artbookIcon.foundModifier)
@@ -417,20 +417,8 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (artbookPages.foundModifier)
                     {
-                        //artbookPages.value;
-
-                        ArtbookPage[] artbookPageArray = new ArtbookPage[artbookPages.value.Count];
-
-                        for (int i = 0; i < artbookPageArray.Length; i++)
-                        {
-                            artbookPageArray[i] = ScriptableObject.CreateInstance<ArtbookPage>();
-                            
-                            artbookPageArray[i].title = "NO TITLE";
-                            artbookPageArray[i].description = "NO DESCRIPTION";
-                            artbookPageArray[i].image = artbookPages.value[i];
-                            artbookPageArray[i].image2 = artbookPages.value[i];
-                        }
-
+                        ArtbookPage[] artbookPageArray = artbookPages.value.ToArray();
+                        
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup")
                             .GetComponent<ArtbookPopupBehavior>().artbookPages = artbookPageArray;
                     }
