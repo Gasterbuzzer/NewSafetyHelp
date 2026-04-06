@@ -10,14 +10,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         /*
          * Conditions of Modifier Section
          */
-        
+
         // Days the theme appears in, if set to null, it will apply every day.
         // If a single day was added only, then we only have single day added.
-        [CanBeNull] public List<int> UnlockDays = null; 
+        [CanBeNull] public List<int> UnlockDays = null;
 
         // If the modifier should only work if the game was finished.
         public bool OnlyIfGameFinished = false;
-        
+
         /*
          * Username Section (Desktop username)
          */
@@ -25,162 +25,174 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = string.Empty
         };
-        
+
         /*
          * Desktop Background Section
          */
         public List<Sprite> DesktopBackgrounds = new List<Sprite>();
-        
+
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();
         public bool BlackBackgroundOnAnimatedBackground = false;
-        
+
         // If to disable the color the background green (or custom) the same as the main game does.
         public bool DisableColorBackground = false;
-        
+
         // Color for background. If null, it means not set.
-        public Color? DesktopBackgroundColor = null; 
-        
+        public Color? DesktopBackgroundColor = null;
+
         // Desktop Background (Finished the game)
-        public VariableChanged<Sprite> GameFinishedBackground = new VariableChanged<Sprite>(); 
+        public VariableChanged<Sprite> GameFinishedBackground = new VariableChanged<Sprite>();
 
         /*
          * Desktop Logo Section
          */
-        
+
         // Disables the desktop logo "Home Safety Hotline" from the background (Also disables custom ones)
         public VariableChanged<bool> DisableDesktopLogo = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         // Logo to show in desktop (if not disabled)
-        public VariableChanged<Sprite> CustomBackgroundLogo = new VariableChanged<Sprite>(); 
-        
+        public VariableChanged<Sprite> CustomBackgroundLogo = new VariableChanged<Sprite>();
+
         public VariableChanged<float> BackgroundLogoTransparency = new VariableChanged<float>
         {
             Data = 0.2627f
         };
-        
+
         // For those who want more immersion. Should not be recommended.
-        public VariableChanged<bool> HideDiscordProgram = new VariableChanged<bool>(); 
+        public VariableChanged<bool> HideDiscordProgram = new VariableChanged<bool>();
 
         /*
          * Programs on Desktop Section
          */
-        
+
         // Main Game Desktop Program
         public VariableChanged<string> RenameMainGameDesktopIcon = new VariableChanged<string>
         {
             Data = string.Empty
         };
-        public VariableChanged<Sprite> MainGameDesktopIcon = new VariableChanged<Sprite>(); 
-        
+
+        public VariableChanged<Sprite> MainGameDesktopIcon = new VariableChanged<Sprite>();
+
         // Mailbox Icon on Desktop
-        public VariableChanged<Sprite> MailBoxIcon = new VariableChanged<Sprite>(); 
+        public VariableChanged<Sprite> MailBoxIcon = new VariableChanged<Sprite>();
+        public VariableChanged<Sprite> ApplicationMailBoxIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> MailBoxRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationMailBoxTitle = new VariableChanged<string>();
-        
+
         // Entry Browser Icon on Desktop
-        public VariableChanged<Sprite> EntryBrowserIcon = new VariableChanged<Sprite>(); 
+        public VariableChanged<Sprite> EntryBrowserIcon = new VariableChanged<Sprite>();
+        public VariableChanged<Sprite> ApplicationEntryBrowserIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> EntryBrowserRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationEntryBrowserTitle = new VariableChanged<string>();
+
         public VariableChanged<bool> EntryBrowserActive = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         // Options Icon on Desktop
-        public VariableChanged<Sprite> OptionsIcon = new VariableChanged<Sprite>(); 
+        public VariableChanged<Sprite> OptionsIcon = new VariableChanged<Sprite>();
+        public VariableChanged<Sprite> ApplicationOptionsIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> OptionsRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationOptionsTitle = new VariableChanged<string>();
-        
+
         // Artbook Icon on Desktop
-        public VariableChanged<Sprite> ArtbookIcon = new VariableChanged<Sprite>(); 
+        public VariableChanged<Sprite> ArtbookIcon = new VariableChanged<Sprite>();
+        public VariableChanged<Sprite> ApplicationArtbookIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> ArtbookRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationArtbookTitle = new VariableChanged<string>();
         public List<ArtbookPage> ArtbookPages = new List<ArtbookPage>();
+
         public VariableChanged<bool> ArtbookActive = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         // Arcade Icon on Desktop
-        public VariableChanged<Sprite> ArcadeIcon = new VariableChanged<Sprite>(); 
+        public VariableChanged<Sprite> ArcadeIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> ArcadeRename = new VariableChanged<string>();
+
         public VariableChanged<bool> ArcadeActive = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         // Scorecard: Weekly Report Icon on Desktop
-        public VariableChanged<Sprite> ScorecardIcon = new VariableChanged<Sprite>(); 
+        public VariableChanged<Sprite> ScorecardIcon = new VariableChanged<Sprite>();
+        public VariableChanged<Sprite> ApplicationScorecardIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> ScorecardRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationScorecardTitle = new VariableChanged<string>();
+
         public VariableChanged<bool> ScorecardActive = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         // Credits
         public VariableChanged<string> DesktopCredits = new VariableChanged<string>
         {
             Data = null
         };
+
         public VariableChanged<Sprite> CreditsIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> CreditsRename = new VariableChanged<string>();
+
         public VariableChanged<bool> HideDesktopCredits = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         /*
          * Special Desktop Options Section
          */
-        
+
         // Strings shown at the beginning of each day.
-        public List<string> DayTitleStrings = new List<string>(); 
-        
+        public List<string> DayTitleStrings = new List<string>();
+
         /*
          * Final Cutscene
          */
-        
+
         // If the final cutscene should fade to black.
         public VariableChanged<bool> FinalCutsceneFadeToBlack = new VariableChanged<bool>
         {
             Data = true
         };
-        
+
         public VariableChanged<bool> FinalCutsceneShake = new VariableChanged<bool>
         {
             Data = true
         };
-        
+
         public VariableChanged<bool> FinalCutsceneGlitchSounds = new VariableChanged<bool>
         {
             Data = true
         };
-        
+
         public VariableChanged<bool> FinalCutscenePreventClicks = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public VariableChanged<float> FinalCutsceneFadeDuration = new VariableChanged<float>
         {
             Data = 3f
         };
-        
+
         public VariableChanged<float> FinalCutsceneFadePaddingDuration = new VariableChanged<float>
         {
             Data = 1f
         };
-        
+
         public VariableChanged<bool> FinalCutsceneStopAudioAfterFade = new VariableChanged<bool>
         {
             Data = true
         };
-        
+
         // Final Cutscene Audio
         public VariableChanged<RichAudioClip> FinalCutsceneAudio = new VariableChanged<RichAudioClip>
         {
@@ -188,20 +200,20 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         };
 
         public string FinalCutsceneAudioPath = null;
-        
+
         /*
          * Cheats / Settings Section
          */
-        
+
         // If to show the accuracy UI text string from the base game.
         public VariableChanged<bool> ShowDefaultUIAccuracyText = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         // If to disable the desktop loading.
         public bool DisableDesktopLoading = false;
-        
+
         /*
          * Removed/Unfinished Section
          */

@@ -362,6 +362,12 @@ namespace NewSafetyHelp.CustomDesktop
                             GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ApplicationEntryBrowserTitle.value.Data;
                     }
                     
+                    if (desktopModifierSnapshot.ApplicationEntryBrowserIcon.found)
+                    {
+                        GlobalVariables.entryCanvasScript.gameObject.transform.GetChild(0).GetChild(0).GetChild(1).
+                            GetComponent<Image>().sprite = desktopModifierSnapshot.ApplicationEntryBrowserIcon.value.Data;
+                    }
+                    
                     /*
                      * Email / Mailbox Section
                      */
@@ -382,6 +388,12 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(3).
                             GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ApplicationMailBoxTitle.value.Data;
+                    }
+                    
+                    if (desktopModifierSnapshot.ApplicationMailBoxIcon.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(2).
+                            GetComponent<Image>().sprite = desktopModifierSnapshot.ApplicationMailBoxIcon.value.Data;
                     }
 
                     /*
@@ -406,6 +418,13 @@ namespace NewSafetyHelp.CustomDesktop
                             GetComponent<TextMeshProUGUI>().text = 
                             desktopModifierSnapshot.ApplicationOptionsTitle.value.Data;
                     }
+                    
+                    if (desktopModifierSnapshot.ApplicationOptionsIcon.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("OptionsPopup").GetChild(0).GetChild(2).
+                                GetComponent<Image>().sprite = 
+                            desktopModifierSnapshot.ApplicationOptionsIcon.value.Data;
+                    }
 
                     /*
                      * Artbook Section
@@ -428,6 +447,13 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup").GetChild(0).GetChild(3)
                             .GetComponent<TextMeshProUGUI>().text = 
                             desktopModifierSnapshot.ApplicationArtbookTitle.value.Data;
+                    }
+                    
+                    if (desktopModifierSnapshot.ApplicationArtbookIcon.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup").GetChild(0).GetChild(2)
+                                .GetComponent<Image>().sprite = 
+                            desktopModifierSnapshot.ApplicationArtbookIcon.value.Data;
                     }
 
                     if (desktopModifierSnapshot.ArtbookPages.found)
@@ -459,6 +485,13 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ScorecardPopup").GetChild(0).GetChild(3)
                             .GetComponent<TextMeshProUGUI>().text = 
                             desktopModifierSnapshot.ApplicationScorecardTitle.value.Data;
+                    }
+                    
+                    if (desktopModifierSnapshot.ApplicationScorecardIcon.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ScorecardPopup").GetChild(0).GetChild(2)
+                                .GetComponent<Image>().sprite = 
+                            desktopModifierSnapshot.ApplicationScorecardIcon.value.Data;
                     }
 
                     /*

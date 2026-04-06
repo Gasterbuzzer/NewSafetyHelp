@@ -14,23 +14,28 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public (bool found, VariableChanged<Sprite> value) EntryBrowserIcon;
         public (bool found, VariableChanged<string> value) EntryBrowserRename;
         public (bool found, VariableChanged<string> value) ApplicationEntryBrowserTitle;
+        public (bool found, VariableChanged<Sprite> value) ApplicationEntryBrowserIcon;
         
         public (bool found, VariableChanged<Sprite> value) MailBoxIcon;
         public (bool found, VariableChanged<string> value) MailBoxRename;
         public (bool found, VariableChanged<string> value) ApplicationMailBoxTitle;
+        public (bool found, VariableChanged<Sprite> value) ApplicationMailBoxIcon;
         
         public (bool found, VariableChanged<Sprite> value) OptionsIcon;
         public (bool found, VariableChanged<string> value) OptionsRename;
         public (bool found, VariableChanged<string> value) ApplicationOptionsTitle;
+        public (bool found, VariableChanged<Sprite> value) ApplicationOptionsIcon;
         
         public (bool found, VariableChanged<Sprite> value) ArtbookIcon;
         public (bool found, VariableChanged<string> value) ArtbookRename;
-        public (bool found, VariableChanged<string> value) ApplicationArtbookTitle;
         public (bool found, List<ArtbookPage> value) ArtbookPages;
+        public (bool found, VariableChanged<string> value) ApplicationArtbookTitle;
+        public (bool found, VariableChanged<Sprite> value) ApplicationArtbookIcon;
         
         public (bool found, VariableChanged<Sprite> value) ScorecardIcon;
         public (bool found, VariableChanged<string> value) ScorecardRename;
         public (bool found, VariableChanged<string> value) ApplicationScorecardTitle;
+        public (bool found, VariableChanged<Sprite> value) ApplicationScorecardIcon;
         
         public (bool found, VariableChanged<Sprite> value) ArcadeIcon;
         public (bool found, VariableChanged<string> value) ArcadeRename;

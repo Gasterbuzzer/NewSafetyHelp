@@ -429,7 +429,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     /*
                      * Username Section
                      */
-                    
+
                     if (modifier.UsernameText.HasChanged)
                     {
                         newModifierSnapshot.UsernameText = (true, modifier.UsernameText);
@@ -456,7 +456,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     /*
                      * Entry Browser Section
                      */
-                    
+
                     if (modifier.EntryBrowserIcon.HasChanged)
                     {
                         newModifierSnapshot.EntryBrowserIcon = (true, modifier.EntryBrowserIcon);
@@ -472,10 +472,15 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         newModifierSnapshot.ApplicationEntryBrowserTitle = (true, modifier.ApplicationEntryBrowserTitle);
                     }
                     
+                    if (modifier.ApplicationEntryBrowserIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationEntryBrowserIcon = (true, modifier.ApplicationEntryBrowserIcon);
+                    }
+
                     /*
                      * Mailbox Section
                      */
-                    
+
                     if (modifier.MailBoxIcon.HasChanged)
                     {
                         newModifierSnapshot.MailBoxIcon = (true, modifier.MailBoxIcon);
@@ -491,10 +496,15 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         newModifierSnapshot.ApplicationMailBoxTitle = (true, modifier.ApplicationMailBoxTitle);
                     }
                     
+                    if (modifier.ApplicationMailBoxIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationMailBoxIcon = (true, modifier.ApplicationMailBoxIcon);
+                    }
+
                     /*
                      * Options Section
                      */
-                    
+
                     if (modifier.OptionsIcon.HasChanged)
                     {
                         newModifierSnapshot.OptionsIcon = (true, modifier.OptionsIcon);
@@ -510,10 +520,15 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         newModifierSnapshot.ApplicationOptionsTitle = (true, modifier.ApplicationOptionsTitle);
                     }
                     
+                    if (modifier.ApplicationOptionsIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationOptionsIcon = (true, modifier.ApplicationOptionsIcon);
+                    }
+
                     /*
                      * Artbook Section
                      */
-                    
+
                     if (modifier.ArtbookIcon.HasChanged)
                     {
                         newModifierSnapshot.ArtbookIcon = (true, modifier.ArtbookIcon);
@@ -529,16 +544,21 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         newModifierSnapshot.ApplicationArtbookTitle = (true, modifier.ApplicationArtbookTitle);
                     }
                     
-                    if (modifier.ArtbookPages != null 
+                    if (modifier.ApplicationArtbookIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationArtbookIcon = (true, modifier.ApplicationArtbookIcon);
+                    }
+
+                    if (modifier.ArtbookPages != null
                         && modifier.ArtbookPages.Count > 0)
                     {
                         newModifierSnapshot.ArtbookPages = (true, modifier.ArtbookPages);
                     }
-                    
+
                     /*
                      * Scorecard Section
                      */
-                    
+
                     if (modifier.ScorecardIcon.HasChanged)
                     {
                         newModifierSnapshot.ScorecardIcon = (true, modifier.ScorecardIcon);
@@ -554,10 +574,15 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         newModifierSnapshot.ApplicationScorecardTitle = (true, modifier.ApplicationScorecardTitle);
                     }
                     
+                    if (modifier.ApplicationScorecardIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationScorecardIcon = (true, modifier.ApplicationScorecardIcon);
+                    }
+
                     /*
                      * Arcade Section
                      */
-                    
+
                     if (modifier.ArcadeIcon.HasChanged)
                     {
                         newModifierSnapshot.ArcadeIcon = (true, modifier.ArcadeIcon);
@@ -567,11 +592,11 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ArcadeRename = (true, modifier.ArcadeRename);
                     }
-                    
+
                     /*
                      * Credits Section
                      */
-                    
+
                     if (modifier.DesktopCredits.HasChanged)
                     {
                         newModifierSnapshot.DesktopCredits = (true, modifier.DesktopCredits);
@@ -581,35 +606,35 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.CreditsRename = (true, modifier.CreditsRename);
                     }
-                    
+
                     if (modifier.CreditsIcon.HasChanged)
                     {
                         newModifierSnapshot.CreditsIcon = (true, modifier.CreditsIcon);
                     }
-                    
+
                     if (modifier.HideDesktopCredits.HasChanged)
                     {
                         newModifierSnapshot.HideDesktopCredits = (true, modifier.HideDesktopCredits);
                     }
-                    
+
                     /*
                      * Discord Section
                      */
-                    
+
                     if (modifier.HideDiscordProgram.HasChanged)
                     {
                         newModifierSnapshot.HideDiscordProgram = (true, modifier.HideDiscordProgram);
                     }
-                    
+
                     /*
                      * Main Game Desktop program
                      */
-                    
+
                     if (modifier.RenameMainGameDesktopIcon.HasChanged)
                     {
                         newModifierSnapshot.RenameMainGameDesktopIcon = (true, modifier.RenameMainGameDesktopIcon);
                     }
-                    
+
                     if (modifier.MainGameDesktopIcon.HasChanged)
                     {
                         newModifierSnapshot.MainGameDesktopIcon = (true, modifier.MainGameDesktopIcon);
