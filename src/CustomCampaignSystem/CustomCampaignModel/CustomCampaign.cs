@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
@@ -222,5 +223,26 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // Ringtones
         public bool DoNotAccountDefaultRingtone = true;
         public List<CustomRingtone.CustomRingtone> CustomRingtones = new List<CustomRingtone.CustomRingtone>();
+        
+        /// <summary>
+        /// Sorts the emails to the correct priorities and days.
+        /// </summary>
+        public void SortEmailsInCustomCampaign()
+        {
+            Emails = Emails.
+                OrderBy(email => email.UnlockDay).
+                ThenByDescending(email => email.EmailPriority).
+                ToList();
+        }
+        
+        /// <summary>
+        /// Sorts the custom cutscenes to the correct priorities.
+        /// </summary>
+        public void SortCutsceneInCustomCampaign()
+        {
+            CustomCutscenes = CustomCutscenes.
+                OrderByDescending(cutscene => cutscene.ApplyPriority).
+                ToList();
+        }
     }
 }

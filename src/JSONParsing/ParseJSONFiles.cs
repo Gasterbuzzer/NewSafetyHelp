@@ -49,12 +49,17 @@ namespace NewSafetyHelp.JSONParsing
                 LoadJsonFilesFromFolder(foldersStringName, __instance);
             }
             
-            // For all custom campaigns we make sure their emails are sorted.
+            // For all custom campaigns we make sure any elements are sorted correctly.
             foreach (CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
             {
                 if (customCampaign.Emails.Count > 0)
                 {
-                    CustomCampaignGlobal.SortEmailsInCustomCampaign(customCampaign);
+                    customCampaign.SortEmailsInCustomCampaign();
+                }
+                
+                if (customCampaign.CustomCutscenes.Count > 0)
+                {
+                    customCampaign.SortCutsceneInCustomCampaign();
                 }
             }
 
@@ -268,7 +273,7 @@ namespace NewSafetyHelp.JSONParsing
             
             // Cutscene was provided
             if (ParsingHelper.ContainsKeys(new List<string> {"cutscene_custom_campaign_name", 
-                    "custom_cutscene_video_file"}, json))
+                    "custom_cutscene_video_file", "custom_cutscene_priority"}, json))
             {
                 return JSONParseTypes.Cutscene;
             }

@@ -79,9 +79,6 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEmails,
                 ref customCampaign.Emails, customCampaignName, "emails");
             
-            // Sort by unlock day. This is to prevent some oddities where some emails that appear later, appear in the list sooner.
-            CustomCampaignGlobal.SortEmailsInCustomCampaign(customCampaign);
-            
             // Check if any videos have to be added to a custom campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
                 ref customCampaign.CustomVideos, customCampaignName, "videos");

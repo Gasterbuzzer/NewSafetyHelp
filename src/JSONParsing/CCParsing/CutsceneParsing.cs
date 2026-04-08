@@ -58,6 +58,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             List<GeneralAccuracyType> unlockAccuracy = null;
             
             List<CallerRequirement> unlockRequiredCallers = null;
+            
+            int applyPriority = 0;
 
             ParsingHelper.TryAssign(jObjectParsed, "cutscene_custom_campaign_name", ref customCampaignName);
 
@@ -73,6 +75,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CallerRequirementParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers,
                 "custom_cutscene_caller_requirement_ids",
                 "custom_cutscene_caller_requirement_should_be_correct");
+            
+            ParsingHelper.TryAssign(jObjectParsed, "custom_cutscene_priority", ref applyPriority);
 
             return new CustomCutscene
             {
@@ -81,7 +85,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CutsceneVideoPath = cutsceneVideoPath,
 
                 UnlockAccuracy = unlockAccuracy,
-                UnlockRequiredCallers = unlockRequiredCallers
+                UnlockRequiredCallers = unlockRequiredCallers,
+                
+                ApplyPriority = applyPriority
             };
         }
     }
