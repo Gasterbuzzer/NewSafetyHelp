@@ -20,6 +20,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                 return true;
             }
 
+            LoggingHelper.DebugLog(() => "Checking specific accuracy requirement for a cutscene.",
+                LoggingHelper.LoggingCategory.CUTSCENE);
+
             foreach (GeneralAccuracyType accuracyType in customCutscene.UnlockAccuracy)
             {
                 // If the day of to unlock is even reached.
@@ -112,7 +115,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
         /// <returns>(True) Passed all checks. (False) Failed a check.</returns>
         public static bool CheckCutsceneAccuracy(CustomCutscene customCutscene)
         {
-            LoggingHelper.DebugLog("Checking custom cutscene accuracy.", LoggingHelper.LoggingCategory.CUTSCENE);
+            LoggingHelper.DebugLog("Checking custom cutscene accuracy.",
+                LoggingHelper.LoggingCategory.CUTSCENE);
 
             if (customCutscene.UnlockRequiredCallers != null
                 && customCutscene.UnlockRequiredCallers.Count > 0)

@@ -183,7 +183,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, requiredAccuracyKey, ref accuracyRequiredList);
 
             List<string> accuracyCheckType = new List<string>();
-            ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, accuracyCheckTypesKey, ref accuracyCheckType);
+            bool? hasOnlyOneAccuracyCheckType = ParsingHelper.TryAssignListOrSingleElement(jObjectParsed,
+                accuracyCheckTypesKey, ref accuracyCheckType);
 
             if (accuracyRequiredList.Count != accuracyCheckType.Count)
             {
@@ -206,13 +207,6 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 }
             }
 
-            if (differentAccuracyDays.Count > accuracyCheckType.Count)
-            {
-                LoggingHelper.ErrorLog("Provided accuracy days list has too many elements. " +
-                                       "Unable of parsing accuracy checks.");
-                return;
-            }
-
             if (accuracyCheckType.Count > 0
                 || accuracyCheckType.Count > 0
                 || differentAccuracyDays.Count > 0)
@@ -224,17 +218,28 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             {
                 GeneralAccuracyType newAccuracyType = new GeneralAccuracyType();
 
-                if (!string.IsNullOrEmpty(accuracyCheckType[i]))
+                if (hasOnlyOneAccuracyCheckType != null)
                 {
-                    newAccuracyType.AccuracyCheck = TryAssignSingleAccuracyType(accuracyCheckType[i]);
+                    if ((bool)hasOnlyOneAccuracyCheckType 
+                        && accuracyCheckType.Count > 0)
+                    {
+                        newAccuracyType.AccuracyCheck = TryAssignSingleAccuracyType(accuracyCheckType[0]);
+                    }
+                    else if (i < accuracyCheckType.Count)
+                    {
+                        if (!string.IsNullOrEmpty(accuracyCheckType[i]))
+                        {
+                            newAccuracyType.AccuracyCheck = TryAssignSingleAccuracyType(accuracyCheckType[i]);
+                        }
+                        else
+                        {
+                            LoggingHelper.WarningLog("Provided general accuracy type is invalid. " +
+                                                     "Defaulting to 'greater or equal'.");
+                            newAccuracyType.AccuracyCheck = AccuracyHelper.CheckOptions.GreaterThanOrEqualTo;
+                        }
+                    }
                 }
-                else
-                {
-                    LoggingHelper.WarningLog("Provided general accuracy type is invalid. " +
-                                             "Defaulting to 'greater or equal'.");
-                    newAccuracyType.AccuracyCheck = AccuracyHelper.CheckOptions.GreaterThanOrEqualTo;
-                }
-
+                
                 if (hasOnlyOneAccuracyDay != null)
                 {
                     if ((bool)hasOnlyOneAccuracyDay && differentAccuracyDays.Count > 0)

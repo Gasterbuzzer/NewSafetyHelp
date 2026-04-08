@@ -305,6 +305,9 @@ namespace NewSafetyHelp.EndingPatches
                             if (AccuracyCutsceneHelper.CheckCutsceneAccuracy(customCutscene)
                                 && !string.IsNullOrEmpty(customCutscene.CutsceneVideoPath))
                             {
+                                LoggingHelper.DebugLog("Picked cutscene with the path: " +
+                                                       $"'{customCutscene.CutsceneVideoPath}'.",
+                                    LoggingHelper.LoggingCategory.CUTSCENE);
                                 endCutsceneVideoURL = customCutscene.CutsceneVideoPath;
                                 break;
                             }

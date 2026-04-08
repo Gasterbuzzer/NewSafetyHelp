@@ -99,7 +99,7 @@ namespace NewSafetyHelp.LoggingSystem
                         break;
                     
                     case LoggingCategory.CUTSCENE:
-                        if (!NewSafetyHelpMainClass.ShowTextFileDebugLog.Value)
+                        if (!NewSafetyHelpMainClass.ShowDebugLogs.Value)
                         {
                             return false;
                         }
