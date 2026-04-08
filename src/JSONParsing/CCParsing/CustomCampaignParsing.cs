@@ -86,6 +86,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
                 ref customCampaign.CustomVideos, customCampaignName, "videos");
             
+            // Check if any cutscenes have to be added to a custom campaign.
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignCutscenes,
+                ref customCampaign.CustomCutscenes, customCampaignName, "cutscenes");
+            
             // Check if any music has to be added to a custom campaign.
             if (GlobalParsingVariables.PendingCustomCampaignMusic.Count > 0)
             {

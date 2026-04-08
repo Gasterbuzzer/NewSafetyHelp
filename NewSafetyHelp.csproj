@@ -145,11 +145,13 @@
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\RingtoneHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFile.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFileHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\CutsceneLogic\CustomCutscene.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\DesktopBackgroundPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Desktop\OnDayUnlockPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Abstract\CustomCampaignElement.cs" />
     <Compile Include="src\CustomCampaignSystem\Fade\FadeScreenPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCallerHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCutsceneHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyEmailHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyTextFileHelper.cs" />
@@ -200,6 +202,7 @@
     <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\CutsceneParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs" />

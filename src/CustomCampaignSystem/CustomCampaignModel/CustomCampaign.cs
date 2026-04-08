@@ -3,6 +3,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
+using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -131,6 +132,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.
         public string GameOverCutsceneVideoName = ""; // Video shown at game over.
+        
+        public List<CustomCutscene> CustomCutscenes = new List<CustomCutscene>();
 
         // Music
         public bool AlwaysRandomMusic = true; // If the provided music is to be always randomly chosen. 

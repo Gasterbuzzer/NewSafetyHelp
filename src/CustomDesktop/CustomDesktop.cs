@@ -164,6 +164,9 @@ namespace NewSafetyHelp.CustomDesktop
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEntryLogToggle,
                         "Enable Entry Logs", NewSafetyHelpMainClass.ShowEntryDebugLog.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnCutsceneLogToggle,
+                        "Enable Cutscene Logs", NewSafetyHelpMainClass.ShowCutsceneLog.Value);
 
                     InGameSettingHelper.CreateButton(developerSettings, (e) =>
                     {
@@ -725,12 +728,14 @@ namespace NewSafetyHelp.CustomDesktop
                     return true;
                 }
 
-                // __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
+                // OLD: __instance.myText = __instance.GetComponent<TextMeshProUGUI>();
                 MyText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>());
 
-                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) // Main Campaign
+                // Main Campaign
+                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) 
                 {
-                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance); // __instance.myText
+                    // OLD: __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance); 
 
                     string[] strArray = new string[5];
 
@@ -763,22 +768,21 @@ namespace NewSafetyHelp.CustomDesktop
 
                     string[] strArray = new string[5];
 
-                    int num = 12; // Month
+                    // Month
+                    int num = 12; 
 
                     strArray[0] = num.ToString();
                     strArray[1] = "/";
-
-
-                    num = 21 + GlobalVariables.currentDay; // Day
-
-
+                    
+                    // Day
+                    num = 21 + GlobalVariables.currentDay; 
+                    
                     strArray[2] = num.ToString();
                     strArray[3] = "/";
 
-
-                    num = 1996; // Year
-
-
+                    // Year
+                    num = 1996; 
+                    
                     strArray[4] = num.ToString();
 
                     string str = string.Concat(strArray);
@@ -789,7 +793,8 @@ namespace NewSafetyHelp.CustomDesktop
                 {
                     LoggingHelper.DebugLog("Handling custom day format..");
 
-                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance); // __instance.myText
+                    // OLD: __instance.myText
+                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance); 
 
                     // Get our stored values
 
@@ -797,7 +802,6 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.CampaignNullError();
                         return false;
                     }
 

@@ -26,6 +26,7 @@ namespace NewSafetyHelp.JSONParsing
             Theme,
             Ringtone,
             TextProgram,
+            Cutscene,
             Invalid
         }
 
@@ -138,6 +139,11 @@ namespace NewSafetyHelp.JSONParsing
                         case JSONParseTypes.TextProgram: // The provided JSON is a text file (for custom campaigns).
                             LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a text file program.");
                             TextProgramParsing.CreateTextProgram(jObjectParse, modFolderPath);
+                            break;
+                        
+                        case JSONParseTypes.Cutscene: // The provided JSON is a cutscene (for custom campaigns).
+                            LoggingHelper.InfoLog($"Provided JSON file at '{jsonPathFile}' has been interpreted as a cutscene.");
+                            CutsceneParsing.CreateCutscene(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -258,6 +264,13 @@ namespace NewSafetyHelp.JSONParsing
                     "text_file_contents", "text_file_unlock_when_game_finished" }, json))
             {
                 return JSONParseTypes.TextProgram;
+            }
+            
+            // Cutscene was provided
+            if (ParsingHelper.ContainsKeys(new List<string> {"cutscene_custom_campaign_name", 
+                    "custom_cutscene_video_file"}, json))
+            {
+                return JSONParseTypes.Cutscene;
             }
             
             // Unknown JSON type or failed parsing the file.

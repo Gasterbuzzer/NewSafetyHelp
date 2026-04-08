@@ -3,6 +3,7 @@ using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomRingtone;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
+using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -32,6 +33,7 @@ namespace NewSafetyHelp.JSONParsing
         public static List<CustomVideo> PendingCustomCampaignVideos = new List<CustomVideo>();
         public static List<CustomRingtone> PendingCustomCampaignRingtones = new List<CustomRingtone>();
         public static List<CustomTextFile> PendingCustomCampaignTextFile = new List<CustomTextFile>();
+        public static List<CustomCutscene> PendingCustomCampaignCutscenes = new List<CustomCutscene>();
         
         // Configuration
         // ID Offset for Entries in the custom campaign.

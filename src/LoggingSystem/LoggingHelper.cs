@@ -14,7 +14,8 @@ namespace NewSafetyHelp.LoggingSystem
             EMAIL,
             VIDEO,
             TEXT_FILE,
-            ENTRY
+            ENTRY,
+            CUTSCENE
         }
 
         private enum LoggingLevel
@@ -91,6 +92,13 @@ namespace NewSafetyHelp.LoggingSystem
                         break;
                     
                     case LoggingCategory.TEXT_FILE:
+                        if (!NewSafetyHelpMainClass.ShowTextFileDebugLog.Value)
+                        {
+                            return false;
+                        }
+                        break;
+                    
+                    case LoggingCategory.CUTSCENE:
                         if (!NewSafetyHelpMainClass.ShowTextFileDebugLog.Value)
                         {
                             return false;

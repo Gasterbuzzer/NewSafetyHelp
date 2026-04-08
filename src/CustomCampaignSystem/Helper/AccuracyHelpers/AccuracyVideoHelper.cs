@@ -102,7 +102,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                 if (!CheckIfDayValid(accuracyType, customVideo))
                 {
                     LoggingHelper.DebugLog(() => "Accuracy day not reached.",
-                        LoggingHelper.LoggingCategory.EMAIL);
+                        LoggingHelper.LoggingCategory.VIDEO);
                     return false;
                 }
 
@@ -193,7 +193,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers
                 return false;
             }
             
-            // If the email is only allowed to be unlocked after the game has been finished, we check that first.
+            // If the video is only allowed to be unlocked after the game has been finished, we check that first.
             if (customVideo.UnlockWhenGameFinished)
             {
                 if (CustomCampaignGlobal.InCustomCampaign)

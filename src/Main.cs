@@ -41,6 +41,7 @@ namespace NewSafetyHelp
         public static MelonPreferences_Entry<bool> ShowVideoDebugLog; // If to show the logs for video info.
         public static MelonPreferences_Entry<bool> ShowEntryDebugLog; // If to show the logs for entry info.
         public static MelonPreferences_Entry<bool> ShowTextFileDebugLog; // If to show the logs for text file info.
+        public static MelonPreferences_Entry<bool> ShowCutsceneLog; // If to show the logs for cutscenes info.
 
         public override void OnInitializeMelon()
         {
@@ -66,6 +67,7 @@ namespace NewSafetyHelp
             ShowVideoDebugLog = mainModSettings.CreateEntry("ShowVideoDebugLog", false);
             ShowEntryDebugLog = mainModSettings.CreateEntry("ShowEntryDebugLog", false);
             ShowTextFileDebugLog = mainModSettings.CreateEntry("ShowTextFileDebugLog", false);
+            ShowCutsceneLog = mainModSettings.CreateEntry("ShowCutsceneLog", false);
 
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;

@@ -106,7 +106,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
             
-            AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref useOldAccuracyChecks);
+            AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy,
+                ref useOldAccuracyChecks);
 
             ImageParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
                 usermodFolderPath, customCampaignName);

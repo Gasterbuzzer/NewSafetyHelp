@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.LoggingSystem;
@@ -266,6 +268,9 @@ namespace NewSafetyHelp.EndingPatches
                 
                 yield return new WaitForSeconds(0.5f);
 
+                // For custom campaign:
+                bool isPlayingCustomVideo = false;
+                
                 // Inject custom end clip here.
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -284,9 +289,33 @@ namespace NewSafetyHelp.EndingPatches
                         yield break;
                     }
 
-                    if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) // If provided
+                    string endCutsceneVideoURL = null;
+                    
+                    if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) 
                     {
-                        mainCanvasBehavior.videoPlayer.url = customCampaign.EndCutsceneVideoName;
+                        endCutsceneVideoURL = customCampaign.EndCutsceneVideoName;
+                    }
+
+                    // Checks for all custom cutscenes and picks the first valid one.
+                    if (customCampaign.CustomCutscenes != null
+                        && customCampaign.CustomCutscenes.Count > 0)
+                    {
+                        foreach (CustomCutscene customCutscene in customCampaign.CustomCutscenes)
+                        {
+                            if (AccuracyCutsceneHelper.CheckCutsceneAccuracy(customCutscene)
+                                && !string.IsNullOrEmpty(customCutscene.CutsceneVideoPath))
+                            {
+                                endCutsceneVideoURL = customCutscene.CutsceneVideoPath;
+                                break;
+                            }
+                        }
+                    }
+
+                    // If provided we play it.
+                    if (!string.IsNullOrEmpty(endCutsceneVideoURL))
+                    {
+                        isPlayingCustomVideo = true;
+                        mainCanvasBehavior.videoPlayer.url = endCutsceneVideoURL;
                     }
                     else // If not, we show the default one.
                     {
@@ -308,13 +337,22 @@ namespace NewSafetyHelp.EndingPatches
                     {
                         yield break;
                     }
+                    
+                    bool prepareVideo = false;
 
-                    if (!string.IsNullOrEmpty(customCampaign.EndCutsceneVideoName)) // If provided
+                    if (isPlayingCustomVideo)
+                    {
+                        prepareVideo = true;
+                    }
+
+                    // If provided
+                    if (prepareVideo) 
                     {
                         // Get video length and then wait for it.
                         mainCanvasBehavior.videoPlayer.Prepare();
 
-                        while (mainCanvasBehavior.videoPlayer.isPlaying) // While playing we don't continue.
+                        // While playing we don't continue.
+                        while (mainCanvasBehavior.videoPlayer.isPlaying) 
                         {
                             yield return null;
                         }

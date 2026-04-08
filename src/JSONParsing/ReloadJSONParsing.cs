@@ -40,8 +40,6 @@ namespace NewSafetyHelp.JSONParsing
                 
                 MainClassForMonsterEntries.AddedEntriesToCustomCampaign = false;
                 
-                
-                
                 CustomCampaignSceneSwitcher.BackToMainGame(false);
             }
 
@@ -66,6 +64,8 @@ namespace NewSafetyHelp.JSONParsing
             GlobalParsingVariables.PendingCustomCampaignThemes.Clear();
             GlobalParsingVariables.PendingCustomCampaignVideos.Clear();
             GlobalParsingVariables.PendingCustomCampaignRingtones.Clear();
+            GlobalParsingVariables.PendingCustomCampaignTextFile.Clear();
+            GlobalParsingVariables.PendingCustomCampaignCutscenes.Clear();
             
             // We clear any entry permission list.
             EntryUnlockerPatcher.FixPermissionOverride.EntriesReaddTierOne.Clear();

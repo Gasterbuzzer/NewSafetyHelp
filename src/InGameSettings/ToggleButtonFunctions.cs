@@ -77,6 +77,13 @@ namespace NewSafetyHelp.InGameSettings
             return toggleValue;
         }
         
+        public static bool OnCutsceneLogToggle(bool toggleValue)
+        {
+            NewSafetyHelpMainClass.ShowCutsceneLog.Value = toggleValue;
+            
+            return toggleValue;
+        }
+        
         public static bool OnSkipDayClockInToggle(bool toggleValue)
         {
             NewSafetyHelpMainClass.SkipDayClockIn.Value = toggleValue;
