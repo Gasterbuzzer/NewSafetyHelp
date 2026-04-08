@@ -186,7 +186,9 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             bool? hasOnlyOneAccuracyCheckType = ParsingHelper.TryAssignListOrSingleElement(jObjectParsed,
                 accuracyCheckTypesKey, ref accuracyCheckType);
 
-            if (accuracyRequiredList.Count != accuracyCheckType.Count)
+            if (hasOnlyOneAccuracyCheckType != null
+                && (bool) !hasOnlyOneAccuracyCheckType
+                && accuracyRequiredList.Count != accuracyCheckType.Count)
             {
                 if (accuracyRequiredList.Count < accuracyCheckType.Count)
                 {
