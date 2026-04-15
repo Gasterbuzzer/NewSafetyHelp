@@ -62,6 +62,10 @@ namespace NewSafetyHelp.Callers.CallerModel
         public bool CountEveryCallerForLocalAccuracy = false; 
         // If we take into account every type of callers when computing the accuracy.
         
+        // Timed Caller
+        public bool IsTimedCaller = false; // If this caller has a timer before it automatically ends the call.
+        public float TimedCallerDuration = 0;
+
         // Constructor
         public CustomCCaller(int orderInCampaign) { OrderInCampaign = orderInCampaign;}
     }

@@ -147,6 +147,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool countEveryCallerForLocalAccuracy = false;
             // If the accuracy check should consider every caller for the day.
             
+            // Timed Caller
+            bool isTimedCaller = false;
+            float timedCallerDuration = 0;
+            
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
                 customCampaignName = (string)customCampaignAttachedValue;
@@ -209,6 +213,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool callerHasAnimatedPortrait = VideoParsingHelper.TryAssignVideoPath(jObjectParsed,
                 "custom_caller_animated_portrait_name",
                 ref callerAnimatedPortraitURL, jsonFolderPath, usermodFolderPath);
+            
+            // Timed Caller
+            ParsingHelper.TryAssign(jObjectParsed, "is_timed_caller", ref isTimedCaller);
+            ParsingHelper.TryAssign(jObjectParsed, "timed_caller_duration", ref timedCallerDuration);
 
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
@@ -244,7 +252,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 
                 IsAccuracyCaller = isAccuracyCaller,
                 AccuracyChecks = accuracyChecks,
-                CountEveryCallerForLocalAccuracy = countEveryCallerForLocalAccuracy
+                CountEveryCallerForLocalAccuracy = countEveryCallerForLocalAccuracy,
+                
+                IsTimedCaller = isTimedCaller,
+                TimedCallerDuration = timedCallerDuration
             };
         }
     }
