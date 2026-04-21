@@ -173,6 +173,7 @@
     <Compile Include="src\CustomCampaignSystem\Themes\CustomTheme.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\SavingManagerPatchesCC.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\CustomModifier.cs" />
+    <Compile Include="src\CustomCampaignSystem\TimedCaller\TimerCallerHelper.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
     <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs" />

@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Reflection;
+using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -91,6 +94,18 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     if (GlobalVariables.arcadeMode)
                     {
                         GlobalVariables.callerControllerScript.StartCallTimerRoutine();
+                    }
+
+                    // Timed caller start.
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        CustomCCaller currentCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+
+                        if (currentCaller != null
+                            && currentCaller.IsTimedCaller)
+                        {
+                            TimerCallerHelper.StartTimedCallerTimer(currentCaller.TimedCallerDuration);
+                        }
                     }
                 }
                 else

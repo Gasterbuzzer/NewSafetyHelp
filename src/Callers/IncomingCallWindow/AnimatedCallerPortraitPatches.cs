@@ -3,9 +3,8 @@ using System.Reflection;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.LoggingSystem;
-using TMPro;
-using UnityEngine;
 
 namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
@@ -74,9 +73,9 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "UpdateCallerInfo", typeof(CallerProfile))]
         public static class UpdateCallerInfoCornerPortraitPatch
         {
-            private static readonly MethodInfo UpdateLayoutGroup = typeof(MainCanvasBehavior).GetMethod("UpdateLayoutGroup", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            private static GameObject timerLabel;
+            private static readonly MethodInfo UpdateLayoutGroup = 
+                typeof(MainCanvasBehavior).GetMethod("UpdateLayoutGroup",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
             
             /// <summary>
             /// Updates the caller info of the left upper corner to show the caller.
@@ -116,36 +115,11 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     if (currentCaller != null
                         && currentCaller.IsTimedCaller)
                     {
-                        RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
-                            .parent.Find("ReplayLabel").GetComponent<RectTransform>();
-                        
-                        timerLabel = Object.Instantiate(replayLabelRectTransform.gameObject,
-                            replayLabelRectTransform.gameObject.transform.parent);
-
-                        timerLabel.name = "Timer Label";
-                        
-                        timerLabel.GetComponent<RectTransform>().localPosition = 
-                            new Vector3(135, replayLabelRectTransform.localPosition.y, replayLabelRectTransform.localPosition.z);
-                        
-                        timerLabel.GetComponent<RectTransform>().offsetMax = new Vector2(100.465f, -40.7853f);
-
-                        timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"{currentCaller.TimedCallerDuration}s";
-                        timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-                        
-                        // Set the replay labels size to allow for the timer label to fit.
-                        replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
+                        TimerCallerHelper.ShowCallerTimerUI(__instance, currentCaller);
                     }
                     else
                     {
-                        if (timerLabel != null)
-                        {
-                            Object.Destroy(timerLabel);
-                        }
-                        
-                        RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
-                            .parent.Find("ReplayLabel").GetComponent<RectTransform>();
-                        
-                        replayLabelRectTransform.offsetMax = new Vector2(100.838f, -40.7853f);
+                        TimerCallerHelper.HideCallerTimerUI();
                     }
                 }
                 
