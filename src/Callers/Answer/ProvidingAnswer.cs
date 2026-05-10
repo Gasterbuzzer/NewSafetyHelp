@@ -6,6 +6,7 @@ using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
@@ -24,10 +25,10 @@ namespace NewSafetyHelp.Callers.Answer
         {
             private static readonly FieldInfo DynamicCaller = typeof(CallerController).GetField("dynamicCaller",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            
+
             private static readonly MethodInfo TriggerXmasLight = typeof(CallerController).GetMethod("TriggerXmasLight",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            
+
             /// <summary>
             /// Patch the caller answer check to be the custom caller/entry.
             /// </summary>
@@ -43,7 +44,7 @@ namespace NewSafetyHelp.Callers.Answer
                 }
 
                 // Monster Valid
-                if (monsterID != null) 
+                if (monsterID != null)
                 {
                     ++__instance.callersToday;
 
@@ -107,9 +108,9 @@ namespace NewSafetyHelp.Callers.Answer
                         else
                         {
                             __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
-                            
+
                             // If wrong and in DLC
-                            if (GlobalVariables.isXmasDLC) 
+                            if (GlobalVariables.isXmasDLC)
                             {
                                 if (TriggerXmasLight == null)
                                 {
@@ -131,7 +132,7 @@ namespace NewSafetyHelp.Callers.Answer
                     }
                 }
                 // Monster not provided and a dynamic caller. So we set it to true.
-                else if (!(bool)DynamicCaller.GetValue(__instance)) 
+                else if (!(bool)DynamicCaller.GetValue(__instance))
                 {
                     __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
 
@@ -155,30 +156,33 @@ namespace NewSafetyHelp.Callers.Answer
             // Some reflection.
             private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-            
+
             private static readonly MethodInfo NewCallRoutine = typeof(CallerController).GetMethod("NewCallRoutine",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-            
+
             private static readonly FieldInfo LastDayNum = typeof(CallerController).GetField("lastDayNum",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            
-            private static readonly MethodInfo CheckCallerAnswer = typeof(CallerController).GetMethod("CheckCallerAnswer",
+
+            private static readonly MethodInfo CheckCallerAnswer = typeof(CallerController).GetMethod(
+                "CheckCallerAnswer",
                 BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-            
+
             private static readonly FieldInfo CallerAudioSource = typeof(CallerController).GetField("callerAudioSource",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-            
+
             private static readonly FieldInfo TriggerGameOver = typeof(CallerController).GetField("triggerGameOver",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-            
+
             private static readonly MethodInfo ColorLifeImages = typeof(CallerController).GetMethod("ColorLifeImages",
                 BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+
             private static readonly MethodInfo CameraShake = typeof(CallerController).GetMethod("CameraShake",
                 BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-            private static readonly MethodInfo ArcadeFailureRoutine = typeof(CallerController).
-                GetMethod("ArcadeFailureRoutine",
+
+            private static readonly MethodInfo ArcadeFailureRoutine = typeof(CallerController).GetMethod(
+                "ArcadeFailureRoutine",
                 BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-            
+
             /// <summary>
             /// Changes the function to work with better with custom campaigns. By also increasing tier on last call if available.
             /// </summary>
@@ -188,7 +192,7 @@ namespace NewSafetyHelp.Callers.Answer
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
                 LoggingHelper.DebugLog("SubmitAnswer Called.", LoggingHelper.LoggingCategory.SKIPPED_CALLER);
-                
+
                 if (OnCallConcluded == null)
                 {
                     LoggingHelper.ReflectionError(nameof(OnCallConcluded));
@@ -197,12 +201,12 @@ namespace NewSafetyHelp.Callers.Answer
                 else // _onCallConcluded != null
                 {
                     // We use null, since it's static.
-                    Delegate del = (Delegate) OnCallConcluded.GetValue(null); 
+                    Delegate del = (Delegate)OnCallConcluded.GetValue(null);
 
                     if (del != null)
                     {
                         // Old: CallerController.OnCallConcluded();
-                        del.DynamicInvoke(); 
+                        del.DynamicInvoke();
                     }
                     else
                     {
@@ -217,9 +221,11 @@ namespace NewSafetyHelp.Callers.Answer
                     return true;
                 }
 
-                IEnumerator newCallRoutineTenValue = (IEnumerator)NewCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
-                IEnumerator newCallRoutineDefaultValues = (IEnumerator)NewCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
-                
+                IEnumerator newCallRoutineTenValue =
+                    (IEnumerator)NewCallRoutine.Invoke(__instance, new object[] { 5f, 10f });
+                IEnumerator newCallRoutineDefaultValues =
+                    (IEnumerator)NewCallRoutine.Invoke(__instance, new object[] { 5f, 30f });
+
                 GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
 
                 if (CallerAudioSource == null)
@@ -235,9 +241,9 @@ namespace NewSafetyHelp.Callers.Answer
                 }
 
                 AudioSource callerAudioSource = (AudioSource)CallerAudioSource.GetValue(__instance);
-                
+
                 // OLD: __instance.callerAudioSource.Stop();
-                callerAudioSource.Stop(); 
+                callerAudioSource.Stop();
 
                 if (__instance.arcadeMode)
                 {
@@ -253,7 +259,7 @@ namespace NewSafetyHelp.Callers.Answer
                         __instance.CreateCustomCaller();
 
                         // OLD: this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
-                        __instance.StartCoroutine(newCallRoutineTenValue); 
+                        __instance.StartCoroutine(newCallRoutineTenValue);
 
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
 
@@ -288,7 +294,7 @@ namespace NewSafetyHelp.Callers.Answer
                         }
 
                         // OLD: __instance.ColorLifeImages();
-                        ColorLifeImages.Invoke(__instance, null); 
+                        ColorLifeImages.Invoke(__instance, null);
 
                         IEnumerator cameraShake = (IEnumerator)CameraShake.Invoke(__instance, new object[] { 0.25f });
 
@@ -302,19 +308,19 @@ namespace NewSafetyHelp.Callers.Answer
                         {
                             IEnumerator arcadeFailureRoutine =
                                 (IEnumerator)ArcadeFailureRoutine.Invoke(__instance, null);
-                            
+
                             // OLD: __instance.StartCoroutine(__instance.ArcadeFailureRoutine());
-                            __instance.StartCoroutine(arcadeFailureRoutine); 
+                            __instance.StartCoroutine(arcadeFailureRoutine);
                         }
                         else
                         {
                             // OLD: __instance.StartCoroutine(__instance.NewCallRoutine(maxTime: 10f));
-                            __instance.StartCoroutine(newCallRoutineTenValue); 
+                            __instance.StartCoroutine(newCallRoutineTenValue);
                         }
                     }
                 }
                 // OLD: __instance.triggerGameOver
-                else if ((bool)TriggerGameOver.GetValue(__instance)) 
+                else if ((bool)TriggerGameOver.GetValue(__instance))
                 {
                     GlobalVariables.mainCanvasScript.PlayGameOverCutscene();
                 }
@@ -327,7 +333,7 @@ namespace NewSafetyHelp.Callers.Answer
                     }
 
                     // OLD: __instance.CheckCallerAnswer(monsterID);
-                    CheckCallerAnswer.Invoke(__instance, new object[] { monsterID }); 
+                    CheckCallerAnswer.Invoke(__instance, new object[] { monsterID });
 
                     // Before checking, it is the last call of the day, we check if we can increase the tier.
 
@@ -342,18 +348,17 @@ namespace NewSafetyHelp.Callers.Answer
 
                     if (__instance.IsLastCallOfDay())
                     {
-                        if (!GlobalVariables.isXmasDLC 
-                            && !__instance.ScoreIsPassing(__instance.gameOverThreshold) 
-                            && GlobalVariables.currentDay > 1 
+                        if (!GlobalVariables.isXmasDLC
+                            && !__instance.ScoreIsPassing(__instance.gameOverThreshold)
+                            && GlobalVariables.currentDay > 1
                             && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
-                            
                             // In case we are not in the DLC and our score is not passing,
                             // we show the last game over caller.
-                            
+
                             // Now we also check if there is immunity
                             bool showGameoverCaller = true;
-                            
+
                             if (CustomCampaignGlobal.InCustomCampaign)
                             {
                                 CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -372,7 +377,7 @@ namespace NewSafetyHelp.Callers.Answer
                             if (showGameoverCaller)
                             {
                                 //__instance.StartCoroutine(__instance.NewCallRoutine());
-                                __instance.StartCoroutine(newCallRoutineDefaultValues); 
+                                __instance.StartCoroutine(newCallRoutineDefaultValues);
 
                                 GlobalVariables.mainCanvasScript.NoCallerWindow();
                                 return false;
@@ -380,14 +385,14 @@ namespace NewSafetyHelp.Callers.Answer
                         }
 
                         if (GlobalVariables.isXmasDLC &&
-                            GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold 
+                            GlobalVariables.cheerMeterScript.scoreDisplay * 100.0 <= __instance.xmasGameOverThreshold
                             && GlobalVariables.saveManagerScript.savedImmunityToggle == 0)
                         {
                             // We are in the DLC and our cheer score is less than the threshold,
                             // we show the last game over caller.
-                            
+
                             //__instance.StartCoroutine(__instance.NewCallRoutine());
-                            __instance.StartCoroutine(newCallRoutineDefaultValues); 
+                            __instance.StartCoroutine(newCallRoutineDefaultValues);
 
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false;
@@ -400,7 +405,7 @@ namespace NewSafetyHelp.Callers.Answer
                         }
 
                         // OLD: __instance.lastDayNum
-                        if (GlobalVariables.currentDay < (int)LastDayNum.GetValue(__instance)) 
+                        if (GlobalVariables.currentDay < (int)LastDayNum.GetValue(__instance))
                         {
                             // OLD:
                             // GlobalVariables.mainCanvasScript.StartCoroutine(
@@ -412,49 +417,50 @@ namespace NewSafetyHelp.Callers.Answer
                             return false;
                         }
                     }
-                    
-                    
+
+
                     // (VERY IMPORTANT: AFTER THIS FUNCTION THE NEXT CALLER GETS CALLED. IF WE WISH TO PREVENT THAT
                     // WE NEED TO END THE DAY HERE OR SKIP THE FUNCTION)
                     // Checks if we need to end the day, in case the next caller gets skipped.
                     if (CustomCampaignGlobal.InCustomCampaign
                         && !GlobalVariables.arcadeMode)
                     {
-                        int checkResult = CallerSkipping.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
+                        int checkResult =
+                            CallerSkipping.CheckIfAnyValidCallerLeft(GlobalVariables.callerControllerScript);
                         if (checkResult > 0)
                         {
                             LoggingHelper.DebugLog("Calling end day routine from submit answer.");
-                            
+
                             // In case the intermission music is playing, we stop it.
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
 
                             for (int i = 1; i < checkResult + 1; i++)
                             {
                                 int targetIndex = __instance.currentCallerID + i;
-                                
+
                                 if (targetIndex < __instance.callers.Length)
                                 {
                                     __instance.callers[targetIndex].answeredCorrectly = true;
                                 }
                             }
-                            
+
                             // Increase caller ID, since we are skipping callers.
                             GlobalVariables.callerControllerScript.currentCallerID += checkResult;
-                        
+
                             // Start the end day routine and stop any caller. And we end the day.
                             GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables.mainCanvasScript
                                 .EndDayRoutine());
                             GlobalVariables.mainCanvasScript.NoCallerWindow();
                             return false; // Skip original function.
                         }
-                        
+
                         CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                         if (customCampaign == null)
                         {
                             return true;
                         }
-    
+
                         // A dynamic caller. We can play intermission music.
                         // For non-dynamic callers, we play the music differently.
                         if (monsterID == null)
@@ -470,7 +476,7 @@ namespace NewSafetyHelp.Callers.Answer
                     if (__instance.currentCallerID + 1 < __instance.callers.Length)
                     {
                         // OLD: __instance.StartCoroutine(__instance.NewCallRoutine()); 
-                        __instance.StartCoroutine(newCallRoutineDefaultValues); 
+                        __instance.StartCoroutine(newCallRoutineDefaultValues);
                         GlobalVariables.mainCanvasScript.NoCallerWindow();
                     }
 
@@ -483,7 +489,7 @@ namespace NewSafetyHelp.Callers.Answer
                         GlobalVariables.mainCanvasScript.cameraAnimator.SetBool(XmasTension, false);
                     }
                 }
-                
+
                 return false; // Skip the original function
             }
         }
@@ -507,8 +513,14 @@ namespace NewSafetyHelp.Callers.Answer
 
             private static IEnumerator SubmitRoutine(SubmitWindowBehavior __instance)
             {
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    TimerCallerHelper.StopTimedCallerTimer();
+                    TimerCallerHelper.HideCallerTimerUI();
+                }
+
                 SubmitWindowBehavior submitWindowBehavior = __instance;
-                
+
                 if (submitWindowBehavior.answerToSubmit == null)
                 {
                     GlobalVariables.mainCanvasScript.CreateError("ERROR: INSUFFICIENT PERMISSIONS.");
@@ -517,32 +529,33 @@ namespace NewSafetyHelp.Callers.Answer
                 {
                     submitWindowBehavior.submitButton.SetActive(false);
                     submitWindowBehavior.loadingText.SetActive(true);
-                    
+
                     if (GlobalVariables.arcadeMode)
                     {
                         GlobalVariables.callerControllerScript.StopCoroutine(GlobalVariables.callerControllerScript
                             .callTimerRoutine);
                     }
-                    
+
                     yield return new WaitForSeconds(Random.Range(4, 6));
-                    
+
                     GlobalVariables.callerControllerScript.SubmitAnswer(submitWindowBehavior.answerToSubmit);
-                    
+
                     if (!GlobalVariables.arcadeMode)
                     {
                         GlobalVariables.mainCanvasScript.CreateError("INFO SUCCESSFULLY SENT TO CLIENT. GOOD JOB!");
                     }
-                    
-                    GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.correctSound);
-                    
+
+                    GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
+                        .correctSound);
+
                     GlobalVariables.musicControllerScript.StopMusic();
                     GlobalVariables.UISoundControllerScript.StopUISoundLooping();
-                    
+
                     submitWindowBehavior.submitButton.SetActive(true);
                     submitWindowBehavior.loadingText.SetActive(false);
                     submitWindowBehavior.gameObject.SetActive(false);
                 }
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -551,7 +564,7 @@ namespace NewSafetyHelp.Callers.Answer
                     {
                         yield break;
                     }
-                        
+
                     if (customCampaign.CustomIntermissionMusic.Count >= 0)
                     {
                         IntermissionMusicHelper.PlayIntermissionMusic();
