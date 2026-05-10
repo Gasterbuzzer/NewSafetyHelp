@@ -1,44 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 {
     public static class AudioParsingHelper
     {
-        /// <summary>
-        /// Helper coroutine for updating the audio correctly for a monster clip.
-        /// </summary>
-        /// <param name="callback">Callback function for returning values
-        /// and doing stuff with it that require the coroutine to finish first. </param>
-        /// <param name="audioPath">Path to the audio file. </param>
-        /// <param name="audioType">Audio type to parse. </param>
-        private static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath,
-            AudioType audioType = AudioType.WAV)
-        {
-            AudioClip monsterSoundClip = null;
-
-            // Attempt to get the type
-            if (audioType != AudioType.UNKNOWN)
-            {
-                audioType = AudioImport.GetAudioType(audioPath);
-
-                yield return MelonCoroutines.Start(
-                    AudioImport.LoadAudio
-                    (
-                        myReturnValue => { monsterSoundClip = myReturnValue; },
-                        audioPath, audioType)
-                );
-            }
-
-            callback(monsterSoundClip);
-        }
-
         /// <summary>
         /// Attempts to update the audio at a given location to a given audio variable via coroutines.
         /// </summary>
@@ -72,7 +42,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 }
                 else // Valid location, so we load in the value.
                 {
-                    MelonCoroutines.Start(UpdateAudioClip
+                    MelonCoroutines.Start(AudioImport.UpdateAudioClip
                         (
                             (myReturnValue) =>
                             {
@@ -120,7 +90,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             }
             else // Valid location, so we load in the value.
             {
-                MelonCoroutines.Start(UpdateAudioClip
+                MelonCoroutines.Start(AudioImport.UpdateAudioClip
                     (
                         (myReturnValue) =>
                         {

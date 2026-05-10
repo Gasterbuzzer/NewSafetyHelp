@@ -123,6 +123,7 @@
     <Compile Include="src\Audio\Music\Data\CustomMusic.cs" />
     <Compile Include="src\Audio\Music\Intermission\IntermissionMusicHelper.cs" />
     <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />
+    <Compile Include="src\Audio\TimerAudio.cs" />
     <Compile Include="src\Callers\Answer\ProvidingAnswer.cs" />
     <Compile Include="src\Callers\CallerCreationAndUpdate\CreateAndUpdateCallerPatches.cs" />
     <Compile Include="src\Callers\CallerHelpers\CallerSkipping.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="src\EntryManager\EntryUnlocker\EntryUnlockerPatcher.cs" />
     <Compile Include="src\ErrorDebugging\UnityLogHook.cs" />
     <Compile Include="src\HelperFunctions\DebugHelper.cs" />
+    <Compile Include="src\HelperFunctions\EmbedHelpers.cs" />
     <Compile Include="src\HelperFunctions\URLVerification.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
     <Compile Include="src\ImportFiles\ImageImport.cs" />
@@ -244,6 +246,12 @@
   <ItemGroup>
     <None Include="build_after.bat" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Audio\EmbeddedAudio\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="src\Audio\EmbeddedAudio\*.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
