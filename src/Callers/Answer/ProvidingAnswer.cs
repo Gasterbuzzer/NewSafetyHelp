@@ -4,6 +4,7 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerHelpers;
+using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
@@ -134,13 +135,38 @@ namespace NewSafetyHelp.Callers.Answer
                 // Monster not provided and a dynamic caller. So we set it to true.
                 else if (!(bool)DynamicCaller.GetValue(__instance))
                 {
-                    __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
-
+                    // Main Campaign
                     if (!CustomCampaignGlobal.InCustomCampaign)
                     {
                         LoggingHelper.DebugLog("The current caller is a dynamic caller. " +
                                                "No replacement effects will happen. " +
                                                "The caller will also be marked as correct.");
+                        
+                        __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                    }
+                    // In Custom Campaign
+                    else
+                    {
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign == null)
+                        {
+                            LoggingHelper.CampaignNullError();
+                            __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
+                            return false;
+                        }
+                        
+                        CustomCCaller currentCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+
+                        if (currentCaller != null
+                            && currentCaller.IsTimedCaller)
+                        {
+                            __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
+                        }
+                        else
+                        {
+                            __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                        }
                     }
                 }
 
@@ -336,6 +362,8 @@ namespace NewSafetyHelp.Callers.Answer
                     CheckCallerAnswer.Invoke(__instance, new object[] { monsterID });
 
                     // Before checking, it is the last call of the day, we check if we can increase the tier.
+                    
+                    LoggingHelper.TestLog($"Was correct? '{__instance.callers[__instance.currentCallerID].answeredCorrectly}' and is monster ID null? '{monsterID == null}' and '{monsterID}'.");
 
                     LoggingHelper.DebugLog("Increase tier? " +
                                            $"(For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) " +

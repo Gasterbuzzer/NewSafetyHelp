@@ -237,6 +237,19 @@ namespace NewSafetyHelp.LoggingSystem
         }
 
         /// <summary>
+        /// Logs a test messages to the console. Only enabled if debug is enabled and should not be used for final release.
+        /// </summary>
+        /// <param name="loggingMessage">Message to log.</param>
+        /// <param name="loggingCategory">If it belongs to a logging category, which one it is.</param>
+        public static void TestLog(string loggingMessage, LoggingCategory loggingCategory = LoggingCategory.NONE)
+        {
+            if (CheckLoggingCategory(loggingCategory, checkDebugLog: true))
+            {
+                Log(loggingMessage, LoggingLevel.DEBUG, ConsoleColor.Magenta);
+            }
+        }
+
+        /// <summary>
         /// Logs an error messages to the console.
         /// </summary>
         /// <param name="loggingMessage">Message to log.</param>

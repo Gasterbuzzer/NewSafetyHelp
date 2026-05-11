@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Reflection;
 using MelonLoader;
+using NewSafetyHelp.Audio;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
@@ -15,6 +16,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static object timerCallerRoutine;
 
         private static GameObject timerLabel;
+
+        private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
+            BindingFlags.Static | BindingFlags.NonPublic);
 
         /// <summary>
         /// Starts the coroutine and timer for the timed caller.
@@ -46,9 +50,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             }
         }
 
-        private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
-            BindingFlags.Static | BindingFlags.NonPublic);
-
+        /// <summary>
+        /// Coroutine for the timed caller.
+        /// </summary>
+        /// <param name="seconds">Seconds to run for.</param>
+        /// <returns>(IEnumerator) Routine to run.</returns>
         private static IEnumerator TimedCallerTimer(float seconds)
         {
             if (timerLabel == null)
@@ -57,24 +63,49 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 yield break;
             }
 
+            float tenPercentTimerCheckmark = seconds * 0.1f;
+            bool playedTenPercent = false;
+
+            float halfPercentTimerCheckmark = seconds * 0.5f;
+            bool playedHalfPercent = false;
+
             TextMeshProUGUI textMeshComponent = timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             textMeshComponent.text = $"{seconds}s";
+
+            GlobalVariables.UISoundControllerScript.PlayUISound(TimerAudio.ClockStart);
 
             while (seconds > 1)
             {
                 yield return new WaitForSeconds(1);
                 seconds--;
                 textMeshComponent.text = $"{seconds}s";
+
+                if (!playedHalfPercent
+                    && seconds <= halfPercentTimerCheckmark)
+                {
+                    playedHalfPercent = true;
+                    GlobalVariables.UISoundControllerScript.PlayUISound(TimerAudio.ClockHalfTime);
+                }
+
+                if (!playedTenPercent
+                    && seconds <= tenPercentTimerCheckmark)
+                {
+                    playedTenPercent = true;
+                    GlobalVariables.UISoundControllerScript.PlayUISound(TimerAudio.ClockFivePercent);
+                }
             }
 
+            // Wait out remainder (less than 1 second)
             yield return new WaitForSeconds(seconds);
 
+            // Finished Call Timer
             textMeshComponent.text = "0s";
 
             LoggingHelper.InfoLog($"Finished timer caller with a time of '{seconds}'.");
 
             yield return new WaitForSeconds(0.1f);
 
+            // Clean Up Call
             GlobalVariables.callerControllerScript.SubmitAnswer();
 
             GlobalVariables.musicControllerScript.StopMusic();
@@ -90,18 +121,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
 
-            /*
-            SubmitWindowBehavior submitWindowComponent = GameObject.Find("MainCanvas").transform.GetChild(2).GetComponent<SubmitWindowBehavior>();
-            submitWindowComponent.submitButton.SetActive(true);
-            submitWindowComponent.loadingText.SetActive(false);
-            submitWindowComponent.gameObject.SetActive(false);
-            */
-
             timerCallerRoutine = null;
+            
+            // Mark the caller as wrong.
 
             HideCallerTimerUI();
         }
 
+        /// <summary>
+        /// Shows the caller timer UI.
+        /// Use this when a timer caller appears.
+        /// </summary>
+        /// <param name="__instance">Instance of the MainCanvas.</param>
+        /// <param name="currentCaller">Current caller calling.</param>
         public static void ShowCallerTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
         {
             RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
@@ -125,6 +157,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
         }
 
+        /// <summary>
+        /// Hides the caller UI.
+        /// Do so, when you are switching back to the normal caller.
+        /// </summary>
         public static void HideCallerTimerUI()
         {
             if (timerLabel != null)

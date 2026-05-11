@@ -29,7 +29,7 @@ namespace NewSafetyHelp.Audio
                         LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(ClockFivePercent)}' audio clip.");
                     }
                 },
-                "clock_5_percent.wav");
+                "clock_10_percent.wav");
 
             AudioImport.LoadEmbeddedAudio(
                 (audioClip) =>
