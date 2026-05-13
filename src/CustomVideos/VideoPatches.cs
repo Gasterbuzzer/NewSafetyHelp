@@ -51,16 +51,24 @@ namespace NewSafetyHelp.CustomVideos
                     {
                         yield break;
                     }
-                    
-                    CustomVideo customVideo = CustomCampaignGlobal.GetCustomVideoFromActiveCampaign(__instance.gameObject);
 
-                    if (customVideo == null)
+                    if (__instance.videoClip != null)
                     {
-                        LoggingHelper.CriticalErrorLog("Unable of finding the video show! Critical error.");
-                        yield break;
+                        __instance.videoPlayer.clip = __instance.videoClip;
                     }
-                    
-                    __instance.videoPlayer.url = customVideo.VideoURL;
+                    else
+                    {
+                        CustomVideo customVideo =
+                            CustomCampaignGlobal.GetCustomVideoFromActiveCampaign(__instance.gameObject);
+
+                        if (customVideo == null)
+                        {
+                            LoggingHelper.CriticalErrorLog("Unable of finding the video show! Critical error.");
+                            yield break;
+                        }
+
+                        __instance.videoPlayer.url = customVideo.VideoURL;
+                    }
                 }
                 else // Main Campaign
                 {
