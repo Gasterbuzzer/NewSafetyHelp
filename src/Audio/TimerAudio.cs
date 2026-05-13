@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.Audio
@@ -12,9 +11,6 @@ namespace NewSafetyHelp.Audio
 
         public static void Initialize()
         {
-            // We delete all temp files and recreate them. (Makes sure we are up to date and doesn't leave residue).
-            EmbedHelpers.DeleteTempFiles();
-
             // We now load all the audios.
             AudioImport.LoadEmbeddedAudio(
                 (audioClip) =>

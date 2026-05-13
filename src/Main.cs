@@ -5,6 +5,7 @@ using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
+using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -21,19 +22,19 @@ namespace NewSafetyHelp
         public static MelonPreferences_Category PersistantEntrySave;
 
         private static MelonPreferences_Category mainModSettings;
-        
+
         public static MelonPreferences_Entry<bool> Vsync;
 
         public static MelonPreferences_Entry<bool> SkipComputerScene; // If to skip the initial computer scene.
 
         public static MelonPreferences_Entry<bool> SkipLoadingScreen; // If to skip the loading texts part.
-        
+
         public static MelonPreferences_Entry<bool> SkipDayClockIn; // If to skip the clock in part.
 
         public static MelonPreferences_Entry<bool> ShowDebugLogs; // If to show the debug logs at all.
 
         // If to show the skipped callers debug log.
-        public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog; 
+        public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog;
 
         public static MelonPreferences_Entry<bool> ShowThemeDebugLog; // If to show the logs for theme info.
         public static MelonPreferences_Entry<bool> ShowRingtoneDebugLog; // If to show the logs for ringtone info.
@@ -50,13 +51,13 @@ namespace NewSafetyHelp
 
             // Settings
             mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
-            
+
             Vsync = mainModSettings.CreateEntry("Vsync", false);
 
             SkipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
 
             SkipLoadingScreen = mainModSettings.CreateEntry("SkipLoadingScreen", false);
-            
+
             SkipDayClockIn = mainModSettings.CreateEntry("SkipDayClockIn", false);
 
             ShowDebugLogs = mainModSettings.CreateEntry("ShowDebugLogs", false);
@@ -78,6 +79,9 @@ namespace NewSafetyHelp
 
         public override void OnLateInitializeMelon()
         {
+            // We delete all temp files and recreate them later. (Makes sure we are up to date and doesn't leave residue).
+            EmbedHelpers.DeleteTempFiles();
+
             if (SkipComputerScene.Value)
             {
                 SceneManager.LoadScene("MainMenuScene");
@@ -107,7 +111,7 @@ namespace NewSafetyHelp
 
         public static MonsterProfile[] CopyMonsterProfiles;
         private static int monsterProfileSize = 0;
-        
+
         // Copy of Tiers (6 tiers exist)
         public static readonly List<MonsterProfile[]> CopyTierUnlocks = new List<MonsterProfile[]>();
         public static readonly List<MonsterProfile[]> CopyXmasTier = new List<MonsterProfile[]>();
@@ -140,14 +144,14 @@ namespace NewSafetyHelp
                 {
                     // We already added them once, no need to add them again.
                     LoggingHelper.DebugLog("Custom Entries were already added. " +
-                                          "Skipping adding them again. (This happens on scene reload).");
+                                           "Skipping adding them again. (This happens on scene reload).");
                     return;
                 }
 
                 // We create copy of the monster profiles. (Before adding all entries)
                 CopyMonsterProfiles = __instance.allEntries.monsterProfiles;
                 monsterProfileSize = CopyMonsterProfiles.Length;
-                
+
                 // Copies of tier unlocks.
                 CopyTierUnlocks.Add(__instance.firstTierUnlocks.monsterProfiles);
                 CopyTierUnlocks.Add(__instance.secondTierUnlocks.monsterProfiles);
@@ -155,7 +159,7 @@ namespace NewSafetyHelp
                 CopyTierUnlocks.Add(__instance.fourthTierUnlocks.monsterProfiles);
                 CopyTierUnlocks.Add(__instance.fifthTierUnlocks.monsterProfiles);
                 CopyTierUnlocks.Add(__instance.sixthTierUnlocks.monsterProfiles);
-                
+
                 CopyXmasTier.Add(__instance.xmastFirstTier.monsterProfiles);
                 CopyXmasTier.Add(__instance.xmasSecondTier.monsterProfiles);
                 CopyXmasTier.Add(__instance.xmasThirdTier.monsterProfiles);
@@ -178,8 +182,8 @@ namespace NewSafetyHelp
             if (!AddedEntriesToCustomCampaign)
             {
                 // Invalid loading.
-                if (CopyMonsterProfiles.Length <= 0 
-                    || monsterProfileSize <= 0) 
+                if (CopyMonsterProfiles.Length <= 0
+                    || monsterProfileSize <= 0)
                 {
                     LoggingHelper.CriticalErrorLog("Loading of old values to add the entries to failed! " +
                                                    "(Count == 0)");
@@ -192,11 +196,11 @@ namespace NewSafetyHelp
                 {
                     return;
                 }
-                
+
                 if (customCampaign.RemoveExistingEntries)
                 {
                     // Remove all entries.
-                    __instance.allEntries.monsterProfiles = Array.Empty<MonsterProfile>(); 
+                    __instance.allEntries.monsterProfiles = Array.Empty<MonsterProfile>();
                 }
                 else // Else we replace our current entries with the original copy and add the entries to that.
                 {

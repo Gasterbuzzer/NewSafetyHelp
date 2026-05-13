@@ -9,7 +9,7 @@ namespace NewSafetyHelp.HelperFunctions
 {
     public static class EmbedHelpers
     {
-        private const string NewSafetyHelpPrefix = "NewSafetyHelp_";
+        public const string NewSafetyHelpPrefix = "NewSafetyHelp_";
 
         /// <summary>
         /// Extracts the embedded resource to a temporary file.
@@ -91,8 +91,11 @@ namespace NewSafetyHelp.HelperFunctions
             {
                 try
                 {
-                    LoggingHelper.DebugLog($"Deleting temporary file '{tempFile}'.");
-                    File.Delete(tempFile);
+                    if (!string.IsNullOrEmpty(tempFile))
+                    {
+                        LoggingHelper.DebugLog($"Deleting temporary file '{tempFile}'.");
+                        File.Delete(tempFile);
+                    }
                 }
                 catch (Exception e)
                 {
