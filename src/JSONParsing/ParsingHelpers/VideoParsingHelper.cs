@@ -311,19 +311,76 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                     string firstFilePath = jsonFolderPath + "\\" + target[i];
                     string videoFileAlternativePath = usermodFolderPath + "\\" + target[i];
 
+                    string correctFilePath = "";
+
                     if (File.Exists(firstFilePath))
                     {
-                        target[i] = firstFilePath;
+                        correctFilePath = firstFilePath;
                     }
                     else if (File.Exists(videoFileAlternativePath))
                     {
-                        target[i] = videoFileAlternativePath;
+                        correctFilePath = videoFileAlternativePath;
                     }
                     else if (!File.Exists(firstFilePath) && !File.Exists(videoFileAlternativePath))
                     {
                         LoggingHelper.ErrorLog(
                             $"Could not find video '{target[i]}' in either: '{firstFilePath}' or " +
                             $"'{videoFileAlternativePath}'.");
+
+                        correctFilePath = "";
+                    }
+
+                    bool validVideoExtension = IsKnownVideoExtension(correctFilePath);
+
+                    // We check if we have a valid video extension, if not, we try to figure out the video type.
+                    if (validVideoExtension)
+                    {
+                        target[i] = correctFilePath;
+                    }
+                    else
+                    {
+                        VideoType videoTypeDiscovered = TryFindingVideoType(correctFilePath);
+
+                        bool createVideoFile = false;
+
+                        switch (videoTypeDiscovered)
+                        {
+                            // We couldn't find it out, so we failed.
+                            case VideoType.NONE:
+                                LoggingHelper.ErrorLog(
+                                    $"Provided video file at '{correctFilePath}' could not be understood. Possible unsupported file format.");
+                                break;
+
+                            default:
+                                createVideoFile = true;
+                                LoggingHelper.InfoLog(
+                                    $"Provided video file '{correctFilePath}' was interpreted as a '{videoTypeDiscovered.ToString()}'.");
+                                break;
+                        }
+
+                        // Create temp copy from the video we took a peek in.
+                        if (createVideoFile)
+                        {
+                            (bool wasSuccessfull, string newFilePath) =
+                                CreateTempVideoFile(correctFilePath, videoTypeDiscovered);
+
+                            if (wasSuccessfull)
+                            {
+                                target[i] = newFilePath;
+                            }
+                            else
+                            {
+                                LoggingHelper.ErrorLog(
+                                    "Failed creating a temporary copy of the video. Not showing video.");
+                                target[i] = "";
+                            }
+                        }
+                        else
+                        {
+                            LoggingHelper.InfoLog($"Video type at '{correctFilePath}' seems to be unsupported. " +
+                                                  "Attempting to still use it.");
+                            target[i] = correctFilePath;
+                        }
                     }
                 }
             }
