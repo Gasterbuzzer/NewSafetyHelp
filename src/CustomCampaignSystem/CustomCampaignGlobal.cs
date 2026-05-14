@@ -468,7 +468,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     }
                     
                     /*
-                     * Video Section
+                     * Video Player Section
                      */
 
                     if (modifier.VideoPlayerDesktopIsWideMode.HasChanged)
@@ -480,24 +480,29 @@ namespace NewSafetyHelp.CustomCampaignSystem
                      * Mailbox Section
                      */
 
-                    if (modifier.MailBoxIcon.HasChanged)
+                    if (modifier.MailboxIcon.HasChanged)
                     {
-                        newModifierSnapshot.MailBoxIcon = (true, modifier.MailBoxIcon);
+                        newModifierSnapshot.MailboxIcon = (true, modifier.MailboxIcon);
                     }
 
-                    if (modifier.MailBoxRename.HasChanged)
+                    if (modifier.MailboxRename.HasChanged)
                     {
-                        newModifierSnapshot.MailBoxRename = (true, modifier.MailBoxRename);
+                        newModifierSnapshot.MailboxRename = (true, modifier.MailboxRename);
                     }
 
-                    if (modifier.ApplicationMailBoxTitle.HasChanged)
+                    if (modifier.ApplicationMailboxTitle.HasChanged)
                     {
-                        newModifierSnapshot.ApplicationMailBoxTitle = (true, modifier.ApplicationMailBoxTitle);
+                        newModifierSnapshot.ApplicationMailboxTitle = (true, modifier.ApplicationMailboxTitle);
                     }
                     
-                    if (modifier.ApplicationMailBoxIcon.HasChanged)
+                    if (modifier.ApplicationMailboxIcon.HasChanged)
                     {
-                        newModifierSnapshot.ApplicationMailBoxIcon = (true, modifier.ApplicationMailBoxIcon);
+                        newModifierSnapshot.ApplicationMailboxIcon = (true, modifier.ApplicationMailboxIcon);
+                    }
+                    
+                    if (modifier.DisplayMailboxOnDesktop.HasChanged)
+                    {
+                        newModifierSnapshot.DisplayMailboxOnDesktop = (true, modifier.DisplayMailboxOnDesktop);
                     }
                     
                     /*

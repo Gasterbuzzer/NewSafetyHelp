@@ -16,10 +16,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         
         public (bool found, VariableChanged<bool> value) VideoPlayerDesktopIsWideMode;
         
-        public (bool found, VariableChanged<Sprite> value) MailBoxIcon;
-        public (bool found, VariableChanged<string> value) MailBoxRename;
-        public (bool found, VariableChanged<string> value) ApplicationMailBoxTitle;
-        public (bool found, VariableChanged<Sprite> value) ApplicationMailBoxIcon;
+        public (bool found, VariableChanged<Sprite> value) MailboxIcon;
+        public (bool found, VariableChanged<string> value) MailboxRename;
+        public (bool found, VariableChanged<string> value) ApplicationMailboxTitle;
+        public (bool found, VariableChanged<Sprite> value) ApplicationMailboxIcon;
+        public (bool found, VariableChanged<bool> value) DisplayMailboxOnDesktop;
         
         public (bool found, VariableChanged<Sprite> value) EntryBrowserIcon;
         public (bool found, VariableChanged<string> value) EntryBrowserRename;

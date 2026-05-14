@@ -35,7 +35,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     if (CustomCampaignGlobal.InCustomCampaign)
                     {
                         string gameObjectName = __instance.gameObject.name;
-                        
+
                         // For future reference: The switch outcome only matters if the modifier was applied.
                         // If true: It means that we wish for the GameObject to be left enabled.
                         // If false (And modifier is false): We wish to check further.
@@ -96,11 +96,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                     else // Unlock Day has been reached.
                     {
                         // Main Campaign
-                        if (!CustomCampaignGlobal.InCustomCampaign) 
+                        if (!CustomCampaignGlobal.InCustomCampaign)
                         {
                             if (PlayerPrefs.HasKey("SavedDayScore" + (__instance.unlockDay - 1)))
                             {
-                                if (PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1)) 
+                                if (PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1))
                                     < (double)__instance.scoreThresholdToUnlock)
                                 {
                                     __instance.gameObject.SetActive(false);
@@ -112,7 +112,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                         $"Day Checked: {(__instance.unlockDay - 1).ToString()}" +
                                         "| Day Score: " +
                                         $"{PlayerPrefs.GetFloat("SavedDayScore" + (__instance.unlockDay - 1)).ToString(CultureInfo.InvariantCulture)}"
-                                        );
+                                    );
                                 }
                             }
                         }
@@ -131,16 +131,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             {
                                 unlockDay = 0;
                             }
-                            
+
                             LoggingHelper.DebugLog(() =>
                                 $"This GameObject (For GameObject: '{__instance.gameObject.name}') " +
                                 $"unlocks on day: {__instance.unlockDay} (Current Day is {GlobalVariables.currentDay}). " +
                                 $"The threshold is: {__instance.scoreThresholdToUnlock}. " +
-                                $"The current score for the day {__instance.unlockDay-1} is {customCampaign.SavedDayScores[unlockDay]}. " +
+                                $"The current score for the day {__instance.unlockDay - 1} is {customCampaign.SavedDayScores[unlockDay]}. " +
                                 $"Is threshold over 0? '{__instance.scoreThresholdToUnlock > 0.0f}'.");
-                            
-                            EmailListingBehavior emailComponent = __instance.gameObject.GetComponent<EmailListingBehavior>();
-                            
+
+                            EmailListingBehavior emailComponent =
+                                __instance.gameObject.GetComponent<EmailListingBehavior>();
+
                             LoggingHelper.DebugLog("Checking if GameObject is email. " +
                                                    $"Is email null? '{emailComponent == null}'",
                                 LoggingHelper.LoggingCategory.EMAIL);
@@ -151,8 +152,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             {
                                 LoggingHelper.DebugLog("Found Email to be unlocked.",
                                     LoggingHelper.LoggingCategory.EMAIL);
-                                    
-                                CustomEmail email = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(emailComponent.myEmail);
+
+                                CustomEmail email =
+                                    CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(emailComponent.myEmail);
 
                                 // If we found an email, it means it is a custom email.
                                 // If we don't find any email, it either isn't an email or from the main campaign.
@@ -163,7 +165,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                     {
                                         LoggingHelper.DebugLog("Email allowed to be shown.",
                                             LoggingHelper.LoggingCategory.EMAIL);
-                                                
+
                                         return false;
                                     }
                                     else // Checks failed.
@@ -181,7 +183,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             if (__instance.scoreThresholdToUnlock > 0.0f)
                             {
                                 // If the threshold was not reached (score too low).
-                                if (customCampaign.SavedDayScores[unlockDay] < (double)__instance.scoreThresholdToUnlock)
+                                if (customCampaign.SavedDayScores[unlockDay] <
+                                    (double)__instance.scoreThresholdToUnlock)
                                 {
                                     LoggingHelper.DebugLog(() =>
                                         $"The score {customCampaign.SavedDayScores[unlockDay]} for day {unlockDay} is not enough to unlock. " +
@@ -199,17 +202,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                         LoggingHelper.LoggingCategory.EMAIL);
                                 }
                             }
-                            
+
                             // Now we check if the given GameObject is a video.
                             if (__instance.gameObject.TryGetComponent(out VideoExecutableFile _))
                             {
-                                CustomVideo customVideo = CustomCampaignGlobal.GetCustomVideoFromActiveCampaign(__instance.gameObject);
+                                CustomVideo customVideo =
+                                    CustomCampaignGlobal.GetCustomVideoFromActiveCampaign(__instance.gameObject);
 
                                 if (customVideo != null)
                                 {
                                     LoggingHelper.DebugLog($"Found video on desktop '{customVideo.DesktopName}'.",
                                         LoggingHelper.LoggingCategory.VIDEO);
-                                    
+
                                     if (!customVideo.IgnoreAccuracyChecks)
                                     {
                                         if (AccuracyVideoHelper.CheckIfVideoAccuracyType(customVideo))
@@ -293,9 +297,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool enableEntryBrowser = false;
-                
-                (bool foundModifier, VariableChanged<bool> value) entryBrowser = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.EntryBrowserActive, vCb => vCb.HasChanged);
+
+                (bool foundModifier, VariableChanged<bool> value) entryBrowser =
+                    CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DisplayEntryBrowserOnDesktop, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.EntryBrowserAlwaysActive)
@@ -314,7 +319,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
 
             return false; // If not set to unlock.
         }
-        
+
         /// <summary>
         /// Handles the Scorecard of the desktop icon for enabling or disabling based on custom campaign settings.
         /// </summary>
@@ -335,9 +340,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool enableScorecard = false;
-                
-                (bool foundModifier, VariableChanged<bool> value) scorecard = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.ScorecardActive, vCb => vCb.HasChanged);
+
+                (bool foundModifier, VariableChanged<bool> value) scorecard =
+                    CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.DisplayScorecardOnDesktop, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.ScorecardAlwaysActive)
@@ -377,9 +383,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool artBookEnabled = false;
-                
+
                 (bool foundModifier, VariableChanged<bool> value) artbook = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.ArtbookActive, vCb => vCb.HasChanged);
+                    c => c.DisplayArtbookOnDesktop, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.ArtbookAlwaysActive)
@@ -420,9 +426,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                 }
 
                 bool arcadeEnabled = false;
-                
+
                 (bool foundModifier, VariableChanged<bool> value) arcade = CustomCampaignGlobal.GetActiveModifierValue(
-                    c => c.ArcadeActive, vCb => vCb.HasChanged);
+                    c => c.DisplayArcadeOnDesktop, vCb => vCb.HasChanged);
 
                 // If always on. We just leave them on.
                 if (currentCampaign.ArcadeAlwaysActive)

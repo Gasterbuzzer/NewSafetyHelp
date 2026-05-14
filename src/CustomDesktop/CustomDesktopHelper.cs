@@ -71,7 +71,7 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Email List GameObject</returns>
         public static GameObject GetEmailList()
         {
-            GameObject foundGameObject = GetMainMenuCanvas().transform.Find("EmailPopup").Find("EmailsScrollview")
+            GameObject foundGameObject = GetMainMenuCanvas().transform.Find("EmailPopup/EmailsScrollview")
                 .Find("Viewport").Find("Content").gameObject;
 
             if (foundGameObject != null)
@@ -132,7 +132,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the Mailbox GameObject from the programs list.
         /// </summary>
@@ -152,7 +152,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the Options GameObject from the programs list.
         /// </summary>
@@ -172,7 +172,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the EntryBrowser GameObject from the programs list.
         /// </summary>
@@ -192,7 +192,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the Artbook GameObject from the programs list.
         /// </summary>
@@ -212,7 +212,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the Arcade GameObject from the programs list.
         /// </summary>
@@ -232,7 +232,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the Scorecard GameObject from the programs list.
         /// </summary>
@@ -252,7 +252,7 @@ namespace NewSafetyHelp.CustomDesktop
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the username GameObject from the windows bar.
         /// </summary>
@@ -279,8 +279,8 @@ namespace NewSafetyHelp.CustomDesktop
         /// <returns>Next Call Button GameObject</returns>
         public static GameObject GetCallSkipButton()
         {
-            GameObject foundGameObject = GameObject.Find("MainCanvas").transform.Find("Panel").transform
-                .Find("CallWindow").transform.Find("LargeCallerPortrait").transform.Find("CallSkipButton").gameObject;
+            GameObject foundGameObject =
+                GameObject.Find("MainCanvas/Panel/CallWindow/LargeCallerPortrait/CallSkipButton").gameObject;
 
             if (foundGameObject != null)
             {

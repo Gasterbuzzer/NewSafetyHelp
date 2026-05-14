@@ -300,7 +300,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (!string.IsNullOrEmpty(renamedMainGameDesktopIcon))
                     {
-                        CustomDesktopHelper.GetMainGameProgram().transform.Find("TextBackground").Find("ExecutableName")
+                        CustomDesktopHelper.GetMainGameProgram().transform.Find("TextBackground/ExecutableName")
                             .GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
                     }
 
@@ -387,37 +387,50 @@ namespace NewSafetyHelp.CustomDesktop
                     if (desktopModifierSnapshot.VideoPlayerDesktopIsWideMode.found
                         && desktopModifierSnapshot.VideoPlayerDesktopIsWideMode.value.Data)
                     {
-                        LoggingHelper.TestLog("Video Player Test Message");
+                        RectTransform videoPlayerRectTransform = CustomDesktopHelper.GetMainMenuCanvas().transform
+                            .Find("VideoPopup/WindowsBar/Video").GetComponent<RectTransform>();
+
+                        videoPlayerRectTransform.offsetMax = new Vector2(0, videoPlayerRectTransform.offsetMax.y);
+                        videoPlayerRectTransform.offsetMin = new Vector2(0, videoPlayerRectTransform.offsetMin.y);
                     }
 
                     /*
                      * Email / Mailbox Section
                      */
 
-                    if (desktopModifierSnapshot.MailBoxIcon.found)
+                    if (desktopModifierSnapshot.MailboxIcon.found)
                     {
                         CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite =
-                            desktopModifierSnapshot.MailBoxIcon.value.Data;
+                            desktopModifierSnapshot.MailboxIcon.value.Data;
                     }
 
-                    if (desktopModifierSnapshot.MailBoxRename.found)
+                    if (desktopModifierSnapshot.MailboxRename.found)
                     {
                         CustomDesktopHelper.GetMailboxGameObject().transform.GetChild(0).GetChild(0)
-                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.MailBoxRename.value.Data;
+                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.MailboxRename.value.Data;
                     }
 
-                    if (desktopModifierSnapshot.ApplicationMailBoxTitle.found)
+                    if (desktopModifierSnapshot.ApplicationMailboxTitle.found)
                     {
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(3)
                                 .GetComponent<TextMeshProUGUI>().text =
-                            desktopModifierSnapshot.ApplicationMailBoxTitle.value.Data;
+                            desktopModifierSnapshot.ApplicationMailboxTitle.value.Data;
                     }
 
-                    if (desktopModifierSnapshot.ApplicationMailBoxIcon.found)
+                    if (desktopModifierSnapshot.ApplicationMailboxIcon.found)
                     {
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(2)
-                            .GetComponent<Image>().sprite = desktopModifierSnapshot.ApplicationMailBoxIcon.value.Data;
+                            .GetComponent<Image>().sprite = desktopModifierSnapshot.ApplicationMailboxIcon.value.Data;
                     }
+
+                    if (desktopModifierSnapshot.DisplayMailboxOnDesktop.found)
+                    {
+                        if (!desktopModifierSnapshot.DisplayMailboxOnDesktop.value.Data)
+                        {
+                            CustomDesktopHelper.GetMailboxGameObject().gameObject.SetActive(false);
+                        }
+                    }
+
 
                     /*
                      * Entry Browser Section

@@ -77,6 +77,25 @@ namespace NewSafetyHelp.JSONParsing
             target.HasChanged = true;
             target.Data = token.Value<T>();
         }
+        
+        /// <summary>
+        /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
+        /// This version takes in a bool that updates to "true" if updated.
+        /// This overload takes in a list of keys, it will search for all provided keys and assigned based on the last one found.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="keys">(List) Keys to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <typeparam name="T">Type of the target.</typeparam>
+        public static void TryAssignWithChangedBool<T>(JObject jObjectParsed, List<string> keys, ref VariableChanged<T> target)
+        {
+            target.HasChanged = false;
+            
+            foreach (var singleKey in keys)
+            {
+                TryAssignWithChangedBool(jObjectParsed, singleKey, ref target);
+            }
+        }
 
         /// <summary>
         /// Attempts to parse the key for a list.

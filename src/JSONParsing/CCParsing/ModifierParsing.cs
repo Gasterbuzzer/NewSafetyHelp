@@ -90,19 +90,51 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         private static CustomModifier ParseModifier(ref JObject jObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref string customCampaignName)
         {
-            // When the modifier is unlocked. If null, it is a general modifier.
-            List<int> unlockDays = null;
-
+            /*
+             * Modifier Conditions
+             */
+            List<int> unlockDays = null; // When the modifier is unlocked. If null, it is a general modifier.
             bool onlyIfGameFinished = false;
 
             /*
-             * Desktop Settings
+             * Username Section (Desktop username)
              */
             VariableChanged<string> username = new VariableChanged<string>
             {
                 Data = string.Empty
             };
-            
+
+            /*
+             * Background
+             */
+            List<Sprite> backgroundSprites = new List<Sprite>();
+
+            VariableChanged<Sprite> gameFinishedBackgroundSprite = new VariableChanged<Sprite>();
+
+            bool disableGreenColorBackground = false;
+            Color? desktopBackgroundColor = null;
+
+            // Animated Backgrounds
+            List<string> animatedDesktopBackgrounds = new List<string>();
+            bool blackBackgroundOnAnimatedBackground = false;
+
+            /*
+             * Desktop Logo
+             */
+            VariableChanged<Sprite> backgroundLogo = new VariableChanged<Sprite>();
+            VariableChanged<bool> disableDesktopLogo = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            VariableChanged<float> backgroundLogoTransparency = new VariableChanged<float>
+            {
+                Data = 0.2627f
+            };
+
+            /*
+             * Programs on Desktop Section (Icons)
+             */
+
             // Video Player
             VariableChanged<bool> videoPlayerDesktopIsWideMode = new VariableChanged<bool>
             {
@@ -116,13 +148,91 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
             VariableChanged<Sprite> mainGameDesktopIconSprite = new VariableChanged<Sprite>();
 
-            // Backgrounds
-            List<Sprite> backgroundSprites = new List<Sprite>();
+            // Mailbox Icon on Desktop
+            VariableChanged<Sprite> mailboxIcon = new VariableChanged<Sprite>();
+            VariableChanged<Sprite> applicationMailboxIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> mailboxRename = new VariableChanged<string>();
+            VariableChanged<string> applicationMailboxTitle = new VariableChanged<string>();
+            VariableChanged<bool> displayMailboxOnDesktop = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
-            VariableChanged<Sprite> gameFinishedBackgroundSprite = new VariableChanged<Sprite>();
+            // Entry Browser Icon on Desktop
+            VariableChanged<Sprite> entryBrowserIcon = new VariableChanged<Sprite>();
+            VariableChanged<Sprite> applicationEntryBrowserIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> entryBrowserRename = new VariableChanged<string>();
+            VariableChanged<string> applicationEntryBrowserTitle = new VariableChanged<string>();
+            VariableChanged<bool> displayEntryBrowserOnDesktop = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
-            // Cutscene
-            VariableChanged<bool> finalCutsceneFadeToBlack = new VariableChanged<bool>()
+            // Options Icon on Desktop
+            VariableChanged<Sprite> optionsIcon = new VariableChanged<Sprite>();
+            VariableChanged<Sprite> applicationOptionsIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> optionsRename = new VariableChanged<string>();
+            VariableChanged<string> applicationOptionsTitle = new VariableChanged<string>();
+
+            // Artbook Icon on Desktop
+            VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>();
+            VariableChanged<Sprite> applicationArtbookIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> artbookRename = new VariableChanged<string>();
+            VariableChanged<string> applicationArtbookTitle = new VariableChanged<string>();
+            List<ArtbookPage> artbookPages = new List<ArtbookPage>();
+            VariableChanged<bool> displayArtbookOnDesktop = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            // Arcade Icon on Desktop
+            VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> arcadeRename = new VariableChanged<string>();
+            VariableChanged<bool> displayArcadeOnDesktop = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            // (Scorecard) Weekly Report Icon on Desktop
+            VariableChanged<Sprite> scorecardIcon = new VariableChanged<Sprite>();
+            VariableChanged<Sprite> applicationScorecardIcon = new VariableChanged<Sprite>();
+            VariableChanged<string> scorecardRename = new VariableChanged<string>();
+            VariableChanged<string> applicationScorecardTitle = new VariableChanged<string>();
+            VariableChanged<bool> displayScorecardOnDesktop = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            // Credits
+            VariableChanged<string> desktopCredits = new VariableChanged<string>
+            {
+                Data = null
+            };
+            VariableChanged<string> creditsRename = new VariableChanged<string>();
+            VariableChanged<bool> hideDesktopCredits = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<Sprite> creditsIcon = new VariableChanged<Sprite>();
+
+            // Not recommended to use, never use it. (Discord)
+            // As such, it is not documented. 
+            VariableChanged<bool> hideDiscordProgram = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            /*
+             * Special Desktop Options Section
+             */
+            List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
+
+            /*
+             * Final Cutscene
+             */
+
+            VariableChanged<bool> finalCutsceneFadeToBlack = new VariableChanged<bool>
             {
                 Data = true
             };
@@ -156,7 +266,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = 1f
             };
-            
+
             VariableChanged<RichAudioClip> finalCutsceneAudio = new VariableChanged<RichAudioClip>
             {
                 Data = null
@@ -164,108 +274,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             string finalCutsceneAudioPath = null;
 
-            // Background
-            bool disableGreenColorBackground = false;
-            Color? desktopBackgroundColor = null;
+            /*
+             * Cheats / Settings Section
+             */
 
-            VariableChanged<Sprite> backgroundLogo = new VariableChanged<Sprite>();
-            VariableChanged<bool> disableDesktopLogo = new VariableChanged<bool>
-            {
-                Data = false
-            };
-            VariableChanged<float> backgroundLogoTransparency = new VariableChanged<float>
-            {
-                Data = 0.2627f
-            };
-
-            // Animated Backgrounds
-            List<string> animatedDesktopBackgrounds = new List<string>();
-            bool blackBackgroundOnAnimatedBackground = false;
-
-            // Icons
-            // Mailbox Icon on Desktop
-            VariableChanged<Sprite> mailBoxIcon = new VariableChanged<Sprite>();
-            VariableChanged<Sprite> applicationMailBoxIcon = new VariableChanged<Sprite>();
-            VariableChanged<string> mailBoxRename = new VariableChanged<string>();
-            VariableChanged<string> applicationMailBoxTitle = new VariableChanged<string>();
-
-            // Entry Browser Icon on Desktop
-            VariableChanged<Sprite> entryBrowserIcon = new VariableChanged<Sprite>();
-            VariableChanged<Sprite> applicationEntryBrowserIcon = new VariableChanged<Sprite>();
-            VariableChanged<string> entryBrowserRename = new VariableChanged<string>();
-            VariableChanged<string> applicationEntryBrowserTitle = new VariableChanged<string>();
-
-            // Options Icon on Desktop
-            VariableChanged<Sprite> optionsIcon = new VariableChanged<Sprite>();
-            VariableChanged<Sprite> applicationOptionsIcon = new VariableChanged<Sprite>();
-            VariableChanged<string> optionsRename = new VariableChanged<string>();
-            VariableChanged<string> applicationOptionsTitle = new VariableChanged<string>();
-
-            // Artbook Icon on Desktop
-            VariableChanged<Sprite> artbookIcon = new VariableChanged<Sprite>();
-            VariableChanged<Sprite> applicationArtbookIcon = new VariableChanged<Sprite>();
-            VariableChanged<string> artbookRename = new VariableChanged<string>();
-            VariableChanged<string> applicationArtbookTitle = new VariableChanged<string>();
-            List<ArtbookPage> artbookPages = new List<ArtbookPage>();
-
-            // Arcade Icon on Desktop
-            VariableChanged<Sprite> arcadeIcon = new VariableChanged<Sprite>();
-            VariableChanged<string> arcadeRename = new VariableChanged<string>();
-
-            // Weekly Report Icon on Desktop
-            VariableChanged<Sprite> scorecardIcon = new VariableChanged<Sprite>();
-            VariableChanged<Sprite> applicationScorecardIcon = new VariableChanged<Sprite>();
-            VariableChanged<string> scorecardRename = new VariableChanged<string>();
-            VariableChanged<string> applicationScorecardTitle = new VariableChanged<string>();
-
-            // Credits
-            VariableChanged<string> desktopCredits = new VariableChanged<string>
-            {
-                Data = null
-            };
-            VariableChanged<string> creditsRename = new VariableChanged<string>();
-            VariableChanged<bool> hideDesktopCredits = new VariableChanged<bool>
-            {
-                Data = false
-            };
-
-            // Credits Icon on Desktop
-            VariableChanged<Sprite> creditsIcon = new VariableChanged<Sprite>();
-
-            // Desktop settings
-            VariableChanged<bool> entryBrowserActive = new VariableChanged<bool>
-            {
-                Data = false
-            };
-
-            VariableChanged<bool> scorecardActive = new VariableChanged<bool>
-            {
-                Data = false
-            };
-
-            VariableChanged<bool> artbookActive = new VariableChanged<bool>
-            {
-                Data = false
-            };
-
-            VariableChanged<bool> arcadeActive = new VariableChanged<bool>
-            {
-                Data = false
-            };
-
-            // Not recommended to use, never use it.
-            VariableChanged<bool> hideDiscordProgram = new VariableChanged<bool>
-            {
-                Data = false
-            };
-
-            // Day Strings
-            List<string> dayTitleStrings = new List<string>(); // Strings shown at the beginning of each day.
-
-            // Cheats
             // If to show the accuracy UI text string from the base game.
             VariableChanged<bool> showDefaultUIAccuracyText = new VariableChanged<bool>();
-            bool disableDesktopLoading = false; // If to skip the initial desktop loading portion.
+
+            // If to skip the initial desktop loading portion.
+            bool disableDesktopLoading = false;
+
+            /*
+             * --------------------------------------------------------------------------------------------------------
+             */
 
             /*
              * Modifier Conditions
@@ -300,22 +321,6 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_username_text", ref username);
 
             /*
-             * Video player
-             */
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "video_player_desktop_wide_mode",
-                ref videoPlayerDesktopIsWideMode);
-
-            /*
-             * Main Game Desktop Program (Start Day Program)
-             */
-
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_main_game_desktop_icon",
-                ref renameMainGameDesktopIcon);
-
-            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "main_game_desktop_icon_path",
-                ref mainGameDesktopIconSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
-
-            /*
              * Desktop Backgrounds
              */
 
@@ -348,31 +353,6 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
                 ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
-
-            /*
-             * Final Cutscene
-             */
-
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black",
-                ref finalCutsceneFadeToBlack);
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_shake", ref finalCutsceneShake);
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_glitch_sounds",
-                ref finalCutsceneGlitchSounds);
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_prevent_clicks",
-                ref finalCutscenePreventClicks);
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black_duration",
-                ref finalCutsceneFadeDuration);
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_extra_fade_to_black_duration",
-                ref finalCutsceneFadePaddingDuration);
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_stop_audio_after_fade",
-                ref finalCutsceneStopAudioAfterFade);
-
-            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
-                ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
-
-            /*
-             * Desktop Background
-             */
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
 
@@ -422,26 +402,47 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref backgroundLogoTransparency);
 
             /*
+             * Video player
+             */
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "video_player_desktop_wide_mode",
+                ref videoPlayerDesktopIsWideMode);
+
+            /*
+             * Main Game Desktop Program (Start Day Program)
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_main_game_desktop_icon",
+                ref renameMainGameDesktopIcon);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "main_game_desktop_icon_path",
+                ref mainGameDesktopIconSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            /*
              * Mailbox
              */
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "show_mailbox_icon_on_desktop",
+                ref displayMailboxOnDesktop);
+
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_mailbox_image_name",
-                ref mailBoxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+                ref mailboxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_mailbox_program_image_name",
-                ref applicationMailBoxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+                ref applicationMailboxIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_mailbox_program",
-                ref mailBoxRename);
+                ref mailboxRename);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_mailbox_program_title",
-                ref applicationMailBoxTitle);
+                ref applicationMailboxTitle);
 
             /*
              * Entry Browser
              */
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "entry_browser_state", ref entryBrowserActive);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed,
+                new List<string> { "entry_browser_state", "show_entry_browser_icon_on_desktop" },
+                ref displayEntryBrowserOnDesktop);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_entry_browser_image_name",
                 ref entryBrowserIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
@@ -475,7 +476,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Artbook
              */
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "artbook_state", ref artbookActive);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed,
+                new List<string> { "artbook_state", "show_artbook_icon_on_desktop" },
+                ref displayArtbookOnDesktop);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "desktop_artbook_image_name",
                 ref artbookIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
@@ -495,7 +499,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Arcade
              */
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_state", ref arcadeActive);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed,
+                new List<string> { "arcade_state", "show_arcade_icon_on_desktop" },
+                ref displayArcadeOnDesktop);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "rename_arcade_program",
                 ref arcadeRename);
@@ -519,7 +526,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_scorecard_program_title",
                 ref applicationScorecardTitle);
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "scorecard_state", ref scorecardActive);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed,
+                new List<string> { "scorecard_state", "show_scorecard_icon_on_desktop" },
+                ref displayScorecardOnDesktop);
 
             /*
              * Credits
@@ -535,10 +544,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref creditsIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
 
             /*
-             * Extra
+             * Not recommended
              */
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hide_discord_program", ref hideDiscordProgram);
+
+            /*
+             * Special Desktop Options Section
+             */
 
             if (jObjectParsed.TryGetValue("campaign_day_names", out JToken customCampaignDaysNamesValue))
             {
@@ -549,6 +562,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     dayTitleStrings.Add(campaignDay.Value<string>());
                 }
             }
+
+            /*
+             * Final Cutscene
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black",
+                ref finalCutsceneFadeToBlack);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_shake", ref finalCutsceneShake);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_glitch_sounds",
+                ref finalCutsceneGlitchSounds);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_prevent_clicks",
+                ref finalCutscenePreventClicks);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_fade_to_black_duration",
+                ref finalCutsceneFadeDuration);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_extra_fade_to_black_duration",
+                ref finalCutsceneFadePaddingDuration);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_stop_audio_after_fade",
+                ref finalCutsceneStopAudioAfterFade);
+
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
+                ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
 
             /*
              * Cheats / Settings
@@ -566,52 +600,37 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignName = customCampaignName,
 
                 UnlockDays = unlockDays,
-
                 OnlyIfGameFinished = onlyIfGameFinished,
 
                 UsernameText = username,
 
-                VideoPlayerDesktopIsWideMode = videoPlayerDesktopIsWideMode,
-                
-                RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
-                MainGameDesktopIcon = mainGameDesktopIconSprite,
-
                 DesktopBackgrounds = backgroundSprites,
-
                 GameFinishedBackground = gameFinishedBackgroundSprite,
-
-                FinalCutsceneFadeToBlack = finalCutsceneFadeToBlack,
-                FinalCutsceneShake = finalCutsceneShake,
-                FinalCutsceneGlitchSounds = finalCutsceneGlitchSounds,
-                FinalCutscenePreventClicks = finalCutscenePreventClicks,
-                FinalCutsceneFadeDuration = finalCutsceneFadeDuration,
-                FinalCutsceneFadePaddingDuration = finalCutsceneFadePaddingDuration,
-                FinalCutsceneAudioPath = finalCutsceneAudioPath,
-                FinalCutsceneAudio = finalCutsceneAudio,
-                FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
-
+                AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
+                BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,
 
                 CustomBackgroundLogo = backgroundLogo,
-
                 DisableDesktopLogo = disableDesktopLogo,
                 BackgroundLogoTransparency = backgroundLogoTransparency,
 
-                AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
-                BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
+                VideoPlayerDesktopIsWideMode = videoPlayerDesktopIsWideMode,
 
-                HideDiscordProgram = hideDiscordProgram,
+                RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
+                MainGameDesktopIcon = mainGameDesktopIconSprite,
 
-                MailBoxIcon = mailBoxIcon,
-                MailBoxRename = mailBoxRename,
-                ApplicationMailBoxTitle = applicationMailBoxTitle,
-                ApplicationMailBoxIcon = applicationMailBoxIcon,
+                MailboxIcon = mailboxIcon,
+                MailboxRename = mailboxRename,
+                ApplicationMailboxTitle = applicationMailboxTitle,
+                ApplicationMailboxIcon = applicationMailboxIcon,
+                DisplayMailboxOnDesktop = displayMailboxOnDesktop,
 
                 EntryBrowserIcon = entryBrowserIcon,
                 EntryBrowserRename = entryBrowserRename,
                 ApplicationEntryBrowserTitle = applicationEntryBrowserTitle,
                 ApplicationEntryBrowserIcon = applicationEntryBrowserIcon,
+                DisplayEntryBrowserOnDesktop = displayEntryBrowserOnDesktop,
 
                 OptionsIcon = optionsIcon,
                 OptionsRename = optionsRename,
@@ -623,32 +642,38 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ArtbookPages = artbookPages,
                 ApplicationArtbookTitle = applicationArtbookTitle,
                 ApplicationArtbookIcon = applicationArtbookIcon,
+                DisplayArtbookOnDesktop = displayArtbookOnDesktop,
 
                 ArcadeIcon = arcadeIcon,
                 ArcadeRename = arcadeRename,
+                DisplayArcadeOnDesktop = displayArcadeOnDesktop,
 
                 ScorecardIcon = scorecardIcon,
                 ScorecardRename = scorecardRename,
                 ApplicationScorecardTitle = applicationScorecardTitle,
                 ApplicationScorecardIcon = applicationScorecardIcon,
+                DisplayScorecardOnDesktop = displayScorecardOnDesktop,
 
                 DesktopCredits = desktopCredits,
                 CreditsRename = creditsRename,
                 CreditsIcon = creditsIcon,
                 HideDesktopCredits = hideDesktopCredits,
 
+                HideDiscordProgram = hideDiscordProgram,
+
                 DayTitleStrings = dayTitleStrings,
 
-                EntryBrowserActive = entryBrowserActive,
-
-                ScorecardActive = scorecardActive,
-
-                ArtbookActive = artbookActive,
-
-                ArcadeActive = arcadeActive,
+                FinalCutsceneFadeToBlack = finalCutsceneFadeToBlack,
+                FinalCutsceneShake = finalCutsceneShake,
+                FinalCutsceneGlitchSounds = finalCutsceneGlitchSounds,
+                FinalCutscenePreventClicks = finalCutscenePreventClicks,
+                FinalCutsceneFadeDuration = finalCutsceneFadeDuration,
+                FinalCutsceneFadePaddingDuration = finalCutsceneFadePaddingDuration,
+                FinalCutsceneAudioPath = finalCutsceneAudioPath,
+                FinalCutsceneAudio = finalCutsceneAudio,
+                FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
-
                 DisableDesktopLoading = disableDesktopLoading
             };
         }
