@@ -125,7 +125,7 @@ namespace NewSafetyHelp.CustomDesktop
                     InGameSettingHelper.CreateNewToggle(InGameSettingHelper.GetVideoOptionsSection(),
                         ToggleButtonFunctions.OnVsyncToggle,
                         "Enable VSYNC", NewSafetyHelpMainClass.Vsync.Value);
-                    
+
                     GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings",
                         "Mod settings to show more information and also allow skipping the initial load scene.");
 
@@ -158,13 +158,13 @@ namespace NewSafetyHelp.CustomDesktop
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnVideoLogToggle,
                         "Enable Video Logs", NewSafetyHelpMainClass.ShowVideoDebugLog.Value);
-                    
+
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnTextFileLogToggle,
                         "Enable Text File Logs", NewSafetyHelpMainClass.ShowTextFileDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEntryLogToggle,
                         "Enable Entry Logs", NewSafetyHelpMainClass.ShowEntryDebugLog.Value);
-                    
+
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnCutsceneLogToggle,
                         "Enable Cutscene Logs", NewSafetyHelpMainClass.ShowCutsceneLog.Value);
 
@@ -190,9 +190,9 @@ namespace NewSafetyHelp.CustomDesktop
                 __instance.StartCoroutine(StartupRoutine(__instance));
 
                 // Add custom campaign icons and add back to main game buttons:
-                
+
                 // Main Campaign
-                if (!CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) 
+                if (!CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC)
                 {
                     foreach (CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
                     {
@@ -217,7 +217,7 @@ namespace NewSafetyHelp.CustomDesktop
                     CustomDesktopHelper.EnableWinterDlcProgram();
                 }
                 // Custom Campaign
-                else if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC) 
+                else if (CustomCampaignGlobal.InCustomCampaign && !GlobalVariables.isXmasDLC)
                 {
                     CustomCampaignProgramHelper.CreateBackToMainGameButton();
 
@@ -245,7 +245,7 @@ namespace NewSafetyHelp.CustomDesktop
                     bool customCampaignUsernameChange = false;
 
                     // First we apply the campaign value.
-                    if (!string.IsNullOrEmpty(customCampaign.DesktopUsernameText)) 
+                    if (!string.IsNullOrEmpty(customCampaign.DesktopUsernameText))
                     {
                         customCampaignUsernameChange = true;
                         username = customCampaign.DesktopUsernameText;
@@ -283,6 +283,45 @@ namespace NewSafetyHelp.CustomDesktop
                     }
 
                     /*
+                     * Main Program Section
+                     */
+
+                    string renamedMainGameDesktopIcon = String.Empty;
+
+                    if (!string.IsNullOrEmpty(customCampaign.RenameMainGameDesktopIcon))
+                    {
+                        renamedMainGameDesktopIcon = customCampaign.RenameMainGameDesktopIcon;
+                    }
+
+                    if (desktopModifierSnapshot.RenameMainGameDesktopIcon.found)
+                    {
+                        renamedMainGameDesktopIcon = desktopModifierSnapshot.RenameMainGameDesktopIcon.value.Data;
+                    }
+
+                    if (!string.IsNullOrEmpty(renamedMainGameDesktopIcon))
+                    {
+                        CustomDesktopHelper.GetMainGameProgram().transform.Find("TextBackground").Find("ExecutableName")
+                            .GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
+                    }
+
+                    Sprite mainProgramIcon = null;
+
+                    if (customCampaign.ChangeMainGameDesktopIcon != null)
+                    {
+                        mainProgramIcon = customCampaign.ChangeMainGameDesktopIcon;
+                    }
+
+                    if (desktopModifierSnapshot.MainGameDesktopIcon.found)
+                    {
+                        mainProgramIcon = desktopModifierSnapshot.MainGameDesktopIcon.value.Data;
+                    }
+
+                    if (mainProgramIcon != null)
+                    {
+                        CustomDesktopHelper.GetMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
+                    }
+
+                    /*
                      * Logo Section
                      */
 
@@ -294,8 +333,7 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         disableLogo = true;
                     }
-                    // We have a desktop logo to show.
-                    else if (customCampaign.CustomDesktopLogo != null) 
+                    else if (customCampaign.CustomDesktopLogo != null)
                     {
                         desktopLogo = customCampaign.CustomDesktopLogo;
                     }
@@ -316,8 +354,7 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         CustomDesktopHelper.GetLogo().SetActive(false);
                     }
-                    // We have a desktop logo to show.
-                    else if (desktopLogo != null) 
+                    else if (desktopLogo != null)
                     {
                         CustomDesktopHelper.GetLogo().GetComponent<Image>().sprite = desktopLogo;
                     }
@@ -344,6 +381,45 @@ namespace NewSafetyHelp.CustomDesktop
                     }
 
                     /*
+                     * Video Player Section
+                     */
+
+                    if (desktopModifierSnapshot.VideoPlayerDesktopIsWideMode.found
+                        && desktopModifierSnapshot.VideoPlayerDesktopIsWideMode.value.Data)
+                    {
+                        LoggingHelper.TestLog("Video Player Test Message");
+                    }
+
+                    /*
+                     * Email / Mailbox Section
+                     */
+
+                    if (desktopModifierSnapshot.MailBoxIcon.found)
+                    {
+                        CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite =
+                            desktopModifierSnapshot.MailBoxIcon.value.Data;
+                    }
+
+                    if (desktopModifierSnapshot.MailBoxRename.found)
+                    {
+                        CustomDesktopHelper.GetMailboxGameObject().transform.GetChild(0).GetChild(0)
+                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.MailBoxRename.value.Data;
+                    }
+
+                    if (desktopModifierSnapshot.ApplicationMailBoxTitle.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(3)
+                                .GetComponent<TextMeshProUGUI>().text =
+                            desktopModifierSnapshot.ApplicationMailBoxTitle.value.Data;
+                    }
+
+                    if (desktopModifierSnapshot.ApplicationMailBoxIcon.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(2)
+                            .GetComponent<Image>().sprite = desktopModifierSnapshot.ApplicationMailBoxIcon.value.Data;
+                    }
+
+                    /*
                      * Entry Browser Section
                      */
 
@@ -352,51 +428,26 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetEntryBrowserGameObject().GetComponent<Image>().sprite =
                             desktopModifierSnapshot.EntryBrowserIcon.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.EntryBrowserRename.found)
                     {
-                        CustomDesktopHelper.GetEntryBrowserGameObject().transform.GetChild(0).GetChild(0).
-                                GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.EntryBrowserRename.value.Data;
+                        CustomDesktopHelper.GetEntryBrowserGameObject().transform.GetChild(0).GetChild(0)
+                                .GetComponent<TextMeshProUGUI>().text =
+                            desktopModifierSnapshot.EntryBrowserRename.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.ApplicationEntryBrowserTitle.found)
                     {
-                        GlobalVariables.entryCanvasScript.gameObject.transform.GetChild(0).GetChild(0).GetChild(2).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ApplicationEntryBrowserTitle.value.Data;
+                        GlobalVariables.entryCanvasScript.gameObject.transform.GetChild(0).GetChild(0).GetChild(2)
+                                .GetComponent<TextMeshProUGUI>().text =
+                            desktopModifierSnapshot.ApplicationEntryBrowserTitle.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.ApplicationEntryBrowserIcon.found)
                     {
-                        GlobalVariables.entryCanvasScript.gameObject.transform.GetChild(0).GetChild(0).GetChild(1).
-                            GetComponent<Image>().sprite = desktopModifierSnapshot.ApplicationEntryBrowserIcon.value.Data;
-                    }
-                    
-                    /*
-                     * Email / Mailbox Section
-                     */
-
-                    if (desktopModifierSnapshot.MailBoxIcon.found)
-                    {
-                        CustomDesktopHelper.GetMailboxGameObject().GetComponent<Image>().sprite = 
-                            desktopModifierSnapshot.MailBoxIcon.value.Data;
-                    }
-                    
-                    if (desktopModifierSnapshot.MailBoxRename.found)
-                    {
-                        CustomDesktopHelper.GetMailboxGameObject().transform.GetChild(0).GetChild(0).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.MailBoxRename.value.Data;
-                    }
-                    
-                    if (desktopModifierSnapshot.ApplicationMailBoxTitle.found)
-                    {
-                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(3).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ApplicationMailBoxTitle.value.Data;
-                    }
-                    
-                    if (desktopModifierSnapshot.ApplicationMailBoxIcon.found)
-                    {
-                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("EmailPopup").GetChild(0).GetChild(2).
-                            GetComponent<Image>().sprite = desktopModifierSnapshot.ApplicationMailBoxIcon.value.Data;
+                        GlobalVariables.entryCanvasScript.gameObject.transform.GetChild(0).GetChild(0).GetChild(1)
+                                .GetComponent<Image>().sprite =
+                            desktopModifierSnapshot.ApplicationEntryBrowserIcon.value.Data;
                     }
 
                     /*
@@ -405,27 +456,27 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (desktopModifierSnapshot.OptionsIcon.found)
                     {
-                        CustomDesktopHelper.GetOptionsGameObject().GetComponent<Image>().sprite = 
+                        CustomDesktopHelper.GetOptionsGameObject().GetComponent<Image>().sprite =
                             desktopModifierSnapshot.OptionsIcon.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.OptionsRename.found)
                     {
-                        CustomDesktopHelper.GetOptionsGameObject().transform.GetChild(0).GetChild(0).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.OptionsRename.value.Data;
+                        CustomDesktopHelper.GetOptionsGameObject().transform.GetChild(0).GetChild(0)
+                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.OptionsRename.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.ApplicationOptionsTitle.found)
                     {
-                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("OptionsPopup").GetChild(0).GetChild(3).
-                            GetComponent<TextMeshProUGUI>().text = 
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("OptionsPopup").GetChild(0).GetChild(3)
+                                .GetComponent<TextMeshProUGUI>().text =
                             desktopModifierSnapshot.ApplicationOptionsTitle.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.ApplicationOptionsIcon.found)
                     {
-                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("OptionsPopup").GetChild(0).GetChild(2).
-                                GetComponent<Image>().sprite = 
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("OptionsPopup").GetChild(0).GetChild(2)
+                                .GetComponent<Image>().sprite =
                             desktopModifierSnapshot.ApplicationOptionsIcon.value.Data;
                     }
 
@@ -441,60 +492,30 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (desktopModifierSnapshot.ArtbookRename.found)
                     {
-                        CustomDesktopHelper.GetArtbookGameObject().transform.GetChild(0).GetChild(0).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ArtbookRename.value.Data;
+                        CustomDesktopHelper.GetArtbookGameObject().transform.GetChild(0).GetChild(0)
+                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ArtbookRename.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.ApplicationArtbookTitle.found)
                     {
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup").GetChild(0).GetChild(3)
-                            .GetComponent<TextMeshProUGUI>().text = 
+                                .GetComponent<TextMeshProUGUI>().text =
                             desktopModifierSnapshot.ApplicationArtbookTitle.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.ApplicationArtbookIcon.found)
                     {
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup").GetChild(0).GetChild(2)
-                                .GetComponent<Image>().sprite = 
+                                .GetComponent<Image>().sprite =
                             desktopModifierSnapshot.ApplicationArtbookIcon.value.Data;
                     }
 
                     if (desktopModifierSnapshot.ArtbookPages.found)
                     {
                         ArtbookPage[] artbookPageArray = desktopModifierSnapshot.ArtbookPages.value.ToArray();
-                        
+
                         CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ArtbookPopup")
                             .GetComponent<ArtbookPopupBehavior>().artbookPages = artbookPageArray;
-                    }
-
-                    /*
-                     * Scorecard Section
-                     */
-
-                    if (desktopModifierSnapshot.ScorecardIcon.found)
-                    {
-                        CustomDesktopHelper.GetScorecardGameObject().GetComponent<Image>().sprite = 
-                            desktopModifierSnapshot.ScorecardIcon.value.Data;
-                    }
-                    
-                    if (desktopModifierSnapshot.ScorecardRename.found)
-                    {
-                        CustomDesktopHelper.GetScorecardGameObject().transform.GetChild(0).GetChild(0).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ScorecardRename.value.Data;
-                    }
-                    
-                    if (desktopModifierSnapshot.ApplicationScorecardTitle.found)
-                    {
-                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ScorecardPopup").GetChild(0).GetChild(3)
-                            .GetComponent<TextMeshProUGUI>().text = 
-                            desktopModifierSnapshot.ApplicationScorecardTitle.value.Data;
-                    }
-                    
-                    if (desktopModifierSnapshot.ApplicationScorecardIcon.found)
-                    {
-                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ScorecardPopup").GetChild(0).GetChild(2)
-                                .GetComponent<Image>().sprite = 
-                            desktopModifierSnapshot.ApplicationScorecardIcon.value.Data;
                     }
 
                     /*
@@ -503,25 +524,56 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (desktopModifierSnapshot.ArcadeIcon.found)
                     {
-                        CustomDesktopHelper.GetArcadeGameObject().GetComponent<Image>().sprite = 
+                        CustomDesktopHelper.GetArcadeGameObject().GetComponent<Image>().sprite =
                             desktopModifierSnapshot.ArcadeIcon.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.ArcadeRename.found)
                     {
-                        CustomDesktopHelper.GetArcadeGameObject().transform.GetChild(0).GetChild(0).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ArcadeRename.value.Data;
+                        CustomDesktopHelper.GetArcadeGameObject().transform.GetChild(0).GetChild(0)
+                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ArcadeRename.value.Data;
+                    }
+
+                    /*
+                     * Scorecard Section
+                     */
+
+                    if (desktopModifierSnapshot.ScorecardIcon.found)
+                    {
+                        CustomDesktopHelper.GetScorecardGameObject().GetComponent<Image>().sprite =
+                            desktopModifierSnapshot.ScorecardIcon.value.Data;
+                    }
+
+                    if (desktopModifierSnapshot.ScorecardRename.found)
+                    {
+                        CustomDesktopHelper.GetScorecardGameObject().transform.GetChild(0).GetChild(0)
+                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.ScorecardRename.value.Data;
+                    }
+
+                    if (desktopModifierSnapshot.ApplicationScorecardTitle.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ScorecardPopup").GetChild(0).GetChild(3)
+                                .GetComponent<TextMeshProUGUI>().text =
+                            desktopModifierSnapshot.ApplicationScorecardTitle.value.Data;
+                    }
+
+                    if (desktopModifierSnapshot.ApplicationScorecardIcon.found)
+                    {
+                        CustomDesktopHelper.GetMainMenuCanvas().transform.Find("ScorecardPopup").GetChild(0).GetChild(2)
+                                .GetComponent<Image>().sprite =
+                            desktopModifierSnapshot.ApplicationScorecardIcon.value.Data;
                     }
 
                     /*
                      * Credits Section
                      */
-                    
+
                     // Get a copy of the text file icon before we overwrite it.
                     // Since credits are a text file, we need to do it here.
                     if (CustomTextFileHelper.TextFileIcon == null)
                     {
-                        CustomTextFileHelper.TextFileIcon = CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite;
+                        CustomTextFileHelper.TextFileIcon =
+                            CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite;
                     }
 
                     if (desktopModifierSnapshot.DesktopCredits.found)
@@ -529,13 +581,13 @@ namespace NewSafetyHelp.CustomDesktop
                         CustomDesktopHelper.GetCreditsGameObject().GetComponent<TextFileExecutable>().myContent =
                             desktopModifierSnapshot.DesktopCredits.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.CreditsRename.found)
                     {
-                        CustomDesktopHelper.GetCreditsGameObject().transform.GetChild(0).GetChild(0).
-                            GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.CreditsRename.value.Data;
+                        CustomDesktopHelper.GetCreditsGameObject().transform.GetChild(0).GetChild(0)
+                            .GetComponent<TextMeshProUGUI>().text = desktopModifierSnapshot.CreditsRename.value.Data;
                     }
-                    
+
                     if (desktopModifierSnapshot.CreditsIcon.found)
                     {
                         CustomDesktopHelper.GetCreditsGameObject().GetComponent<Image>().sprite =
@@ -558,49 +610,11 @@ namespace NewSafetyHelp.CustomDesktop
                             !desktopModifierSnapshot.HideDiscordProgram.value.Data);
                     }
 
-                    /*
-                     * Main Program Section
-                     */
-
-                    string renamedMainGameDesktopIcon = String.Empty;
-
-                    if (!string.IsNullOrEmpty(customCampaign.RenameMainGameDesktopIcon))
-                    {
-                        renamedMainGameDesktopIcon = customCampaign.RenameMainGameDesktopIcon;
-                    }
-                    
-                    if (desktopModifierSnapshot.RenameMainGameDesktopIcon.found)
-                    {
-                        renamedMainGameDesktopIcon = desktopModifierSnapshot.RenameMainGameDesktopIcon.value.Data;
-                    }
-
-                    if (!string.IsNullOrEmpty(renamedMainGameDesktopIcon))
-                    {
-                        CustomDesktopHelper.GetMainGameProgram().transform.Find("TextBackground").Find("ExecutableName")
-                            .GetComponent<TextMeshProUGUI>().text = renamedMainGameDesktopIcon;
-                    }
-                    
-                    Sprite mainProgramIcon = null;
-
-                    if (customCampaign.ChangeMainGameDesktopIcon != null)
-                    {
-                        mainProgramIcon = customCampaign.ChangeMainGameDesktopIcon;
-                    }
-
-                    if (desktopModifierSnapshot.MainGameDesktopIcon.found)
-                    {
-                        mainProgramIcon = desktopModifierSnapshot.MainGameDesktopIcon.value.Data;
-                    }
-
-                    if (mainProgramIcon != null)
-                    {
-                        CustomDesktopHelper.GetMainGameProgram().GetComponent<Image>().sprite = mainProgramIcon;
-                    }
 
                     /*
                      * Custom Videos Section
                      */
-                    
+
                     if (customCampaign.DisableAllDefaultVideos)
                     {
                         CustomDesktopHelper.DisableDefaultVideos();
@@ -613,11 +627,11 @@ namespace NewSafetyHelp.CustomDesktop
                             VideoHelper.CreateCustomVideoFileProgram(customVideo);
                         }
                     }
-                    
+
                     /*
                      * Custom Text Files Section
                      */
-                    
+
                     if (customCampaign.CustomTextProgramFiles.Count > 0)
                     {
                         foreach (CustomTextFile customTextFile in customCampaign.CustomTextProgramFiles)
@@ -732,10 +746,10 @@ namespace NewSafetyHelp.CustomDesktop
                 MyText.SetValue(__instance, __instance.GetComponent<TextMeshProUGUI>());
 
                 // Main Campaign
-                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign) 
+                if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     // OLD: __instance.myText
-                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance); 
+                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance);
 
                     string[] strArray = new string[5];
 
@@ -769,20 +783,20 @@ namespace NewSafetyHelp.CustomDesktop
                     string[] strArray = new string[5];
 
                     // Month
-                    int num = 12; 
+                    int num = 12;
 
                     strArray[0] = num.ToString();
                     strArray[1] = "/";
-                    
+
                     // Day
-                    num = 21 + GlobalVariables.currentDay; 
-                    
+                    num = 21 + GlobalVariables.currentDay;
+
                     strArray[2] = num.ToString();
                     strArray[3] = "/";
 
                     // Year
-                    num = 1996; 
-                    
+                    num = 1996;
+
                     strArray[4] = num.ToString();
 
                     string str = string.Concat(strArray);
@@ -794,7 +808,7 @@ namespace NewSafetyHelp.CustomDesktop
                     LoggingHelper.DebugLog("Handling custom day format..");
 
                     // OLD: __instance.myText
-                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance); 
+                    TextMeshProUGUI text = (TextMeshProUGUI)MyText.GetValue(__instance);
 
                     // Get our stored values
 

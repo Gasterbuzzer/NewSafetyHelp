@@ -40,8 +40,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
 
         // Color for background. If null, it means not set.
         public Color? DesktopBackgroundColor = null;
-
-        // Desktop Background (Finished the game)
+        
         public VariableChanged<Sprite> GameFinishedBackground = new VariableChanged<Sprite>();
 
         /*
@@ -68,6 +67,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         /*
          * Programs on Desktop Section
          */
+        
+        // Video Player
+        public VariableChanged<bool> VideoPlayerDesktopIsWideMode = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         // Main Game Desktop Program
         public VariableChanged<string> RenameMainGameDesktopIcon = new VariableChanged<string>

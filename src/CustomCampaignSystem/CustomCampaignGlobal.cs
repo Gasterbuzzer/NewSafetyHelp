@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
@@ -434,7 +433,22 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.UsernameText = (true, modifier.UsernameText);
                     }
+                    
+                    
+                    /*
+                     * Main Game Desktop program
+                     */
 
+                    if (modifier.RenameMainGameDesktopIcon.HasChanged)
+                    {
+                        newModifierSnapshot.RenameMainGameDesktopIcon = (true, modifier.RenameMainGameDesktopIcon);
+                    }
+
+                    if (modifier.MainGameDesktopIcon.HasChanged)
+                    {
+                        newModifierSnapshot.MainGameDesktopIcon = (true, modifier.MainGameDesktopIcon);
+                    }
+                    
                     /*
                      * Desktop Logo Section
                      */
@@ -452,31 +466,16 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.BackgroundLogoTransparency = (true, modifier.BackgroundLogoTransparency);
                     }
-
+                    
                     /*
-                     * Entry Browser Section
+                     * Video Section
                      */
 
-                    if (modifier.EntryBrowserIcon.HasChanged)
+                    if (modifier.VideoPlayerDesktopIsWideMode.HasChanged)
                     {
-                        newModifierSnapshot.EntryBrowserIcon = (true, modifier.EntryBrowserIcon);
-                    }
-
-                    if (modifier.EntryBrowserRename.HasChanged)
-                    {
-                        newModifierSnapshot.EntryBrowserRename = (true, modifier.EntryBrowserRename);
-                    }
-
-                    if (modifier.ApplicationEntryBrowserTitle.HasChanged)
-                    {
-                        newModifierSnapshot.ApplicationEntryBrowserTitle = (true, modifier.ApplicationEntryBrowserTitle);
+                        newModifierSnapshot.VideoPlayerDesktopIsWideMode = (true, modifier.VideoPlayerDesktopIsWideMode);
                     }
                     
-                    if (modifier.ApplicationEntryBrowserIcon.HasChanged)
-                    {
-                        newModifierSnapshot.ApplicationEntryBrowserIcon = (true, modifier.ApplicationEntryBrowserIcon);
-                    }
-
                     /*
                      * Mailbox Section
                      */
@@ -500,6 +499,31 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ApplicationMailBoxIcon = (true, modifier.ApplicationMailBoxIcon);
                     }
+                    
+                    /*
+                     * Entry Browser Section
+                     */
+
+                    if (modifier.EntryBrowserIcon.HasChanged)
+                    {
+                        newModifierSnapshot.EntryBrowserIcon = (true, modifier.EntryBrowserIcon);
+                    }
+
+                    if (modifier.EntryBrowserRename.HasChanged)
+                    {
+                        newModifierSnapshot.EntryBrowserRename = (true, modifier.EntryBrowserRename);
+                    }
+
+                    if (modifier.ApplicationEntryBrowserTitle.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationEntryBrowserTitle = (true, modifier.ApplicationEntryBrowserTitle);
+                    }
+                    
+                    if (modifier.ApplicationEntryBrowserIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ApplicationEntryBrowserIcon = (true, modifier.ApplicationEntryBrowserIcon);
+                    }
+                    
 
                     /*
                      * Options Section
@@ -554,6 +578,20 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ArtbookPages = (true, modifier.ArtbookPages);
                     }
+                    
+                    /*
+                     * Arcade Section
+                     */
+
+                    if (modifier.ArcadeIcon.HasChanged)
+                    {
+                        newModifierSnapshot.ArcadeIcon = (true, modifier.ArcadeIcon);
+                    }
+
+                    if (modifier.ArcadeRename.HasChanged)
+                    {
+                        newModifierSnapshot.ArcadeRename = (true, modifier.ArcadeRename);
+                    }
 
                     /*
                      * Scorecard Section
@@ -577,20 +615,6 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     if (modifier.ApplicationScorecardIcon.HasChanged)
                     {
                         newModifierSnapshot.ApplicationScorecardIcon = (true, modifier.ApplicationScorecardIcon);
-                    }
-
-                    /*
-                     * Arcade Section
-                     */
-
-                    if (modifier.ArcadeIcon.HasChanged)
-                    {
-                        newModifierSnapshot.ArcadeIcon = (true, modifier.ArcadeIcon);
-                    }
-
-                    if (modifier.ArcadeRename.HasChanged)
-                    {
-                        newModifierSnapshot.ArcadeRename = (true, modifier.ArcadeRename);
                     }
 
                     /*
@@ -624,20 +648,6 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     if (modifier.HideDiscordProgram.HasChanged)
                     {
                         newModifierSnapshot.HideDiscordProgram = (true, modifier.HideDiscordProgram);
-                    }
-
-                    /*
-                     * Main Game Desktop program
-                     */
-
-                    if (modifier.RenameMainGameDesktopIcon.HasChanged)
-                    {
-                        newModifierSnapshot.RenameMainGameDesktopIcon = (true, modifier.RenameMainGameDesktopIcon);
-                    }
-
-                    if (modifier.MainGameDesktopIcon.HasChanged)
-                    {
-                        newModifierSnapshot.MainGameDesktopIcon = (true, modifier.MainGameDesktopIcon);
                     }
                 }
             }

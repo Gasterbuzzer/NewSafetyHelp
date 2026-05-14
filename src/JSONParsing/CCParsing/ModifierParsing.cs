@@ -102,6 +102,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = string.Empty
             };
+            
+            // Video Player
+            VariableChanged<bool> videoPlayerDesktopIsWideMode = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
             // Main Program
             VariableChanged<string> renameMainGameDesktopIcon = new VariableChanged<string>
@@ -115,7 +121,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             VariableChanged<Sprite> gameFinishedBackgroundSprite = new VariableChanged<Sprite>();
 
-            // If the final cutscene should fade to black.
+            // Cutscene
             VariableChanged<bool> finalCutsceneFadeToBlack = new VariableChanged<bool>()
             {
                 Data = true
@@ -150,8 +156,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = 1f
             };
-
-            // Final Cutscene Audio
+            
             VariableChanged<RichAudioClip> finalCutsceneAudio = new VariableChanged<RichAudioClip>
             {
                 Data = null
@@ -159,6 +164,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             string finalCutsceneAudioPath = null;
 
+            // Background
             bool disableGreenColorBackground = false;
             Color? desktopBackgroundColor = null;
 
@@ -247,7 +253,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = false
             };
 
-            // Not recommended to use ever.
+            // Not recommended to use, never use it.
             VariableChanged<bool> hideDiscordProgram = new VariableChanged<bool>
             {
                 Data = false
@@ -292,6 +298,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              */
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_username_text", ref username);
+
+            /*
+             * Video player
+             */
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "video_player_desktop_wide_mode",
+                ref videoPlayerDesktopIsWideMode);
 
             /*
              * Main Game Desktop Program (Start Day Program)
@@ -559,6 +571,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 UsernameText = username,
 
+                VideoPlayerDesktopIsWideMode = videoPlayerDesktopIsWideMode,
+                
                 RenameMainGameDesktopIcon = renameMainGameDesktopIcon,
                 MainGameDesktopIcon = mainGameDesktopIconSprite,
 

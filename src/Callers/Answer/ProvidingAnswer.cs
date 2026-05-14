@@ -362,12 +362,14 @@ namespace NewSafetyHelp.Callers.Answer
                     CheckCallerAnswer.Invoke(__instance, new object[] { monsterID });
 
                     // Before checking, it is the last call of the day, we check if we can increase the tier.
-                    
-                    LoggingHelper.TestLog($"Was correct? '{__instance.callers[__instance.currentCallerID].answeredCorrectly}' and is monster ID null? '{monsterID == null}' and '{monsterID}'.");
 
-                    LoggingHelper.DebugLog("Increase tier? " +
-                                           $"(For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) " +
-                                           $"{__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
+                    LoggingHelper.DebugLog(() =>
+                        $"Was correct? '{__instance.callers[__instance.currentCallerID].answeredCorrectly}'.");
+
+                    LoggingHelper.DebugLog(() =>
+                        "Increase tier? " +
+                        $"(For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) " +
+                        $"{__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
 
                     if (__instance.callers[__instance.currentCallerID].callerProfile.increaseTier)
                     {
