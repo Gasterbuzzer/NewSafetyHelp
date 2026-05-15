@@ -591,10 +591,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref showDefaultUIAccuracyText);
 
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
-
-
-            // Return newly created modifier:
-
+            
             return new CustomModifier
             {
                 CustomCampaignName = customCampaignName,

@@ -132,7 +132,7 @@ namespace NewSafetyHelp.Callers.Answer
                         }
                     }
                 }
-                // Monster not provided and a dynamic caller. So we set it to true.
+                // Monster not provided and a dynamic caller.
                 else if (!(bool)DynamicCaller.GetValue(__instance))
                 {
                     // Main Campaign
@@ -162,6 +162,7 @@ namespace NewSafetyHelp.Callers.Answer
                             && currentCaller.IsTimedCaller)
                         {
                             __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
+                            ++__instance.callersToday;
                         }
                         else
                         {
@@ -217,7 +218,7 @@ namespace NewSafetyHelp.Callers.Answer
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, ref MonsterProfile monsterID)
             {
-                LoggingHelper.DebugLog("SubmitAnswer Called.", LoggingHelper.LoggingCategory.SKIPPED_CALLER);
+                LoggingHelper.DebugLog("SubmitAnswer called.", LoggingHelper.LoggingCategory.SKIPPED_CALLER);
 
                 if (OnCallConcluded == null)
                 {

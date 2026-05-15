@@ -49,6 +49,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 timerCallerRoutine = null;
             }
         }
+        
+        /// <summary>
+        /// Displays the seconds into a more readable format.
+        /// </summary>
+        /// <param name="seconds"></param>
+        /// <returns></returns>
+        private static string GetTimerDisplay(float seconds)
+        {
+            int displayMinutes = (int)(seconds / 60);
+            int displaySeconds = (int)(seconds % 60);
+            
+            return $"{displayMinutes:D2}:{displaySeconds:D2}";
+        }
 
         /// <summary>
         /// Coroutine for the timed caller.
@@ -70,7 +83,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             bool playedHalfPercent = false;
 
             TextMeshProUGUI textMeshComponent = timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-            textMeshComponent.text = $"{seconds}s";
+            textMeshComponent.text = GetTimerDisplay(seconds);
 
             GlobalVariables.UISoundControllerScript.PlayUISound(TimerAudio.ClockStart);
 
@@ -78,7 +91,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 yield return new WaitForSeconds(1);
                 seconds--;
-                textMeshComponent.text = $"{seconds}s";
+                textMeshComponent.text = GetTimerDisplay(seconds);
 
                 if (!playedHalfPercent
                     && seconds <= halfPercentTimerCheckmark)
@@ -99,7 +112,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             yield return new WaitForSeconds(seconds);
 
             // Finished Call Timer
-            textMeshComponent.text = "0s";
+            textMeshComponent.text = "00:00";
 
             LoggingHelper.InfoLog($"Finished timer caller with a time of '{seconds}'.");
 
