@@ -135,10 +135,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript.disconnect);
 
             timerCallerRoutine = null;
-            
-            // Mark the caller as wrong.
 
             HideCallerTimerUI();
+            
+            // Show Call Ended Badly error:
+            GlobalVariables.mainCanvasScript.CreateError("CALL RELEASED BY REMOTE");
+            GlobalVariables.mainCanvasScript.inputBlocker.SetActive(false);
         }
 
         /// <summary>

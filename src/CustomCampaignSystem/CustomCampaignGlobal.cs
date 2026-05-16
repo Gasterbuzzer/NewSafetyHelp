@@ -17,9 +17,9 @@ namespace NewSafetyHelp.CustomCampaignSystem
     public static class CustomCampaignGlobal
     {
         public static readonly List<CustomCampaign> CustomCampaignsAvailable = new List<CustomCampaign>();
-        
+
         public static bool InCustomCampaign => currentCustomCampaign != null;
-        
+
         private static CustomCampaign currentCustomCampaign;
 
         /// <summary>
@@ -28,10 +28,9 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// <param name="customCampaignName">Name of the custom campaign to set as the current one.</param>
         public static void ActivateCustomCampaign(string customCampaignName)
         {
-            currentCustomCampaign = CustomCampaignsAvailable.Find(
-                customCampaign =>
-                    customCampaign.CampaignName == customCampaignName
-                );
+            currentCustomCampaign = CustomCampaignsAvailable.Find(customCampaign =>
+                customCampaign.CampaignName == customCampaignName
+            );
         }
 
         /// <summary>
@@ -52,10 +51,10 @@ namespace NewSafetyHelp.CustomCampaignSystem
             {
                 LoggingHelper.CampaignNullError();
             }
-            
+
             return currentCustomCampaign;
         }
-        
+
         /// <summary>
         /// Returns the campaign of the given name.
         /// </summary>
@@ -63,9 +62,9 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// <returns>CustomCampaign Object of the current activate custom campaign.</returns>
         public static CustomCampaign GetNamedCustomCampaign(string customCampaignName)
         {
-            return CustomCampaignsAvailable.Find(
-                customCampaignSearch => customCampaignSearch.CampaignName == customCampaignName
-                );
+            return CustomCampaignsAvailable.Find(customCampaignSearch =>
+                customCampaignSearch.CampaignName == customCampaignName
+            );
         }
 
         /// <summary>
@@ -77,16 +76,15 @@ namespace NewSafetyHelp.CustomCampaignSystem
         public static CustomCCaller GetCustomCallerFromActiveCampaign(int orderID)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
-            
+
             if (customCampaign == null)
             {
                 return null;
             }
-            
-            return customCampaign.CustomCallersInCampaign.Find(
-                customCaller => customCaller.OrderInCampaign == orderID);
+
+            return customCampaign.CustomCallersInCampaign.Find(customCaller => customCaller.OrderInCampaign == orderID);
         }
-        
+
         /// <summary>
         /// Gets the custom music from custom campaign.
         /// </summary>
@@ -96,15 +94,15 @@ namespace NewSafetyHelp.CustomCampaignSystem
         public static CustomMusic GetCustomMusicFromActiveCampaign(RichAudioClip musicToFind)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
-            
+
             if (customCampaign == null)
             {
                 return null;
             }
-            
+
             return customCampaign.CustomMusic.Find(customMusic => customMusic.MusicClip == musicToFind);
         }
-        
+
         /// <summary>
         /// Gets the custom video from custom campaign.
         /// </summary>
@@ -114,16 +112,16 @@ namespace NewSafetyHelp.CustomCampaignSystem
         public static CustomVideo GetCustomVideoFromActiveCampaign(GameObject videoGameObject)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
-            
+
             if (customCampaign == null)
             {
                 return null;
             }
-            
-            return customCampaign.CustomVideos.Find(
-                customVideo => customVideo.ReferenceToCreatedVideo == videoGameObject);
+
+            return customCampaign.CustomVideos.Find(customVideo =>
+                customVideo.ReferenceToCreatedVideo == videoGameObject);
         }
-        
+
         /// <summary>
         /// Gets the custom email from custom campaign.
         /// </summary>
@@ -133,12 +131,12 @@ namespace NewSafetyHelp.CustomCampaignSystem
         public static CustomEmail GetCustomEmailFromActiveCampaign(Email emailToFind)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
-            
+
             if (customCampaign == null)
             {
                 return null;
             }
-            
+
             return customCampaign.Emails.Find(customEmail => customEmail.ReferenceToEmailObject == emailToFind);
         }
 
@@ -150,12 +148,12 @@ namespace NewSafetyHelp.CustomCampaignSystem
         public static EntryMetadata GetEntryFromActiveCampaign(string entryName)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
-            
+
             if (customCampaign == null)
             {
                 return null;
             }
-            
+
             return customCampaign.EntriesOnlyInCampaign.Find(customEntry => customEntry.Name == entryName);
         }
 
@@ -192,14 +190,14 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         conditionalIDSearch += customCampaign.CustomThemesGeneral.Count;
                     }
-                    
+
                     return conditionalIDSearch + 4;
                 }
             }
 
             return -1;
         }
-        
+
         /// <summary>
         /// Gets the custom theme of a given custom theme ID.
         /// </summary>
@@ -250,7 +248,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
 
             return null;
         }
-        
+
         /// <summary>
         /// Gets the theme's ID from the theme's name.
         /// </summary>
@@ -335,7 +333,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     }
                 }
             }
-            
+
             return -1;
         }
 
@@ -353,7 +351,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
             {
                 return null;
             }
-            
+
             isCustomTheme = false;
 
             if (customCampaign.ActiveTheme <= 3) // Default Theme
@@ -363,7 +361,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
 
             int indexAsGeneral = customCampaign.ActiveTheme - 4;
 
-            if (indexAsGeneral >= 0 
+            if (indexAsGeneral >= 0
                 && customCampaign.CustomThemesGeneral != null
                 && indexAsGeneral < customCampaign.CustomThemesGeneral.Count) // We have a general theme.
             {
@@ -433,8 +431,8 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.UsernameText = (true, modifier.UsernameText);
                     }
-                    
-                    
+
+
                     /*
                      * Main Game Desktop program
                      */
@@ -448,7 +446,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.MainGameDesktopIcon = (true, modifier.MainGameDesktopIcon);
                     }
-                    
+
                     /*
                      * Desktop Logo Section
                      */
@@ -466,16 +464,17 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.BackgroundLogoTransparency = (true, modifier.BackgroundLogoTransparency);
                     }
-                    
+
                     /*
                      * Video Player Section
                      */
 
                     if (modifier.VideoPlayerDesktopIsWideMode.HasChanged)
                     {
-                        newModifierSnapshot.VideoPlayerDesktopIsWideMode = (true, modifier.VideoPlayerDesktopIsWideMode);
+                        newModifierSnapshot.VideoPlayerDesktopIsWideMode =
+                            (true, modifier.VideoPlayerDesktopIsWideMode);
                     }
-                    
+
                     /*
                      * Mailbox Section
                      */
@@ -494,17 +493,17 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ApplicationMailboxTitle = (true, modifier.ApplicationMailboxTitle);
                     }
-                    
+
                     if (modifier.ApplicationMailboxIcon.HasChanged)
                     {
                         newModifierSnapshot.ApplicationMailboxIcon = (true, modifier.ApplicationMailboxIcon);
                     }
-                    
+
                     if (modifier.DisplayMailboxOnDesktop.HasChanged)
                     {
                         newModifierSnapshot.DisplayMailboxOnDesktop = (true, modifier.DisplayMailboxOnDesktop);
                     }
-                    
+
                     /*
                      * Entry Browser Section
                      */
@@ -521,14 +520,15 @@ namespace NewSafetyHelp.CustomCampaignSystem
 
                     if (modifier.ApplicationEntryBrowserTitle.HasChanged)
                     {
-                        newModifierSnapshot.ApplicationEntryBrowserTitle = (true, modifier.ApplicationEntryBrowserTitle);
+                        newModifierSnapshot.ApplicationEntryBrowserTitle =
+                            (true, modifier.ApplicationEntryBrowserTitle);
                     }
-                    
+
                     if (modifier.ApplicationEntryBrowserIcon.HasChanged)
                     {
                         newModifierSnapshot.ApplicationEntryBrowserIcon = (true, modifier.ApplicationEntryBrowserIcon);
                     }
-                    
+
 
                     /*
                      * Options Section
@@ -548,7 +548,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ApplicationOptionsTitle = (true, modifier.ApplicationOptionsTitle);
                     }
-                    
+
                     if (modifier.ApplicationOptionsIcon.HasChanged)
                     {
                         newModifierSnapshot.ApplicationOptionsIcon = (true, modifier.ApplicationOptionsIcon);
@@ -572,7 +572,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ApplicationArtbookTitle = (true, modifier.ApplicationArtbookTitle);
                     }
-                    
+
                     if (modifier.ApplicationArtbookIcon.HasChanged)
                     {
                         newModifierSnapshot.ApplicationArtbookIcon = (true, modifier.ApplicationArtbookIcon);
@@ -583,7 +583,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ArtbookPages = (true, modifier.ArtbookPages);
                     }
-                    
+
                     /*
                      * Arcade Section
                      */
@@ -616,7 +616,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         newModifierSnapshot.ApplicationScorecardTitle = (true, modifier.ApplicationScorecardTitle);
                     }
-                    
+
                     if (modifier.ApplicationScorecardIcon.HasChanged)
                     {
                         newModifierSnapshot.ApplicationScorecardIcon = (true, modifier.ApplicationScorecardIcon);
@@ -699,7 +699,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
             // elements that come later have higher priority.
             foreach (ModifierSource modifierSource in customCampaign.ModifierSources)
             {
-                if (modifierSource == null 
+                if (modifierSource == null
                     || modifierSource.Modifiers == null
                     || modifierSource.Modifiers.Count == 0)
                 {
@@ -710,9 +710,9 @@ namespace NewSafetyHelp.CustomCampaignSystem
                 {
                     continue;
                 }
-                
+
                 (bool found, TValue value) modifierResult = GetModifierValueFromList(
-                    modifierSource.Modifiers, selector, predicate, 
+                    modifierSource.Modifiers, selector, predicate,
                     modifier => modifierSource.ModifierExtraSelectionCondition(modifier)
                                 && specialPredicate(modifier));
 
@@ -722,7 +722,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     selectedValue = modifierResult.value;
                 }
             }
-            
+
             return (foundModifier, selectedValue);
         }
 
@@ -744,7 +744,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
             {
                 return (false, default);
             }
-            
+
             foreach (CustomModifier modifier in modifierList)
             {
                 if (modifier == null)
@@ -759,7 +759,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     return (true, value);
                 }
             }
-            
+
             return (false, default);
         }
 
@@ -776,13 +776,13 @@ namespace NewSafetyHelp.CustomCampaignSystem
                 return;
             }
 
-            LoggingHelper.DebugLog(() => 
+            LoggingHelper.DebugLog(() =>
                 $"Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
 
             // Add all entries.
             foreach (EntryMetadata entryInCustomCampaign in customCampaign.EntriesOnlyInCampaign)
             {
-                LoggingHelper.DebugLog(() => 
+                LoggingHelper.DebugLog(() =>
                     $"Adding entry {entryInCustomCampaign.Name} to custom campaign.");
 
                 EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.ReferenceCopyEntry,
@@ -800,7 +800,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
         public static void ReplaceAllProvidedCampaignEntries(ref MonsterProfileList monsterProfileList)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
-            
+
             if (!InCustomCampaign || customCampaign == null)
             {
                 return;
@@ -844,7 +844,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         EntryManager.EntryManager.DeleteMonsterProfile(ref monsterProfileList.monsterProfiles,
                             null, entryFound.Name);
 
-                        LoggingHelper.DebugLog(() => 
+                        LoggingHelper.DebugLog(() =>
                             $"Deleting entry '{entryFound.Name}' in custom campaign.");
                     }
                     else // It exists, so replace it.
@@ -860,10 +860,9 @@ namespace NewSafetyHelp.CustomCampaignSystem
 
                         monsterProfileList.monsterProfiles[i] = entryFound.ReferenceCopyEntry;
 
-                        LoggingHelper.DebugLog(() => 
+                        LoggingHelper.DebugLog(() =>
                             $"Replacing entry {entryFound.Name} with custom entry in custom campaign.");
                     }
-                    
                 }
             }
         }

@@ -201,6 +201,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         };
 
         public string FinalCutsceneAudioPath = null;
+        
+        /*
+         * Caller Section
+         */
+        
+        public VariableChanged<bool> DisablePhoneStatic = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         /*
          * Cheats / Settings Section

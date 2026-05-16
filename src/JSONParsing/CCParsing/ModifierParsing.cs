@@ -275,6 +275,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string finalCutsceneAudioPath = null;
 
             /*
+             * Caller Section
+             */
+
+            VariableChanged<bool> disablePhoneStatic = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            /*
              * Cheats / Settings Section
              */
 
@@ -583,6 +592,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
                 ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
+            
+            /*
+             * Caller Section
+             */
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_phone_static", ref disablePhoneStatic);
 
             /*
              * Cheats / Settings
@@ -591,7 +606,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref showDefaultUIAccuracyText);
 
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
-            
+
             return new CustomModifier
             {
                 CustomCampaignName = customCampaignName,
@@ -669,6 +684,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FinalCutsceneAudioPath = finalCutsceneAudioPath,
                 FinalCutsceneAudio = finalCutsceneAudio,
                 FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
+                
+                DisablePhoneStatic = disablePhoneStatic,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

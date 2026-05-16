@@ -15,9 +15,9 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
 {
     public static class CallWindowStartPatches
     {
-        private static readonly FieldInfo FirstCaller = typeof(CallerController).
-            GetField("firstCaller", BindingFlags.NonPublic | BindingFlags.Instance);
-        
+        private static readonly FieldInfo FirstCaller =
+            typeof(CallerController).GetField("firstCaller", BindingFlags.NonPublic | BindingFlags.Instance);
+
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "OnEnable")]
         public static class OnEnablePatch
         {
@@ -26,16 +26,16 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
-            // ReSharper disable once UnusedParameter.Local
-            // ReSharper disable once RedundantAssignment
             private static bool Prefix(CallWindowBehavior __instance)
             {
                 __instance.answerButton.SetActive(true);
                 __instance.loadingText.SetActive(false);
 
-                if (!CustomCampaignGlobal.InCustomCampaign) // Main Campaign
+                // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
-                    if (GlobalVariables.callerControllerScript.currentCallerID + 1 <= GlobalVariables.callerControllerScript.callers.Length)
+                    if (GlobalVariables.callerControllerScript.currentCallerID + 1 <=
+                        GlobalVariables.callerControllerScript.callers.Length)
                     {
                         foreach (int downedNetworkCall in GlobalVariables.callerControllerScript.downedNetworkCalls)
                         {
@@ -43,32 +43,38 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                             {
                                 if (!GlobalVariables.isXmasDLC)
                                 {
-                                    GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.phoneCallWarped);
+                                    GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                                        .UISoundControllerScript.phoneCallWarped);
                                     return false;
                                 }
-                            
-                                GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.xmasPhoneCallWarped);
+
+                                GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                                    .UISoundControllerScript.xmasPhoneCallWarped);
                                 return false;
                             }
                         }
-                    
+
                         if (!GlobalVariables.isXmasDLC)
                         {
-                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.phoneCall);
+                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                                .UISoundControllerScript.phoneCall);
                         }
                         else
                         {
-                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.xmasPhoneCall);
+                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                                .UISoundControllerScript.xmasPhoneCall);
                         }
                     }
                     else if (!GlobalVariables.isXmasDLC)
                     {
-                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript
+                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                            .UISoundControllerScript
                             .phoneCall);
                     }
                     else
                     {
-                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript
+                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                            .UISoundControllerScript
                             .xmasPhoneCall);
                     }
                 }
@@ -82,24 +88,25 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     }
 
                     // Ringtone
-                    if (customCampaign.CustomRingtones != null 
+                    if (customCampaign.CustomRingtones != null
                         && customCampaign.CustomRingtones.Count > 0)
                     {
                         List<CustomRingtone> validRingtonesNormal = new List<CustomRingtone>();
                         List<CustomRingtone> validRingtonesGlitched = new List<CustomRingtone>();
 
                         // For each ringtone that is valid for this current day, attempt to find all valid.
-                        foreach (CustomRingtone customRingtone in customCampaign.CustomRingtones.Where(c => c.UnlockDay <= GlobalVariables.currentDay))
+                        foreach (CustomRingtone customRingtone in customCampaign.CustomRingtones.Where(c =>
+                                     c.UnlockDay <= GlobalVariables.currentDay))
                         {
                             // If we are only allowed to play on the unlock day.
                             // Then the unlock day must be equal to the current day.
-                            
-                            if (customRingtone.OnlyOnUnlockDay 
+
+                            if (customRingtone.OnlyOnUnlockDay
                                 && customRingtone.UnlockDay != GlobalVariables.currentDay)
                             {
                                 continue;
                             }
-                            
+
                             if (customRingtone.IsGlitchedVersion)
                             {
                                 validRingtonesGlitched.Add(customRingtone);
@@ -109,20 +116,24 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                                 validRingtonesNormal.Add(customRingtone);
                             }
                         }
-                        
+
                         // Now for each valid ringtone we try to pick one valid.
-                        GlobalVariables.UISoundControllerScript.phoneCall = RingtoneHelper.ReplacePhoneRingtoneIfValid(ref validRingtonesNormal,
+                        GlobalVariables.UISoundControllerScript.phoneCall = RingtoneHelper.ReplacePhoneRingtoneIfValid(
+                            ref validRingtonesNormal,
                             customCampaign.DoNotAccountDefaultRingtone, ref UISoundPatch.StartPatch.DefaultRingtone);
 
-                        GlobalVariables.UISoundControllerScript.phoneCallWarped = RingtoneHelper.ReplacePhoneRingtoneIfValid(ref validRingtonesGlitched,
-                            customCampaign.DoNotAccountDefaultRingtone, ref UISoundPatch.StartPatch.DefaultWarpedRingtone);
+                        GlobalVariables.UISoundControllerScript.phoneCallWarped =
+                            RingtoneHelper.ReplacePhoneRingtoneIfValid(ref validRingtonesGlitched,
+                                customCampaign.DoNotAccountDefaultRingtone,
+                                ref UISoundPatch.StartPatch.DefaultWarpedRingtone);
                     }
 
                     if (GlobalVariables.callerControllerScript.currentCallerID + 1 <=
                         GlobalVariables.callerControllerScript.callers.Length)
                     {
                         int currentCallerID = GlobalVariables.callerControllerScript.currentCallerID;
-                        int checkResult = CallerSkipping.GetCallersSkippedAmount(GlobalVariables.callerControllerScript);
+                        int checkResult =
+                            CallerSkipping.GetCallersSkippedAmount(GlobalVariables.callerControllerScript);
 
                         int callersLookedAhead = 1;
 
@@ -131,7 +142,7 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                             callersLookedAhead = checkResult + 1;
                         }
 
-                        if ((bool) FirstCaller.GetValue(GlobalVariables.callerControllerScript))
+                        if ((bool)FirstCaller.GetValue(GlobalVariables.callerControllerScript))
                         {
                             LoggingHelper.DebugLog("First caller of the day. Callers ahead will be set to 0.",
                                 LoggingHelper.LoggingCategory.RINGTONE);
@@ -145,55 +156,61 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                                 $"Check Result: '{checkResult}'. " +
                                 $"(Look ahead '{callersLookedAhead}').",
                             LoggingHelper.LoggingCategory.RINGTONE);
-                        
-                        CustomCCaller customCCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(callerToBeCalledID);
+
+                        CustomCCaller customCCaller =
+                            CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(callerToBeCalledID);
 
                         if (customCCaller == null)
                         {
                             LoggingHelper.ErrorLog(
-                                "Custom campaign caller was null. Unable of checking for downed network parameter." +
-                                " Calling original function.");
+                                "Custom campaign caller was null. Unable of checking for downed network parameter. " +
+                                "Calling original function.");
                             return true;
                         }
-                        
+
                         // In case the intermission music is playing, we stop it.
                         if (CustomCampaignGlobal.InCustomCampaign)
                         {
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
                         }
-                        
-                        if (!GlobalVariables.isXmasDLC 
+
+                        if (!GlobalVariables.isXmasDLC
                             && customCCaller.DownedNetworkCaller)
                         {
                             LoggingHelper.DebugLog("Custom caller is set to play warped phone call sound " +
                                                    $"(INFO: Downed Network? {customCCaller.DownedNetworkCaller}; " +
                                                    $"Caller Name: {customCCaller.CallerName}).");
-                            
-                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.phoneCallWarped);
+
+                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                                .UISoundControllerScript.phoneCallWarped);
                             return false;
                         }
-                    
+
                         if (!GlobalVariables.isXmasDLC)
                         {
-                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.phoneCall);
+                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                                .UISoundControllerScript.phoneCall);
                         }
                         else
                         {
-                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript.xmasPhoneCall);
+                            GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                                .UISoundControllerScript.xmasPhoneCall);
                         }
                     }
                     else if (!GlobalVariables.isXmasDLC)
                     {
-                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript
+                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                            .UISoundControllerScript
                             .phoneCall);
                     }
                     else
                     {
-                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables.UISoundControllerScript
+                        GlobalVariables.UISoundControllerScript.PlayUISoundLooping(GlobalVariables
+                            .UISoundControllerScript
                             .xmasPhoneCall);
                     }
                 }
-                
+
                 return false; // Skip function with false.
             }
         }

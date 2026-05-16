@@ -85,8 +85,9 @@ namespace NewSafetyHelp.Callers
                 /*
                  * Add Custom Callers / Campaign Callers.
                  */
-
-                if (!CustomCampaignGlobal.InCustomCampaign) // If we are not in a custom campaign. (Main Campaign)
+                
+                // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign) 
                 {
                     foreach (KeyValuePair<int, CustomCCaller> customCaller in GlobalParsingVariables.CustomCallersMainGame)
                     {
@@ -98,8 +99,8 @@ namespace NewSafetyHelp.Callers
 
                         if (customCaller.Value.InCustomCampaign)
                         {
-                            LoggingHelper.WarningLog("Custom Caller is marked as custom campaign but is also main campaign!" +
-                                                     " Skipping.");
+                            LoggingHelper.WarningLog("Custom Caller is marked as custom campaign but is also main campaign! " +
+                                                     "Skipping.");
                             continue;
                         }
 
@@ -185,7 +186,8 @@ namespace NewSafetyHelp.Callers
                         __instance.callers[customCaller.Key] = newCustomCaller;
                     }
                 }
-                else // We are in a custom campaign.
+                // Custom Campaign
+                else
                 {
                     // Attempt to hijack caller list.
 
