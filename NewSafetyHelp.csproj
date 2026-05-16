@@ -252,7 +252,13 @@
     <Folder Include="src\Audio\EmbeddedAudio\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="src\ImportFiles\EmbeddedImages\" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="src\Audio\EmbeddedAudio\*.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="src\ImportFiles\EmbeddedImages\*.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
