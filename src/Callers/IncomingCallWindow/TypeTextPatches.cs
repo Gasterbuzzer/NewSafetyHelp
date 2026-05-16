@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Reflection;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
@@ -17,7 +16,6 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
             /// <summary>
             /// Patches the type text function to not cut off letters at the end.
             /// </summary>
-            /// <param name="__originalMethod"> Method which was called. </param>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="profile"> Profile of the caller. </param>
             /// <param name="skip"> If to skip. (By default: False)</param>
@@ -25,7 +23,7 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
             // ReSharper disable once UnusedMember.Local
             // ReSharper disable once UnusedParameter.Local
             // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MethodBase __originalMethod, CallWindowBehavior __instance, ref IEnumerator __result,
+            private static bool Prefix(CallWindowBehavior __instance, ref IEnumerator __result,
                 ref CallerProfile profile, ref bool skip)
             {
                 __result = TypeTextCoroutine(__instance, profile, skip);
@@ -94,18 +92,6 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     if (GlobalVariables.arcadeMode)
                     {
                         GlobalVariables.callerControllerScript.StartCallTimerRoutine();
-                    }
-
-                    // Timed caller start.
-                    if (CustomCampaignGlobal.InCustomCampaign)
-                    {
-                        CustomCCaller currentCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
-
-                        if (currentCaller != null
-                            && currentCaller.IsTimedCaller)
-                        {
-                            TimerCallerHelper.StartTimedCallerTimer(currentCaller.TimedCallerDuration);
-                        }
                     }
                 }
                 else
