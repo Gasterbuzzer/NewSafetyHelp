@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -228,7 +229,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                     Screen.SetResolution(customCampaign.SavedScreenWidth, customCampaign.SavedScreenHeight,
                         customCampaign.SavedFullScreenToggle, customCampaign.SavedRefreshRate);
                     
-                    if (NewSafetyHelpMainClass.Vsync.Value)
+                    if (GlobalPreferences.Vsync.Value)
                     {
                         QualitySettings.vSyncCount = 1;
                     }

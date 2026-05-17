@@ -7,7 +7,7 @@ namespace NewSafetyHelp.InGameSettings
     {
         public static bool OnDebugLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowDebugLogs.Value = toggleValue;
+            GlobalPreferences.ShowDebugLogs.Value = toggleValue;
             
             LoggingHelper.InfoLog($"Debug Log Toggle changed to '{toggleValue}'.");
             
@@ -16,86 +16,86 @@ namespace NewSafetyHelp.InGameSettings
         
         public static bool OnSkipComputerSceneToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.SkipComputerScene.Value = toggleValue;
+            GlobalPreferences.SkipComputerScene.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnShowSkippedCallerLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value = toggleValue;
+            GlobalPreferences.ShowSkippedCallerDebugLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnThemeLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowThemeDebugLog.Value = toggleValue;
+            GlobalPreferences.ShowThemeDebugLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnRingtoneLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value = toggleValue;
+            GlobalPreferences.ShowRingtoneDebugLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnEmailLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowEmailDebugLog.Value = toggleValue;
+            GlobalPreferences.ShowEmailDebugLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnVideoLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowVideoDebugLog.Value = toggleValue;
+            GlobalPreferences.ShowVideoDebugLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnSkipLoadingScreenToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.SkipLoadingScreen.Value = toggleValue;
+            GlobalPreferences.SkipLoadingScreen.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnEntryLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowEntryDebugLog.Value = toggleValue;
+            GlobalPreferences.ShowEntryDebugLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnTextFileLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowTextFileDebugLog.Value = toggleValue;
+            GlobalPreferences.ShowTextFileDebugLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnCutsceneLogToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.ShowCutsceneLog.Value = toggleValue;
+            GlobalPreferences.ShowCutsceneLog.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnSkipDayClockInToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.SkipDayClockIn.Value = toggleValue;
+            GlobalPreferences.SkipDayClockIn.Value = toggleValue;
             
             return toggleValue;
         }
         
         public static bool OnVsyncToggle(bool toggleValue)
         {
-            NewSafetyHelpMainClass.Vsync.Value = toggleValue;
+            GlobalPreferences.Vsync.Value = toggleValue;
             
-            if (NewSafetyHelpMainClass.Vsync.Value)
+            if (GlobalPreferences.Vsync.Value)
             {
                 QualitySettings.vSyncCount = 1;
             }

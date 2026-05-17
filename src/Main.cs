@@ -1,11 +1,11 @@
 ﻿using MelonLoader;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
 using NewSafetyHelp.HelperFunctions;
+using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -18,57 +18,10 @@ namespace NewSafetyHelp
 {
     public class NewSafetyHelpMainClass : MelonMod
     {
-        // Category for Entries (So that they can be saved upon quitting the game)
-        public static MelonPreferences_Category PersistantEntrySave;
-
-        private static MelonPreferences_Category mainModSettings;
-
-        public static MelonPreferences_Entry<bool> Vsync;
-
-        public static MelonPreferences_Entry<bool> SkipComputerScene; // If to skip the initial computer scene.
-
-        public static MelonPreferences_Entry<bool> SkipLoadingScreen; // If to skip the loading texts part.
-
-        public static MelonPreferences_Entry<bool> SkipDayClockIn; // If to skip the clock in part.
-
-        public static MelonPreferences_Entry<bool> ShowDebugLogs; // If to show the debug logs at all.
-
-        // If to show the skipped callers debug log.
-        public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog;
-
-        public static MelonPreferences_Entry<bool> ShowThemeDebugLog; // If to show the logs for theme info.
-        public static MelonPreferences_Entry<bool> ShowRingtoneDebugLog; // If to show the logs for ringtone info.
-        public static MelonPreferences_Entry<bool> ShowEmailDebugLog; // If to show the logs for email info.
-        public static MelonPreferences_Entry<bool> ShowVideoDebugLog; // If to show the logs for video info.
-        public static MelonPreferences_Entry<bool> ShowEntryDebugLog; // If to show the logs for entry info.
-        public static MelonPreferences_Entry<bool> ShowTextFileDebugLog; // If to show the logs for text file info.
-        public static MelonPreferences_Entry<bool> ShowCutsceneLog; // If to show the logs for cutscenes info.
-
         public override void OnInitializeMelon()
         {
-            // Entries are created when needed.
-            PersistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
-
-            // Settings
-            mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
-
-            Vsync = mainModSettings.CreateEntry("Vsync", false);
-
-            SkipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
-
-            SkipLoadingScreen = mainModSettings.CreateEntry("SkipLoadingScreen", false);
-
-            SkipDayClockIn = mainModSettings.CreateEntry("SkipDayClockIn", false);
-
-            ShowDebugLogs = mainModSettings.CreateEntry("ShowDebugLogs", false);
-            ShowSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);
-            ShowThemeDebugLog = mainModSettings.CreateEntry("ShowThemeDebugLog", false);
-            ShowRingtoneDebugLog = mainModSettings.CreateEntry("ShowRingtoneDebugLog", false);
-            ShowEmailDebugLog = mainModSettings.CreateEntry("ShowEmailDebugLog", false);
-            ShowVideoDebugLog = mainModSettings.CreateEntry("ShowVideoDebugLog", false);
-            ShowEntryDebugLog = mainModSettings.CreateEntry("ShowEntryDebugLog", false);
-            ShowTextFileDebugLog = mainModSettings.CreateEntry("ShowTextFileDebugLog", false);
-            ShowCutsceneLog = mainModSettings.CreateEntry("ShowCutsceneLog", false);
+            // Preferences
+            GlobalPreferences.InitializeMelonPreferences();
 
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;
@@ -79,10 +32,11 @@ namespace NewSafetyHelp
 
         public override void OnLateInitializeMelon()
         {
-            // We delete all temp files and recreate them later. (Makes sure we are up to date and doesn't leave residue).
+            // We delete all temp files and recreate them later.
+            // (Makes sure we are up to date and doesn't leave residue).
             EmbedHelpers.DeleteTempFiles();
 
-            if (SkipComputerScene.Value)
+            if (GlobalPreferences.SkipComputerScene.Value)
             {
                 SceneManager.LoadScene("MainMenuScene");
             }
@@ -248,36 +202,6 @@ namespace NewSafetyHelp
 
             isInitializedMainOnce = true;
             LoggingHelper.InfoLog("Loaded all '.json' files successfully!", consoleColor: ConsoleColor.Green);
-        }
-    }
-
-    // Patches the class when it opens to also update the monster list, since due to our coroutine's problem.
-    [HarmonyLib.HarmonyPatch(typeof(OptionsExecutable), "Open")]
-    public static class UpdateListDesktop
-    {
-        private static readonly MethodInfo StartMethod =
-            typeof(EntryCanvasStandaloneBehavior).GetMethod("Start",
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-        /// <summary>
-        /// Update the entry canvas list when opening.
-        /// </summary>
-        /// <param name="__instance"> Caller of function. </param>
-        // ReSharper disable once UnusedMember.Local
-        // ReSharper disable once InconsistentNaming
-        private static void Prefix(OptionsExecutable __instance)
-        {
-            // We are opening the EntryBrowser, so we update the list.
-            if (__instance.myPopup.name == "EntryCanvasStandalone")
-            {
-                if (StartMethod == null)
-                {
-                    LoggingHelper.ReflectionError(nameof(StartMethod));
-                    return;
-                }
-
-                StartMethod.Invoke(__instance.myPopup.GetComponent<EntryCanvasStandaloneBehavior>(), null);
-            }
         }
     }
 }

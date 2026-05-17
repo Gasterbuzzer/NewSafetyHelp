@@ -22,13 +22,13 @@ namespace NewSafetyHelp.Callers
 
         private static readonly MethodInfo GetRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-        
+
         private static readonly FieldInfo LastDayNum = typeof(CallerController).GetField("lastDayNum",
             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-        
+
         private static readonly FieldInfo CallerAudioSource = typeof(CallerController).GetField("callerAudioSource",
             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "Start")]
         public static class AddCustomCampaign
         {
@@ -46,9 +46,9 @@ namespace NewSafetyHelp.Callers
 
                 __instance.arcadeMode = GlobalVariables.arcadeMode;
 
-                if (LastDayNum == null 
-                    || CallerAudioSource == null 
-                    || GetRandomPicMethod == null 
+                if (LastDayNum == null
+                    || CallerAudioSource == null
+                    || GetRandomPicMethod == null
                     || GetRandomClip == null)
                 {
                     LoggingHelper.ReflectionError(nameof(LastDayNum), nameof(CallerAudioSource),
@@ -81,15 +81,16 @@ namespace NewSafetyHelp.Callers
                     LastDayNum.SetValue(__instance, __instance.xmasLastDay);
                     __instance.downedNetworkCalls = __instance.xmasDownedNetworkCalls;
                 }
-                
+
                 /*
                  * Add Custom Callers / Campaign Callers.
                  */
-                
+
                 // Main Campaign
-                if (!CustomCampaignGlobal.InCustomCampaign) 
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
-                    foreach (KeyValuePair<int, CustomCCaller> customCaller in GlobalParsingVariables.CustomCallersMainGame)
+                    foreach (KeyValuePair<int, CustomCCaller> customCaller in GlobalParsingVariables
+                                 .CustomCallersMainGame)
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {
@@ -99,8 +100,9 @@ namespace NewSafetyHelp.Callers
 
                         if (customCaller.Value.InCustomCampaign)
                         {
-                            LoggingHelper.WarningLog("Custom Caller is marked as custom campaign but is also main campaign! " +
-                                                     "Skipping.");
+                            LoggingHelper.WarningLog(
+                                "Custom Caller is marked as custom campaign but is also main campaign! " +
+                                "Skipping.");
                             continue;
                         }
 
@@ -128,9 +130,10 @@ namespace NewSafetyHelp.Callers
 
                             if (foundMonster == null)
                             {
-                                LoggingHelper.WarningLog($"Provided Monster name '{customCaller.Value.MonsterNameAttached}'" +
-                                                         $" for custom caller {customCaller.Key} was not found!" +
-                                                         " Thus will not have any monster entry.");
+                                LoggingHelper.WarningLog(
+                                    $"Provided Monster name '{customCaller.Value.MonsterNameAttached}'" +
+                                    $" for custom caller {customCaller.Key} was not found!" +
+                                    " Thus will not have any monster entry.");
                                 callerProfile.callerMonster = null;
                             }
                             else
@@ -146,8 +149,9 @@ namespace NewSafetyHelp.Callers
 
                             if (foundMonster == null)
                             {
-                                LoggingHelper.WarningLog($"Provided monster ID for custom caller {customCaller.Key} was not found!" +
-                                                         $" Thus will not have any monster entry.");
+                                LoggingHelper.WarningLog(
+                                    $"Provided monster ID for custom caller {customCaller.Key} was not found!" +
+                                    $" Thus will not have any monster entry.");
                                 callerProfile.callerMonster = null;
                             }
                             else
@@ -220,13 +224,15 @@ namespace NewSafetyHelp.Callers
                         {
                             if (AudioImport.CurrentLoadingAudios.Count > 0)
                             {
-                                LoggingHelper.InfoLog($"Custom Caller '{customCallerCC.CallerName}' is still loading its audio." +
-                                                      " Using fallback for now.");
+                                LoggingHelper.InfoLog(
+                                    $"Custom Caller '{customCallerCC.CallerName}' is still loading its audio." +
+                                    " Using fallback for now.");
                             }
                             else // No Loading Audio
                             {
-                                LoggingHelper.WarningLog($"Custom Caller '{customCallerCC.CallerName}' does not have any valid audio clip!" +
-                                                         " Using fallback instead of real audio.");
+                                LoggingHelper.WarningLog(
+                                    $"Custom Caller '{customCallerCC.CallerName}' does not have any valid audio clip!" +
+                                    " Using fallback instead of real audio.");
                             }
 
                             newProfile.callerClip = (RichAudioClip)GetRandomClip.Invoke(__instance, new object[] { });
@@ -259,9 +265,10 @@ namespace NewSafetyHelp.Callers
 
                             if (foundMonster == null)
                             {
-                                LoggingHelper.WarningLog($"Provided Monster name '{customCallerCC.MonsterNameAttached}'" +
-                                                         $" for custom caller {customCallerCC.CallerName} was not found!" +
-                                                         " Thus will not have any monster entry.");
+                                LoggingHelper.WarningLog(
+                                    $"Provided Monster name '{customCallerCC.MonsterNameAttached}'" +
+                                    $" for custom caller {customCallerCC.CallerName} was not found!" +
+                                    " Thus will not have any monster entry.");
                                 newProfile.callerMonster = null;
                             }
                             else
@@ -277,8 +284,9 @@ namespace NewSafetyHelp.Callers
 
                             if (foundMonster == null)
                             {
-                                LoggingHelper.WarningLog($"Provided monster ID for custom caller {customCallerCC.CallerName} was not found!" +
-                                                         " Thus will not have any monster entry.");
+                                LoggingHelper.WarningLog(
+                                    $"Provided monster ID for custom caller {customCallerCC.CallerName} was not found!" +
+                                    " Thus will not have any monster entry.");
                                 newProfile.callerMonster = null;
                             }
                             else
@@ -297,12 +305,13 @@ namespace NewSafetyHelp.Callers
                         newProfile.increaseTier = customCallerCC.CallerIncreasesTier;
 
                         // Sanity check if we actually have a valid order provided.
-                        if (customCallerCC.OrderInCampaign < 0 
+                        if (customCallerCC.OrderInCampaign < 0
                             || customCallerCC.OrderInCampaign >= currentCustomCampaign.CustomCallersInCampaign.Count)
                         {
-                            LoggingHelper.ErrorLog("Provided order is not valid! (Might be missing a caller(s) in between callers!)" +
-                                                   $" (Info: Provided Order: {customCallerCC.OrderInCampaign}; " +
-                                                   $"CampaignSize: {currentCustomCampaign.CustomCallersInCampaign.Count})");
+                            LoggingHelper.ErrorLog(
+                                "Provided order is not valid! (Might be missing a caller(s) in between callers!)" +
+                                $" (Info: Provided Order: {customCallerCC.OrderInCampaign}; " +
+                                $"CampaignSize: {currentCustomCampaign.CustomCallersInCampaign.Count})");
                         }
                         else
                         {
@@ -352,8 +361,9 @@ namespace NewSafetyHelp.Callers
                             }
                             else
                             {
-                                LoggingHelper.ErrorLog("Provided original caller for consequence caller does not exist!" +
-                                                       " Check that you have the correct amount of callers!");
+                                LoggingHelper.ErrorLog(
+                                    "Provided original caller for consequence caller does not exist!" +
+                                    " Check that you have the correct amount of callers!");
                             }
                         }
                     }
@@ -375,7 +385,7 @@ namespace NewSafetyHelp.Callers
         {
             private static readonly FieldInfo LastDayNumField = typeof(CallerController).GetField("lastDayNum",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            
+
             /// <summary>
             /// Changes the function to also return if the last caller of the day to check for custom callers.
             /// </summary>
@@ -429,9 +439,9 @@ namespace NewSafetyHelp.Callers
                     // If the last caller of the day, this will result in true.
                     __result = customCCallerFound.LastDayCaller;
 
-                    LoggingHelper.DebugLog(() => 
+                    LoggingHelper.DebugLog(() =>
                         $"Last caller of day: '{customCCallerFound.LastDayCaller}'. " +
-                                           $"Caller name: '{customCCallerFound.CallerName}'.");
+                        $"Caller name: '{customCCallerFound.CallerName}'.");
                 }
 
                 return false; // Skip the original function
@@ -443,8 +453,8 @@ namespace NewSafetyHelp.Callers
         {
             private static readonly FieldInfo OnIncreasedTierEvent =
                 typeof(EntryUnlockController).GetField("OnIncreasedTierEvent",
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             /// <summary>
             /// Changes the function increase tier patch to work with better with custom campaigns.
             /// </summary>
@@ -462,7 +472,7 @@ namespace NewSafetyHelp.Callers
                 }
                 else
                 {
-                    Delegate del = (Delegate) OnIncreasedTierEvent.GetValue(__instance);
+                    Delegate del = (Delegate)OnIncreasedTierEvent.GetValue(__instance);
 
                     if (del != null)
                     {
@@ -492,11 +502,14 @@ namespace NewSafetyHelp.Callers
         {
             private static readonly FieldInfo GivenWarning = typeof(CallerController).GetField("givenWarning",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+
             private static readonly FieldInfo FirstCaller = typeof(CallerController).GetField("firstCaller",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-            private static readonly MethodInfo AnswerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall",
+
+            private static readonly MethodInfo AnswerDynamicCall = typeof(CallerController).GetMethod(
+                "AnswerDynamicCall",
                 BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-            
+
             /// <summary>
             /// Patches answer caller to have more features for custom campaigns.
             /// </summary>
@@ -506,8 +519,8 @@ namespace NewSafetyHelp.Callers
             {
                 LoggingHelper.DebugLog("Called 'AnswerCaller' method.");
 
-                if (GivenWarning == null 
-                    || AnswerDynamicCall == null 
+                if (GivenWarning == null
+                    || AnswerDynamicCall == null
                     || FirstCaller == null)
                 {
                     LoggingHelper.ReflectionError(nameof(GivenWarning), nameof(AnswerDynamicCall),
@@ -609,17 +622,17 @@ namespace NewSafetyHelp.Callers
                     // not DLC, threshold correct,
                     // current day is after day 1 and no save immunity.
                     // And no game over immunity by the custom campaign.
-                    if (!GlobalVariables.arcadeMode 
-                        && __instance.IsLastCallOfDay() 
-                        && !GlobalVariables.isXmasDLC 
-                        && !__instance.ScoreIsPassing(customCampaign.GameOverThreshold) 
-                        && GlobalVariables.currentDay > 1 
+                    if (!GlobalVariables.arcadeMode
+                        && __instance.IsLastCallOfDay()
+                        && !GlobalVariables.isXmasDLC
+                        && !__instance.ScoreIsPassing(customCampaign.GameOverThreshold)
+                        && GlobalVariables.currentDay > 1
                         && GlobalVariables.saveManagerScript.savedImmunityToggle == 0
                         && !customCampaign.GameOverImmunity)
                     {
                         __instance.TriggerGameOver();
                     }
-                    else if (!__instance.ScoreIsPassing(customCampaign.WarningThreshold) 
+                    else if (!__instance.ScoreIsPassing(customCampaign.WarningThreshold)
                              && !(bool)GivenWarning.GetValue(__instance)) // OLD: !__instance.givenWarning
                     {
                         LoggingHelper.DebugLog("(Warning) Caller checks started.");
@@ -642,7 +655,7 @@ namespace NewSafetyHelp.Callers
                             else
                             {
                                 // If we go past the 6 calls. We default to 7.
-                                callersTodayRequiredWarning = 7; 
+                                callersTodayRequiredWarning = 7;
                             }
                         }
 
@@ -661,8 +674,8 @@ namespace NewSafetyHelp.Callers
                             {
                                 // If we have warning caller without a day attached,
                                 // we use this one before trying to find a more fitting one.
-                                if (customCampaign.CustomWarningCallersInCampaign.Exists(
-                                        warningCaller => warningCaller.WarningCallDay <= -1))
+                                if (customCampaign.CustomWarningCallersInCampaign.Exists(warningCaller =>
+                                        warningCaller.WarningCallDay <= -1))
                                 {
                                     List<CustomCCaller> allWarningCallsWithoutDay =
                                         customCampaign.CustomWarningCallersInCampaign.FindAll(warningCaller =>
@@ -671,8 +684,8 @@ namespace NewSafetyHelp.Callers
                                     if (allWarningCallsWithoutDay.Count > 0)
                                     {
                                         // Choose a random one from the available list.
-                                        warningCCallerToday = 
-                                            allWarningCallsWithoutDay[Random.Range(0, allWarningCallsWithoutDay.Count)]; 
+                                        warningCCallerToday =
+                                            allWarningCallsWithoutDay[Random.Range(0, allWarningCallsWithoutDay.Count)];
                                     }
                                 }
 
@@ -683,8 +696,8 @@ namespace NewSafetyHelp.Callers
                                 if (allWarningCallsForToday.Count > 0)
                                 {
                                     // Choose a random one from the available list.
-                                    warningCCallerToday = 
-                                        allWarningCallsForToday[Random.Range(0, allWarningCallsForToday.Count)]; 
+                                    warningCCallerToday =
+                                        allWarningCallsForToday[Random.Range(0, allWarningCallsForToday.Count)];
                                 }
                             }
 
@@ -786,7 +799,7 @@ namespace NewSafetyHelp.Callers
                                 new object[]
                                 {
                                     __instance.warningCall
-                                }); 
+                                });
                             GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);   
                         }
                         else
@@ -801,7 +814,7 @@ namespace NewSafetyHelp.Callers
                 }
 
                 // Since we have duplicated copies of this, we just have a flag called if that section is called.
-                if (normalCallerAfterCheck) 
+                if (normalCallerAfterCheck)
                 {
                     if (!(bool)FirstCaller.GetValue(__instance) && !__instance.arcadeMode) // !__instance.firstCaller
                     {
@@ -887,7 +900,7 @@ namespace NewSafetyHelp.Callers
                                 }
                             }
                         }
-                        
+
                         if (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)
                         {
                             GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
@@ -905,8 +918,9 @@ namespace NewSafetyHelp.Callers
 
                         if (delayedLargeWindowDisplayRoutine == null || waitTillCallEndRoutine == null)
                         {
-                            LoggingHelper.ErrorLog("'delayedLargeWindowDisplayRoutine' or 'WaitTillCallEndRoutine' is null." +
-                                                   " Calling original function.");
+                            LoggingHelper.ErrorLog(
+                                "'delayedLargeWindowDisplayRoutine' or 'WaitTillCallEndRoutine' is null." +
+                                " Calling original function.");
                             return true;
                         }
 
@@ -975,15 +989,15 @@ namespace NewSafetyHelp.Callers
                         if (waitTimeBetweenCallersCustomCampaign != null)
                         {
                             waitTimeBetweenCallers = waitTimeBetweenCallersCustomCampaign.Value;
-                        } 
+                        }
                     }
-                    
+
                     LoggingHelper.DebugLog($"Wait time has been chosen as: '{waitTimeBetweenCallers}'.");
                 }
-                
+
                 yield return new WaitForSeconds(waitTimeBetweenCallers);
 
-                if (GlobalVariables.mainCanvasScript != null 
+                if (GlobalVariables.mainCanvasScript != null
                     && GlobalVariables.mainCanvasScript.callWindow != null)
                 {
                     GlobalVariables.mainCanvasScript.callWindow.SetActive(true);

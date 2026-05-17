@@ -124,49 +124,49 @@ namespace NewSafetyHelp.CustomDesktop
                     // Add vsync option
                     InGameSettingHelper.CreateNewToggle(InGameSettingHelper.GetVideoOptionsSection(),
                         ToggleButtonFunctions.OnVsyncToggle,
-                        "Enable VSYNC", NewSafetyHelpMainClass.Vsync.Value);
+                        "Enable VSYNC", GlobalPreferences.Vsync.Value);
 
                     GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings",
                         "Mod settings to show more information and also allow skipping the initial load scene.");
 
                     InGameSettingHelper.CreateNewToggle(developerSettings,
                         ToggleButtonFunctions.OnSkipComputerSceneToggle,
-                        "Skip 3D Computer Scene on Startup", NewSafetyHelpMainClass.SkipComputerScene.Value);
+                        "Skip 3D Computer Scene on Startup", GlobalPreferences.SkipComputerScene.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings,
                         ToggleButtonFunctions.OnSkipLoadingScreenToggle,
-                        "Skip Desktop Loading Screen", NewSafetyHelpMainClass.SkipLoadingScreen.Value);
+                        "Skip Desktop Loading Screen", GlobalPreferences.SkipLoadingScreen.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnSkipDayClockInToggle,
-                        "Skip Clock In Screen", NewSafetyHelpMainClass.SkipDayClockIn.Value);
+                        "Skip Clock In Screen", GlobalPreferences.SkipDayClockIn.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnDebugLogToggle,
-                        "Enable Debug Logs", NewSafetyHelpMainClass.ShowDebugLogs.Value);
+                        "Enable Debug Logs", GlobalPreferences.ShowDebugLogs.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings,
                         ToggleButtonFunctions.OnShowSkippedCallerLogToggle,
-                        "Enable Skipped Callers Logs", NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value);
+                        "Enable Skipped Callers Logs", GlobalPreferences.ShowSkippedCallerDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnThemeLogToggle,
-                        "Enable Theme Logs", NewSafetyHelpMainClass.ShowThemeDebugLog.Value);
+                        "Enable Theme Logs", GlobalPreferences.ShowThemeDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnRingtoneLogToggle,
-                        "Enable Ringtone Logs", NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value);
+                        "Enable Ringtone Logs", GlobalPreferences.ShowRingtoneDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEmailLogToggle,
-                        "Enable Email Logs", NewSafetyHelpMainClass.ShowEmailDebugLog.Value);
+                        "Enable Email Logs", GlobalPreferences.ShowEmailDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnVideoLogToggle,
-                        "Enable Video Logs", NewSafetyHelpMainClass.ShowVideoDebugLog.Value);
+                        "Enable Video Logs", GlobalPreferences.ShowVideoDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnTextFileLogToggle,
-                        "Enable Text File Logs", NewSafetyHelpMainClass.ShowTextFileDebugLog.Value);
+                        "Enable Text File Logs", GlobalPreferences.ShowTextFileDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnEntryLogToggle,
-                        "Enable Entry Logs", NewSafetyHelpMainClass.ShowEntryDebugLog.Value);
+                        "Enable Entry Logs", GlobalPreferences.ShowEntryDebugLog.Value);
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnCutsceneLogToggle,
-                        "Enable Cutscene Logs", NewSafetyHelpMainClass.ShowCutsceneLog.Value);
+                        "Enable Cutscene Logs", GlobalPreferences.ShowCutsceneLog.Value);
 
                     InGameSettingHelper.CreateButton(developerSettings, (e) =>
                     {
@@ -678,7 +678,7 @@ namespace NewSafetyHelp.CustomDesktop
                     yield return null;
                 }
 
-                if (NewSafetyHelpMainClass.SkipLoadingScreen.Value)
+                if (GlobalPreferences.SkipLoadingScreen.Value)
                 {
                     GlobalVariables.fade.FadeOut(0.0001f);
                     yield break;

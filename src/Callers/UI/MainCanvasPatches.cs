@@ -7,6 +7,7 @@ using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomDesktop;
+using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -272,7 +273,7 @@ namespace NewSafetyHelp.Callers.UI
                     GlobalVariables.fade.FadeOut(1f);
                 }
 
-                if (NewSafetyHelpMainClass.SkipDayClockIn.Value)
+                if (GlobalPreferences.SkipDayClockIn.Value)
                 {
                     GlobalVariables.fade.FadeIn(1f);
 
@@ -286,7 +287,7 @@ namespace NewSafetyHelp.Callers.UI
 
                 if (!GlobalVariables.arcadeMode)
                 {
-                    if (!NewSafetyHelpMainClass.SkipDayClockIn.Value)
+                    if (!GlobalPreferences.SkipDayClockIn.Value)
                     {
                         yield return new WaitForSeconds(6f);
 

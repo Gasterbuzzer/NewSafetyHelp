@@ -71,7 +71,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         // Date and Username
         public string DesktopUsernameText = "";
-        
+
         public int DesktopDateStartYear = -1;
         public int DesktopDateStartMonth = -1;
         public int DesktopDateStartDay = -1;
@@ -89,11 +89,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public int SavedCallerArrayLength = 0;
 
         public List<bool> SavedCallersCorrectAnswer = new List<bool>();
-            
+
         // Special Saves
         public int SavedGameFinished = 0;
         public int SavedGameFinishedDisplay = 0;
-        
+
         /*
          * Options Saved
          */
@@ -105,17 +105,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         // Screen Effects
         public bool SavedCRTToggle = true; // If to use the CRT Screen effect.
-        
+
         // Screen Options
         public bool SavedFullScreenToggle = true; // If fullscreen is enabled.
         public int SavedScreenHeight = 1080; // Screen Height
         public int SavedScreenWidth = 1920; // Screen Width
         public int SavedRefreshRate = 180; // Screen Refresh Rate
-        
+
         // Text Settings
         public bool SavedDyslexiaToggle = false;
         public float SavedTextSizeMultiplier = 1.0f;
-        
+
         // Phobias
         public bool SavedSpiderToggle = false;
         public bool SavedInsectToggle = false;
@@ -124,7 +124,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public bool SavedWatchToggle = false;
         public bool SavedDogToggle = false;
         public bool SavedTightToggle = false;
-        
+
         // Saved Cheat Options
         public bool SavedImmunityToggle = false;
         public bool SavedAccuracyToggle = false;
@@ -133,7 +133,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // Video Cutscenes
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.
         public string GameOverCutsceneVideoName = ""; // Video shown at game over.
-        
+
         public List<CustomCutscene> CustomCutscenes = new List<CustomCutscene>();
 
         // Music
@@ -142,9 +142,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public bool RemoveDefaultMusic = false; // If to remove the default music from the game.
 
         public List<CustomMusic> CustomMusic = new List<CustomMusic>(); // List of custom music.
-        
+
         public List<CustomMusic> CustomIntermissionMusic = new List<CustomMusic>(); // List of intermission music.
-        
+
         // Wait Time between callers
         // (1 element => Always this wait time;
         // 2 elements => Between those two times;
@@ -188,61 +188,65 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         // Video Programs
         public bool DisableAllDefaultVideos = true;
-        
+
         public List<CustomVideo> CustomVideos = new List<CustomVideo>();
-        
+
         // Text Files
         public List<CustomTextFile> CustomTextProgramFiles = new List<CustomTextFile>();
 
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> SavedDayScores = new List<float>();
-        
+
         // Themes
 
         public bool DisablePickingThemeOption = false; // If true, it will hide the option to set the theme.
-        
+
         // If a default theme is given, it will only be applied once, if overwritten.
         // Too bad, we allow our users more freedom.
-        public bool DefaultThemeAppliedOnce = false; 
-        
+        public bool DefaultThemeAppliedOnce = false;
+
         public string DefaultTheme = null; // Default theme to be loaded when doing the campaign for the first time.
-        
+
         public int ActiveTheme = 0; // 0 is default theme. (0-3 are reserved for the default themes)
-        
+
         // List of themes for general.
-        public List<CustomTheme> CustomThemesGeneral = new List<CustomTheme>(); 
-        
+        public List<CustomTheme> CustomThemesGeneral = new List<CustomTheme>();
+
         // List of (conditional) themes that apply for certain days and apply to a certain theme only.
         public List<CustomTheme> CustomThemesDays = new List<CustomTheme>();
-        
+
         // Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
-        
+
         // All the different modifiers.
-        public List<ModifierSource> ModifierSources = new List<ModifierSource>(); 
-        
+        public List<ModifierSource> ModifierSources = new List<ModifierSource>();
+
         // Ringtones
         public bool DoNotAccountDefaultRingtone = true;
         public List<CustomRingtone.CustomRingtone> CustomRingtones = new List<CustomRingtone.CustomRingtone>();
-        
+
         /// <summary>
         /// Sorts the emails to the correct priorities and days.
         /// </summary>
         public void SortEmailsInCustomCampaign()
         {
-            Emails = Emails.
-                OrderBy(email => email.UnlockDay).
-                ThenByDescending(email => email.EmailPriority).
-                ToList();
+            Emails = Emails.OrderBy(email => email.UnlockDay).ThenByDescending(email => email.EmailPriority).ToList();
         }
-        
+
         /// <summary>
         /// Sorts the custom cutscenes to the correct priorities.
         /// </summary>
         public void SortCutsceneInCustomCampaign()
         {
-            CustomCutscenes = CustomCutscenes.
-                OrderByDescending(cutscene => cutscene.ApplyPriority).
-                ToList();
+            CustomCutscenes = CustomCutscenes.OrderByDescending(cutscene => cutscene.ApplyPriority).ToList();
+        }
+
+        /// <summary>
+        /// Sorts the emails to the correct priorities and days.
+        /// </summary>
+        public void SortCustomCallersInCustomCampaign()
+        {
+            CustomCallersInCampaign =
+                CustomCallersInCampaign.OrderBy(customCCaller => customCCaller.OrderInCampaign).ToList();
         }
     }
 }

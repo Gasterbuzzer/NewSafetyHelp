@@ -4,7 +4,6 @@ using System.IO;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
-using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.CCParsing;
 using NewSafetyHelp.LoggingSystem;
@@ -64,6 +63,11 @@ namespace NewSafetyHelp.JSONParsing
                 if (customCampaign.CustomCutscenes.Count > 0)
                 {
                     customCampaign.SortCutsceneInCustomCampaign();
+                }
+                
+                if (customCampaign.CustomCallersInCampaign.Count > 0)
+                {
+                    customCampaign.SortCustomCallersInCustomCampaign();
                 }
             }
 

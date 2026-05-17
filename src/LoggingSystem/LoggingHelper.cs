@@ -1,5 +1,6 @@
 ﻿using System;
 using MelonLoader;
+using NewSafetyHelp.InGameSettings;
 
 namespace NewSafetyHelp.LoggingSystem
 {
@@ -39,7 +40,7 @@ namespace NewSafetyHelp.LoggingSystem
         {
             if (checkDebugLog)
             {
-                if (!NewSafetyHelpMainClass.ShowDebugLogs.Value)
+                if (!GlobalPreferences.ShowDebugLogs.Value)
                 {
                     return false;
                 }
@@ -50,56 +51,56 @@ namespace NewSafetyHelp.LoggingSystem
                 switch (loggingCategory)
                 {
                     case LoggingCategory.SKIPPED_CALLER:
-                        if (!NewSafetyHelpMainClass.ShowSkippedCallerDebugLog.Value)
+                        if (!GlobalPreferences.ShowSkippedCallerDebugLog.Value)
                         {
                             return false;
                         }
                         break;
                     
                     case LoggingCategory.THEME:
-                        if (!NewSafetyHelpMainClass.ShowThemeDebugLog.Value)
+                        if (!GlobalPreferences.ShowThemeDebugLog.Value)
                         {
                             return false;
                         }
                         break;
                     
                     case LoggingCategory.RINGTONE:
-                        if (!NewSafetyHelpMainClass.ShowRingtoneDebugLog.Value)
+                        if (!GlobalPreferences.ShowRingtoneDebugLog.Value)
                         {
                             return false;
                         }
                         break;
                     
                     case LoggingCategory.EMAIL:
-                        if (!NewSafetyHelpMainClass.ShowEmailDebugLog.Value)
+                        if (!GlobalPreferences.ShowEmailDebugLog.Value)
                         {
                             return false;
                         }
                         break;
                     
                     case LoggingCategory.VIDEO:
-                        if (!NewSafetyHelpMainClass.ShowVideoDebugLog.Value)
+                        if (!GlobalPreferences.ShowVideoDebugLog.Value)
                         {
                             return false;
                         }
                         break;
                     
                     case LoggingCategory.ENTRY:
-                        if (!NewSafetyHelpMainClass.ShowEntryDebugLog.Value)
+                        if (!GlobalPreferences.ShowEntryDebugLog.Value)
                         {
                             return false;
                         }
                         break;
                     
                     case LoggingCategory.TEXT_FILE:
-                        if (!NewSafetyHelpMainClass.ShowTextFileDebugLog.Value)
+                        if (!GlobalPreferences.ShowTextFileDebugLog.Value)
                         {
                             return false;
                         }
                         break;
                     
                     case LoggingCategory.CUTSCENE:
-                        if (!NewSafetyHelpMainClass.ShowDebugLogs.Value)
+                        if (!GlobalPreferences.ShowDebugLogs.Value)
                         {
                             return false;
                         }

@@ -202,6 +202,7 @@
     <Compile Include="src\HelperFunctions\URLVerification.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
     <Compile Include="src\ImportFiles\ImageImport.cs" />
+    <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
     <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />
     <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
@@ -235,6 +236,7 @@
     <Compile Include="src\MainGameBugFixes\CloseErrorPopupFix.cs" />
     <Compile Include="src\MainGameBugFixes\EmailLoadingBugFix.cs" />
     <Compile Include="src\MainGameBugFixes\EntryLoadingBuxFix.cs" />
+    <Compile Include="src\MainGameBugFixes\EntryViewNotUpdating.cs" />
     <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs" />
     <Compile Include="src\MainGameBugFixes\UISoundBugFix.cs" />
     <Compile Include="src\VersionChecker\AsyncVersionChecker.cs" />

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -15,7 +15,6 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 {
     public static class CreateAndUpdateCallerPatches
     {
-        
         /// <summary>
         /// Gets the consequence caller based on a provided profile from a caller list.
         /// </summary>
@@ -35,13 +34,15 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
             return null;
         }
-        
-        // Patches the caller to have a custom caller clip in arcade mode.
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "CreateCustomCaller")]
         public static class UpdateArcadeCallerAudio
         {
+            private static readonly MethodInfo PickRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
+                BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+
             /// <summary>
-            /// Update the list when opening.
+            /// Patches the caller to have a custom caller clip in arcade mode.
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
@@ -57,28 +58,28 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                     }
                 }
 
-                if (__instance.currentCustomCaller.callerClip ==
-                    null) // If we didn't find anything, we set it to a random clip.
+                // If we didn't find anything, we set it to a random clip.
+                if (__instance.currentCustomCaller.callerClip == null)
                 {
-                    MethodInfo pickRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
-                        BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-
-                    if (pickRandomClip == null)
+                    if (PickRandomClip == null)
                     {
-                        LoggingHelper.ErrorLog("PickRandomClip couldn't be found in CallerController.");
+                        LoggingHelper.ReflectionError(nameof(PickRandomClip));
                         return;
                     }
 
-                    __instance.currentCustomCaller.callerClip =
-                        (RichAudioClip)pickRandomClip.Invoke(__instance, null); // __instance.PickRandomClip()
+                    // OLD: __instance.PickRandomClip()
+                    __instance.currentCustomCaller.callerClip = (RichAudioClip)PickRandomClip.Invoke(__instance, null);
                 }
             }
         }
-        
+
         // Patches the caller to have a custom audio in campaign.
-        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine",typeof(CallerProfile))]
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine", typeof(CallerProfile))]
         public static class UpdateCampaignCallerAudio
         {
+            private static readonly FieldInfo CallerAudioSource = typeof(CallerController).GetField("callerAudioSource",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             // ReSharper disable once RedundantAssignment
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, CallerProfile profile, ref IEnumerator __result)
@@ -107,22 +108,17 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                 yield return new WaitForSeconds(__instance.playCallAudioDelayTime);
 
-                // Get callerAudioSource
-                Type callerController = typeof(CallerController);
-                var callerAudioSourceGetter = callerController.GetField("callerAudioSource",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                if (callerAudioSourceGetter == null)
+                if (CallerAudioSource == null)
                 {
-                    LoggingHelper.ErrorLog("CallerController: callerAudioSourceGetter is null");
+                    LoggingHelper.ReflectionError(nameof(CallerAudioSource));
                     yield break;
                 }
 
-                AudioSource callerAudioSource = (AudioSource)callerAudioSourceGetter.GetValue(__instance);
+                AudioSource callerAudioSource = (AudioSource)CallerAudioSource.GetValue(__instance);
 
                 if (callerAudioSource == null)
                 {
-                    LoggingHelper.ErrorLog("CallerController: callerAudioSource is null");
+                    LoggingHelper.ErrorLog("CallerController: CallerAudioSource is null");
                     yield break;
                 }
 
@@ -146,29 +142,29 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                             // We now check if we are allowed to save if the entry can be saved as already called.
                             if (!item.AllowCallAgainOverRestart)
                             {
-                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
+                                if (!GlobalPreferences.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
-                                    NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
+                                    GlobalPreferences.PersistantEntrySave.CreateEntry<bool>(
                                         item.Name + item.CallerName, true);
                                 }
                                 else
                                 {
-                                    NewSafetyHelpMainClass.PersistantEntrySave
+                                    GlobalPreferences.PersistantEntrySave
                                         .GetEntry<bool>(item.Name + item.CallerName).Value = true;
                                 }
                             }
                             else
                             {
-                                if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
+                                if (!GlobalPreferences.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
                                 {
                                     // ReSharper disable once RedundantTypeArgumentsOfMethod
-                                    NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
+                                    GlobalPreferences.PersistantEntrySave.CreateEntry<bool>(
                                         item.Name + item.CallerName, false); // Store it as false
                                 }
                                 else
                                 {
-                                    NewSafetyHelpMainClass.PersistantEntrySave
+                                    GlobalPreferences.PersistantEntrySave
                                         .GetEntry<bool>(item.Name + item.CallerName).Value = false;
                                 }
                             }
@@ -222,7 +218,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                 }
             }
         }
-        
+
         // Patches the caller to replace it with another with random chance.
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", typeof(CallerProfile))]
         public static class UpdateCampaignCallerRandom
@@ -271,23 +267,24 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                             MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry;
 
-                            if (!NewSafetyHelpMainClass.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
+                            if (!GlobalPreferences.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
                             {
                                 // ReSharper disable once RedundantTypeArgumentsOfMethod
                                 entryAlreadyCalledBeforeEntry =
-                                    NewSafetyHelpMainClass.PersistantEntrySave.CreateEntry<bool>(
+                                    GlobalPreferences.PersistantEntrySave.CreateEntry<bool>(
                                         item.Name + item.CallerName, false);
                             }
                             else
                             {
                                 entryAlreadyCalledBeforeEntry =
-                                    NewSafetyHelpMainClass.PersistantEntrySave.GetEntry<bool>(item.Name +
+                                    GlobalPreferences.PersistantEntrySave.GetEntry<bool>(item.Name +
                                         item.CallerName);
                             }
 
                             if (item.AllowCallAgainOverRestart)
                             {
-                                LoggingHelper.DebugLog($"Entry {item.Name} is allowed to be called again even if called once in the past.");
+                                LoggingHelper.DebugLog(
+                                    $"Entry {item.Name} is allowed to be called again even if called once in the past.");
 
                                 entryAlreadyCalledBeforeEntry.Value =
                                     false; // Reset the entry. If not allowed to store the value.
@@ -307,7 +304,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                                 {
                                     if (!entryAlreadyCalledBeforeEntry.Value &&
                                         // We never called it. And make sure we can actually access the callers' entry.
-                                        item.PermissionLevel <= GlobalVariables.currentDay) 
+                                        item.PermissionLevel <= GlobalVariables.currentDay)
                                     {
                                         if (GlobalVariables.isXmasDLC) // If DLC
                                         {
@@ -334,7 +331,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                                             LoggingHelper.InfoLog($"Saved Entry '{item.Name}'" +
                                                                   " to not be called in the future.");
-                                            
+
                                             entryAlreadyCalledBeforeEntry.Value = true;
                                         }
                                     }
@@ -367,11 +364,11 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                 }
 
                 // Not in custom campaign. This makes odd problems in custom campaigns.
-                if (!CustomCampaignGlobal.InCustomCampaign) 
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
                     if (profile != null && !__instance.arcadeMode &&
-                        profile.consequenceCallerProfile != null) 
+                        profile.consequenceCallerProfile != null)
                     {
                         LoggingHelper.InfoLog("Current caller is a consequence Caller.");
                         Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
@@ -380,10 +377,10 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                         {
                             LoggingHelper.InfoLog($"Consequence Caller name: {callers.callerProfile.name}");
 
+                            // If the consequence caller has been replaced once.
                             if (GlobalParsingVariables.EntriesMetadata.Exists(item =>
                                     item.ReferenceProfileNameInternal ==
-                                    callers.callerProfile.consequenceCallerProfile
-                                        .name)) // If the consequence caller has been replaced once.
+                                    callers.callerProfile.consequenceCallerProfile.name))
                             {
                                 LoggingHelper.InfoLog("Consequence Caller to be replaced found!");
                                 EntryMetadata foundMetadata = GlobalParsingVariables.EntriesMetadata.Find(item =>
@@ -442,9 +439,10 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                             if (profile != null && profile.callerMonster != null)
                             {
-                                LoggingHelper.InfoLog($"Replaced the current caller ({profile.callerMonster.monsterName} " +
-                                                      $"with ID: {profile.callerMonster.monsterID}) with a custom caller:" +
-                                                      $" {selected.Name} with ID: {selected.ID}.");
+                                LoggingHelper.InfoLog(
+                                    $"Replaced the current caller ({profile.callerMonster.monsterName} " +
+                                    $"with ID: {profile.callerMonster.monsterID}) with a custom caller:" +
+                                    $" {selected.Name} with ID: {selected.ID}.");
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.
@@ -452,7 +450,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                                 .ReferenceProfileNameInternal = profile.name;
                         }
                     }
-                    
+
                     LoggingHelper.DebugLog("Finished handling the caller replacement.");
                 }
 
@@ -460,7 +458,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                 GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
 
                 LoggingHelper.DebugLog($"Current caller calling is '{profile.callerName}'.");
-                
+
                 return false; // Skip the original function
             }
         }
