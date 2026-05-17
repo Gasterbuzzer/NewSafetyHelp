@@ -15,7 +15,7 @@ namespace NewSafetyHelp.ImportFiles
 
             if (!Directory.Exists(modFolder)) // Our cute folder.
             {
-                LoggingHelper.InfoLog("No UserData Folder found, creating one.");
+                LoggingHelper.InfoLog("No UserData/NewSafetyHelp folder found, creating the directory.");
                 Directory.CreateDirectory(modFolder);
             }
 

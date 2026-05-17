@@ -1,17 +1,25 @@
 ﻿using JetBrains.Annotations;
+using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
+using UnityEngine;
 
 namespace NewSafetyHelp.Audio
 {
-    public static class TimerAudio
+    public static class EmbeddedTimerData
     {
         [CanBeNull] public static RichAudioClip ClockFivePercent;
         [CanBeNull] public static RichAudioClip ClockHalfTime;
         [CanBeNull] public static RichAudioClip ClockStart;
 
+        [CanBeNull] public static Sprite ClockBase;
+        [CanBeNull] public static Sprite ClockHand;
+
         public static void Initialize()
         {
-            // We now load all the audios.
+            /*
+             * Audios
+             */
+
             AudioImport.LoadEmbeddedAudio(
                 audioClip =>
                 {
@@ -57,7 +65,14 @@ namespace NewSafetyHelp.Audio
                 },
                 "clock_start.wav");
 
-            LoggingHelper.DebugLog("Finished starting the embedded audio loading routines.");
+            /*
+             * Images
+             */
+
+            ClockBase = ImageImport.LoadEmbeddedImage("clock_base.png");
+            ClockHand = ImageImport.LoadEmbeddedImage("clock_hand.png");
+
+            LoggingHelper.DebugLog("Finished the starting of the embed loading coroutines.");
         }
     }
 }

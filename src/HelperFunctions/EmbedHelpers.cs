@@ -37,7 +37,7 @@ namespace NewSafetyHelp.HelperFunctions
                 resourceName = currentAssembly.GetManifestResourceNames()
                     .SingleOrDefault(str => str.EndsWith(fileName, StringComparison.Ordinal));
 
-                if (resourceName == null)
+                if (string.IsNullOrEmpty(resourceName))
                 {
                     LoggingHelper.ErrorLog($"Could not find embedded resource '{fileName}'. " +
                                            "Unable of loading the provided embedded resource.");

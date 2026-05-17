@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -27,20 +30,86 @@ namespace NewSafetyHelp.ImportFiles
             Texture2D texture = new Texture2D(2, 2);
             if (!texture.LoadImage(imageData))
             {
+                UnityEngine.Object.Destroy(texture);
                 LoggingHelper.ErrorLog($"Failed to load image '{imagePath}' data into texture.");
                 return null;
             }
 
             // Create a sprite from the texture
             Sprite newSprite = Sprite.Create(
-                texture,                                        // Texture Data
-                new Rect(0, 0, texture.width, texture.height),  // Size
-                new Vector2(0.5f, 0.5f)                         // Pivot
+                texture, // Texture Data
+                new Rect(0, 0, texture.width, texture.height), // Size
+                new Vector2(0.5f, 0.5f) // Pivot
             );
 
             return newSprite;
         }
-        
+
+        /// <summary>
+        /// Function for loading in an embedded image and converting it into a Sprite.
+        /// </summary>
+        /// <param name="imageName"> Name of the image inside the embedded files. </param>
+        [CanBeNull]
+        public static Sprite LoadEmbeddedImage(string imageName)
+        {
+            imageName = imageName.Trim();
+
+            if (string.IsNullOrEmpty(imageName))
+            {
+                LoggingHelper.ErrorLog("Empty embedded image provided. Unable of loading embedded image.");
+                return null;
+            }
+
+            LoggingHelper.InfoLog($"Attempting to load embedded image '{imageName}'.");
+
+            // Get Assembly with the embedded resource.
+            Assembly currentAssembly = Assembly.GetExecutingAssembly();
+
+            // We try finding the resource via the file name and use that to get the resource name.
+            string fileName = imageName;
+            imageName = currentAssembly.GetManifestResourceNames()
+                .SingleOrDefault(str => str.EndsWith(fileName, StringComparison.Ordinal));
+
+            if (string.IsNullOrEmpty(imageName))
+            {
+                LoggingHelper.ErrorLog($"Could not find embedded resource '{fileName}'. " +
+                                       "Unable of loading the provided embedded resource.");
+                return null;
+            }
+
+            using (Stream imageStream = currentAssembly.GetManifestResourceStream(imageName))
+            {
+                if (imageStream == null)
+                {
+                    LoggingHelper.ErrorLog($"Could not find embedded resource '{fileName}'. " +
+                                           "Unable of loading the provided embedded resource.");
+                    return null;
+                }
+
+                using (BinaryReader binaryReader = new BinaryReader(imageStream))
+                {
+                    byte[] imageData = binaryReader.ReadBytes((int)imageStream.Length);
+
+                    // Create a 2D texture from the image stream.
+                    Texture2D texture = new Texture2D(2, 2);
+
+                    if (!texture.LoadImage(imageData))
+                    {
+                        UnityEngine.Object.Destroy(texture);
+                        LoggingHelper.ErrorLog($"Failed to load image '{imageName}' data into texture.");
+                        return null;
+                    }
+
+                    // Create a sprite from the texture
+                    return Sprite.Create(
+                        texture, // Texture Data
+                        new Rect(0, 0, texture.width, texture.height), // Size
+                        new Vector2(0.5f, 0.5f) // Pivot
+                    );
+                }
+            }
+        }
+
         /// <summary>
         /// Overload of LoadImage(). Allows providing two paths, if the first one doesn't exist, we attempt to load the second.
         /// </summary>
@@ -71,15 +140,16 @@ namespace NewSafetyHelp.ImportFiles
             Texture2D texture = new Texture2D(2, 2);
             if (!texture.LoadImage(imageData))
             {
+                UnityEngine.Object.Destroy(texture);
                 LoggingHelper.ErrorLog($"Failed to load image '{imagePathToUse}' data into texture.");
                 return null;
             }
 
             // Create a sprite from the texture
             Sprite newSprite = Sprite.Create(
-                texture,                                        // Texture Data
-                new Rect(0, 0, texture.width, texture.height),  // Size
-                new Vector2(0.5f, 0.5f)                         // Pivot
+                texture, // Texture Data
+                new Rect(0, 0, texture.width, texture.height), // Size
+                new Vector2(0.5f, 0.5f) // Pivot
             );
 
             return newSprite;

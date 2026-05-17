@@ -85,7 +85,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             TextMeshProUGUI textMeshComponent = timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             textMeshComponent.text = GetTimerDisplay(seconds);
 
-            GlobalVariables.UISoundControllerScript.PlayUISound(TimerAudio.ClockStart);
+            GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockStart);
 
             while (seconds > 1)
             {
@@ -97,14 +97,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                     && seconds <= halfPercentTimerCheckmark)
                 {
                     playedHalfPercent = true;
-                    GlobalVariables.UISoundControllerScript.PlayUISound(TimerAudio.ClockHalfTime);
+                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockHalfTime);
                 }
 
                 if (!playedTenPercent
                     && seconds <= tenPercentTimerCheckmark)
                 {
                     playedTenPercent = true;
-                    GlobalVariables.UISoundControllerScript.PlayUISound(TimerAudio.ClockFivePercent);
+                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockFivePercent);
                 }
             }
 

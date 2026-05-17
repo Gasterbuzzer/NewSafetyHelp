@@ -68,7 +68,7 @@ namespace NewSafetyHelp.Audio
         /// <param name="callback"> Callback function used for getting the AudioClip back. </param>
         /// <param name="path"> Path to file. </param>
         /// <param name="audioType"> Unity AudioType </param>
-        public static IEnumerator LoadAudio(Action<AudioClip> callback, string path,
+        private static IEnumerator LoadAudio(Action<AudioClip> callback, string path,
             AudioType audioType = AudioType.MPEG)
         {
             LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
