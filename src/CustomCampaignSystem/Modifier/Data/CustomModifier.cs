@@ -40,7 +40,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
 
         // Color for background. If null, it means not set.
         public Color? DesktopBackgroundColor = null;
-        
+
         public VariableChanged<Sprite> GameFinishedBackground = new VariableChanged<Sprite>();
 
         /*
@@ -64,7 +64,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         /*
          * Programs on Desktop Section
          */
-        
+
         // Video Player
         public VariableChanged<bool> VideoPlayerDesktopIsWideMode = new VariableChanged<bool>
         {
@@ -76,6 +76,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = string.Empty
         };
+
         public VariableChanged<Sprite> MainGameDesktopIcon = new VariableChanged<Sprite>();
 
         // Mailbox Icon on Desktop
@@ -83,6 +84,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public VariableChanged<Sprite> ApplicationMailboxIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> MailboxRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationMailboxTitle = new VariableChanged<string>();
+
         public VariableChanged<bool> DisplayMailboxOnDesktop = new VariableChanged<bool>
         {
             Data = false
@@ -93,6 +95,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public VariableChanged<Sprite> ApplicationEntryBrowserIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> EntryBrowserRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationEntryBrowserTitle = new VariableChanged<string>();
+
         public VariableChanged<bool> DisplayEntryBrowserOnDesktop = new VariableChanged<bool>
         {
             Data = false
@@ -110,6 +113,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public VariableChanged<string> ArtbookRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationArtbookTitle = new VariableChanged<string>();
         public List<ArtbookPage> ArtbookPages = new List<ArtbookPage>();
+
         public VariableChanged<bool> DisplayArtbookOnDesktop = new VariableChanged<bool>
         {
             Data = false
@@ -118,6 +122,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // Arcade Icon on Desktop
         public VariableChanged<Sprite> ArcadeIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> ArcadeRename = new VariableChanged<string>();
+
         public VariableChanged<bool> DisplayArcadeOnDesktop = new VariableChanged<bool>
         {
             Data = false
@@ -128,6 +133,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         public VariableChanged<Sprite> ApplicationScorecardIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> ScorecardRename = new VariableChanged<string>();
         public VariableChanged<string> ApplicationScorecardTitle = new VariableChanged<string>();
+
         public VariableChanged<bool> DisplayScorecardOnDesktop = new VariableChanged<bool>
         {
             Data = false
@@ -138,13 +144,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
+
         public VariableChanged<Sprite> CreditsIcon = new VariableChanged<Sprite>();
         public VariableChanged<string> CreditsRename = new VariableChanged<string>();
+
         public VariableChanged<bool> HideDesktopCredits = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         // For those who want more immersion. Should not be recommended.
         public VariableChanged<bool> HideDiscordProgram = new VariableChanged<bool>();
 
@@ -194,18 +202,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = true
         };
-        
+
         public VariableChanged<RichAudioClip> FinalCutsceneAudio = new VariableChanged<RichAudioClip>
         {
             Data = null
         };
 
         public string FinalCutsceneAudioPath = null;
-        
+
         /*
          * Caller Section
          */
-        
+
         public VariableChanged<bool> DisablePhoneStatic = new VariableChanged<bool>
         {
             Data = false

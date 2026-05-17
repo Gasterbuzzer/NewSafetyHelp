@@ -150,8 +150,8 @@ namespace NewSafetyHelp.VersionChecker
 
             if (newestVersion == null)
             {
-                LoggingHelper.WarningLog("Unable of checking if there is a new version available." +
-                                         " Check your internet connection.");
+                LoggingHelper.WarningLog("Unable of checking if there is a new version available. " +
+                                         "Check your internet connection.");
             }
             else
             {

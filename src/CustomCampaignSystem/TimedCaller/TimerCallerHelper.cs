@@ -49,7 +49,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 timerCallerRoutine = null;
             }
         }
-        
+
         /// <summary>
         /// Displays the seconds into a more readable format.
         /// </summary>
@@ -59,7 +59,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         {
             int displayMinutes = (int)(seconds / 60);
             int displaySeconds = (int)(seconds % 60);
-            
+
             return $"{displayMinutes:D2}:{displaySeconds:D2}";
         }
 
@@ -137,7 +137,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             timerCallerRoutine = null;
 
             HideCallerTimerUI();
-            
+
             // Show Call Ended Badly error:
             GlobalVariables.mainCanvasScript.CreateError("CALL RELEASED BY REMOTE");
             GlobalVariables.mainCanvasScript.inputBlocker.SetActive(false);

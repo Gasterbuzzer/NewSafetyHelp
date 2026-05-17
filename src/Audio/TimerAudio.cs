@@ -13,7 +13,7 @@ namespace NewSafetyHelp.Audio
         {
             // We now load all the audios.
             AudioImport.LoadEmbeddedAudio(
-                (audioClip) =>
+                audioClip =>
                 {
                     if (audioClip != null)
                     {
@@ -28,7 +28,7 @@ namespace NewSafetyHelp.Audio
                 "clock_10_percent.wav");
 
             AudioImport.LoadEmbeddedAudio(
-                (audioClip) =>
+                audioClip =>
                 {
                     if (audioClip != null)
                     {
@@ -43,7 +43,7 @@ namespace NewSafetyHelp.Audio
                 "clock_half_time.wav");
 
             AudioImport.LoadEmbeddedAudio(
-                (audioClip) =>
+                audioClip =>
                 {
                     if (audioClip != null)
                     {
