@@ -283,6 +283,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = false
             };
 
+            VariableChanged<bool> useClockInsteadOfTimer = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             /*
              * Cheats / Settings Section
              */
@@ -592,12 +597,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
                 ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
-            
+
             /*
              * Caller Section
              */
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_phone_static", ref disablePhoneStatic);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "use_clock_instead_of_timer",
+                ref useClockInsteadOfTimer);
 
             /*
              * Cheats / Settings
@@ -684,8 +692,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FinalCutsceneAudioPath = finalCutsceneAudioPath,
                 FinalCutsceneAudio = finalCutsceneAudio,
                 FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
-                
+
                 DisablePhoneStatic = disablePhoneStatic,
+                UseClockInsteadOfTimer = useClockInsteadOfTimer,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

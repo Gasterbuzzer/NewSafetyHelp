@@ -219,6 +219,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = false
         };
 
+        public VariableChanged<bool> UseClockInsteadOfTimer = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Cheats / Settings Section
          */

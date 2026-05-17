@@ -4,9 +4,11 @@ using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
@@ -16,6 +18,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static object timerCallerRoutine;
 
         private static GameObject timerLabel;
+        
+        private static GameObject analogClock;
 
         private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
             BindingFlags.Static | BindingFlags.NonPublic);
@@ -28,8 +32,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         {
             if (timerCallerRoutine == null)
             {
+                (bool foundModifier, VariableChanged<bool> value) useClockInsteadOfTimer =
+                    CustomCampaignGlobal.GetActiveModifierValue(c => c.UseClockInsteadOfTimer,
+                        vCb => vCb.HasChanged);
+
+                if (useClockInsteadOfTimer.foundModifier
+                    && useClockInsteadOfTimer.value.Data)
+                {
+                    timerCallerRoutine = MelonCoroutines.Start(AnalogTimedCallerTimer(seconds));
+                }
+                else
+                {
+                    timerCallerRoutine = MelonCoroutines.Start(DigitalTimedCallerTimer(seconds));
+                }
+
                 LoggingHelper.InfoLog($"Starting timed caller with a timer of '{seconds}'.");
-                timerCallerRoutine = MelonCoroutines.Start(TimedCallerTimer(seconds));
             }
             else
             {
@@ -64,11 +81,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         }
 
         /// <summary>
-        /// Coroutine for the timed caller.
+        /// Coroutine for the timed caller. (For digital clock display)
         /// </summary>
         /// <param name="seconds">Seconds to run for.</param>
         /// <returns>(IEnumerator) Routine to run.</returns>
-        private static IEnumerator TimedCallerTimer(float seconds)
+        private static IEnumerator DigitalTimedCallerTimer(float seconds)
         {
             if (timerLabel == null)
             {
@@ -82,7 +99,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             float halfPercentTimerCheckmark = seconds * 0.5f;
             bool playedHalfPercent = false;
 
+            // Digital Label
             TextMeshProUGUI textMeshComponent = timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
             textMeshComponent.text = GetTimerDisplay(seconds);
 
             GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockStart);
@@ -91,6 +110,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 yield return new WaitForSeconds(1);
                 seconds--;
+
                 textMeshComponent.text = GetTimerDisplay(seconds);
 
                 if (!playedHalfPercent
@@ -111,13 +131,72 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             // Wait out remainder (less than 1 second)
             yield return new WaitForSeconds(seconds);
 
-            // Finished Call Timer
+            // Finished Digital Call Timer
             textMeshComponent.text = "00:00";
 
             LoggingHelper.InfoLog($"Finished timer caller with a time of '{seconds}'.");
 
             yield return new WaitForSeconds(0.1f);
 
+            // Clean Up Call
+            GlobalVariables.callerControllerScript.SubmitAnswer();
+
+            GlobalVariables.musicControllerScript.StopMusic();
+            GlobalVariables.UISoundControllerScript.StopUISoundLooping();
+
+            FinishUpTimedCaller();
+        }
+        
+        /// <summary>
+        /// Coroutine for the timed caller. (For digital clock display)
+        /// </summary>
+        /// <param name="seconds">Seconds to run for.</param>
+        /// <returns>(IEnumerator) Routine to run.</returns>
+        private static IEnumerator AnalogTimedCallerTimer(float seconds)
+        {
+            float tenPercentTimerCheckmark = seconds * 0.1f;
+            bool playedTenPercent = false;
+
+            float halfPercentTimerCheckmark = seconds * 0.5f;
+            bool playedHalfPercent = false;
+
+            GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockStart);
+
+            while (seconds > 1)
+            {
+                yield return new WaitForSeconds(1);
+                seconds--;
+
+                if (!playedHalfPercent
+                    && seconds <= halfPercentTimerCheckmark)
+                {
+                    playedHalfPercent = true;
+                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockHalfTime);
+                }
+
+                if (!playedTenPercent
+                    && seconds <= tenPercentTimerCheckmark)
+                {
+                    playedTenPercent = true;
+                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockFivePercent);
+                }
+            }
+
+            // Wait out remainder (less than 1 second)
+            yield return new WaitForSeconds(seconds);
+
+            LoggingHelper.InfoLog($"Finished timer caller with a time of '{seconds}'.");
+
+            yield return new WaitForSeconds(0.1f);
+
+            FinishUpTimedCaller();
+        }
+
+        /// <summary>
+        /// Finishes up the timed call by setting all the correct values and disconnecting the call.
+        /// </summary>
+        private static void FinishUpTimedCaller()
+        {
             // Clean Up Call
             GlobalVariables.callerControllerScript.SubmitAnswer();
 
@@ -151,6 +230,28 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// <param name="currentCaller">Current caller calling.</param>
         public static void ShowCallerTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
         {
+            (bool foundModifier, VariableChanged<bool> value) useClockInsteadOfTimer =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.UseClockInsteadOfTimer,
+                    vCb => vCb.HasChanged);
+
+            if (useClockInsteadOfTimer.foundModifier
+                && useClockInsteadOfTimer.value.Data)
+            {
+                ShowAnalogClockTimerUI(__instance, currentCaller);
+            }
+            else
+            {
+                ShowDigitTimerUI(__instance, currentCaller);
+            }
+        }
+
+        /// <summary>
+        /// Shows the digit clock (00:00 -> 99:99) in the UI.
+        /// </summary>
+        /// <param name="__instance"></param>
+        /// <param name="currentCaller"></param>
+        private static void ShowDigitTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
+        {
             RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
                 .parent.Find("ReplayLabel").GetComponent<RectTransform>();
 
@@ -165,8 +266,59 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             timerLabel.GetComponent<RectTransform>().offsetMax = new Vector2(100.465f, -40.7853f);
 
             timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                $"{currentCaller.TimedCallerDuration}s";
+                GetTimerDisplay(currentCaller.TimedCallerDuration);
             timerLabel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+            // Set the replay labels size to allow for the timer label to fit.
+            replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
+        }
+
+        /// <summary>
+        /// Shows the digit clock (00:00 -> 99:99) in the UI.
+        /// </summary>
+        /// <param name="__instance"></param>
+        /// <param name="currentCaller"></param>
+        private static void ShowAnalogClockTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
+        {
+            RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
+                .parent.Find("ReplayLabel").GetComponent<RectTransform>();
+
+            analogClock = Object.Instantiate(replayLabelRectTransform.gameObject,
+                replayLabelRectTransform.gameObject.transform.parent);
+
+            analogClock.name = "Timer Clock";
+
+            analogClock.GetComponent<RectTransform>().localPosition =
+                new Vector3(141,
+                    replayLabelRectTransform.localPosition.y - 5f,
+                    replayLabelRectTransform.localPosition.z);
+
+            analogClock.GetComponent<RectTransform>().offsetMax = new Vector2(105.465f, -30.7853f);
+
+            analogClock.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
+            Object.Destroy(analogClock.transform.GetComponent<Image>()); 
+            
+            // Add clock UI:
+            // 1. Create a blank GameObject and parent it immediately
+            GameObject baseClockGO = new GameObject("Clock Base");
+            baseClockGO.transform.SetParent(analogClock.transform, false);
+            // false = don't preserve world position — use local space of the parent instead
+
+            // 2. Add the required UI components
+            baseClockGO.AddComponent<CanvasRenderer>(); // Required by Unity's UI system to render anything
+            Image clockImage = baseClockGO.AddComponent<Image>();
+
+            // 3. Assign your sprite
+            clockImage.sprite = EmbeddedTimerData.ClockBase;
+
+            // 4. Stretch it to fill the parent exactly
+            RectTransform rt = baseClockGO.GetComponent<RectTransform>();
+            // AddComponent<Image>() auto-adds a RectTransform, so GetComponent is safe here
+
+            rt.anchorMin = Vector2.zero; // Bottom-left corner anchored to 0,0 of parent
+            rt.anchorMax = Vector2.one; // Top-right corner anchored to 1,1 of parent (full stretch)
+            rt.offsetMin = Vector2.zero; // No offset from the anchor on the bottom-left
+            rt.offsetMax = Vector2.zero; // No offset from the anchor on the top-right
 
             // Set the replay labels size to allow for the timer label to fit.
             replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
@@ -181,6 +333,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             if (timerLabel != null)
             {
                 Object.Destroy(timerLabel);
+            }
+            
+            if (analogClock != null)
+            {
+                Object.Destroy(analogClock);
             }
 
             RectTransform replayLabelRectTransform = GlobalVariables.mainCanvasScript.callerNameText.transform.parent
