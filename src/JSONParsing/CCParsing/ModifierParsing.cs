@@ -287,6 +287,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = false
             };
+            
+            VariableChanged<float> digitalClockTickRate = new VariableChanged<float>
+            {
+                Data = 1f
+            };
+        
+            VariableChanged<float> analogClockTickRate = new VariableChanged<float>
+            {
+                Data = 0.05f
+            };
 
             /*
              * Cheats / Settings Section
@@ -606,6 +616,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "use_clock_instead_of_timer",
                 ref useClockInsteadOfTimer);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "caller_digital_clock_tick_rate",
+                ref digitalClockTickRate);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "caller_analog_clock_tick_rate",
+                ref analogClockTickRate);
 
             /*
              * Cheats / Settings
@@ -695,6 +711,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DisablePhoneStatic = disablePhoneStatic,
                 UseClockInsteadOfTimer = useClockInsteadOfTimer,
+                DigitalClockTickRate =  digitalClockTickRate,
+                AnalogClockTickRate =  analogClockTickRate,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

@@ -223,6 +223,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = false
         };
+        
+        public VariableChanged<float> DigitalClockTickRate = new VariableChanged<float>
+        {
+            Data = 1f
+        };
+        
+        public VariableChanged<float> AnalogClockTickRate = new VariableChanged<float>
+        {
+            Data = 0.05f
+        };
 
         /*
          * Cheats / Settings Section

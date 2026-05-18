@@ -5,6 +5,7 @@ using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
@@ -133,6 +134,8 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                             
                             // In case the intermission music is playing, we stop it.
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
+                            
+                            TimerCallerHelper.StopTimedCallerTimer();
 
                             for (int i = 1; i < checkResult + 1; i++)
                             {

@@ -9,6 +9,7 @@ using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomRingtone;
+using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.Callers.IncomingCallWindow
@@ -172,6 +173,7 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                         if (CustomCampaignGlobal.InCustomCampaign)
                         {
                             MelonCoroutines.Start(IntermissionMusicHelper.StopIntermissionMusic());
+                            TimerCallerHelper.StopTimedCallerTimer();
                         }
 
                         if (!GlobalVariables.isXmasDLC

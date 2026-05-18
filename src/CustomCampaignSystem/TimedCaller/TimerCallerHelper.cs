@@ -18,8 +18,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static object timerCallerRoutine;
 
         private static GameObject timerLabel;
-        
+
         private static GameObject analogClock;
+        private static GameObject clockHand;
+        private static Image clockFill;
 
         private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
             BindingFlags.Static | BindingFlags.NonPublic);
@@ -106,10 +108,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockStart);
 
-            while (seconds > 1)
+            float tickRate = 1f;
+
+            (bool modifierFound, VariableChanged<float> value) tickRateModifier =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.DigitalClockTickRate,
+                    vCf => vCf.HasChanged);
+
+            if (tickRateModifier.modifierFound)
             {
-                yield return new WaitForSeconds(1);
-                seconds--;
+                tickRate = tickRateModifier.value.Data;
+            }
+
+            while (seconds > tickRate)
+            {
+                yield return new WaitForSeconds(tickRate);
+                seconds -= tickRate;
 
                 textMeshComponent.text = GetTimerDisplay(seconds);
 
@@ -146,7 +159,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             FinishUpTimedCaller();
         }
-        
+
         /// <summary>
         /// Coroutine for the timed caller. (For digital clock display)
         /// </summary>
@@ -154,6 +167,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// <returns>(IEnumerator) Routine to run.</returns>
         private static IEnumerator AnalogTimedCallerTimer(float seconds)
         {
+            // If the clock isn't set up correctly.
+            if (clockHand == null)
+            {
+                LoggingHelper.ErrorLog("ClockHand of the Clock UI is null. (Possibly not set up correctly)?");
+                yield break;
+            }
+
+            float startSeconds = seconds;
+
             float tenPercentTimerCheckmark = seconds * 0.1f;
             bool playedTenPercent = false;
 
@@ -162,10 +184,29 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockStart);
 
-            while (seconds > 1)
+            float tickRate = 0.05f;
+
+            (bool modifierFound, VariableChanged<float> value) tickRateModifier =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.AnalogClockTickRate,
+                    vCf => vCf.HasChanged);
+
+            if (tickRateModifier.modifierFound)
             {
-                yield return new WaitForSeconds(1);
-                seconds--;
+                tickRate = tickRateModifier.value.Data;
+                LoggingHelper.DebugLog($"Setting tick rate of analog timer to '{tickRate}'.");
+            }
+
+            while (seconds > tickRate)
+            {
+                yield return new WaitForSeconds(tickRate);
+                seconds -= tickRate;
+
+                float rotationPercentage = (startSeconds - seconds) / startSeconds; // 0.0 -> 1.0
+
+                float rotationValue = rotationPercentage * 360; // This gives us the slice of the rotation.
+                clockHand.transform.localRotation = Quaternion.Euler(0f, 0f, -rotationValue);
+
+                clockFill.fillAmount = rotationPercentage;
 
                 if (!playedHalfPercent
                     && seconds <= halfPercentTimerCheckmark)
@@ -186,6 +227,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             yield return new WaitForSeconds(seconds);
 
             LoggingHelper.InfoLog($"Finished timer caller with a time of '{seconds}'.");
+
+            clockHand.transform.localRotation = Quaternion.Euler(0f, 0f, -360f);
+            clockFill.fillAmount = 1.0f;
 
             yield return new WaitForSeconds(0.1f);
 
@@ -218,7 +262,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             HideCallerTimerUI();
 
             // Show Call Ended Badly error:
-            GlobalVariables.mainCanvasScript.CreateError("CALL RELEASED BY REMOTE");
+            GlobalVariables.mainCanvasScript.CreateError("  CALL RELEASED BY REMOTE");
             GlobalVariables.mainCanvasScript.inputBlocker.SetActive(false);
         }
 
@@ -237,7 +281,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             if (useClockInsteadOfTimer.foundModifier
                 && useClockInsteadOfTimer.value.Data)
             {
-                ShowAnalogClockTimerUI(__instance, currentCaller);
+                ShowAnalogClockTimerUI(__instance);
             }
             else
             {
@@ -277,8 +321,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// Shows the digit clock (00:00 -> 99:99) in the UI.
         /// </summary>
         /// <param name="__instance"></param>
-        /// <param name="currentCaller"></param>
-        private static void ShowAnalogClockTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
+        private static void ShowAnalogClockTimerUI(MainCanvasBehavior __instance)
         {
             RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
                 .parent.Find("ReplayLabel").GetComponent<RectTransform>();
@@ -296,29 +339,69 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             analogClock.GetComponent<RectTransform>().offsetMax = new Vector2(105.465f, -30.7853f);
 
             analogClock.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
-            Object.Destroy(analogClock.transform.GetComponent<Image>()); 
-            
+            Object.Destroy(analogClock.transform.GetComponent<Image>());
+
             // Add clock UI:
-            // 1. Create a blank GameObject and parent it immediately
-            GameObject baseClockGO = new GameObject("Clock Base");
-            baseClockGO.transform.SetParent(analogClock.transform, false);
-            // false = don't preserve world position — use local space of the parent instead
+            GameObject baseClock = new GameObject("ClockBase");
+            baseClock.transform.SetParent(analogClock.transform, false);
 
-            // 2. Add the required UI components
-            baseClockGO.AddComponent<CanvasRenderer>(); // Required by Unity's UI system to render anything
-            Image clockImage = baseClockGO.AddComponent<Image>();
+            baseClock.AddComponent<CanvasRenderer>();
 
-            // 3. Assign your sprite
-            clockImage.sprite = EmbeddedTimerData.ClockBase;
+            Image clockBaseImage = baseClock.AddComponent<Image>();
+            clockBaseImage.sprite = EmbeddedTimerData.ClockBase;
 
-            // 4. Stretch it to fill the parent exactly
-            RectTransform rt = baseClockGO.GetComponent<RectTransform>();
-            // AddComponent<Image>() auto-adds a RectTransform, so GetComponent is safe here
+            // Fill parent
+            RectTransform baseRectTransform = baseClock.GetComponent<RectTransform>();
 
-            rt.anchorMin = Vector2.zero; // Bottom-left corner anchored to 0,0 of parent
-            rt.anchorMax = Vector2.one; // Top-right corner anchored to 1,1 of parent (full stretch)
-            rt.offsetMin = Vector2.zero; // No offset from the anchor on the bottom-left
-            rt.offsetMax = Vector2.zero; // No offset from the anchor on the top-right
+            baseRectTransform.anchorMin = Vector2.zero;
+            baseRectTransform.anchorMax = Vector2.one;
+            baseRectTransform.offsetMin = Vector2.zero;
+            baseRectTransform.offsetMax = Vector2.zero;
+
+            // Add clock fill (Grey zone):
+
+            GameObject clockFillGameObject = new GameObject("ClockFill");
+            clockFillGameObject.transform.SetParent(baseClock.transform, false);
+
+            clockFillGameObject.AddComponent<CanvasRenderer>();
+
+            clockFill = clockFillGameObject.AddComponent<Image>();
+
+            clockFill.sprite = EmbeddedTimerData.ClockBase;
+
+            clockFill.type = Image.Type.Filled;
+            clockFill.fillMethod = Image.FillMethod.Radial360;
+            clockFill.fillOrigin = (int)Image.Origin360.Top;
+            clockFill.fillCenter = true;
+            clockFill.fillClockwise = true;
+            clockFill.color = Color.gray;
+            clockFill.fillAmount = 0.0f;
+
+            RectTransform fillRectTransform = clockFillGameObject.GetComponent<RectTransform>();
+            fillRectTransform.anchorMin = Vector2.zero;
+            fillRectTransform.anchorMax = Vector2.one;
+            fillRectTransform.offsetMin = Vector2.zero;
+            fillRectTransform.offsetMax = Vector2.zero;
+
+            // Add Clock Hand:
+            clockHand = new GameObject("ClockHand");
+            clockHand.transform.SetParent(baseClock.transform, false);
+
+            clockHand.AddComponent<CanvasRenderer>();
+
+            Image clockHandImage = clockHand.AddComponent<Image>();
+            clockHandImage.sprite = EmbeddedTimerData.ClockHand;
+
+            // Fill parent
+            RectTransform handRectTransform = clockHand.GetComponent<RectTransform>();
+
+            handRectTransform.anchorMin = Vector2.zero;
+            handRectTransform.anchorMax = Vector2.one;
+            handRectTransform.offsetMin = Vector2.zero;
+            handRectTransform.offsetMax = Vector2.zero;
+
+            // Set to start (Pointing up)
+            clockHand.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
             // Set the replay labels size to allow for the timer label to fit.
             replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
@@ -334,10 +417,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 Object.Destroy(timerLabel);
             }
-            
+
             if (analogClock != null)
             {
                 Object.Destroy(analogClock);
+            }
+
+            if (clockHand != null)
+            {
+                Object.Destroy(clockHand);
             }
 
             RectTransform replayLabelRectTransform = GlobalVariables.mainCanvasScript.callerNameText.transform.parent
