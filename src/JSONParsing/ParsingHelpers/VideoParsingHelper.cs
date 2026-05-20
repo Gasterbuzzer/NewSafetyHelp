@@ -312,8 +312,12 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                     string videoFileAlternativePath = usermodFolderPath + "\\" + target[i];
 
                     string correctFilePath = "";
-
-                    if (File.Exists(firstFilePath))
+                    
+                    if (File.Exists(target[i]))
+                    {
+                        correctFilePath = target[i];
+                    }
+                    else if (File.Exists(firstFilePath))
                     {
                         correctFilePath = firstFilePath;
                     }
@@ -417,8 +421,12 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             else
             {
                 string correctFilePath;
-
-                if (File.Exists(updatedFilePath))
+                
+                if (File.Exists(videoFilePath))
+                {
+                    correctFilePath = videoFilePath;
+                }
+                else if (File.Exists(updatedFilePath))
                 {
                     correctFilePath = updatedFilePath;
                 }

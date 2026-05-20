@@ -23,6 +23,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static GameObject clockHand;
         private static Image clockFill;
 
+        private static RichAudioClip clockStart = EmbeddedTimerData.ClockStart;
+        private static RichAudioClip clockHalfTime = EmbeddedTimerData.ClockHalfTime;
+        private static RichAudioClip clockFivePercent = EmbeddedTimerData.ClockFivePercent;
+
         private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
             BindingFlags.Static | BindingFlags.NonPublic);
 
@@ -34,6 +38,47 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         {
             if (timerCallerRoutine == null)
             {
+                // Setting up all values:
+
+                (bool foundModifier, VariableChanged<RichAudioClip> value) timedCallerStartSound =
+                    CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerStartSound,
+                        vCb => vCb.HasChanged);
+
+                if (timedCallerStartSound.foundModifier)
+                {
+                    clockStart = timedCallerStartSound.value.Data;
+                }
+                else
+                {
+                    clockStart = EmbeddedTimerData.ClockStart;
+                }
+
+                (bool foundModifier, VariableChanged<RichAudioClip> value) timedCallerHalfSound =
+                    CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerHalfSound,
+                        vCb => vCb.HasChanged);
+
+                if (timedCallerHalfSound.foundModifier)
+                {
+                    clockHalfTime = timedCallerHalfSound.value.Data;
+                }
+                else
+                {
+                    clockHalfTime = EmbeddedTimerData.ClockHalfTime;
+                }
+
+                (bool foundModifier, VariableChanged<RichAudioClip> value) timedCallerCriticalSound =
+                    CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerCriticalSound,
+                        vCb => vCb.HasChanged);
+
+                if (timedCallerCriticalSound.foundModifier)
+                {
+                    clockFivePercent = timedCallerCriticalSound.value.Data;
+                }
+                else
+                {
+                    clockFivePercent = EmbeddedTimerData.ClockHalfTime;
+                }
+
                 (bool foundModifier, VariableChanged<bool> value) useClockInsteadOfTimer =
                     CustomCampaignGlobal.GetActiveModifierValue(c => c.UseClockInsteadOfTimer,
                         vCb => vCb.HasChanged);
@@ -106,7 +151,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             textMeshComponent.text = GetTimerDisplay(seconds);
 
-            GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockStart);
+            GlobalVariables.UISoundControllerScript.PlayUISound(clockStart);
 
             float tickRate = 1f;
 
@@ -130,14 +175,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                     && seconds <= halfPercentTimerCheckmark)
                 {
                     playedHalfPercent = true;
-                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockHalfTime);
+                    GlobalVariables.UISoundControllerScript.PlayUISound(clockHalfTime);
                 }
 
                 if (!playedTenPercent
                     && seconds <= tenPercentTimerCheckmark)
                 {
                     playedTenPercent = true;
-                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockFivePercent);
+                    GlobalVariables.UISoundControllerScript.PlayUISound(clockFivePercent);
                 }
             }
 
@@ -182,7 +227,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             float halfPercentTimerCheckmark = seconds * 0.5f;
             bool playedHalfPercent = false;
 
-            GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockStart);
+            GlobalVariables.UISoundControllerScript.PlayUISound(clockStart);
 
             float tickRate = 0.05f;
 
@@ -212,14 +257,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                     && seconds <= halfPercentTimerCheckmark)
                 {
                     playedHalfPercent = true;
-                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockHalfTime);
+                    GlobalVariables.UISoundControllerScript.PlayUISound(clockHalfTime);
                 }
 
                 if (!playedTenPercent
                     && seconds <= tenPercentTimerCheckmark)
                 {
                     playedTenPercent = true;
-                    GlobalVariables.UISoundControllerScript.PlayUISound(EmbeddedTimerData.ClockFivePercent);
+                    GlobalVariables.UISoundControllerScript.PlayUISound(clockFivePercent);
                 }
             }
 
@@ -265,13 +310,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             string callEndedMessage = "TIMES UP!\nCALL DISCONNECTED";
 
-            (bool foundModifier, VariableChanged<string> data) timedCallerDisconnectedMessage =
+            (bool foundModifier, VariableChanged<string> value) timedCallerDisconnectedMessage =
                 CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerDisconnectedMessage,
                     vCs => vCs.HasChanged);
 
             if (timedCallerDisconnectedMessage.foundModifier)
             {
-                callEndedMessage = timedCallerDisconnectedMessage.data.Data;
+                callEndedMessage = timedCallerDisconnectedMessage.value.Data;
             }
 
             GlobalVariables.mainCanvasScript.CreateError(callEndedMessage);

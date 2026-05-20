@@ -35,6 +35,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomModifier customModifier = ParseModifier(ref jObjectParsed, ref usermodFolderPath,
                 ref jsonFolderPath, ref customCampaignName);
 
+            /*
+             * Cutscene Audio
+             */
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.FinalCutsceneAudioPath,
                 clip =>
                 {
@@ -42,6 +45,33 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.FinalCutsceneAudio.HasChanged = true;
                 },
                 jsonFolderPath, "final_cutscene_audio_name");
+
+            /*
+             * Timed Caller Audio
+             */
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.TimedCallerStartSoundPath,
+                clip =>
+                {
+                    customModifier.TimedCallerStartSound.Data = clip;
+                    customModifier.TimedCallerStartSound.HasChanged = true;
+                },
+                jsonFolderPath, "timed_caller_start_audio_name");
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.TimedCallerHalfSoundPath,
+                clip =>
+                {
+                    customModifier.TimedCallerHalfSound.Data = clip;
+                    customModifier.TimedCallerHalfSound.HasChanged = true;
+                },
+                jsonFolderPath, "timed_caller_half_point_audio_name");
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.TimedCallerCriticalSoundPath,
+                clip =>
+                {
+                    customModifier.TimedCallerCriticalSound.Data = clip;
+                    customModifier.TimedCallerCriticalSound.HasChanged = true;
+                },
+                jsonFolderPath, "timed_caller_critical_audio_name");
 
             // Add to correct campaign.
             CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
@@ -287,20 +317,50 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = false
             };
-            
+
             VariableChanged<float> digitalClockTickRate = new VariableChanged<float>
             {
                 Data = 1f
             };
-        
+
             VariableChanged<float> analogClockTickRate = new VariableChanged<float>
             {
                 Data = 0.05f
             };
-            
+
             VariableChanged<string> timedCallerDisconnectedMessage = new VariableChanged<string>
             {
                 Data = "TIMES UP!\nCALL DISCONNECTED"
+            };
+
+            VariableChanged<RichAudioClip> timedCallerStartSound = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> timedCallerStartSoundPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<RichAudioClip> timedCallerHalfSound = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> timedCallerHalfSoundPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<RichAudioClip> timedCallerCriticalSound = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> timedCallerCriticalSoundPath = new VariableChanged<string>
+            {
+                Data = null
             };
 
             /*
@@ -621,15 +681,24 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "use_clock_instead_of_timer",
                 ref useClockInsteadOfTimer);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "caller_digital_clock_tick_rate",
                 ref digitalClockTickRate);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "caller_analog_clock_tick_rate",
                 ref analogClockTickRate);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_disconnect_message",
                 ref timedCallerDisconnectedMessage);
+
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "timed_caller_start_audio_name",
+                ref timedCallerStartSoundPath, jsonFolderPath, usermodFolderPath);
+
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "timed_caller_half_point_audio_name",
+                ref timedCallerHalfSoundPath, jsonFolderPath, usermodFolderPath);
+
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "timed_caller_critical_audio_name",
+                ref timedCallerCriticalSoundPath, jsonFolderPath, usermodFolderPath);
 
             /*
              * Cheats / Settings
@@ -719,9 +788,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DisablePhoneStatic = disablePhoneStatic,
                 UseClockInsteadOfTimer = useClockInsteadOfTimer,
-                DigitalClockTickRate =  digitalClockTickRate,
-                AnalogClockTickRate =  analogClockTickRate,
+                DigitalClockTickRate = digitalClockTickRate,
+                AnalogClockTickRate = analogClockTickRate,
                 TimedCallerDisconnectedMessage = timedCallerDisconnectedMessage,
+                TimedCallerStartSound = timedCallerStartSound,
+                TimedCallerStartSoundPath = timedCallerStartSoundPath,
+                TimedCallerHalfSound = timedCallerHalfSound,
+                TimedCallerHalfSoundPath = timedCallerHalfSoundPath,
+                TimedCallerCriticalSound = timedCallerCriticalSound,
+                TimedCallerCriticalSoundPath = timedCallerCriticalSoundPath,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

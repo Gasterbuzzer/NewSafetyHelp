@@ -238,6 +238,36 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = "TIMES UP!\nCALL DISCONNECTED"
         };
+        
+        public VariableChanged<RichAudioClip> TimedCallerStartSound = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> TimedCallerStartSoundPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<RichAudioClip> TimedCallerHalfSound = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> TimedCallerHalfSoundPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<RichAudioClip> TimedCallerCriticalSound = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> TimedCallerCriticalSoundPath = new VariableChanged<string>
+        {
+            Data = null
+        };
 
         /*
          * Cheats / Settings Section
