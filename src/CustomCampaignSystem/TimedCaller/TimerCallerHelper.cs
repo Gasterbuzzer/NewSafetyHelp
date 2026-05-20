@@ -262,7 +262,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             HideCallerTimerUI();
 
             // Show Call Ended Badly error:
-            GlobalVariables.mainCanvasScript.CreateError("  CALL RELEASED BY REMOTE");
+
+            string callEndedMessage = "TIMES UP!\nCALL DISCONNECTED";
+
+            (bool foundModifier, VariableChanged<string> data) timedCallerDisconnectedMessage =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerDisconnectedMessage,
+                    vCs => vCs.HasChanged);
+
+            if (timedCallerDisconnectedMessage.foundModifier)
+            {
+                callEndedMessage = timedCallerDisconnectedMessage.data.Data;
+            }
+
+            GlobalVariables.mainCanvasScript.CreateError(callEndedMessage);
             GlobalVariables.mainCanvasScript.inputBlocker.SetActive(false);
         }
 

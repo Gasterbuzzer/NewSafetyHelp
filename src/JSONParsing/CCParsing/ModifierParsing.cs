@@ -297,6 +297,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = 0.05f
             };
+            
+            VariableChanged<string> timedCallerDisconnectedMessage = new VariableChanged<string>
+            {
+                Data = "TIMES UP!\nCALL DISCONNECTED"
+            };
 
             /*
              * Cheats / Settings Section
@@ -622,6 +627,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "caller_analog_clock_tick_rate",
                 ref analogClockTickRate);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_disconnect_message",
+                ref timedCallerDisconnectedMessage);
 
             /*
              * Cheats / Settings
@@ -713,6 +721,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 UseClockInsteadOfTimer = useClockInsteadOfTimer,
                 DigitalClockTickRate =  digitalClockTickRate,
                 AnalogClockTickRate =  analogClockTickRate,
+                TimedCallerDisconnectedMessage = timedCallerDisconnectedMessage,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

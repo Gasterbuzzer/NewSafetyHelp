@@ -233,6 +233,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = 0.05f
         };
+        
+        public VariableChanged<string> TimedCallerDisconnectedMessage = new VariableChanged<string>
+        {
+            Data = "TIMES UP!\nCALL DISCONNECTED"
+        };
 
         /*
          * Cheats / Settings Section
