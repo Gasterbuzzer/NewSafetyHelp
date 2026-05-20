@@ -8,6 +8,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         public static class HoldButtonClosePatch
         {
             /// <summary>
+            /// If the caller is already set on hold.
+            /// </summary>
+            public static bool IsInHold = true;
+            
+            /// <summary>
             /// Patches the hold buttons function (that closes the popup) to start timers for custom callers if necessary.
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
@@ -16,6 +21,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallWindowBehavior __instance, ref bool playHoldSound, ref bool playHoldMusic)
             {
+                IsInHold = true;
+                
                 if (playHoldSound)
                 {
                     GlobalVariables.UISoundControllerScript.PlayUISound(
@@ -27,8 +34,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                     GlobalVariables.musicControllerScript.StartRandomMusic();
                     GlobalVariables.mainCanvasScript.largeCallerPortrait.gameObject.SetActive(false);
                 }
-
-                GlobalVariables.callerControllerScript.StopCallAudio();
+                
                 GlobalVariables.callerControllerScript.StopLargeWindowRoutine();
                 
                 __instance.gameObject.SetActive(false);
@@ -44,6 +50,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                         TimerCallerHelper.StartTimedCallerTimer(currentCaller.TimedCallerDuration);
                     }
                 }
+                
+                // Moving the "StopCallAudio" lower, possibly fixes the timing mismatch of not stopping the caller audio.
+                // Also updated the starting of the caller audio to not happen if halted.
+                GlobalVariables.callerControllerScript.StopCallAudio();
 
                 return false; // Skip function with false.
             }

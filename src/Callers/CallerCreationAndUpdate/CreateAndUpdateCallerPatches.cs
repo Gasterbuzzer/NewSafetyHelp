@@ -4,6 +4,7 @@ using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
@@ -125,13 +126,14 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                 callerAudioSource.Stop();
 
                 // Here we replace the clip.
-                bool found = false;
+                bool foundReplacementClip = false;
 
                 // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
                 // And only if not in a custom campaign.
-                if (!CustomCampaignGlobal.InCustomCampaign &&
-                    profile != null && profile.callerMonster != null &&
-                    !__instance.arcadeMode)
+                if (!CustomCampaignGlobal.InCustomCampaign 
+                    && profile != null 
+                    && profile.callerMonster != null 
+                    && !__instance.arcadeMode)
                 {
                     foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
                     {
@@ -176,24 +178,24 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                                 callerAudioSource.clip = item.CallerClip.clip;
                             }
 
-                            found = true;
+                            foundReplacementClip = true;
                         }
                     }
                 }
 
-                // Else
-                if (!found)
+                // If we didn't find a clip.
+                if (!foundReplacementClip)
                 {
                     if (profile != null && profile.callerMonster != null)
                     {
-                        LoggingHelper.DebugLog("Monster Name:" +
-                                               $" {profile.callerMonster.monsterName} with ID:" +
-                                               $" {profile.callerMonster.monsterID}.");
+                        LoggingHelper.DebugLog("Monster Name: " +
+                                               $"{profile.callerMonster.monsterName} with ID: " +
+                                               $"{profile.callerMonster.monsterID}.");
                     }
                     else if (!CustomCampaignGlobal.InCustomCampaign)
                     {
-                        LoggingHelper.InfoLog("This caller does not have a monster entry." +
-                                              " Thus not replaced.");
+                        LoggingHelper.InfoLog("This caller does not have a monster entry. " +
+                                              "The caller audio will not be replaced.");
                     }
 
                     if (profile != null && profile.callerClip != null && profile.callerClip.clip != null)
@@ -214,7 +216,10 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                 if (callerAudioSource.clip != null)
                 {
-                    callerAudioSource.Play();
+                    if (!TimedCallerPatches.HoldButtonClosePatch.IsInHold)
+                    {
+                        callerAudioSource.Play();
+                    }
                 }
             }
         }
@@ -232,6 +237,9 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
             private static bool Prefix(CallerController __instance, ref CallerProfile profile)
             {
                 LoggingHelper.DebugLog("New caller is calling.");
+                
+                // For hold callers.
+                TimedCallerPatches.HoldButtonClosePatch.IsInHold = false;
 
                 if (profile == null)
                 {
