@@ -21,6 +21,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
         private static GameObject analogClock;
         private static GameObject clockHand;
+        private static GameObject clockSymbol;
         private static Image clockFill;
 
         private static RichAudioClip clockStart = EmbeddedTimerData.ClockStart;
@@ -462,6 +463,33 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             // Set the replay labels size to allow for the timer label to fit.
             replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
+            
+            /*
+             * Clock Symbol (For Timed Callers Portrait)
+             */
+
+            GameObject callerPortrait = __instance.callWindow.transform.Find("CurrentCall/CallerPortrait").gameObject;
+            
+            clockSymbol = new GameObject("ClockSymbol");
+            clockSymbol.transform.SetParent(callerPortrait.transform, false);
+
+            clockSymbol.AddComponent<CanvasRenderer>();
+
+            Image clockSymbolImage = clockSymbol.AddComponent<Image>();
+            clockSymbolImage.sprite = EmbeddedTimerData.ClockBase;
+            
+            // Fit for parent.
+            RectTransform clocKSymbolTransform = clockSymbol.GetComponent<RectTransform>();
+
+            clocKSymbolTransform.anchorMin = new Vector2(1, 0);
+            clocKSymbolTransform.anchorMax = new Vector2(1, 0);
+            
+            clocKSymbolTransform.pivot = new Vector2(1f, 0f);
+            
+            clocKSymbolTransform.anchoredPosition = new Vector2(0f, 0f);
+            
+            clocKSymbolTransform.offsetMax = new Vector2(0f, 25f);
+            clocKSymbolTransform.offsetMin = new Vector2(-25f, 0f);
         }
 
         /// <summary>
@@ -483,6 +511,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             if (clockHand != null)
             {
                 Object.Destroy(clockHand);
+            }
+            
+            if (clockSymbol != null)
+            {
+                Object.Destroy(clockSymbol);
             }
 
             RectTransform replayLabelRectTransform = GlobalVariables.mainCanvasScript.callerNameText.transform.parent
