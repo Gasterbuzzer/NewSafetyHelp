@@ -8,6 +8,7 @@ using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -16,6 +17,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
     public static class TimerCallerHelper
     {
         private static object timerCallerRoutine;
+        private static object smallerTimerCallerRoutine;
 
         private static GameObject timerLabel;
 
@@ -27,6 +29,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static RichAudioClip clockStart = EmbeddedTimerData.ClockStart;
         private static RichAudioClip clockHalfTime = EmbeddedTimerData.ClockHalfTime;
         private static RichAudioClip clockFivePercent = EmbeddedTimerData.ClockFivePercent;
+        
+        private static float currentSeconds;
 
         private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
             BindingFlags.Static | BindingFlags.NonPublic);
@@ -37,6 +41,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// <param name="seconds"></param>
         public static void StartTimedCallerTimer(float seconds)
         {
+            currentSeconds = 0;
+            
             if (timerCallerRoutine == null)
             {
                 // Setting up all values:
@@ -113,8 +119,49 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 MelonCoroutines.Stop(timerCallerRoutine);
                 timerCallerRoutine = null;
             }
-        }
 
+            StopHoverCallerTimerRoutine();
+        }
+        
+        /// <summary>
+        /// Stops the smaller coroutine of the timed caller.
+        /// (For the hover clock)
+        /// </summary>
+        private static void StopHoverCallerTimerRoutine()
+        {
+            if (smallerTimerCallerRoutine != null)
+            {
+                LoggingHelper.DebugLog("Stopped hover (Timed-Caller) coroutine.");
+                MelonCoroutines.Stop(smallerTimerCallerRoutine);
+                smallerTimerCallerRoutine = null;
+            }
+        }
+        
+        /// <summary>
+        /// Coroutine for the small hover UI (Timed-Caller).
+        /// (For digital clock display when hovering over analog clock)
+        /// </summary>
+        /// <param name="textMeshComponent">Component to write the seconds to.</param>
+        /// <param name="tickRate">Tick rate of the digital timer.</param>
+        /// <returns>(IEnumerator) Routine to run.</returns>
+        private static IEnumerator HoverDigitalRoutine(TextMeshProUGUI textMeshComponent, float tickRate=1f)
+        {
+            textMeshComponent.text = GetTimerDisplay(currentSeconds);
+
+            while (currentSeconds > tickRate)
+            {
+                yield return new WaitForSeconds(tickRate);
+
+                textMeshComponent.text = GetTimerDisplay(currentSeconds);
+            }
+
+            // Wait out remainder (less than 1 second)
+            yield return new WaitForSeconds(currentSeconds);
+
+            // Finished Digital Call Timer
+            textMeshComponent.text = "00:00";
+        }
+        
         /// <summary>
         /// Displays the seconds into a more readable format.
         /// </summary>
@@ -141,6 +188,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 yield break;
             }
 
+            currentSeconds = seconds;
+            
             float tenPercentTimerCheckmark = seconds * 0.1f;
             bool playedTenPercent = false;
 
@@ -169,6 +218,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 yield return new WaitForSeconds(tickRate);
                 seconds -= tickRate;
+                currentSeconds = seconds;
 
                 textMeshComponent.text = GetTimerDisplay(seconds);
 
@@ -221,6 +271,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             }
 
             float startSeconds = seconds;
+            currentSeconds = startSeconds;
 
             float tenPercentTimerCheckmark = seconds * 0.1f;
             bool playedTenPercent = false;
@@ -246,6 +297,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 yield return new WaitForSeconds(tickRate);
                 seconds -= tickRate;
+
+                currentSeconds = seconds;
 
                 float rotationPercentage = (startSeconds - seconds) / startSeconds; // 0.0 -> 1.0
 
@@ -332,6 +385,37 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// <param name="currentCaller">Current caller calling.</param>
         public static void ShowCallerTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
         {
+            /*
+             * Clock Symbol (For Timed Callers Portrait)
+             */
+
+            GameObject callerPortrait = __instance.callWindow.transform.Find("CurrentCall/CallerPortrait").gameObject;
+
+            clockSymbol = new GameObject("ClockSymbol");
+            clockSymbol.transform.SetParent(callerPortrait.transform, false);
+
+            clockSymbol.AddComponent<CanvasRenderer>();
+
+            Image clockSymbolImage = clockSymbol.AddComponent<Image>();
+            clockSymbolImage.sprite = EmbeddedTimerData.ClockBase;
+
+            // Fit for parent.
+            RectTransform clocKSymbolTransform = clockSymbol.GetComponent<RectTransform>();
+
+            clocKSymbolTransform.anchorMin = new Vector2(1, 0);
+            clocKSymbolTransform.anchorMax = new Vector2(1, 0);
+
+            clocKSymbolTransform.pivot = new Vector2(1f, 0f);
+
+            clocKSymbolTransform.anchoredPosition = new Vector2(0f, 0f);
+
+            clocKSymbolTransform.offsetMax = new Vector2(0f, 25f);
+            clocKSymbolTransform.offsetMin = new Vector2(-25f, 0f);
+
+            /*
+             * Show specific timer UI.
+             */
+
             (bool foundModifier, VariableChanged<bool> value) useClockInsteadOfTimer =
                 CustomCampaignGlobal.GetActiveModifierValue(c => c.UseClockInsteadOfTimer,
                     vCb => vCb.HasChanged);
@@ -339,7 +423,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             if (useClockInsteadOfTimer.foundModifier
                 && useClockInsteadOfTimer.value.Data)
             {
-                ShowAnalogClockTimerUI(__instance);
+                ShowAnalogClockTimerUI(__instance, currentCaller);
             }
             else
             {
@@ -350,8 +434,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// <summary>
         /// Shows the digit clock (00:00 -> 99:99) in the UI.
         /// </summary>
-        /// <param name="__instance"></param>
-        /// <param name="currentCaller"></param>
+        /// <param name="__instance">Instance of the UI.</param>
+        /// <param name="currentCaller">Current Caller</param>
         private static void ShowDigitTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
         {
             RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
@@ -378,11 +462,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// <summary>
         /// Shows the digit clock (00:00 -> 99:99) in the UI.
         /// </summary>
-        /// <param name="__instance"></param>
-        private static void ShowAnalogClockTimerUI(MainCanvasBehavior __instance)
+        /// <param name="__instance">Instance of the UI.</param>
+        /// <param name="currentCaller">Current Caller</param>
+        private static void ShowAnalogClockTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
         {
             RectTransform replayLabelRectTransform = __instance.callerNameText.gameObject.transform.parent
                 .parent.Find("ReplayLabel").GetComponent<RectTransform>();
+
+            /*
+             * Add Timer Clock GameObject
+             */
 
             analogClock = Object.Instantiate(replayLabelRectTransform.gameObject,
                 replayLabelRectTransform.gameObject.transform.parent);
@@ -397,9 +486,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             analogClock.GetComponent<RectTransform>().offsetMax = new Vector2(105.465f, -30.7853f);
 
             analogClock.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
-            Object.Destroy(analogClock.transform.GetComponent<Image>());
 
-            // Add clock UI:
+            Object.Destroy(analogClock.GetComponent<AdhereToPalette>());
+
+            Image analogClockImage = analogClock.GetComponent<Image>();
+
+            analogClockImage.color = new Color(0f, 0f, 0f, 0f);
+            analogClockImage.raycastTarget = true;
+
+            /*
+             * Add clock base:
+             */
+
             GameObject baseClock = new GameObject("ClockBase");
             baseClock.transform.SetParent(analogClock.transform, false);
 
@@ -416,7 +514,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             baseRectTransform.offsetMin = Vector2.zero;
             baseRectTransform.offsetMax = Vector2.zero;
 
-            // Add clock fill (Grey zone):
+            /*
+             * Add clock fill (Grey zone):
+             */
 
             GameObject clockFillGameObject = new GameObject("ClockFill");
             clockFillGameObject.transform.SetParent(baseClock.transform, false);
@@ -441,7 +541,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             fillRectTransform.offsetMin = Vector2.zero;
             fillRectTransform.offsetMax = Vector2.zero;
 
-            // Add Clock Hand:
+            /*
+             * Add clock base:
+             */
+
             clockHand = new GameObject("ClockHand");
             clockHand.transform.SetParent(baseClock.transform, false);
 
@@ -461,35 +564,96 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             // Set to start (Pointing up)
             clockHand.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
-            // Set the replay labels size to allow for the timer label to fit.
-            replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
-            
             /*
-             * Clock Symbol (For Timed Callers Portrait)
+             * Clock (Digit)
              */
 
-            GameObject callerPortrait = __instance.callWindow.transform.Find("CurrentCall/CallerPortrait").gameObject;
-            
-            clockSymbol = new GameObject("ClockSymbol");
-            clockSymbol.transform.SetParent(callerPortrait.transform, false);
+            GameObject clockDigitOnAnalog = new GameObject("ClockDigitOnAnalog");
+            clockDigitOnAnalog.transform.SetParent(analogClock.transform, false);
 
-            clockSymbol.AddComponent<CanvasRenderer>();
+            clockDigitOnAnalog.AddComponent<CanvasRenderer>();
 
-            Image clockSymbolImage = clockSymbol.AddComponent<Image>();
-            clockSymbolImage.sprite = EmbeddedTimerData.ClockBase;
-            
-            // Fit for parent.
-            RectTransform clocKSymbolTransform = clockSymbol.GetComponent<RectTransform>();
+            Image clockDigitOnAnalogImage = clockDigitOnAnalog.AddComponent<Image>();
+            clockDigitOnAnalogImage.sprite = null;
 
-            clocKSymbolTransform.anchorMin = new Vector2(1, 0);
-            clocKSymbolTransform.anchorMax = new Vector2(1, 0);
+            Color blurColor = new Color(0, 0, 0, 0.5f);
+
+            clockDigitOnAnalogImage.color = blurColor;
+
+            RectTransform clockDigitOnAnalogTransform = clockDigitOnAnalog.GetComponent<RectTransform>();
+
+            clockDigitOnAnalogTransform.anchorMin = Vector2.zero;
+            clockDigitOnAnalogTransform.anchorMax = Vector2.one;
+            clockDigitOnAnalogTransform.offsetMin = Vector2.zero;
+            clockDigitOnAnalogTransform.offsetMax = Vector2.zero;
+
+            // Digits
+            GameObject clockDigitOnAnalogDigits = new GameObject("ClockDigitOnAnalogDigits");
+            clockDigitOnAnalogDigits.transform.SetParent(clockDigitOnAnalog.transform, false);
+
+            TextMeshProUGUI clockDigitAnalogText = clockDigitOnAnalogDigits.AddComponent<TextMeshProUGUI>();
+            clockDigitAnalogText.text = $"{GetTimerDisplay(currentCaller.TimedCallerDuration)}";
+            clockDigitAnalogText.fontSize = 12f;
+            clockDigitAnalogText.alignment = TextAlignmentOptions.Center;
+            clockDigitAnalogText.font = analogClock.transform.GetChild(0).GetComponent<TextMeshProUGUI>().font;
+
+            RectTransform clockDigitOnAnalogDigitsTransform = clockDigitOnAnalogDigits.GetComponent<RectTransform>();
+
+            clockDigitOnAnalogDigitsTransform.anchorMin = Vector2.zero;
+            clockDigitOnAnalogDigitsTransform.anchorMax = Vector2.one;
+            clockDigitOnAnalogDigitsTransform.offsetMin = Vector2.zero;
+            clockDigitOnAnalogDigitsTransform.offsetMax = Vector2.zero;
+
+            // Hide it:
+            clockDigitOnAnalog.SetActive(false);
+
+            /*
+             * Set up event for clock asset.
+             */
             
-            clocKSymbolTransform.pivot = new Vector2(1f, 0f);
+            (bool modifierFound, VariableChanged<float> value) tickRateModifier =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.DigitalClockTickRate,
+                    vCf => vCf.HasChanged);
+
+
+            float tickRate = 1.0f;
             
-            clocKSymbolTransform.anchoredPosition = new Vector2(0f, 0f);
-            
-            clocKSymbolTransform.offsetMax = new Vector2(0f, 25f);
-            clocKSymbolTransform.offsetMin = new Vector2(-25f, 0f);
+            if (tickRateModifier.modifierFound)
+            {
+                tickRate = tickRateModifier.value.Data;
+            }
+
+            EventTrigger analogClockEvent = analogClock.AddComponent<EventTrigger>();
+
+            EventTrigger.Entry enterEntry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.PointerEnter
+            };
+
+            enterEntry.callback.AddListener(_ =>
+            {
+                clockDigitOnAnalog.SetActive(true);
+                MelonCoroutines.Start(HoverDigitalRoutine(clockDigitAnalogText, tickRate));
+            });
+
+            EventTrigger.Entry exitEntry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.PointerExit
+            };
+
+            exitEntry.callback.AddListener(_ =>
+            {
+                clockDigitOnAnalog.SetActive(false);
+                StopHoverCallerTimerRoutine();
+            });
+
+            analogClockEvent.triggers.Add(enterEntry);
+            analogClockEvent.triggers.Add(exitEntry);
+
+            /*
+             * Set the replay labels size to allow for the timer label to fit.
+             */
+            replayLabelRectTransform.offsetMax = new Vector2(60.838f, -40.7853f);
         }
 
         /// <summary>
@@ -512,7 +676,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 Object.Destroy(clockHand);
             }
-            
+
             if (clockSymbol != null)
             {
                 Object.Destroy(clockSymbol);
