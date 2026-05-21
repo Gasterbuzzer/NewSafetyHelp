@@ -17,7 +17,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
     public static class TimerCallerHelper
     {
         private static object timerCallerRoutine;
-        private static object smallerTimerCallerRoutine;
 
         private static GameObject timerLabel;
 
@@ -25,12 +24,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static GameObject clockHand;
         private static GameObject clockSymbol;
         private static Image clockFill;
+        private static TextMeshProUGUI analogClockHoverText;
 
         private static RichAudioClip clockStart = EmbeddedTimerData.ClockStart;
         private static RichAudioClip clockHalfTime = EmbeddedTimerData.ClockHalfTime;
         private static RichAudioClip clockFivePercent = EmbeddedTimerData.ClockFivePercent;
-        
-        private static float currentSeconds;
 
         private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
             BindingFlags.Static | BindingFlags.NonPublic);
@@ -41,8 +39,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         /// <param name="seconds"></param>
         public static void StartTimedCallerTimer(float seconds)
         {
-            currentSeconds = 0;
-            
             if (timerCallerRoutine == null)
             {
                 // Setting up all values:
@@ -119,47 +115,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 MelonCoroutines.Stop(timerCallerRoutine);
                 timerCallerRoutine = null;
             }
-
-            StopHoverCallerTimerRoutine();
-        }
-        
-        /// <summary>
-        /// Stops the smaller coroutine of the timed caller.
-        /// (For the hover clock)
-        /// </summary>
-        private static void StopHoverCallerTimerRoutine()
-        {
-            if (smallerTimerCallerRoutine != null)
-            {
-                LoggingHelper.DebugLog("Stopped hover (Timed-Caller) coroutine.");
-                MelonCoroutines.Stop(smallerTimerCallerRoutine);
-                smallerTimerCallerRoutine = null;
-            }
-        }
-        
-        /// <summary>
-        /// Coroutine for the small hover UI (Timed-Caller).
-        /// (For digital clock display when hovering over analog clock)
-        /// </summary>
-        /// <param name="textMeshComponent">Component to write the seconds to.</param>
-        /// <param name="tickRate">Tick rate of the digital timer.</param>
-        /// <returns>(IEnumerator) Routine to run.</returns>
-        private static IEnumerator HoverDigitalRoutine(TextMeshProUGUI textMeshComponent, float tickRate=1f)
-        {
-            textMeshComponent.text = GetTimerDisplay(currentSeconds);
-
-            while (currentSeconds > tickRate)
-            {
-                yield return new WaitForSeconds(tickRate);
-
-                textMeshComponent.text = GetTimerDisplay(currentSeconds);
-            }
-
-            // Wait out remainder (less than 1 second)
-            yield return new WaitForSeconds(currentSeconds);
-
-            // Finished Digital Call Timer
-            textMeshComponent.text = "00:00";
         }
         
         /// <summary>
@@ -187,8 +142,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 LoggingHelper.ErrorLog("TimerLabel is null and can't be updated.");
                 yield break;
             }
-
-            currentSeconds = seconds;
             
             float tenPercentTimerCheckmark = seconds * 0.1f;
             bool playedTenPercent = false;
@@ -218,7 +171,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 yield return new WaitForSeconds(tickRate);
                 seconds -= tickRate;
-                currentSeconds = seconds;
 
                 textMeshComponent.text = GetTimerDisplay(seconds);
 
@@ -271,7 +223,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             }
 
             float startSeconds = seconds;
-            currentSeconds = startSeconds;
 
             float tenPercentTimerCheckmark = seconds * 0.1f;
             bool playedTenPercent = false;
@@ -298,14 +249,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 yield return new WaitForSeconds(tickRate);
                 seconds -= tickRate;
 
-                currentSeconds = seconds;
-
                 float rotationPercentage = (startSeconds - seconds) / startSeconds; // 0.0 -> 1.0
 
                 float rotationValue = rotationPercentage * 360; // This gives us the slice of the rotation.
                 clockHand.transform.localRotation = Quaternion.Euler(0f, 0f, -rotationValue);
 
+                // Clock Fill (gray area)
                 clockFill.fillAmount = rotationPercentage;
+                
+                // Hover Text Update
+                analogClockHoverText.text = GetTimerDisplay(seconds);
 
                 if (!playedHalfPercent
                     && seconds <= halfPercentTimerCheckmark)
@@ -597,6 +550,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             clockDigitAnalogText.alignment = TextAlignmentOptions.Center;
             clockDigitAnalogText.font = analogClock.transform.GetChild(0).GetComponent<TextMeshProUGUI>().font;
 
+            analogClockHoverText = clockDigitAnalogText;
+
             RectTransform clockDigitOnAnalogDigitsTransform = clockDigitOnAnalogDigits.GetComponent<RectTransform>();
 
             clockDigitOnAnalogDigitsTransform.anchorMin = Vector2.zero;
@@ -604,24 +559,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             clockDigitOnAnalogDigitsTransform.offsetMin = Vector2.zero;
             clockDigitOnAnalogDigitsTransform.offsetMax = Vector2.zero;
 
-            // Hide it:
+            // Hide the hover text:
             clockDigitOnAnalog.SetActive(false);
 
             /*
              * Set up event for clock asset.
              */
-            
-            (bool modifierFound, VariableChanged<float> value) tickRateModifier =
-                CustomCampaignGlobal.GetActiveModifierValue(c => c.DigitalClockTickRate,
-                    vCf => vCf.HasChanged);
-
-
-            float tickRate = 1.0f;
-            
-            if (tickRateModifier.modifierFound)
-            {
-                tickRate = tickRateModifier.value.Data;
-            }
 
             EventTrigger analogClockEvent = analogClock.AddComponent<EventTrigger>();
 
@@ -633,7 +576,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             enterEntry.callback.AddListener(_ =>
             {
                 clockDigitOnAnalog.SetActive(true);
-                MelonCoroutines.Start(HoverDigitalRoutine(clockDigitAnalogText, tickRate));
             });
 
             EventTrigger.Entry exitEntry = new EventTrigger.Entry
@@ -644,7 +586,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             exitEntry.callback.AddListener(_ =>
             {
                 clockDigitOnAnalog.SetActive(false);
-                StopHoverCallerTimerRoutine();
             });
 
             analogClockEvent.triggers.Add(enterEntry);
