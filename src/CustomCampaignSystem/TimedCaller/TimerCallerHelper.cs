@@ -30,6 +30,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static RichAudioClip clockHalfTime = EmbeddedTimerData.ClockHalfTime;
         private static RichAudioClip clockFivePercent = EmbeddedTimerData.ClockFivePercent;
 
+        private static Sprite clockBaseSprite = EmbeddedTimerData.ClockBase;
+        private static Sprite clockHandSprite = EmbeddedTimerData.ClockHand;
+
         private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
             BindingFlags.Static | BindingFlags.NonPublic);
 
@@ -116,7 +119,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 timerCallerRoutine = null;
             }
         }
-        
+
         /// <summary>
         /// Displays the seconds into a more readable format.
         /// </summary>
@@ -142,7 +145,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 LoggingHelper.ErrorLog("TimerLabel is null and can't be updated.");
                 yield break;
             }
-            
+
             float tenPercentTimerCheckmark = seconds * 0.1f;
             bool playedTenPercent = false;
 
@@ -256,7 +259,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
                 // Clock Fill (gray area)
                 clockFill.fillAmount = rotationPercentage;
-                
+
                 // Hover Text Update
                 analogClockHoverText.text = GetTimerDisplay(seconds);
 
@@ -339,6 +342,36 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         public static void ShowCallerTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
         {
             /*
+             * Updating icons before creating gameobjects.
+             */
+
+            (bool foundModifier, VariableChanged<Sprite> value) clockBaseModifier =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerBaseClock,
+                    vCs => vCs.HasChanged);
+
+            if (clockBaseModifier.foundModifier)
+            {
+                clockBaseSprite = clockBaseModifier.value.Data;
+            }
+            else
+            {
+                clockBaseSprite = EmbeddedTimerData.ClockBase;
+            }
+
+            (bool foundModifier, VariableChanged<Sprite> value) clockHandModifier =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerClockHand,
+                    vCs => vCs.HasChanged);
+
+            if (clockHandModifier.foundModifier)
+            {
+                clockHandSprite = clockHandModifier.value.Data;
+            }
+            else
+            {
+                clockHandSprite = EmbeddedTimerData.ClockHand;
+            }
+
+            /*
              * Clock Symbol (For Timed Callers Portrait)
              */
 
@@ -350,7 +383,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             clockSymbol.AddComponent<CanvasRenderer>();
 
             Image clockSymbolImage = clockSymbol.AddComponent<Image>();
-            clockSymbolImage.sprite = EmbeddedTimerData.ClockBase;
+            clockSymbolImage.sprite = clockBaseSprite;
 
             // Fit for parent.
             RectTransform clocKSymbolTransform = clockSymbol.GetComponent<RectTransform>();
@@ -457,7 +490,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             baseClock.AddComponent<CanvasRenderer>();
 
             Image clockBaseImage = baseClock.AddComponent<Image>();
-            clockBaseImage.sprite = EmbeddedTimerData.ClockBase;
+            clockBaseImage.sprite = clockBaseSprite;
 
             // Fill parent
             RectTransform baseRectTransform = baseClock.GetComponent<RectTransform>();
@@ -478,7 +511,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             clockFill = clockFillGameObject.AddComponent<Image>();
 
-            clockFill.sprite = EmbeddedTimerData.ClockBase;
+            clockFill.sprite = clockBaseSprite;
 
             clockFill.type = Image.Type.Filled;
             clockFill.fillMethod = Image.FillMethod.Radial360;
@@ -504,7 +537,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             clockHand.AddComponent<CanvasRenderer>();
 
             Image clockHandImage = clockHand.AddComponent<Image>();
-            clockHandImage.sprite = EmbeddedTimerData.ClockHand;
+            clockHandImage.sprite = clockHandSprite;
 
             // Fill parent
             RectTransform handRectTransform = clockHand.GetComponent<RectTransform>();
@@ -573,20 +606,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 eventID = EventTriggerType.PointerEnter
             };
 
-            enterEntry.callback.AddListener(_ =>
-            {
-                clockDigitOnAnalog.SetActive(true);
-            });
+            enterEntry.callback.AddListener(_ => { clockDigitOnAnalog.SetActive(true); });
 
             EventTrigger.Entry exitEntry = new EventTrigger.Entry
             {
                 eventID = EventTriggerType.PointerExit
             };
 
-            exitEntry.callback.AddListener(_ =>
-            {
-                clockDigitOnAnalog.SetActive(false);
-            });
+            exitEntry.callback.AddListener(_ => { clockDigitOnAnalog.SetActive(false); });
 
             analogClockEvent.triggers.Add(enterEntry);
             analogClockEvent.triggers.Add(exitEntry);

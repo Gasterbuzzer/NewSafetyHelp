@@ -363,6 +363,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = null
             };
 
+            VariableChanged<Sprite> timedCallerBaseClock = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
+            VariableChanged<Sprite> timedCallerClockHand = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
             /*
              * Cheats / Settings Section
              */
@@ -700,6 +710,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "timed_caller_critical_audio_name",
                 ref timedCallerCriticalSoundPath, jsonFolderPath, usermodFolderPath);
 
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "timed_caller_base_clock_image_name",
+                ref timedCallerBaseClock, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "timed_caller_clock_hand_image_name",
+                ref timedCallerClockHand, jsonFolderPath, usermodFolderPath, customCampaignName);
+
             /*
              * Cheats / Settings
              */
@@ -708,6 +724,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
 
+            /*
+             * Creating the modifier object.
+             */
             return new CustomModifier
             {
                 CustomCampaignName = customCampaignName,
@@ -797,6 +816,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 TimedCallerHalfSoundPath = timedCallerHalfSoundPath,
                 TimedCallerCriticalSound = timedCallerCriticalSound,
                 TimedCallerCriticalSoundPath = timedCallerCriticalSoundPath,
+                TimedCallerBaseClock = timedCallerBaseClock,
+                TimedCallerClockHand = timedCallerClockHand,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

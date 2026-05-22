@@ -170,6 +170,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 Sprite parsedSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath, usermodFolderPath + "\\" + imagePath);
                 if (parsedSprite != null)
                 {
+                    LoggingHelper.DebugLog($"Loaded in sprite (image) '{imagePath}' successfully.");
                     target.HasChanged = true;
                     target.Data = parsedSprite;
                 }

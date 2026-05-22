@@ -223,48 +223,58 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = false
         };
-        
+
         public VariableChanged<float> DigitalClockTickRate = new VariableChanged<float>
         {
             Data = 1f
         };
-        
+
         public VariableChanged<float> AnalogClockTickRate = new VariableChanged<float>
         {
             Data = 0.05f
         };
-        
+
         public VariableChanged<string> TimedCallerDisconnectedMessage = new VariableChanged<string>
         {
             Data = "TIMES UP!\nCALL DISCONNECTED"
         };
-        
+
         public VariableChanged<RichAudioClip> TimedCallerStartSound = new VariableChanged<RichAudioClip>
         {
             Data = null
         };
-        
+
         public VariableChanged<string> TimedCallerStartSoundPath = new VariableChanged<string>
         {
             Data = null
         };
-        
+
         public VariableChanged<RichAudioClip> TimedCallerHalfSound = new VariableChanged<RichAudioClip>
         {
             Data = null
         };
-        
+
         public VariableChanged<string> TimedCallerHalfSoundPath = new VariableChanged<string>
         {
             Data = null
         };
-        
+
         public VariableChanged<RichAudioClip> TimedCallerCriticalSound = new VariableChanged<RichAudioClip>
         {
             Data = null
         };
-        
+
         public VariableChanged<string> TimedCallerCriticalSoundPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<Sprite> TimedCallerBaseClock = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+
+        public VariableChanged<Sprite> TimedCallerClockHand = new VariableChanged<Sprite>
         {
             Data = null
         };
