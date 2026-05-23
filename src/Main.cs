@@ -76,7 +76,7 @@ namespace NewSafetyHelp
         private static int monsterProfileSizeAfterAdding = 0; // May be used later. Don't remove.
 
         /// <summary>
-        /// Adds extra Monsters to the list.
+        /// Adds extra entries to the list.
         /// We do this preferably here in order to make sure its
         /// </summary>
         /// <param name="__instance"> Caller of function. </param>
@@ -93,7 +93,7 @@ namespace NewSafetyHelp
                     __instance.allEntries.monsterProfiles = copyMonsterProfilesAfterAdding;
                 }
 
-                // Check if already added monsters at any point.
+                // Check if already added entries at any point.
                 if (isInitializedMainOnce)
                 {
                     // We already added them once, no need to add them again.
@@ -102,7 +102,7 @@ namespace NewSafetyHelp
                     return;
                 }
 
-                // We create copy of the monster profiles. (Before adding all entries)
+                // We create copy of the entry profiles. (Before adding all entries)
                 CopyMonsterProfiles = __instance.allEntries.monsterProfiles;
                 monsterProfileSize = CopyMonsterProfiles.Length;
 
@@ -193,7 +193,7 @@ namespace NewSafetyHelp
         {
             LoggingHelper.InfoLog("Now parsing all '.json' files...", consoleColor: ConsoleColor.Green);
 
-            // Read all JSON and add all monsters and campaigns (/Calls)
+            // Read all JSON and add all entries and campaigns (/Calls)
             ParseJSONFiles.LoadAllJSON(__instance);
 
             // Create copy after adding all custom entries that belong to the main campaign.

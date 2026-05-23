@@ -44,7 +44,7 @@ namespace NewSafetyHelp.Callers.Answer
                     return true;
                 }
 
-                // Monster Valid
+                // Entry (Monster) is valid?
                 if (monsterID != null)
                 {
                     ++__instance.callersToday;

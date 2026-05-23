@@ -129,11 +129,11 @@ namespace NewSafetyHelp.EndingPatches
                                 newProfile.callerClip = (RichAudioClip)GetRandomClip.Invoke(__instance, null);
                             }
 
-                            if (!string.IsNullOrEmpty(customCCallerGameOverChosen.MonsterNameAttached) ||
-                                customCCallerGameOverChosen.MonsterIDAttached != -1)
+                            if (!string.IsNullOrEmpty(customCCallerGameOverChosen.EntryNameAttached) ||
+                                customCCallerGameOverChosen.EntryIDAttached != -1)
                             {
                                 LoggingHelper.WarningLog(
-                                    "A monster was provided for the GameOver caller, " +
+                                    "A entry (monster) was provided for the GameOver caller, " +
                                     "but GameOver callers do not use any entries! Will default to none.");
                             }
 

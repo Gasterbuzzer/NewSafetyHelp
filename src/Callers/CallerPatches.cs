@@ -122,16 +122,16 @@ namespace NewSafetyHelp.Callers
                         callerProfile.callerClip = customCaller.Value.CallerClip;
                         callerProfile.increaseTier = customCaller.Value.CallerIncreasesTier;
 
-                        if (customCaller.Value.MonsterNameAttached != "NO_MONSTER_NAME")
+                        if (customCaller.Value.EntryNameAttached != "NO_MONSTER_NAME")
                         {
                             MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
                                 ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
-                                    .allEntries.monsterProfiles, customCaller.Value.MonsterNameAttached);
+                                    .allEntries.monsterProfiles, customCaller.Value.EntryNameAttached);
 
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided entry (monster) name '{customCaller.Value.MonsterNameAttached}' " +
+                                    $"Provided entry (monster) name '{customCaller.Value.EntryNameAttached}' " +
                                     $"for custom caller {customCaller.Key} was not found! " +
                                     "Thus will not have any entry (monster).");
                                 callerProfile.callerMonster = null;
@@ -141,11 +141,11 @@ namespace NewSafetyHelp.Callers
                                 callerProfile.callerMonster = foundMonster;
                             }
                         }
-                        else if (customCaller.Value.MonsterIDAttached >= 0) // Check for ID entry.
+                        else if (customCaller.Value.EntryIDAttached >= 0) // Check for ID entry.
                         {
                             MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
                                 ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
-                                    .allEntries.monsterProfiles, entryID: customCaller.Value.MonsterIDAttached);
+                                    .allEntries.monsterProfiles, entryID: customCaller.Value.EntryIDAttached);
 
                             if (foundMonster == null)
                             {
@@ -258,16 +258,16 @@ namespace NewSafetyHelp.Callers
                         }
 
                         // Adding Entry to Caller if valid.
-                        if (customCallerCC.MonsterNameAttached != "NO_MONSTER_NAME")
+                        if (customCallerCC.EntryNameAttached != "NO_MONSTER_NAME")
                         {
                             MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
                                 ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
-                                    .allEntries.monsterProfiles, customCallerCC.MonsterNameAttached);
+                                    .allEntries.monsterProfiles, customCallerCC.EntryNameAttached);
 
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided entry (monster) name '{customCallerCC.MonsterNameAttached}' " +
+                                    $"Provided entry (monster) name '{customCallerCC.EntryNameAttached}' " +
                                     $"for custom caller {customCallerCC.CallerName} was not found! " +
                                     "Thus will not have any entry (monster).");
                                 newProfile.callerMonster = null;
@@ -277,11 +277,11 @@ namespace NewSafetyHelp.Callers
                                 newProfile.callerMonster = foundMonster;
                             }
                         }
-                        else if (customCallerCC.MonsterIDAttached >= 0) // Check for ID entry.
+                        else if (customCallerCC.EntryIDAttached >= 0) // Check for ID entry.
                         {
                             MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
                                 ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
-                                    .allEntries.monsterProfiles, entryID: customCallerCC.MonsterIDAttached);
+                                    .allEntries.monsterProfiles, entryID: customCallerCC.EntryIDAttached);
 
                             if (foundMonster == null)
                             {
@@ -766,8 +766,8 @@ namespace NewSafetyHelp.Callers
                                     newProfile.callerClip = (RichAudioClip)GetRandomClip.Invoke(__instance, null);
                                 }
 
-                                if (!string.IsNullOrEmpty(warningCCallerToday.MonsterNameAttached) ||
-                                    warningCCallerToday.MonsterIDAttached != -1)
+                                if (!string.IsNullOrEmpty(warningCCallerToday.EntryNameAttached) ||
+                                    warningCCallerToday.EntryIDAttached != -1)
                                 {
                                     LoggingHelper.WarningLog(
                                         "An entry (monster) was provided for the warning caller, " +

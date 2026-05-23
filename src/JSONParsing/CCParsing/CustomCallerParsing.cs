@@ -52,7 +52,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (customCallerMonsterName != "NO_CUSTOM_CALLER_MONSTER_NAME")
             {
-                customCCaller.MonsterNameAttached = customCallerMonsterName;
+                customCCaller.EntryNameAttached = customCallerMonsterName;
             }
 
             // Custom Caller Audio Path (Later gets added with coroutine) 
@@ -232,7 +232,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CallerName = customCallerName,
                 CallerImage = customCallerImage,
                 CallTranscript = customCallerTranscript,
-                MonsterIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
+                EntryIDAttached = customCallerMonsterID, // Note, this should 99% of times not be set by user!!!
                 InCustomCampaign = !inMainCampaign,
                 CallerIncreasesTier = increasesTier,
                 CallerClipPath = customCallerAudioPath,

@@ -29,12 +29,12 @@ namespace NewSafetyHelp.Callers.CallerModel
 
         public bool DownedNetworkCaller = false; // If the caller will down the network (Meaning entry information cannot be accessed)
         
-        // Monster Profile
-        // Monster / Entry name to be attached for.
-        // (Used when the caller asks for help and to check if that name is valid).
-        public string MonsterNameAttached = "NO_MONSTER_NAME"; 
 
-        public int MonsterIDAttached = -1; // Similar to name but allows also ID to work.
+        // Entry (Monster)
+        // (Used when the caller asks for help and to check if that name is valid).
+        public string EntryNameAttached = "NO_MONSTER_NAME"; 
+
+        public int EntryIDAttached = -1; // Similar to name but allows also ID to work.
         
         // Call Order
         
