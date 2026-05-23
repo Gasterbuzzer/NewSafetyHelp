@@ -785,12 +785,12 @@ namespace NewSafetyHelp.CustomCampaignSystem
                 LoggingHelper.DebugLog(() =>
                     $"Adding entry {entryInCustomCampaign.Name} to custom campaign.");
 
-                EntryManager.EntryManager.AddMonsterToTheProfile(entryInCustomCampaign.ReferenceCopyEntry,
+                EntryManager.EntryManager.AddEntryToTheProfile(entryInCustomCampaign.ReferenceCopyEntry,
                     ref monsterProfileList.monsterProfiles, "allEntries");
             }
 
             // Sort afterward
-            EntryManager.EntryManager.SortMonsterProfiles(ref monsterProfileList.monsterProfiles);
+            EntryManager.EntryManager.SortEntryProfiles(ref monsterProfileList.monsterProfiles);
         }
 
         /// <summary>
@@ -841,7 +841,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         }
 
                         // Delete by name.
-                        EntryManager.EntryManager.DeleteMonsterProfile(ref monsterProfileList.monsterProfiles,
+                        EntryManager.EntryManager.DeleteEntryProfile(ref monsterProfileList.monsterProfiles,
                             null, entryFound.Name);
 
                         LoggingHelper.DebugLog(() =>

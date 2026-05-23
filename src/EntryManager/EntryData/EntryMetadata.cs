@@ -29,13 +29,13 @@ namespace NewSafetyHelp.EntryManager.EntryData
         public bool OnlyDLC = false; // If only in the DLC.
         public bool IncludeInDlc = false; // If to also include in the DLC
 
-        // Extra Extra
+        // Extra
         public bool AlreadyCalledOnce = false;
         // Used for finding currently selected, for replacing audio.
         // Please know that the information is updated for the canvas before the audio is played.
         public bool CurrentlySelected = false; 
 
-        // Copy of Monster Entry
+        // Copy of the Entry
         public MonsterProfile ReferenceCopyEntry = null;
 
         // Copy of Caller (if called)

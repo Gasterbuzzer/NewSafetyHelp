@@ -118,7 +118,7 @@ namespace NewSafetyHelp.JSONParsing
                         case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
                             LoggingHelper.InfoLog(
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
-                            EntryParsing.EntryParsing.CreateMonsterFromJSON(jObjectParse,
+                            EntryParsing.EntryParsing.CreateEntryFromJSON(jObjectParse,
                                 usermodFolderPath: modFolderPath,
                                 jsonFolderPath: jsonFolderPath, entryUnlockerInstance: __instance);
                             break;
@@ -206,7 +206,7 @@ namespace NewSafetyHelp.JSONParsing
                 return JSONParseTypes.Invalid;
             }
 
-            // Added Campaign Settings
+            // Custom Campaign was provided.
             if (ParsingHelper.ContainsKeys(
                     new List<string>
                         { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name" }, json))
@@ -226,7 +226,9 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Entry was provided.
-            if (ParsingHelper.ContainsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json))
+            if (ParsingHelper.ContainsKeys(new List<string> { "monster_name", "replace_entry", "caller_name",
+                    "entry_name", "entry_description", "monster_description", "monster_portrait_image_name",
+                    "entry_portrait_image_name", "monster_audio_clip_name", "entry_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Entry;
             }

@@ -35,7 +35,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.firstTierUnlocks.monsterProfiles.Contains(EntriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -43,7 +43,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.secondTierUnlocks.monsterProfiles.Contains(EntriesReaddTierTwo[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -51,7 +51,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.thirdTierUnlocks.monsterProfiles.Contains(EntriesReaddTierThree[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -59,7 +59,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.fourthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierFour[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -67,7 +67,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.fifthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierFive[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -75,7 +75,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.sixthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierSix[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
         }
