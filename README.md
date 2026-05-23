@@ -1,7 +1,7 @@
 ﻿# New Safety Help
 
 A mod that allows adding and modifying content for the game Home Safety Hotline. \
-This mod also includes multiple fixes for many bugs present in the base game.
+This mod also includes multiple fixes for different bugs present in the base game.
 
 # How to Install:
 1. Download MelonLoader (Automated Installer) from the official website: [MelonLoader Download](https://melonwiki.xyz/#/?id=requirements)
@@ -17,24 +17,28 @@ You can find your games Mod folder by pressing the folder icon MelonLoader.
 
 5. Start your game and enjoy.
 
-# Using the Mod
+You can also check out the wiki for more detailed instructions. ([Link](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki/Installation))
+
+# Using the Mod (Creating Entries/Campaigns)
 See the Wiki here on GitHub for the documentation and some tutorials: [Link](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
 
 # MelonLoader Information
-Has been tested with version 0.5.7 and above. 
+It has been tested with MelonLoader version 0.7.2 and below (Minimum: 0.5.7). \
 As of the latest release, the newest version is 0.7.2. \
-If any versions higher or lower do not work, do not be afraid to contact me.
+If any MelonLoader version that is higher or lower do not work, feel free to contact me.
 
 # Building the project
 Project can be built with: .NET Framework 4.7.2
 
 Please note, a build script has been added to automatically move the built mod to the game's directory. \
 For this to work, you have to provide a text file named "config.txt" in the top most level. 
-It should contain the full absolute path to the games' folder. (Changed from the mods folder only). 
-It can also start the game if you set batch variable to true.\
+It should contain the full absolute path to the games' folder.
+It can also start the game after building, if you set scripts variable to true.\
 Other than that, enjoy.
 
-# Contributing
+# Contributing and Providing ideas
 
 Contributions are very welcome and help improve the mod for others. \
 If you wish to learn how to contribute, please check the Wiki.
+
+If you simply wish to provide an idea, feel free to send me message or open an issue.
