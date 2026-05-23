@@ -1,0 +1,332 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using MelonLoader;
+using NewSafetyHelp.Audio.Music.Data;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
+using UnityEngine;
+
+namespace NewSafetyHelp.Audio.Music.Intermission
+{
+    public static class IntermissionMusicHelper
+    {
+        private static bool shouldPlayIntermissionMusic = true;
+        private static object playIntermission;
+
+        private static bool alreadyStoppingIntermissionMusic;
+
+        // Field Infos
+        private static readonly FieldInfo MyMusicSource =
+            typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        /// <summary>
+        /// Plays intermission music based on the given custom music.
+        /// </summary>
+        /// <param name="audioClip"> Audio Clip to be played as intermission music. </param>
+        public static void PlayIntermissionMusic(CustomMusic audioClip = null)
+        {
+            if (MyMusicSource == null)
+            {
+                LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic.");
+                return;
+            }
+
+            AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(GlobalVariables.musicControllerScript);
+
+            if (myMusicSourceCast == null)
+            {
+                LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic.");
+                return;
+            }
+
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                LoggingHelper.CampaignNullError();
+                return;
+            }
+
+            if (customCampaign.CustomIntermissionMusic.Count <= 0)
+            {
+                return;
+            }
+
+            myMusicSourceCast.pitch = 1.0f;
+
+            shouldPlayIntermissionMusic = true;
+            alreadyStoppingIntermissionMusic = false;
+            playIntermission =
+                MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));
+        }
+
+        /// <summary>
+        /// Stops the intermission music coroutine from playing.
+        /// </summary>
+        public static void StopIntermissionMusicRoutine()
+        {
+            LoggingHelper.DebugLog("Stopping the intermission music.");
+            
+            shouldPlayIntermissionMusic = false;
+            alreadyStoppingIntermissionMusic = false;
+
+            if (playIntermission != null)
+            {
+                MelonCoroutines.Stop(playIntermission);
+            }
+        }
+
+        /// <summary>
+        /// Stops the intermission music from playing.
+        /// </summary>
+        public static IEnumerator StopIntermissionMusic()
+        {
+            if (alreadyStoppingIntermissionMusic)
+            {
+                yield break;
+            }
+
+            alreadyStoppingIntermissionMusic = true;
+            
+            if (MyMusicSource == null)
+            {
+                LoggingHelper.CriticalErrorLog("'myMusicSource' was not found. Unable of changing StartMusic.");
+                yield break;
+            }
+
+            AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(GlobalVariables.musicControllerScript);
+
+            if (myMusicSourceCast == null)
+            {
+                LoggingHelper.CriticalErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic.");
+                yield break;
+            }
+
+            if (playIntermission != null)
+            {
+                shouldPlayIntermissionMusic = false;
+
+                MelonCoroutines.Stop(playIntermission);
+
+                yield return FadeOutMusic(myMusicSourceCast);
+                
+                myMusicSourceCast.Stop();
+                myMusicSourceCast.loop = true;
+                myMusicSourceCast.volume = 1f;
+
+                alreadyStoppingIntermissionMusic = false;
+            }
+        }
+
+        /// <summary>
+        /// Actually plays the intermission music in a loop. The loop will stop when the stop function gets called.
+        /// </summary>
+        /// <param name="myMusicSourceCast"> AudioSource to stop the music for. </param>
+        /// <param name="audioClip"> Music to played. </param>
+        /// <param name="customCampaign"> Custom Campaign to find the music in. </param>
+        /// <param name="shouldLoop"> If the music should loop or should stop after being played once. </param>
+        private static IEnumerator PlayIntermissionMusicLoop(AudioSource myMusicSourceCast, CustomMusic audioClip,
+            CustomCampaign customCampaign, bool shouldLoop = true)
+        {
+            bool wasProvidedNull = (audioClip == null);
+            bool shouldPlayIntermission = false;
+
+            while (shouldPlayIntermissionMusic)
+            {
+                // Check if we should stop and to pick the next music.
+                if (audioClip == null || wasProvidedNull)
+                {
+                    audioClip = PickIntermissionMusic(ref shouldPlayIntermission, customCampaign);
+
+                    // No valid music found. We stop.
+                    if (!shouldPlayIntermission)
+                    {
+                        yield break;
+                    }
+                }
+
+                // Set some values to prevent a problem.
+                myMusicSourceCast.volume = audioClip.MusicClip.volume;
+                myMusicSourceCast.loop = false;
+
+                float startAfterSeconds = MusicStartRange(audioClip);
+                float musicStopAfterSeconds = MusicEndRange(audioClip);
+
+                LoggingHelper.DebugLog($"Intermission music playing with start of: '{startAfterSeconds}' with" +
+                                       $"end range of '{musicStopAfterSeconds}'.");
+
+                if (musicStopAfterSeconds - startAfterSeconds <= 0)
+                {
+                    LoggingHelper.WarningLog("Provided music ranges overlap and cause the music not to play." +
+                    " Unable to play music.");
+                    yield break;
+                }
+
+                GlobalVariables.musicControllerScript.StartMusic(audioClip.MusicClip);
+                
+                myMusicSourceCast.time = startAfterSeconds;
+                myMusicSourceCast.pitch = 1.0f;
+
+                // Wait for end range.
+                yield return new WaitForSeconds(musicStopAfterSeconds - startAfterSeconds);
+
+                // Fade out the music.
+                yield return FadeOutMusic(myMusicSourceCast);
+                
+                // Reset values back to normal.
+                myMusicSourceCast.Stop();
+                myMusicSourceCast.loop = true;
+                myMusicSourceCast.volume = 1f;
+
+                // If we should stop.
+                if (!shouldLoop)
+                {
+                    yield break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the music range where the music is supposed to be stopped based on the different types of end range.
+        /// </summary>
+        /// <param name="audioClip"> Music to played. </param>
+        private static float MusicEndRange(CustomMusic audioClip)
+        {
+            if (audioClip.EndRange == null)
+            {
+                return audioClip.MusicClip.clip.length;
+            }
+
+            if (audioClip.EndRange.Count <= 0)
+            {
+                return audioClip.MusicClip.clip.length;
+            }
+
+            switch (audioClip.EndRange.Count)
+            {
+                case 1:
+                    return audioClip.EndRange[0];
+
+                case 2:
+                    return Random.Range(audioClip.EndRange[0], audioClip.EndRange[1]);
+            }
+
+            if (audioClip.EndRange.Count > 2)
+            {
+                int randomIndex = Random.Range(0, audioClip.EndRange.Count);
+
+                return audioClip.EndRange[randomIndex];
+            }
+
+            return audioClip.MusicClip.clip.length;
+        }
+
+        /// <summary>
+        /// Returns the music range where the music is supposed
+        /// to be started based on the different types of start range.
+        /// </summary>
+        /// <param name="audioClip"> Music to played. </param>
+        private static float MusicStartRange(CustomMusic audioClip)
+        {
+            if (audioClip.StartRange == null)
+            {
+                return 0;
+            }
+
+            if (audioClip.StartRange.Count <= 0)
+            {
+                return 0;
+            }
+
+            switch (audioClip.StartRange.Count)
+            {
+                case 1:
+                    return audioClip.StartRange[0];
+
+                case 2:
+                    return Random.Range(audioClip.StartRange[0], audioClip.StartRange[1]);
+            }
+
+            if (audioClip.StartRange.Count > 2)
+            {
+                int randomIndex = Random.Range(0, audioClip.StartRange.Count);
+
+                return audioClip.StartRange[randomIndex];
+            }
+
+            return 0;
+        }
+
+
+        /// <summary>
+        /// Returns a valid intermission music that is allowed to play for the current day.
+        /// </summary>
+        /// <returns>Returns null if none found and </returns>
+        // ReSharper disable once RedundantAssignment
+        private static CustomMusic PickIntermissionMusic(ref bool shouldPlayIntermission, CustomCampaign customCampaign)
+        {
+            shouldPlayIntermission = false;
+
+            if (CustomCampaignGlobal.InCustomCampaign)
+            {
+                List<CustomMusic> validCustomMusic = customCampaign.CustomIntermissionMusic
+                    .Where(clip =>
+                        {
+                            if (clip.OnlyPlayOnUnlockDay)
+                            {
+                                if (clip.UnlockDay <= 0)
+                                {
+                                    return 1 == GlobalVariables.currentDay;
+                                }
+
+                                return clip.UnlockDay == GlobalVariables.currentDay;
+                            }
+
+                            return clip.UnlockDay <= GlobalVariables.currentDay;
+                        }
+                    ).ToList();
+
+                LoggingHelper.DebugLog(
+                    $"Custom Intermission Music Available: {customCampaign.CustomIntermissionMusic.Count}." +
+                    $" Valid: '{validCustomMusic.Count}'.");
+
+                if (validCustomMusic.Count <= 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    shouldPlayIntermission = true;
+                    int randomIndex = Random.Range(0, validCustomMusic.Count);
+                    return validCustomMusic[randomIndex];
+                }
+            }
+
+            return null;
+        }
+        
+        /// <summary>
+        /// Fades out a given music source.
+        /// </summary>
+        private static IEnumerator FadeOutMusic(AudioSource mySource, float interpolateScalar = 1f)
+        {
+            float interpolateValue = 0.0f;
+            float maxVol = mySource.volume;
+            
+            while (mySource.volume > 0.0)
+            {
+                mySource.volume = Mathf.Lerp(maxVol, 0.0f, interpolateValue);
+                
+                interpolateValue += interpolateScalar * Time.deltaTime;
+                
+                yield return null;
+            }
+            
+            mySource.volume = 0.0f;
+            mySource.Stop();
+        }
+    }
+}

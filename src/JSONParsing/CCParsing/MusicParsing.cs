@@ -1,8 +1,9 @@
-﻿using System.IO;
-using MelonLoader;
-using NewSafetyHelp.Audio;
+﻿using System.Collections.Generic;
 using NewSafetyHelp.Audio.Music.Data;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
@@ -20,7 +21,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as music. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as music. Possible syntax mistake?");
                 return;
             }
 
@@ -31,56 +32,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref jsonFolderPath, ref customCampaignName);
 
             // Add music clip
-            if (jObjectParsed.ContainsKey("music_audio_clip_name"))
-            {
-                if (string.IsNullOrEmpty(customMusic.MusicClipPath))
-                {
-                    MelonLogger.Warning(
-                        $"WARNING: No valid music file given for file in {jsonFolderPath}. No audio will be heard.");
-                }
-                // Check if location is valid now, since we are storing it now.
-                else if (!File.Exists(customMusic.MusicClipPath))
-                {
-                    MelonLogger.Error(
-                        $"ERROR: Location {jsonFolderPath} does not contain '{customMusic.MusicClipPath}'." +
-                        " Unable to add audio.");
-                }
-                else // Valid location, so we load in the value.
-                {
-                    MelonCoroutines.Start(ParsingHelper.UpdateAudioClip
-                        (
-                            (myReturnValue) =>
-                            {
-                                if (myReturnValue != null)
-                                {
-                                    // Add the audio
-                                    customMusic.MusicClip = AudioImport.CreateRichAudioClip(myReturnValue);
-                                }
-                                else
-                                {
-                                    MelonLogger.Error(
-                                        $"ERROR: Failed to load audio clip {customMusic.MusicClipPath} for custom caller.");
-                                }
-                            },
-                            customMusic.MusicClipPath)
-                    );
-                }
-            }
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customMusic.MusicClipPath,
+                clip => customMusic.MusicClip = clip,
+                jsonFolderPath, "music_audio_clip_name");
 
             // Add to correct campaign.
-            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
-                CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
-                    customCampaignSearch.CampaignName == customCampaignName);
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
 
-            if (foundCustomCampaign != null)
+            if (customCampaign != null)
             {
-                foundCustomCampaign.CustomMusic.Add(customMusic);
+                if (customMusic.IsIntermissionMusic)
+                {
+                    customCampaign.CustomIntermissionMusic.Add(customMusic);
+                }
+                else
+                {
+                    customCampaign.CustomMusic.Add(customMusic);
+                }
             }
             else
             {
-                #if DEBUG
-                MelonLogger.Msg("DEBUG: Found Music File before the custom campaign was found / does not exist.");
-                #endif
+                LoggingHelper.DebugLog("Found Music File before the custom campaign was found / does not exist.");
 
                 GlobalParsingVariables.PendingCustomCampaignMusic.Add(customMusic);
             }
@@ -92,14 +64,29 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             int unlockDay = 0; // When the music is unlocked. Mostly used for default game logic.
 
             string musicAudioPath = ""; // Audio Path to load audio from.
+            
+            bool onlyPlayOnUnlockDay = false;
+            
+            bool isIntermissionMusic = false;
+            
+            List<float> startRange = new List<float>(); 
+            List<float> endRange = new List<float>();
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
-            ParsingHelper.TryAssignAudioPath(jObjectParsed, "music_audio_clip_name", ref musicAudioPath,
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "music_audio_clip_name", ref musicAudioPath,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
             
             ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "only_play_on_unlock_day", ref onlyPlayOnUnlockDay);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "is_intermission_music", ref isIntermissionMusic);
 
+            ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "start_range", ref startRange);
+            
+            ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "end_range", ref endRange);
+            
             return new CustomMusic
             {
                 CustomCampaignName = customCampaignName,
@@ -107,6 +94,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 MusicClipPath = musicAudioPath,
 
                 UnlockDay = unlockDay,
+                
+                OnlyPlayOnUnlockDay = onlyPlayOnUnlockDay,
+                
+                IsIntermissionMusic =  isIntermissionMusic,
+                
+                StartRange = startRange,
+                EndRange = endRange
             };
         }
     }

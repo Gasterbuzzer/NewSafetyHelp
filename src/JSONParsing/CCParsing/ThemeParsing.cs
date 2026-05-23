@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
-using NewSafetyHelp.CustomCampaign.Themes;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Themes;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using static NewSafetyHelp.CustomThemes.ColorHelper;
@@ -21,18 +22,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a theme. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a theme. Possible syntax mistake?");
                 return;
             }
             
             // Campaign Values
             string customCampaignName = "";
 
-            CustomTheme customTheme = ParseTheme(ref jObjectParsed, ref usermodFolderPath,
-                ref jsonFolderPath, ref customCampaignName);
+            CustomTheme customTheme = ParseTheme(ref jObjectParsed, ref customCampaignName);
 
             // Add to correct campaign.
-            CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+            CustomCampaign customCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
             
@@ -42,30 +42,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                if (foundCustomCampaign != null)
+                if (customCampaign != null)
                 {
                     if (customTheme.UnlockDays == null)
                     {
-                        foundCustomCampaign.CustomThemesGeneral.Add(customTheme);
+                        customCampaign.CustomThemesGeneral.Add(customTheme);
                     }
                     else
                     {
-                        foundCustomCampaign.CustomThemesDays.Add(customTheme);
+                        customCampaign.CustomThemesDays.Add(customTheme);
                     }
                 }
                 else
                 {
-                    #if DEBUG
-                    MelonLogger.Msg("DEBUG: Found theme file before the custom campaign was found / does not exist.");
-                    #endif
+                    LoggingHelper.DebugLog("Found theme file before the custom campaign was found / does not exist.");
 
                     GlobalParsingVariables.PendingCustomCampaignThemes.Add(customTheme);
                 }
             }
         }
 
-        private static CustomTheme ParseTheme(ref JObject jObjectParsed, ref string usermodFolderPath,
-            ref string jsonFolderPath, ref string customCampaignName)
+        private static CustomTheme ParseTheme(ref JObject jObjectParsed, ref string customCampaignName)
         {
             bool inMainCampaign = false; // If available in main campaign.
             
@@ -183,9 +180,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         break;
 
                     default:
-                        MelonLogger.Error("ERROR: " +
-                                          "Provided color for setting color is invalid! " +
-                                          "Make sure it's 3 or 4 values.");
+                        LoggingHelper.ErrorLog("Provided color for setting color is invalid! " +
+                                               "Make sure it's 3 or 4 values.");
                         break;
                 }
             }

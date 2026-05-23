@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Reflection;
-using MelonLoader;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomDesktop.Utils;
+using NewSafetyHelp.Emails;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.MainGameBugFixes
@@ -11,6 +15,8 @@ namespace NewSafetyHelp.MainGameBugFixes
         public static class DisplayEmailPatch
         {
             private static readonly int ScreenLoad = Animator.StringToHash("ScreenLoad");
+            private static readonly MethodInfo UpdateLayoutGroupMethod = 
+                typeof(EmailWindowBehavior).GetMethod("UpdateLayoutGroup", BindingFlags.NonPublic | BindingFlags.Instance);
             
             /// <summary>
             /// DisplayEmail patch to fix the double loading bug.
@@ -21,11 +27,9 @@ namespace NewSafetyHelp.MainGameBugFixes
             // ReSharper disable once UnusedParameter.Local
             private static bool Prefix(EmailWindowBehavior __instance, ref Email emailToDisplay)
             {
-                MethodInfo updateLayoutGroupMethod = typeof(EmailWindowBehavior).GetMethod("UpdateLayoutGroup", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                if (updateLayoutGroupMethod == null)
+                if (UpdateLayoutGroupMethod == null)
                 {
-                    MelonLogger.Error("ERROR: Method 'UpdateLayoutGroup' was not found. Calling original function. ");
+                    LoggingHelper.ReflectionError(nameof(UpdateLayoutGroupMethod));
                     return true;
                 }
                 
@@ -35,7 +39,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                         $"<b>Subject Line: {__instance.selectedEmail.subjectLine}</b> \n\nFrom: {__instance.selectedEmail.sender}\n\n\n{__instance.selectedEmail.emailBody}";
                     
                     // If we selected the same email, we don't update the email.
-                    if ( __instance.displayedEmailBody.text.Equals(newEmailBody))
+                    if (__instance.displayedEmailBody.text.Equals(newEmailBody))
                     {
                         if (__instance.selectedEmail.imageAttachment != null)
                         {
@@ -52,14 +56,65 @@ namespace NewSafetyHelp.MainGameBugFixes
                     
                     __instance.displayedEmailBody.text = newEmailBody;
 
-                    if (__instance.selectedEmail.imageAttachment != null)
+                    bool showVideo = false;
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign == null)
+                        {
+                            return true;
+                        }
+
+                        CustomEmail customEmail = CustomCampaignGlobal.GetCustomEmailFromActiveCampaign(
+                            __instance.selectedEmail);
+
+                        LoggingHelper.DebugLog(() => 
+                            "Trying to find associated custom email. Did we find a custom email? " +
+                                               $"{customEmail != null}.", LoggingHelper.LoggingCategory.EMAIL);
+                    
+                        if (customEmail != null)
+                        {
+                            if (customEmail.HasAnimatedVideo)
+                            {
+                                LoggingHelper.DebugLog(() => 
+                                        $"Playing email video: '{customEmail.EmailAnimatedVideo}'.",
+                                    LoggingHelper.LoggingCategory.EMAIL);
+                                
+                                EmailHelper.SetVideoUrlEmail(customEmail.EmailAnimatedVideo);
+                                showVideo = true;
+                            }
+                            else
+                            {
+                                EmailHelper.RestoreEmailPortrait();
+                            }
+
+                            // For the image clicking behavior.
+                            EmailHelper.SetClickUrlToOpen(customEmail.EmailClickURL == null, customEmail.EmailClickURL,
+                                customEmail.HasAnimatedVideo);
+                        }
+                        else
+                        {
+                            EmailHelper.RestoreEmailPortrait();
+                            
+                            // We disable any leftover email image cursor swaps.
+                            EmailHelper.DisableEmailImageCursorHover();
+                        }
+                    }
+
+                    if (showVideo 
+                        || __instance.selectedEmail.imageAttachment != null)
                     {
                         __instance.displayedImage.transform.parent.gameObject.SetActive(true);
-                        __instance.displayedImage.sprite = __instance.selectedEmail.imageAttachment;
                     }
                     else
                     {
                         __instance.displayedImage.transform.parent.gameObject.SetActive(false);
+                    }
+
+                    if (__instance.selectedEmail.imageAttachment != null)
+                    {
+                        __instance.displayedImage.sprite = __instance.selectedEmail.imageAttachment;
                     }
                 }
                 else
@@ -85,7 +140,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                 __instance.previewScrollbar.value = 1f;
 
                 // Original: __instance.UpdateLayoutGroup(__instance.inboxLayoutGroup)
-                IEnumerator updateLayoutGroupCoroutine = (IEnumerator) updateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.inboxLayoutGroup}); 
+                IEnumerator updateLayoutGroupCoroutine = (IEnumerator) UpdateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.inboxLayoutGroup}); 
                 __instance.StartCoroutine(updateLayoutGroupCoroutine);
                 
                 return false; // Skip original

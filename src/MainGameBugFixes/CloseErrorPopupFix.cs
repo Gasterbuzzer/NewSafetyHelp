@@ -40,5 +40,24 @@ namespace NewSafetyHelp.MainGameBugFixes
                 }
             }
         }
+        
+        [HarmonyLib.HarmonyPatch(typeof(SubmitWindowBehavior), "OnEnable")]
+        public static class SubmitAnswerCloseButtonFix
+        {
+            /// <summary>
+            /// Fixes the error popup from having two buttons.
+            /// </summary>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedMember.Local
+            private static void Prefix(SubmitWindowBehavior __instance)
+            {
+                GameObject closeButton = __instance.transform.Find("WindowsBar").Find("CloseButton").gameObject;
+
+                if (closeButton != null && closeButton.GetComponents<Button>().Length >= 2)
+                {
+                    Object.Destroy(closeButton.GetComponent<Button>());
+                }
+            }
+        }
     }
 }

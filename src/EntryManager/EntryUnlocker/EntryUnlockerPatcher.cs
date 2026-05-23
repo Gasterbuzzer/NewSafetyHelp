@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.EntryManager.EntryUnlocker
 {
     public static class EntryUnlockerPatcher
     {
         // Patches the entry unlocker to readd the missing entries to the different permission tiers that get lost upon reloading the computer scene.
-    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
+    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake")]
     public static class FixPermissionOverride
     {
         // List of entire permissions
@@ -29,15 +29,13 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
         {
             // I am aware there are more beautiful ways of achieving this. However, I am going to do it like the game.
 
-            #if DEBUG
-                MelonLogger.Msg("DEBUG: If tier/permission levels for extra entries were lost, they will now be readded.");
-            #endif
+            LoggingHelper.DebugLog("If tier/permission levels for extra entries were lost, they will now be readded.");
 
             for (int i = 0; i < EntriesReaddTierOne.Count; i++)
             {
                 if (!__instance.firstTierUnlocks.monsterProfiles.Contains(EntriesReaddTierOne[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierOne[i], ref __instance.firstTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -45,7 +43,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.secondTierUnlocks.monsterProfiles.Contains(EntriesReaddTierTwo[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierTwo[i], ref __instance.secondTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -53,7 +51,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.thirdTierUnlocks.monsterProfiles.Contains(EntriesReaddTierThree[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierThree[i], ref __instance.thirdTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -61,7 +59,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.fourthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierFour[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierFour[i], ref __instance.fourthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -69,7 +67,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.fifthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierFive[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierFive[i], ref __instance.fifthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
 
@@ -77,7 +75,7 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (!__instance.sixthTierUnlocks.monsterProfiles.Contains(EntriesReaddTierSix[i])) // Avoid duplicate adding.
                 {
-                    EntryManager.AddMonsterToTheProfile(EntriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
+                    EntryManager.AddEntryToTheProfile(EntriesReaddTierSix[i], ref __instance.sixthTierUnlocks.monsterProfiles, "NONE", true);
                 }
             }
         }
@@ -102,31 +100,41 @@ namespace NewSafetyHelp.EntryManager.EntryUnlocker
             {
                 if (profileToCheck == null)
                 {
-                    MelonLogger.Error("ERROR: Profile to check is empty!");
+                    LoggingHelper.ErrorLog("Profile to check is empty!");
                     return;
                 }
                 
-                CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
                 
                 if (customCampaign == null)
                 {
-                    MelonLogger.Error("ERROR: No active custom campaign!");
                     return;
                 }
 
-                if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission)
+                if (!customCampaign.RemoveExistingEntries 
+                    && customCampaign.ResetDefaultEntriesPermission)
                 {
                     if (MainClassForMonsterEntries.CopyMonsterProfiles != null)
                     {
                         // We have the copies. So we can check if to enable it.
-                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(profileToCheck)) // A default entry to show. We return true.
+                        // A default entry to show. We return true.
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(profileToCheck)) 
                         {
                             __result = true;
+                        }
+                        
+                        if (customCampaign.UseDLCEntries)
+                        {
+                            if (GlobalVariables.entryUnlockScript.allXmasEntries.monsterProfiles.Contains(profileToCheck)) 
+                            {
+                                __result = true;
+                            }
                         }
                     }
                     else
                     {
-                        MelonLogger.Error("ERROR: Copy of entry profiles does not exist! Possibly called before initialization.");
+                        LoggingHelper.ErrorLog("Copy of entry profiles does not exist! " +
+                                               "Possibly called before initialization.");
                     }
                 }
             }

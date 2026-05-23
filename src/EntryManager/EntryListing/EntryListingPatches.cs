@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
-using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.EntryManager.EntryListing
 {
     public static class EntryListingPatches
     {
-        [HarmonyLib.HarmonyPatch(typeof(EntryListingBehavior), "ShowEntryInfo", new Type[] { })]
+        private static readonly FieldInfo HasClickedField = typeof(EntryListingBehavior).GetField("hasClicked",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        
+        [HarmonyLib.HarmonyPatch(typeof(EntryListingBehavior), "ShowEntryInfo")]
         public static class ShowEntryInfoPatch
         {
             /// <summary>
@@ -22,33 +25,42 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             // ReSharper disable once UnusedMember.Local
             private static void Postfix(EntryListingBehavior __instance)
             {
+                if (HasClickedField == null)
+                {
+                    LoggingHelper.ReflectionError(nameof(HasClickedField));
+                    return;
+                }
+                
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("ERROR: No active custom campaign!");
                         return;
                     }
 
-                    if (!customCampaign.RemoveExistingEntries && customCampaign.ResetDefaultEntriesPermission &&
-                        !customCampaign.DoShowNewTagForMainGameEntries) // If allowed to hide the name, we do it. 
+                    // If allowed to hide the name, we do it. 
+                    if (!customCampaign.RemoveExistingEntries 
+                        && customCampaign.ResetDefaultEntriesPermission 
+                        && !customCampaign.DoShowNewTagForMainGameEntries) 
                     {
-                        if (MainClassForMonsterEntries.CopyMonsterProfiles
-                            .Contains(__instance.myProfile)) // Contained in main campaign.
+                        if (customCampaign.UseDLCEntries)
                         {
-                            FieldInfo hasClickedField = typeof(EntryListingBehavior).GetField("hasClicked",
-                                BindingFlags.NonPublic | BindingFlags.Instance);
-
-                            if (hasClickedField == null)
+                            // Contained in DLC.
+                            if (GlobalVariables.entryUnlockScript.allXmasEntries.monsterProfiles.Contains(__instance.myProfile)) 
                             {
-                                MelonLogger.Error("ERROR: HasClicked Method is null! Unable of setting as viewed!");
+                                HasClickedField.SetValue(__instance, true);
+                                
+                                // Set name to normal.
+                                __instance.myText.text = __instance.myProfile.monsterName;
                             }
-                            else
-                            {
-                                hasClickedField.SetValue(__instance, true);
-                            }
+                        }
+                        
+                        // Contained in main campaign.
+                        if (MainClassForMonsterEntries.CopyMonsterProfiles.Contains(__instance.myProfile)) 
+                        {
+                            HasClickedField.SetValue(__instance, true);
 
                             // Set name to normal.
                             __instance.myText.text = __instance.myProfile.monsterName;
@@ -57,10 +69,18 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                 }
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(EntryListingBehavior), "DelayedStart")]
         public static class DelayedStartPatch
         {
+            private static readonly FieldInfo HasClicked =
+                typeof(EntryListingBehavior).GetField("hasClicked",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+
+            private static readonly MethodInfo DetermineLocked =
+                typeof(EntryListingBehavior).GetMethod("DetermineLocked",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+
             /// <summary>
             /// Changes the DelayedStart function to consider custom campaign entries.
             /// </summary>
@@ -78,12 +98,9 @@ namespace NewSafetyHelp.EntryManager.EntryListing
             {
                 yield return null;
 
-                FieldInfo hasClicked = typeof(EntryListingBehavior).GetField("hasClicked", BindingFlags.NonPublic | BindingFlags.Instance);
-                MethodInfo determineLocked = typeof(EntryListingBehavior).GetMethod("DetermineLocked", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                if (hasClicked == null || determineLocked == null)
+                if (HasClicked == null || DetermineLocked == null)
                 {
-                    MelonLogger.Error("CRITICAL ERROR: hasClicked and/or DetermineLocked could not be found and are null.");
+                    LoggingHelper.ReflectionError(nameof(HasClicked), nameof(DetermineLocked));
                     yield break;
                 }
 
@@ -92,18 +109,19 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                     if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile) 
                         && GlobalVariables.currentDay >= GlobalVariables.entryUnlockScript.currentTier + 1)
                     {
-                        hasClicked.SetValue(__instance, true); // __instance.hasClicked = true;
+                        // OLD: __instance.hasClicked = true;
+                        HasClicked.SetValue(__instance, true); 
                     }
                 
-                    determineLocked.Invoke(__instance, null); // __instance.DetermineLocked();
+                    // OLD: __instance.DetermineLocked();
+                    DetermineLocked.Invoke(__instance, null); 
                 }
                 else // Custom Campaign
                 {
-                    CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                     if (customCampaign == null)
                     {
-                        MelonLogger.Error("CRITICAL ERROR: Custom Campaign is active but no campaign was found.");
                         yield break;
                     }
 
@@ -115,9 +133,9 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                         if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile))
                         {
                             // Our permission tier is 1 larger than the current permission.
-                            if (GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel)
+                            if (GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.PermissionLevel)
                             {
-                                hasClicked.SetValue(__instance, true);
+                                HasClicked.SetValue(__instance, true);
                             }
 
                             // If our current day is one later than the out tier + 1.
@@ -126,29 +144,21 @@ namespace NewSafetyHelp.EntryManager.EntryListing
                             // As such, our current day is equal 1, and as such, we hide the NEW tag.
                             if (GlobalVariables.currentDay >= GlobalVariables.entryUnlockScript.currentTier + 1)
                             {
-                                hasClicked.SetValue(__instance, true);
+                                HasClicked.SetValue(__instance, true);
                             }
                         }
-                        
-                        #if DEBUG
-                        /*MelonLogger.Msg(ConsoleColor.Blue, "DEBUG: " +
-                                                           $"Entry Name: '{__instance.myProfile.monsterName}'. " +
-                                                           $"Is Unlocked? '{GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile)}'. " +
-                                                           "Current Tier - 1 > Entry Permission Level : " +
-                                                           $"'{GlobalVariables.entryUnlockScript.currentTier}' - 1 > '{entryFound.permissionLevel}' = '{GlobalVariables.entryUnlockScript.currentTier - 1 > entryFound.permissionLevel}'.");
-                        */
-                        #endif
                     }
                     else // Main Campaign Entries, for now we just default.
                     {
-                        if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile) 
+                        if (GlobalVariables.entryUnlockScript.CheckMonsterIsUnlocked(__instance.myProfile)
                             && GlobalVariables.currentDay >= GlobalVariables.entryUnlockScript.currentTier + 1)
                         {
-                            hasClicked.SetValue(__instance, true); // __instance.hasClicked = true;
+                            // OLD: __instance.hasClicked = true;
+                            HasClicked.SetValue(__instance, true); 
                         }
                     }
                     
-                    determineLocked.Invoke(__instance, null);
+                    DetermineLocked.Invoke(__instance, null);
                 }
             }
         }

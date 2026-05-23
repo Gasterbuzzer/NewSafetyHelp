@@ -1,0 +1,474 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using JetBrains.Annotations;
+using MelonLoader;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
+using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.InGameSettings;
+using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.LoggingSystem;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
+{
+    public static class CreateAndUpdateCallerPatches
+    {
+        /// <summary>
+        /// Gets the consequence caller based on a provided profile from a caller list.
+        /// </summary>
+        /// <param name="profileToCheck"></param>
+        /// <param name="callers"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        private static Caller GetConsequenceCaller(CallerProfile profileToCheck, ref Caller[] callers)
+        {
+            foreach (Caller caller in callers)
+            {
+                if (profileToCheck == caller.callerProfile)
+                {
+                    return caller; // Returns the caller
+                }
+            }
+
+            return null;
+        }
+
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "CreateCustomCaller")]
+        public static class UpdateArcadeCallerAudio
+        {
+            private static readonly MethodInfo PickRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
+                BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+
+            /// <summary>
+            /// Patches the caller to have a custom caller clip in arcade mode.
+            /// </summary>
+            /// <param name="__instance"> Caller of function. </param>
+            // ReSharper disable once UnusedMember.Local
+            private static void Postfix(CallerController __instance)
+            {
+                foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
+                {
+                    if (__instance.currentCustomCaller.callerMonster.monsterName == item.Name ||
+                        __instance.currentCustomCaller.callerMonster.monsterID ==
+                        item.ID) // We found an entry to replace the audio for.
+                    {
+                        __instance.currentCustomCaller.callerClip = item.CallerClip;
+                    }
+                }
+
+                // If we didn't find anything, we set it to a random clip.
+                if (__instance.currentCustomCaller.callerClip == null)
+                {
+                    if (PickRandomClip == null)
+                    {
+                        LoggingHelper.ReflectionError(nameof(PickRandomClip));
+                        return;
+                    }
+
+                    // OLD: __instance.PickRandomClip()
+                    __instance.currentCustomCaller.callerClip = (RichAudioClip)PickRandomClip.Invoke(__instance, null);
+                }
+            }
+        }
+
+        // Patches the caller to have a custom audio in campaign.
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudioRoutine", typeof(CallerProfile))]
+        public static class UpdateCampaignCallerAudio
+        {
+            private static readonly FieldInfo CallerAudioSource = typeof(CallerController).GetField("callerAudioSource",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+            // ReSharper disable once RedundantAssignment
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(CallerController __instance, CallerProfile profile, ref IEnumerator __result)
+            {
+                __result = OriginalCaller(__instance, profile);
+                return false; // Skip the original coroutine
+            }
+
+            /// <summary>
+            /// Patches the IEnumerator to be with the custom Audio.
+            /// </summary>
+            /// <param name="__instance"> Caller of function. </param>
+            /// <param name= "profile"> Profile Parameter. </param>
+            private static IEnumerator OriginalCaller(CallerController __instance,
+                CallerProfile profile)
+            {
+                if (profile == null && !__instance.arcadeMode)
+                {
+                    profile = __instance.callers[__instance.currentCallerID].callerProfile;
+                }
+
+                if (__instance.arcadeMode)
+                {
+                    profile = __instance.currentCustomCaller;
+                }
+
+                yield return new WaitForSeconds(__instance.playCallAudioDelayTime);
+
+                if (CallerAudioSource == null)
+                {
+                    LoggingHelper.ReflectionError(nameof(CallerAudioSource));
+                    yield break;
+                }
+
+                AudioSource callerAudioSource = (AudioSource)CallerAudioSource.GetValue(__instance);
+
+                if (callerAudioSource == null)
+                {
+                    LoggingHelper.ErrorLog("CallerController: CallerAudioSource is null");
+                    yield break;
+                }
+
+                callerAudioSource.Stop();
+
+                // Here we replace the clip.
+                bool foundReplacementClip = false;
+
+                // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
+                // And only if not in a custom campaign.
+                if (!CustomCampaignGlobal.InCustomCampaign 
+                    && profile != null 
+                    && profile.callerMonster != null 
+                    && !__instance.arcadeMode)
+                {
+                    foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
+                    {
+                        if (item.CurrentlySelected) // We found an entry to replace the audio for.
+                        {
+                            item.AlreadyCalledOnce = true;
+
+                            // We now check if we are allowed to save if the entry can be saved as already called.
+                            if (!item.AllowCallAgainOverRestart)
+                            {
+                                if (!GlobalPreferences.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
+                                {
+                                    // ReSharper disable once RedundantTypeArgumentsOfMethod
+                                    GlobalPreferences.PersistantEntrySave.CreateEntry<bool>(
+                                        item.Name + item.CallerName, true);
+                                }
+                                else
+                                {
+                                    GlobalPreferences.PersistantEntrySave
+                                        .GetEntry<bool>(item.Name + item.CallerName).Value = true;
+                                }
+                            }
+                            else
+                            {
+                                if (!GlobalPreferences.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
+                                {
+                                    // ReSharper disable once RedundantTypeArgumentsOfMethod
+                                    GlobalPreferences.PersistantEntrySave.CreateEntry<bool>(
+                                        item.Name + item.CallerName, false); // Store it as false
+                                }
+                                else
+                                {
+                                    GlobalPreferences.PersistantEntrySave
+                                        .GetEntry<bool>(item.Name + item.CallerName).Value = false;
+                                }
+                            }
+
+                            // Current selection is set to false once the answer for the caller has been submitted.
+
+                            if (item.CallerClip != null && item.CallerClip.clip != null)
+                            {
+                                callerAudioSource.clip = item.CallerClip.clip;
+                            }
+
+                            foundReplacementClip = true;
+                        }
+                    }
+                }
+
+                // If we didn't find a clip.
+                if (!foundReplacementClip)
+                {
+                    if (profile != null && profile.callerMonster != null)
+                    {
+                        LoggingHelper.DebugLog("Monster Name: " +
+                                               $"{profile.callerMonster.monsterName} with ID: " +
+                                               $"{profile.callerMonster.monsterID}.");
+                    }
+                    else if (!CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        LoggingHelper.InfoLog("This caller does not have a monster entry. " +
+                                              "The caller audio will not be replaced.");
+                    }
+
+                    if (profile != null && profile.callerClip != null && profile.callerClip.clip != null)
+                    {
+                        callerAudioSource.clip = profile.callerClip.clip;
+                    }
+                }
+
+                LoggingHelper.InfoLog("Caller Audio File Name:" +
+                                      $" {callerAudioSource.name} with " +
+                                      $"{callerAudioSource.clip.name} and " +
+                                      $"{callerAudioSource.clip.length}.");
+
+                if (profile != null && profile.callerClip != null)
+                {
+                    callerAudioSource.volume = profile.callerClip.volume;
+                }
+
+                if (callerAudioSource.clip != null)
+                {
+                    if (!TimedCallerPatches.HoldButtonClosePatch.IsInHold)
+                    {
+                        callerAudioSource.Play();
+                    }
+                }
+            }
+        }
+
+        // Patches the caller to replace it with another with random chance.
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "UpdateCallerInfo", typeof(CallerProfile))]
+        public static class UpdateCampaignCallerRandom
+        {
+            /// <summary>
+            /// Patch for the caller info to be updated to a custom entry.
+            /// </summary>
+            /// <param name="__instance"> Function Caller Instance </param>
+            /// <param name="profile"> Caller Profile that called </param>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(CallerController __instance, ref CallerProfile profile)
+            {
+                LoggingHelper.DebugLog("New caller is calling.");
+                
+                // For hold callers.
+                TimedCallerPatches.HoldButtonClosePatch.IsInHold = false;
+
+                if (profile == null)
+                {
+                    if (__instance.callers[__instance.currentCallerID] != null)
+                    {
+                        profile = __instance.callers[__instance.currentCallerID].callerProfile;
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog("Caller is null. Unable of calling. " +
+                                               "You may have a duplicate caller (Meaning the same ID on two callers)!");
+                        return false;
+                    }
+                }
+
+                if (__instance.arcadeMode)
+                {
+                    profile = __instance.currentCustomCaller;
+                }
+
+                List<EntryMetadata> entries = new List<EntryMetadata>();
+
+                bool replaceTrue = false;
+
+                if (!CustomCampaignGlobal.InCustomCampaign && !__instance.arcadeMode)
+                {
+                    foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
+                    {
+                        if (item.InMainCampaign && !item.AlreadyCalledOnce &&
+                            !item.CurrentlySelected) // Find a valid entry.
+                        {
+                            // Create Entry if not existent and if allowed
+
+                            MelonPreferences_Entry<bool> entryAlreadyCalledBeforeEntry;
+
+                            if (!GlobalPreferences.PersistantEntrySave.HasEntry(item.Name + item.CallerName))
+                            {
+                                // ReSharper disable once RedundantTypeArgumentsOfMethod
+                                entryAlreadyCalledBeforeEntry =
+                                    GlobalPreferences.PersistantEntrySave.CreateEntry<bool>(
+                                        item.Name + item.CallerName, false);
+                            }
+                            else
+                            {
+                                entryAlreadyCalledBeforeEntry =
+                                    GlobalPreferences.PersistantEntrySave.GetEntry<bool>(item.Name +
+                                        item.CallerName);
+                            }
+
+                            if (item.AllowCallAgainOverRestart)
+                            {
+                                LoggingHelper.DebugLog(
+                                    $"Entry {item.Name} is allowed to be called again even if called once in the past.");
+
+                                entryAlreadyCalledBeforeEntry.Value =
+                                    false; // Reset the entry. If not allowed to store the value.
+                            }
+
+                            if (entryAlreadyCalledBeforeEntry.Value)
+                            {
+                                LoggingHelper.DebugLog($"Entry {item.Name} was already called once," +
+                                                       $" so it will not be available for calling.");
+                            }
+
+                            if (Random.Range(0.0f, 1.0f) <= item.CallerReplaceChance)
+                            {
+                                // We check if we already called once, if yes, we skip and if not we continue
+                                // (setting is done later).
+                                if (!item.AllowCallAgainOverRestart)
+                                {
+                                    if (!entryAlreadyCalledBeforeEntry.Value &&
+                                        // We never called it. And make sure we can actually access the callers' entry.
+                                        item.PermissionLevel <= GlobalVariables.currentDay)
+                                    {
+                                        if (GlobalVariables.isXmasDLC) // If DLC
+                                        {
+                                            if (item.IncludeInDlc || item.OnlyDLC) // Is allowed to be added?
+                                            {
+                                                entries.Add(item);
+                                                replaceTrue = true;
+
+                                                LoggingHelper.InfoLog($"Saved Entry '{item.Name}'" +
+                                                                      " to not be called in the future.");
+
+                                                entryAlreadyCalledBeforeEntry.Value = true;
+                                            }
+                                            else
+                                            {
+                                                LoggingHelper.InfoLog($"Entry '{item.Name}'" +
+                                                                      " is not allowed to be called in DLC Mode.");
+                                            }
+                                        }
+                                        else // Main Game
+                                        {
+                                            entries.Add(item);
+                                            replaceTrue = true;
+
+                                            LoggingHelper.InfoLog($"Saved Entry '{item.Name}'" +
+                                                                  " to not be called in the future.");
+
+                                            entryAlreadyCalledBeforeEntry.Value = true;
+                                        }
+                                    }
+                                    // Else we skip it.
+                                }
+                                else // We are allowed to ignore it.
+                                {
+                                    if (item.PermissionLevel <=
+                                        GlobalVariables
+                                            .currentDay) // Make sure we can actually access the callers' entry.
+                                    {
+                                        if (GlobalVariables.isXmasDLC) // If DLC
+                                        {
+                                            if (item.IncludeInDlc || item.OnlyDLC) // Is allowed to be added?
+                                            {
+                                                entries.Add(item);
+                                                replaceTrue = true;
+                                            }
+                                        }
+                                        else // Main Game
+                                        {
+                                            entries.Add(item);
+                                            replaceTrue = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Not in custom campaign. This makes odd problems in custom campaigns.
+                if (!CustomCampaignGlobal.InCustomCampaign)
+                {
+                    // We are a consequence caller. (Since we don't replace, and we don't have a caller monster.)
+                    if (profile != null && !__instance.arcadeMode &&
+                        profile.consequenceCallerProfile != null)
+                    {
+                        LoggingHelper.InfoLog("Current caller is a consequence Caller.");
+                        Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
+
+                        if (callers != null) // Caller is valid.
+                        {
+                            LoggingHelper.InfoLog($"Consequence Caller name: {callers.callerProfile.name}");
+
+                            // If the consequence caller has been replaced once.
+                            if (GlobalParsingVariables.EntriesMetadata.Exists(item =>
+                                    item.ReferenceProfileNameInternal ==
+                                    callers.callerProfile.consequenceCallerProfile.name))
+                            {
+                                LoggingHelper.InfoLog("Consequence Caller to be replaced found!");
+                                EntryMetadata foundMetadata = GlobalParsingVariables.EntriesMetadata.Find(item =>
+                                    item.ReferenceProfileNameInternal ==
+                                    callers.callerProfile.consequenceCallerProfile.name);
+
+                                if (foundMetadata == null)
+                                {
+                                    LoggingHelper.ErrorLog("Did not find replacement caller.");
+                                    return true;
+                                }
+
+                                // It was replaced once, so we also change the consequence caller info.
+                                profile.callTranscription = foundMetadata.ConsequenceTranscript;
+                                profile.callerName = foundMetadata.ConsequenceName;
+                                profile.callerPortrait = foundMetadata.ConsequenceCallerImage;
+                                profile.callerClip = foundMetadata.ConsequenceCallerClip;
+
+                                LoggingHelper.InfoLog("Replaced the current caller transcript with: " +
+                                                      $"{profile.callTranscription}.");
+                            }
+                        }
+                        else
+                        {
+                            LoggingHelper.ErrorLog("Did not find initial caller.");
+                        }
+                    }
+                    // Replace information about the caller with a random entry
+                    else if (replaceTrue && profile != null && profile.callerMonster != null &&
+                             !__instance.arcadeMode &&
+                             profile.consequenceCallerProfile ==
+                             null) // If any entry won the chance to replace this call, replace it.
+                    {
+                        if (entries.Count > 0) // We actually found at least one.
+                        {
+                            // We are not a consequence caller.
+                            // Select one randomly.
+                            int entrySelected = Random.Range(0, entries.Count - 1);
+
+                            // Audio check
+                            GlobalParsingVariables.EntriesMetadata.Find(item => item.Equals(entries[entrySelected]))
+                                .CurrentlySelected = true;
+
+                            // Get a "copy"
+                            EntryMetadata selected = entries[entrySelected];
+
+                            // Replace caller with custom caller
+                            profile.callerName = selected.CallerName;
+
+                            if (selected.CallerImage != null) // If Image provided
+                            {
+                                profile.callerPortrait = selected.CallerImage;
+                            }
+
+                            profile.callTranscription = selected.CallTranscript;
+
+                            if (profile != null && profile.callerMonster != null)
+                            {
+                                LoggingHelper.InfoLog(
+                                    $"Replaced the current caller ({profile.callerMonster.monsterName} " +
+                                    $"with ID: {profile.callerMonster.monsterID}) with a custom caller:" +
+                                    $" {selected.Name} with ID: {selected.ID}.");
+                            }
+
+                            // We store a reference to the caller for finding later if the consequence caller calls.
+                            GlobalParsingVariables.EntriesMetadata.Find(item => item.Equals(entries[entrySelected]))
+                                .ReferenceProfileNameInternal = profile.name;
+                        }
+                    }
+
+                    LoggingHelper.DebugLog("Finished handling the caller replacement.");
+                }
+
+                __instance.currentCallerProfile = profile;
+                GlobalVariables.mainCanvasScript.UpdateCallerInfo(profile);
+
+                LoggingHelper.DebugLog($"Current caller calling is '{profile.callerName}'.");
+
+                return false; // Skip the original function
+            }
+        }
+    }
+}

@@ -1,8 +1,12 @@
-﻿using System.IO;
-using MelonLoader;
-using NewSafetyHelp.CustomCampaign;
+﻿using System;
+using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.Emails;
-using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
+using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -21,7 +25,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                MelonLogger.Error("ERROR: Provided JSON could not be parsed as a email. Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a email. Possible syntax mistake?");
                 return;
             }
 
@@ -40,19 +44,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             else
             {
                 // Add to correct campaign.
-                CustomCampaign.CustomCampaignModel.CustomCampaign foundCustomCampaign =
+                CustomCampaign customCampaign =
                     CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                         customCampaignSearch.CampaignName == customCampaignName);
 
-                if (foundCustomCampaign != null)
+                if (customCampaign != null)
                 {
-                    foundCustomCampaign.Emails.Add(customEmail);
+                    customCampaign.Emails.Add(customEmail);
                 }
                 else
                 {
-                    #if DEBUG
-                    MelonLogger.Msg($"DEBUG: Found Email before the custom campaign was found / does not exist.");
-                    #endif
+                    LoggingHelper.DebugLog("Found Email before the custom campaign was found / does not exist.");
 
                     GlobalParsingVariables.PendingCustomCampaignEmails.Add(customEmail);
                 }
@@ -67,12 +69,29 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string emailSender = "";
             string emailBody = "";
 
+            // Url that is opened on click
+            Uri emailClickUrl = null;
+            
             // Image
             Sprite emailImage = null;
+            
+            string emailAnimatedVideo = null;
 
             // Unlock
+            bool unlockWhenGameFinished = false;
+            
             int emailUnlockDay = 0;
-            int emailUnlockThreshold = 0;
+            
+            float unlockThreshold = 0;
+            
+            int emailPriority = 0;
+            
+            // For this email to appear, it may require some callers to be correct or false.
+            List<CallerRequirement> unlockRequiredCallers = null;
+            
+            // New Unlock System
+            List<GeneralAccuracyType> unlockAccuracy = null;
+            bool useOldAccuracyChecks = true;
 
             ParsingHelper.TryAssign(jObjectParsed, "email_in_main_campaign", ref inMainCampaign);
             ParsingHelper.TryAssign(jObjectParsed, "email_custom_campaign_name", ref customCampaignName);
@@ -80,10 +99,23 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "email_sender", ref emailSender);
             ParsingHelper.TryAssign(jObjectParsed, "email_body", ref emailBody);
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
-            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref emailUnlockThreshold);
+            ParsingHelper.TryAssign(jObjectParsed, "unlock_when_game_finished", ref unlockWhenGameFinished);
+            ParsingHelper.TryAssign(jObjectParsed, "email_priority", ref emailPriority);
+            
+            CallerRequirementParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
+            
+            AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy,
+                ref useOldAccuracyChecks);
 
-            ParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
                 usermodFolderPath, customCampaignName);
+            
+            bool hasAnimatedVideo = VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "email_animated_image",
+                ref emailAnimatedVideo, jsonFolderPath, usermodFolderPath);
+            
+            URLParsingHelper.TryAssignURL(jObjectParsed, "email_click_url", ref emailClickUrl);
 
             return new CustomEmail
             {
@@ -92,11 +124,24 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 EmailSubject = emailSubject,
                 SenderName = emailSender,
                 EmailBody = emailBody,
+                
+                EmailClickURL = emailClickUrl,
+                
+                EmailPriority = emailPriority,
+                
+                UnlockWhenGameFinished = unlockWhenGameFinished,
 
                 UnlockDay = emailUnlockDay,
-                UnlockThreshold = emailUnlockThreshold,
+                UnlockThreshold = unlockThreshold,
+                UnlockAccuracy = unlockAccuracy,
+                UseOldAccuracyChecks = useOldAccuracyChecks,
+                
+                UnlockRequiredCallers = unlockRequiredCallers,
 
-                EmailImage = emailImage
+                EmailImage = emailImage,
+                
+                EmailAnimatedVideo = emailAnimatedVideo,
+                HasAnimatedVideo = hasAnimatedVideo
             };
         }
     }

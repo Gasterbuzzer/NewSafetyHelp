@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using HarmonyLib;
-using MelonLoader;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.MainGameBugFixes
@@ -24,7 +24,8 @@ namespace NewSafetyHelp.MainGameBugFixes
                 
                 if (resolutionField == null)
                 {
-                    MelonLogger.Error("ERROR: ScreenResolutions field not found. Unable of patching out bug. Defaulting to normal function.");
+                    LoggingHelper.ErrorLog("ScreenResolutions field not found." +
+                                           " Unable of patching out bug. Defaulting to normal function.");
                     return true; // Call normal function instead.
                 }
                 
@@ -32,7 +33,8 @@ namespace NewSafetyHelp.MainGameBugFixes
 
                 if (resolutions.Length <= 0)
                 {
-                    MelonLogger.Error("ERROR: ScreenResolutions field was empty. Unable of patching out bug. Defaulting to normal function.");
+                    LoggingHelper.ErrorLog("ScreenResolutions field was empty." +
+                                           " Unable of patching out bug. Defaulting to normal function.");
                     return true; // Call normal function instead.
                 }
                 

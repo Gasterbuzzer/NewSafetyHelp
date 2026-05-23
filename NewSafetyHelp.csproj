@@ -93,6 +93,12 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
@@ -119,72 +125,125 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
+    <Compile Include="src\Audio\AudioPatches\PlaySoundPatches.cs" />
     <Compile Include="src\Audio\AudioPatches\UISoundPatch.cs" />
     <Compile Include="src\Audio\Music\Data\CustomMusic.cs" />
+    <Compile Include="src\Audio\Music\Intermission\IntermissionMusicHelper.cs" />
     <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />
-    <Compile Include="src\CallerPatches\Answer\ProvidingAnswer.cs" />
-    <Compile Include="src\CallerPatches\CallerCreationAndUpdate\CreateAndUpdateCallerPatches.cs" />
-    <Compile Include="src\CallerPatches\CallerModel\CustomCCaller.cs" />
-    <Compile Include="src\CallerPatches\CallerPatches.cs" />
-    <Compile Include="src\CallerPatches\GameOverPatches.cs" />
-    <Compile Include="src\CallerPatches\IncomingCallWindow\CloseButtonPatches.cs" />
-    <Compile Include="src\CallerPatches\IncomingCallWindow\StartPatches.cs" />
-    <Compile Include="src\CallerPatches\IncomingCallWindow\TypeTextPatches.cs" />
-    <Compile Include="src\CallerPatches\UI\MainCanvasPatches.cs" />
-    <Compile Include="src\CallerPatches\UI\NextCaller.cs" />
-    <Compile Include="src\CallerPatches\UI\UIFallbacks.cs" />
-    <Compile Include="src\CustomCampaign\CustomCampaignModel\CustomCampaign.cs" />
-    <Compile Include="src\CustomCampaign\CustomCampaignGlobal.cs" />
-    <Compile Include="src\CustomCampaign\CustomRingtone\CustomRingtone.cs" />
-    <Compile Include="src\CustomCampaign\Desktop\DesktopBackgroundPatches.cs" />
-    <Compile Include="src\CustomCampaign\Desktop\OnDayUnlockPatches.cs" />
-    <Compile Include="src\CustomCampaign\Helper\AccuracyHelper.cs" />
-    <Compile Include="src\CustomCampaign\Abstract\CustomCampaignElement.cs" />
-    <Compile Include="src\CustomCampaign\Helper\AccuracyType.cs" />
-    <Compile Include="src\CustomCampaign\Saving\CustomCampaignOptionSaving.cs" />
-    <Compile Include="src\CustomCampaign\Saving\CustomCampaignSaving.cs" />
-    <Compile Include="src\CustomCampaign\Saving\OptionUpdatePatches.cs" />
-    <Compile Include="src\CustomCampaign\Saving\SavingSettingPatches.cs" />
-    <Compile Include="src\CustomCampaign\Saving\SpecialOptionUpdatePatches.cs" />
-    <Compile Include="src\CustomCampaign\Themes\ThemePatches.cs" />
-    <Compile Include="src\CustomCampaign\Themes\CustomTheme.cs" />
-    <Compile Include="src\CustomCampaign\Saving\SavingManagerPatchesCC.cs" />
-    <Compile Include="src\CustomCampaign\Modifier\Data\CustomModifier.cs" />
+    <Compile Include="src\Audio\EmbeddedTimerData.cs" />
+    <Compile Include="src\Callers\Answer\ProvidingAnswer.cs" />
+    <Compile Include="src\Callers\CallerCreationAndUpdate\CreateAndUpdateCallerPatches.cs" />
+    <Compile Include="src\Callers\CallerHelpers\CallerSkipping.cs" />
+    <Compile Include="src\Callers\CallerModel\CustomCCaller.cs" />
+    <Compile Include="src\Callers\CallerPatches.cs" />
+    <Compile Include="src\Callers\IncomingCallWindow\AnimatedCallerPortraitPatches.cs" />
+    <Compile Include="src\Callers\IncomingCallWindow\CloseButtonPatches.cs" />
+    <Compile Include="src\Callers\IncomingCallWindow\CallWindowStartPatches.cs" />
+    <Compile Include="src\Callers\IncomingCallWindow\TypeTextPatches.cs" />
+    <Compile Include="src\Callers\UI\AnimatedEntry\AnimatedImageHelper.cs" />
+    <Compile Include="src\Callers\UI\AnimatedEntry\EntryCanvasStandaloneEntry.cs" />
+    <Compile Include="src\Callers\UI\AnimatedEntry\MainCanvasEntry.cs" />
+    <Compile Include="src\Callers\UI\MainCanvasPatches.cs" />
+    <Compile Include="src\Callers\UI\NextCaller.cs" />
+    <Compile Include="src\Callers\UI\UIFallbacks.cs" />
+    <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomRingtone\RingtoneHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFile.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFileHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\CutsceneLogic\CustomCutscene.cs" />
+    <Compile Include="src\CustomCampaignSystem\Desktop\DesktopBackgroundPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Desktop\OnDayUnlockPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Abstract\CustomCampaignElement.cs" />
+    <Compile Include="src\CustomCampaignSystem\Fade\FadeScreenPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCallerHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCutsceneHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyEmailHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyTextFileHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyVideoHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\CallerAccuracyType.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\GeneralAccuracyType.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs" />
+    <Compile Include="src\CustomCampaignSystem\Modifier\Data\DesktopModifierSnapshot.cs" />
+    <Compile Include="src\CustomCampaignSystem\Modifier\Data\ModifierSource.cs" />
+    <Compile Include="src\CustomCampaignSystem\Modifier\Data\VariableChanged.cs" />
+    <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignOptionSaving.cs" />
+    <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignSaving.cs" />
+    <Compile Include="src\CustomCampaignSystem\Saving\OptionUpdatePatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Saving\SavingSettingPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Saving\SpecialOptionUpdatePatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Themes\ThemePatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\Themes\CustomTheme.cs" />
+    <Compile Include="src\CustomCampaignSystem\Saving\SavingManagerPatchesCC.cs" />
+    <Compile Include="src\CustomCampaignSystem\Modifier\Data\CustomModifier.cs" />
+    <Compile Include="src\CustomCampaignSystem\TimedCaller\TimedCallerPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\TimedCaller\TimerCallerHelper.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
     <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
     <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs" />
     <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs" />
+    <Compile Include="src\CustomDesktop\Utils\CustomCampaignProgramHelper.cs" />
+    <Compile Include="src\CustomDesktop\Utils\CustomCampaignSceneSwitcher.cs" />
     <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
+    <Compile Include="src\CustomDesktop\Utils\EmailHelper.cs" />
+    <Compile Include="src\CustomDesktop\Utils\ThemeProgramHelper.cs" />
     <Compile Include="src\CustomThemes\ColorHelper.cs" />
     <Compile Include="src\CustomVideos\CustomVideo.cs" />
+    <Compile Include="src\CustomVideos\VideoHelper.cs" />
     <Compile Include="src\CustomVideos\VideoPatches.cs" />
     <Compile Include="src\Emails\CustomEmail.cs" />
+    <Compile Include="src\EndingPatches\GameEndCutscene.cs" />
+    <Compile Include="src\EndingPatches\GameOverPatches.cs" />
     <Compile Include="src\EntryManager\EntryData\EntryMetadata.cs" />
     <Compile Include="src\EntryManager\EntryListing\EntryListingPatches.cs" />
     <Compile Include="src\EntryManager\EntryManager.cs" />
     <Compile Include="src\EntryManager\EntryUnlocker\EntryUnlockerPatcher.cs" />
     <Compile Include="src\ErrorDebugging\UnityLogHook.cs" />
     <Compile Include="src\HelperFunctions\DebugHelper.cs" />
+    <Compile Include="src\HelperFunctions\EmbedHelpers.cs" />
+    <Compile Include="src\HelperFunctions\URLVerification.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
     <Compile Include="src\ImportFiles\ImageImport.cs" />
+    <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
+    <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />
+    <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\CutsceneParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\RingtoneParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\TextProgramParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
-    <Compile Include="src\JSONParsing\EntryParsing\CallerParsing.cs" />
+    <Compile Include="src\JSONParsing\EntryParsing\MainCampaignCallerParsing.cs" />
     <Compile Include="src\JSONParsing\EntryParsing\EntryParsing.cs" />
     <Compile Include="src\JSONParsing\GlobalParsingVariables.cs" />
     <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
     <Compile Include="src\JSONParsing\ParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\AccuracyParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\ArtbookParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\CallerRequirementParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\IDParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\ImageParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\PendingParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\URLParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\VideoParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ReloadJSONParsing.cs" />
+    <Compile Include="src\LoggingSystem\LoggingHelper.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\MainGameBugFixes\CloseErrorPopupFix.cs" />
     <Compile Include="src\MainGameBugFixes\EmailLoadingBugFix.cs" />
     <Compile Include="src\MainGameBugFixes\EntryLoadingBuxFix.cs" />
+    <Compile Include="src\MainGameBugFixes\EntryViewNotUpdating.cs" />
     <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs" />
     <Compile Include="src\MainGameBugFixes\UISoundBugFix.cs" />
     <Compile Include="src\VersionChecker\AsyncVersionChecker.cs" />
@@ -197,6 +256,18 @@
   <ItemGroup>
     <None Include="build_after.bat" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Audio\EmbeddedAudio\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\ImportFiles\EmbeddedImages\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="src\Audio\EmbeddedAudio\*.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="src\ImportFiles\EmbeddedImages\*.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

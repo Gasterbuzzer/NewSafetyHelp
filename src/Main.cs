@@ -1,53 +1,42 @@
 ﻿using MelonLoader;
 using System;
-using System.Reflection;
-using NewSafetyHelp.CustomCampaign;
+using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ErrorDebugging;
+using NewSafetyHelp.HelperFunctions;
+using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NewSafetyHelp.VersionChecker;
+
 // ReSharper disable RedundantDefaultMemberInitializer
 
 namespace NewSafetyHelp
 {
     public class NewSafetyHelpMainClass : MelonMod
     {
-        // Category for Entries (So that they can be saved upon quitting the game)
-        public static MelonPreferences_Category PersistantEntrySave;
-        
-        private static MelonPreferences_Category mainModSettings;
-        private static MelonPreferences_Entry<bool> skipComputerScene; // If to skip the initial computer scene.
-        public static MelonPreferences_Entry<bool> ShowSkippedCallerDebugLog; // If to show the skipped callers debug log.
-        public static MelonPreferences_Entry<bool> ShowThemeDebugLog; // If to show the logs for theme info.
-        public static MelonPreferences_Entry<bool> ShowRingtoneDebugLog; // If to show the logs for ringtone info.
-
         public override void OnInitializeMelon()
         {
-            // Entries are created when needed.
-            PersistantEntrySave = MelonPreferences.CreateCategory("EntryAlreadyCalled");
-            
-            // Settings
-            mainModSettings = MelonPreferences.CreateCategory("MainModSettings");
-            skipComputerScene = mainModSettings.CreateEntry("SkipComputerScene", false);
-            ShowSkippedCallerDebugLog = mainModSettings.CreateEntry("ShowSkippedCallerDebugLog", false);
-            ShowThemeDebugLog = mainModSettings.CreateEntry("ShowThemeDebugLog", false);
-            ShowRingtoneDebugLog = mainModSettings.CreateEntry("ShowRingtoneDebugLog", false);
-            
+            // Preferences
+            GlobalPreferences.InitializeMelonPreferences();
+
             // Subscribe to Unity's logging system
             Application.logMessageReceived += UnityLogHook.HandleUnityLog;
-            
+
             // Check for updates.
             _ = AsyncVersionChecker.CheckForUpdates();
         }
 
         public override void OnLateInitializeMelon()
         {
-            #if DEBUG
-                SceneManager.LoadScene("MainMenuScene");
-            #endif
+            // We delete all temp files and recreate them later.
+            // (Makes sure we are up to date and doesn't leave residue).
+            EmbedHelpers.DeleteTempFiles();
 
-            if (skipComputerScene.Value)
+            if (GlobalPreferences.SkipComputerScene.Value)
             {
                 SceneManager.LoadScene("MainMenuScene");
             }
@@ -55,35 +44,39 @@ namespace NewSafetyHelp
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            #if DEBUG
-            LoggerInstance.Msg($"DEBUG: Scene {sceneName} with build index {buildIndex} has been loaded!");
-            #endif
+            LoggingHelper.DebugLog(() =>
+                $"Scene {sceneName} with build index {buildIndex} has been loaded!");
 
             MelonPreferences.Save(); // Save on scene change.
         }
     }
 
     // Add new Entries.
-    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake", new Type[] { })]
+    [HarmonyLib.HarmonyPatch(typeof(EntryUnlockController), "Awake")]
     public static class MainClassForMonsterEntries
     {
         // If we show the update message again.
         public static bool ShowUpdateMessage = false;
-        
+
         // Check if we already added the entries, if yes, we do not do it again.
         private static bool isInitializedMainOnce = false;
 
-        private static bool addedEntriesToCustomCampaign = false;
+        public static bool AddedEntriesToCustomCampaign = false;
 
         public static MonsterProfile[] CopyMonsterProfiles;
         private static int monsterProfileSize = 0;
-        
+
+        // Copy of Tiers (6 tiers exist)
+        public static readonly List<MonsterProfile[]> CopyTierUnlocks = new List<MonsterProfile[]>();
+        public static readonly List<MonsterProfile[]> CopyXmasTier = new List<MonsterProfile[]>();
+
         private static MonsterProfile[] copyMonsterProfilesAfterAdding;
+
         // ReSharper disable once NotAccessedField.Local
         private static int monsterProfileSizeAfterAdding = 0; // May be used later. Don't remove.
 
         /// <summary>
-        /// Adds extra Monsters to the list.
+        /// Adds extra entries to the list.
         /// We do this preferably here in order to make sure its
         /// </summary>
         /// <param name="__instance"> Caller of function. </param>
@@ -94,103 +87,121 @@ namespace NewSafetyHelp
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 // We left the custom campaign. We reset the custom campaign values / entries.
-                if (addedEntriesToCustomCampaign)
+                if (AddedEntriesToCustomCampaign)
                 {
-                    addedEntriesToCustomCampaign = false;
+                    AddedEntriesToCustomCampaign = false;
                     __instance.allEntries.monsterProfiles = copyMonsterProfilesAfterAdding;
                 }
-                
-                // Check if already added monsters at any point.
+
+                // Check if already added entries at any point.
                 if (isInitializedMainOnce)
                 {
                     // We already added them once, no need to add them again.
-                    MelonLogger.Msg("INFO: Custom Entries were already added. Skipping adding them again. (This happens on scene reload).");
+                    LoggingHelper.DebugLog("Custom Entries were already added. " +
+                                           "Skipping adding them again. (This happens on scene reload).");
                     return;
                 }
-            
-                // We create copy of the monster profiles. (Before adding all entries)
+
+                // We create copy of the entry profiles. (Before adding all entries)
                 CopyMonsterProfiles = __instance.allEntries.monsterProfiles;
                 monsterProfileSize = CopyMonsterProfiles.Length;
 
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Now parsing all '.json' files...");
+                // Copies of tier unlocks.
+                CopyTierUnlocks.Add(__instance.firstTierUnlocks.monsterProfiles);
+                CopyTierUnlocks.Add(__instance.secondTierUnlocks.monsterProfiles);
+                CopyTierUnlocks.Add(__instance.thirdTierUnlocks.monsterProfiles);
+                CopyTierUnlocks.Add(__instance.fourthTierUnlocks.monsterProfiles);
+                CopyTierUnlocks.Add(__instance.fifthTierUnlocks.monsterProfiles);
+                CopyTierUnlocks.Add(__instance.sixthTierUnlocks.monsterProfiles);
 
-                // Read all json and add all monsters and campaigns (/Calls)
-                ParseJSONFiles.LoadAllJSON(__instance);
-                
-                // Create copy after adding all custom entries that belong to the main campaign.
-                copyMonsterProfilesAfterAdding = __instance.allEntries.monsterProfiles;
-                monsterProfileSizeAfterAdding = copyMonsterProfilesAfterAdding.Length;
+                CopyXmasTier.Add(__instance.xmastFirstTier.monsterProfiles);
+                CopyXmasTier.Add(__instance.xmasSecondTier.monsterProfiles);
+                CopyXmasTier.Add(__instance.xmasThirdTier.monsterProfiles);
+                CopyXmasTier.Add(__instance.xmasFourthTier.monsterProfiles);
 
-                isInitializedMainOnce = true;
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Loaded all '.json' files successfully!");
+                StartingJSONParsing(__instance);
             }
-            else if (!addedEntriesToCustomCampaign) // Custom Campaign
+            else // Custom Campaign
             {
-                if (CopyMonsterProfiles.Length <= 0 || monsterProfileSize <= 0) // Invalid loading.
+                CustomCampaignInitialization(__instance);
+            }
+        }
+
+        /// <summary>
+        /// Function to initialize the custom campaign values.
+        /// </summary>
+        /// <param name="__instance">Instance of the entry unlock controller.</param>
+        private static void CustomCampaignInitialization(EntryUnlockController __instance)
+        {
+            if (!AddedEntriesToCustomCampaign)
+            {
+                // Invalid loading.
+                if (CopyMonsterProfiles.Length <= 0
+                    || monsterProfileSize <= 0)
                 {
-                    MelonLogger.Error("CRITICAL ERROR: Loading of old values to add the entries to failed! (Count == 0)");
+                    LoggingHelper.CriticalErrorLog("Loading of old values to add the entries to failed! " +
+                                                   "(Count == 0)");
                     return;
                 }
 
-                CustomCampaign.CustomCampaignModel.CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
                 if (customCampaign == null)
                 {
-                    MelonLogger.Error("CRITICAL ERROR: Trying to add to empty custom campaign! Custom campaign is enabled but custom campaign was not found?");
                     return;
                 }
 
                 if (customCampaign.RemoveExistingEntries)
                 {
-                    __instance.allEntries.monsterProfiles = Array.Empty<MonsterProfile>(); // Remove all entries.
+                    // Remove all entries.
+                    __instance.allEntries.monsterProfiles = Array.Empty<MonsterProfile>();
                 }
                 else // Else we replace our current entries with the original copy and add the entries to that.
                 {
-                    __instance.allEntries.monsterProfiles = CopyMonsterProfiles;
+                    // If to use the DLC entries instead.
+                    if (customCampaign.UseDLCEntries)
+                    {
+                        LoggingHelper.DebugLog("Using DLC monster profiles.");
+                        __instance.allEntries.monsterProfiles = __instance.allXmasEntries.monsterProfiles;
+                    }
+                    else
+                    {
+                        __instance.allEntries.monsterProfiles = CopyMonsterProfiles;
+                    }
                 }
-                
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Entries are now being added... (Custom Campaign)");
+
+                LoggingHelper.InfoLog("Entries are now being added... (Custom Campaign)",
+                    consoleColor: ConsoleColor.Green);
 
                 // Replace all entries that need replacement.
                 CustomCampaignGlobal.ReplaceAllProvidedCampaignEntries(ref __instance.allEntries);
-                
+
                 // Read all JSON and add all monsters and campaigns (/Calls)
                 CustomCampaignGlobal.AddAllCustomCampaignEntriesToArray(ref __instance.allEntries);
 
-                addedEntriesToCustomCampaign = true;
-                MelonLogger.Msg(ConsoleColor.Green, "INFO: Added/Modified all custom entries successfully! (Custom Campaign)");
+                AddedEntriesToCustomCampaign = true;
+                LoggingHelper.InfoLog("Added/Modified all custom entries successfully! (Custom Campaign)",
+                    consoleColor: ConsoleColor.Green);
             }
         }
-    }
 
-    // Patches the class when it opens to also update the monster list, since due to our coroutine's problem.
-    [HarmonyLib.HarmonyPatch(typeof(OptionsExecutable), "Open", new Type[] { })]
-    public static class UpdateListDesktop
-    {
         /// <summary>
-        /// Update the list when opening.
+        /// Small helper function to start the JSON parsing process.
         /// </summary>
-        /// <param name="__instance"> Caller of function. </param>
-        // ReSharper disable once UnusedMember.Local
-        // ReSharper disable once InconsistentNaming
-        private static void Prefix(OptionsExecutable __instance)
+        /// <param name="__instance">Instance of the EntryUnlockController.</param>
+        public static void StartingJSONParsing(EntryUnlockController __instance)
         {
-            if (__instance.myPopup.name == "EntryCanvasStandalone") // We are opening the EntryBrowser, lets update
-            {
-                // Get the start of the EntryBrowser
-                Type optionsExecutable = typeof(EntryCanvasStandaloneBehavior);
+            LoggingHelper.InfoLog("Now parsing all '.json' files...", consoleColor: ConsoleColor.Green);
 
-                MethodInfo startMethod = optionsExecutable.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public, null, new Type[] { }, null);
+            // Read all JSON and add all entries and campaigns (/Calls)
+            ParseJSONFiles.LoadAllJSON(__instance);
 
-                if (startMethod != null)
-                {
-                    startMethod.Invoke(__instance.myPopup.GetComponent<EntryCanvasStandaloneBehavior>(), null);
-                }
-                else
-                {
-                    MelonLogger.Error("ERROR: Failed to access the member 'Start' of EntryCanvasStandaloneBehavior.");
-                }
-            }
+            // Create copy after adding all custom entries that belong to the main campaign.
+            copyMonsterProfilesAfterAdding = __instance.allEntries.monsterProfiles;
+            monsterProfileSizeAfterAdding = copyMonsterProfilesAfterAdding.Length;
+
+            isInitializedMainOnce = true;
+            LoggingHelper.InfoLog("Loaded all '.json' files successfully!", consoleColor: ConsoleColor.Green);
         }
     }
 }

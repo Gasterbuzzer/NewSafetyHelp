@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using MelonLoader;
 using NewSafetyHelp.Audio;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.CCParsing;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 
@@ -23,6 +25,8 @@ namespace NewSafetyHelp.JSONParsing
             Modifier,
             Theme,
             Ringtone,
+            TextProgram,
+            Cutscene,
             Invalid
         }
 
@@ -36,6 +40,9 @@ namespace NewSafetyHelp.JSONParsing
             // Halt the game while we are parsing and loading all necessary files.
             Time.timeScale = 0.0f;
 
+            // Before load all JSON files, we first load all embedded audio.
+            EmbeddedTimerData.Initialize();
+
             string userDataPath = FileImporter.GetUserDataFolderPath();
 
             string[] foldersDataPath = Directory.GetDirectories(userDataPath);
@@ -43,6 +50,25 @@ namespace NewSafetyHelp.JSONParsing
             foreach (string foldersStringName in foldersDataPath)
             {
                 LoadJsonFilesFromFolder(foldersStringName, __instance);
+            }
+
+            // For all custom campaigns we make sure any elements are sorted correctly.
+            foreach (CustomCampaign customCampaign in CustomCampaignGlobal.CustomCampaignsAvailable)
+            {
+                if (customCampaign.Emails.Count > 0)
+                {
+                    customCampaign.SortEmailsInCustomCampaign();
+                }
+
+                if (customCampaign.CustomCutscenes.Count > 0)
+                {
+                    customCampaign.SortCutsceneInCustomCampaign();
+                }
+                
+                if (customCampaign.CustomCallersInCampaign.Count > 0)
+                {
+                    customCampaign.SortCustomCallersInCustomCampaign();
+                }
             }
 
             // If no audio is loading, we can reset the game back. If not, we let the audios do so.
@@ -65,7 +91,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 try
                 {
-                    MelonLogger.Msg($"INFO: Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
+                    LoggingHelper.InfoLog($"Found new JSON file at '{jsonPathFile}', attempting to parse it now.");
 
                     string jsonString = File.ReadAllText(jsonPathFile);
 
@@ -78,77 +104,90 @@ namespace NewSafetyHelp.JSONParsing
                     switch (jsonType)
                     {
                         case JSONParseTypes.Campaign: // The provided JSON is a standalone campaign declaration.
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a custom campaign.");
                             CustomCampaignParsing.CreateCustomCampaign(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Call: // The provided JSON is a standalone call.
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a custom caller.");
                             CustomCallerParsing.CreateCustomCaller(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
-                            MelonLogger.Msg(
-                                "INFO: " +
-                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a monster entry.");
-                            EntryParsing.EntryParsing.CreateMonsterFromJSON(jObjectParse, usermodFolderPath: modFolderPath,
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as an entry (monster).");
+                            EntryParsing.EntryParsing.CreateEntryFromJSON(jObjectParse,
+                                usermodFolderPath: modFolderPath,
                                 jsonFolderPath: jsonFolderPath, entryUnlockerInstance: __instance);
                             break;
 
                         case JSONParseTypes.Email: // The provided JSON is an email (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a email.");
                             EmailParsing.CreateEmail(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Video: // The provided JSON is a video (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a video.");
                             VideoParsing.CreateVideo(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Music: // The provided JSON is a music file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a music file.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a music file.");
                             MusicParsing.CreateMusic(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Modifier: // The provided JSON is a modifier file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a modifier file.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a modifier file.");
                             ModifierParsing.CreateModifier(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
-                        
+
                         case JSONParseTypes.Theme: // The provided JSON is a theme file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a theme file.");
                             ThemeParsing.CreateTheme(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
-                        
+
                         case JSONParseTypes.Ringtone: // The provided JSON is a ringtone file (for custom campaigns).
-                            MelonLogger.Msg(
-                                $"INFO: Provided JSON file at '{jsonPathFile}' has been interpreted as a ringtone file.");
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a ringtone file.");
                             RingtoneParsing.CreateRingtone(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
+                        case JSONParseTypes.TextProgram: // The provided JSON is a text file (for custom campaigns).
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a text file program.");
+                            TextProgramParsing.CreateTextProgram(jObjectParse, modFolderPath);
+                            break;
+
+                        case JSONParseTypes.Cutscene: // The provided JSON is a cutscene (for custom campaigns).
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a cutscene.");
+                            CutsceneParsing.CreateCutscene(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
-                            MelonLogger.Error(
+                            LoggingHelper.ErrorLog(
                                 "ERROR: Provided JSON file parsing failed or is not any known provided format." +
                                 "\n(If this intended, you can ignore this, if not, check if you have written your JSON correctly)." +
                                 "\nSkipping trying to read this file.");
                             break;
 
                         default: // Unknown Error
-                            MelonLogger.Error("ERROR: This error should not happen. Possible file corruption.");
+                            LoggingHelper.ErrorLog("This error should not happen. Possible file corruption.");
                             break;
                     }
                 }
                 catch (Exception e)
                 {
-                    MelonLogger.Error($"ERROR: Failed in reading file '{jsonPathFile}'. " +
-                                      $"Error message: '{e.Message};{e.StackTrace}'.");
+                    LoggingHelper.ErrorLog($"Failed reading the file '{jsonPathFile}'. \n---\n" +
+                                           $"Error message: '{e.Message}'. \n---\n" +
+                                           $"Error Stacktrace: \n'\n{e.StackTrace}\n'.");
                 }
             }
         }
@@ -167,7 +206,7 @@ namespace NewSafetyHelp.JSONParsing
                 return JSONParseTypes.Invalid;
             }
 
-            // Added Campaign Settings
+            // Custom Campaign was provided.
             if (ParsingHelper.ContainsKeys(
                     new List<string>
                         { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name" }, json))
@@ -187,7 +226,9 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Entry was provided.
-            if (ParsingHelper.ContainsKeys(new List<string> { "monster_name", "replace_entry", "caller_name" }, json))
+            if (ParsingHelper.ContainsKeys(new List<string> { "monster_name", "replace_entry", "caller_name",
+                    "entry_name", "entry_description", "monster_description", "monster_portrait_image_name",
+                    "entry_portrait_image_name", "monster_audio_clip_name", "entry_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Entry;
             }
@@ -215,8 +256,10 @@ namespace NewSafetyHelp.JSONParsing
             // Modifier was provided
             if (!ParsingHelper.ContainsKeys(
                     new List<string>
-                        { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
-                            "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
+                    {
+                        "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name",
+                        "email_subject", "email_in_main_campaign", "email_custom_campaign_name"
+                    }, json)
                 &&
                 ParsingHelper.ContainsKeys(new List<string>
                 {
@@ -225,12 +268,14 @@ namespace NewSafetyHelp.JSONParsing
             {
                 return JSONParseTypes.Modifier;
             }
-            
+
             // Theme was provided
             if (!ParsingHelper.ContainsKeys(
                     new List<string>
-                    { "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name", 
-                        "email_subject", "email_in_main_campaign", "email_custom_campaign_name" }, json)
+                    {
+                        "custom_campaign_name", "custom_campaign_days", "custom_campaign_icon_image_name",
+                        "email_subject", "email_in_main_campaign", "email_custom_campaign_name"
+                    }, json)
                 &&
                 ParsingHelper.ContainsKeys(new List<string>
                 {
@@ -239,13 +284,33 @@ namespace NewSafetyHelp.JSONParsing
             {
                 return JSONParseTypes.Theme;
             }
-            
+
             // Ringtone was provided
             if (ParsingHelper.ContainsKeys(new List<string> { "ringtone_audio_clip_name" }, json))
             {
                 return JSONParseTypes.Ringtone;
             }
-            
+
+            // Text file program was provided
+            if (ParsingHelper.ContainsKeys(new List<string>
+                {
+                    "text_file_desktop_name", "text_file_unlock_day",
+                    "text_file_contents", "text_file_unlock_when_game_finished"
+                }, json))
+            {
+                return JSONParseTypes.TextProgram;
+            }
+
+            // Cutscene was provided
+            if (ParsingHelper.ContainsKeys(new List<string>
+                {
+                    "cutscene_custom_campaign_name",
+                    "custom_cutscene_video_file", "custom_cutscene_priority"
+                }, json))
+            {
+                return JSONParseTypes.Cutscene;
+            }
+
             // Unknown JSON type or failed parsing the file.
             return JSONParseTypes.Invalid;
         }
