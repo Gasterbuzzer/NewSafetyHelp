@@ -37,6 +37,24 @@ namespace NewSafetyHelp.JSONParsing
         }
 
         /// <summary>
+        /// Tries to assign the target with the JSON value at the given key(s). If not found, it will not write.
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">List of valid keys to be found.</param>
+        /// <param name="target">Target to write the value to.</param>
+        /// <typeparam name="T">Type of the target.</typeparam>
+        public static void TryAssign<T>(JObject jObjectParsed, List<string> key, ref T target)
+        {
+            foreach (var _key in key)
+            {
+                if (jObjectParsed.TryGetValue(_key, out var token))
+                {
+                    target = token.Value<T>();
+                }
+            }
+        }
+
+        /// <summary>
         /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
         /// This version takes in a bool that updates to "true" if updated.
         /// </summary>
@@ -57,7 +75,7 @@ namespace NewSafetyHelp.JSONParsing
             wasAssigned = true;
             target = token.Value<T>();
         }
-        
+
         /// <summary>
         /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
         /// This version takes in a bool that updates to "true" if updated.
@@ -77,7 +95,7 @@ namespace NewSafetyHelp.JSONParsing
             target.HasChanged = true;
             target.Data = token.Value<T>();
         }
-        
+
         /// <summary>
         /// Tries to assign the target with the JSON value at the given key. If not found, it will not write.
         /// This version takes in a bool that updates to "true" if updated.
@@ -87,10 +105,11 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="keys">(List) Keys to be found.</param>
         /// <param name="target">Target to write the value to.</param>
         /// <typeparam name="T">Type of the target.</typeparam>
-        public static void TryAssignWithChangedBool<T>(JObject jObjectParsed, List<string> keys, ref VariableChanged<T> target)
+        public static void TryAssignWithChangedBool<T>(JObject jObjectParsed, List<string> keys,
+            ref VariableChanged<T> target)
         {
             target.HasChanged = false;
-            
+
             foreach (var singleKey in keys)
             {
                 TryAssignWithChangedBool(jObjectParsed, singleKey, ref target);
@@ -176,7 +195,5 @@ namespace NewSafetyHelp.JSONParsing
                 LoggingHelper.ErrorLog($"Provided key '{key}' does not contain a list.");
             }
         }
-
-        
     }
 }

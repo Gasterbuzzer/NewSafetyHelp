@@ -131,9 +131,9 @@ namespace NewSafetyHelp.Callers
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided Monster name '{customCaller.Value.MonsterNameAttached}'" +
-                                    $" for custom caller {customCaller.Key} was not found!" +
-                                    " Thus will not have any monster entry.");
+                                    $"Provided entry (monster) name '{customCaller.Value.MonsterNameAttached}' " +
+                                    $"for custom caller {customCaller.Key} was not found! " +
+                                    "Thus will not have any entry (monster).");
                                 callerProfile.callerMonster = null;
                             }
                             else
@@ -141,17 +141,17 @@ namespace NewSafetyHelp.Callers
                                 callerProfile.callerMonster = foundMonster;
                             }
                         }
-                        else if (customCaller.Value.MonsterIDAttached >= 0) // Check for ID monster.
+                        else if (customCaller.Value.MonsterIDAttached >= 0) // Check for ID entry.
                         {
                             MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
                                 ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
-                                    .allEntries.monsterProfiles, monsterID: customCaller.Value.MonsterIDAttached);
+                                    .allEntries.monsterProfiles, entryID: customCaller.Value.MonsterIDAttached);
 
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided monster ID for custom caller {customCaller.Key} was not found!" +
-                                    $" Thus will not have any monster entry.");
+                                    $"Provided entry (monster) ID for custom caller {customCaller.Key} was not found! " +
+                                    "Thus will not have any entry (monster).");
                                 callerProfile.callerMonster = null;
                             }
                             else
@@ -159,7 +159,7 @@ namespace NewSafetyHelp.Callers
                                 callerProfile.callerMonster = foundMonster;
                             }
                         }
-                        else // No caller monster.
+                        else // No caller entry.
                         {
                             callerProfile.callerMonster = null;
                         }
@@ -168,8 +168,9 @@ namespace NewSafetyHelp.Callers
                         {
                             if (__instance.callers[customCaller.Value.ConsequenceCallerID].callerProfile == null)
                             {
-                                LoggingHelper.WarningLog("Provided consequence caller but profile is null?" +
-                                                         " Setting to null.");
+                                LoggingHelper.WarningLog(
+                                    "Provided consequence caller but profile was not found (Profile == null)? " +
+                                    "Setting to null.");
                             }
 
                             callerProfile.consequenceCallerProfile =
@@ -266,9 +267,9 @@ namespace NewSafetyHelp.Callers
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided Monster name '{customCallerCC.MonsterNameAttached}'" +
-                                    $" for custom caller {customCallerCC.CallerName} was not found!" +
-                                    " Thus will not have any monster entry.");
+                                    $"Provided entry (monster) name '{customCallerCC.MonsterNameAttached}' " +
+                                    $"for custom caller {customCallerCC.CallerName} was not found! " +
+                                    "Thus will not have any entry (monster).");
                                 newProfile.callerMonster = null;
                             }
                             else
@@ -276,17 +277,17 @@ namespace NewSafetyHelp.Callers
                                 newProfile.callerMonster = foundMonster;
                             }
                         }
-                        else if (customCallerCC.MonsterIDAttached >= 0) // Check for ID monster.
+                        else if (customCallerCC.MonsterIDAttached >= 0) // Check for ID entry.
                         {
                             MonsterProfile foundMonster = EntryManager.EntryManager.FindEntry(
                                 ref GameObject.Find("EntryUnlockController").GetComponent<EntryUnlockController>()
-                                    .allEntries.monsterProfiles, monsterID: customCallerCC.MonsterIDAttached);
+                                    .allEntries.monsterProfiles, entryID: customCallerCC.MonsterIDAttached);
 
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided monster ID for custom caller {customCallerCC.CallerName} was not found!" +
-                                    " Thus will not have any monster entry.");
+                                    $"Provided entry (monster) ID for custom caller {customCallerCC.CallerName} was not found!" +
+                                    " Thus will not have any entry (monster).");
                                 newProfile.callerMonster = null;
                             }
                             else
@@ -510,6 +511,15 @@ namespace NewSafetyHelp.Callers
                 "AnswerDynamicCall",
                 BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
 
+            private static readonly FieldInfo DelayedLargeWindowDisplayRoutine =
+                typeof(CallerController).GetField("delayedLargeWindowDisplayRoutine",
+                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance |
+                    BindingFlags.Public);
+
+            private static readonly MethodInfo WaitTillCallEndRoutine = typeof(CallerController).GetMethod(
+                "WaitTillCallEndRoutine",
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             /// <summary>
             /// Patches answer caller to have more features for custom campaigns.
             /// </summary>
@@ -713,16 +723,10 @@ namespace NewSafetyHelp.Callers
                                 newProfile.callTranscription = warningCCallerToday.CallTranscript;
 
                                 // Fallback for missing picture or audio.
-                                MethodInfo getRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic",
-                                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                                MethodInfo getRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
-                                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                                if (getRandomPicMethod == null || getRandomClip == null)
+                                if (GetRandomPicMethod == null || GetRandomClip == null)
                                 {
-                                    LoggingHelper.ErrorLog("'getRandomPicMethod' or 'getRandomClip' is null!" +
-                                                           " Calling original function.");
+                                    LoggingHelper.ReflectionError(nameof(GetRandomPicMethod),
+                                        nameof(GetRandomClip));
                                     return true;
                                 }
 
@@ -732,10 +736,10 @@ namespace NewSafetyHelp.Callers
                                 }
                                 else
                                 {
-                                    LoggingHelper.WarningLog("Warning-Caller has no caller image," +
-                                                             " using random image.");
+                                    LoggingHelper.WarningLog("Warning-Caller has no caller image, " +
+                                                             "using random image.");
 
-                                    newProfile.callerPortrait = (Sprite)getRandomPicMethod.Invoke(__instance, null);
+                                    newProfile.callerPortrait = (Sprite)GetRandomPicMethod.Invoke(__instance, null);
                                 }
 
                                 if (warningCCallerToday.CallerClip != null)
@@ -746,28 +750,29 @@ namespace NewSafetyHelp.Callers
                                 {
                                     if (AudioImport.CurrentLoadingAudios.Count > 0)
                                     {
-                                        LoggingHelper.WarningLog("Warning-Caller audio is still loading!" +
-                                                                 " Using fallback for now. " +
-                                                                 "If this happens often," +
-                                                                 " please check if the audio is too large!");
+                                        LoggingHelper.WarningLog("Warning-Caller audio is still loading! " +
+                                                                 "Using fallback for now. " +
+                                                                 "If this happens often, " +
+                                                                 "please check if the audio is too large!");
                                     }
                                     else
                                     {
-                                        LoggingHelper.WarningLog("Warning-Caller has no audio!" +
-                                                                 " Using audio fallback." +
-                                                                 " If you provided an audio but this error shows up," +
-                                                                 " check for any errors before!");
+                                        LoggingHelper.WarningLog("Warning-Caller has no audio! " +
+                                                                 "Using audio fallback. " +
+                                                                 "If you provided an audio but this error shows up, " +
+                                                                 "check for any errors before!");
                                     }
 
-                                    newProfile.callerClip = (RichAudioClip)getRandomClip.Invoke(__instance, null);
+                                    newProfile.callerClip = (RichAudioClip)GetRandomClip.Invoke(__instance, null);
                                 }
 
                                 if (!string.IsNullOrEmpty(warningCCallerToday.MonsterNameAttached) ||
                                     warningCCallerToday.MonsterIDAttached != -1)
                                 {
-                                    LoggingHelper.WarningLog("A monster was provided for the warning caller," +
-                                                             " but warning callers do not use any entries!" +
-                                                             " Will default to none.");
+                                    LoggingHelper.WarningLog(
+                                        "An entry (monster) was provided for the warning caller, " +
+                                        "but warning callers do not use any entries! " +
+                                        "Will default to none.");
                                 }
 
                                 newProfile.callerMonster = null;
@@ -775,8 +780,8 @@ namespace NewSafetyHelp.Callers
 
                                 if (warningCCallerToday.CallerIncreasesTier)
                                 {
-                                    LoggingHelper.WarningLog("Increase tier was provided for a warning caller!" +
-                                                             " It will be set to false!");
+                                    LoggingHelper.WarningLog("Increase tier was provided for a warning caller! " +
+                                                             "It will be set to false!");
                                 }
 
                                 newProfile.increaseTier = false;
@@ -784,8 +789,8 @@ namespace NewSafetyHelp.Callers
 
                                 if (warningCCallerToday.ConsequenceCallerID != -1)
                                 {
-                                    LoggingHelper.WarningLog("Warning callers cannot be consequence caller," +
-                                                             " ignoring option.");
+                                    LoggingHelper.WarningLog("Warning callers cannot be consequence caller, " +
+                                                             "ignoring option.");
                                 }
 
                                 newProfile.consequenceCallerProfile = null;
@@ -908,19 +913,10 @@ namespace NewSafetyHelp.Callers
 
                         __instance.PlayCallAudio();
 
-                        FieldInfo delayedLargeWindowDisplayRoutine =
-                            typeof(CallerController).GetField("delayedLargeWindowDisplayRoutine",
-                                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance |
-                                BindingFlags.Public);
-                        MethodInfo waitTillCallEndRoutine = typeof(CallerController).GetMethod(
-                            "WaitTillCallEndRoutine",
-                            BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-
-                        if (delayedLargeWindowDisplayRoutine == null || waitTillCallEndRoutine == null)
+                        if (DelayedLargeWindowDisplayRoutine == null || WaitTillCallEndRoutine == null)
                         {
-                            LoggingHelper.ErrorLog(
-                                "'delayedLargeWindowDisplayRoutine' or 'WaitTillCallEndRoutine' is null." +
-                                " Calling original function.");
+                            LoggingHelper.ReflectionError(nameof(DelayedLargeWindowDisplayRoutine),
+                                nameof(WaitTillCallEndRoutine));
                             return true;
                         }
 
@@ -930,8 +926,8 @@ namespace NewSafetyHelp.Callers
                         // __instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length
                         // )
                         // );
-                        delayedLargeWindowDisplayRoutine.SetValue(__instance,
-                            __instance.StartCoroutine((IEnumerator)waitTillCallEndRoutine.Invoke(__instance,
+                        DelayedLargeWindowDisplayRoutine.SetValue(__instance,
+                            __instance.StartCoroutine((IEnumerator)WaitTillCallEndRoutine.Invoke(__instance,
                                 new object[]
                                 {
                                     __instance.callers[__instance.currentCallerID].callerProfile.callerClip.clip.length

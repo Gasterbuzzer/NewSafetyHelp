@@ -15,8 +15,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CutsceneLogic
         
         /// <summary>
         /// The apply priority of the cutscene.
-        /// Higher values mean that this cutscene is lower in the list and if lower, the cutscenes position in the list
-        /// is lower. 
+        /// Higher values mean that this cutscene is lower in the list and if lower,
+        /// the cutscenes position in the list is lower. 
         /// This affects how the cutscene is chosen.
         /// Since a valid cutscene will be picked based on the first that matches all conditions given.
         /// </summary>
