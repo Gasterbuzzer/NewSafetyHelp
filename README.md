@@ -3,14 +3,14 @@
 [![MelonLoader-Mod](https://img.shields.io/badge/MelonLoader-Mod-red?style=flat&labelColor=green)](https://melonwiki.xyz/#/README?id=requirements)
 [![License](https://img.shields.io/github/license/gasterbuzzer/NewSafetyHelp)](https://github.com/Gasterbuzzer/NewSafetyHelp/blob/master/LICENSE.txt)
 
+[![Latest Release](https://img.shields.io/github/v/release/gasterbuzzer/NewSafetyHelp)](https://github.com/Gasterbuzzer/NewSafetyHelp/releases/latest)
+[![Download](https://img.shields.io/github/downloads/gasterbuzzer/NewSafetyHelp/total)](https://github.com/Gasterbuzzer/NewSafetyHelp/releases)
+[![Wiki](https://img.shields.io/badge/Wiki-GitHub-blue?style=flat&logo=github)](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
+
 ![Top-Language](https://img.shields.io/github/languages/top/gasterbuzzer/NewSafetyHelp)
 ![DotNet](https://img.shields.io/badge/.NET_Framework-4.7.2-512BD4?style=flat&logo=dotnet)
 [![Last Commit](https://img.shields.io/github/last-commit/gasterbuzzer/NewSafetyHelp)](https://github.com/Gasterbuzzer/NewSafetyHelp/commits)
 [![Open Issues](https://img.shields.io/github/issues/gasterbuzzer/NewSafetyHelp)](https://github.com/Gasterbuzzer/NewSafetyHelp/issues)
-
-[![Latest Release](https://img.shields.io/github/v/release/gasterbuzzer/NewSafetyHelp)](https://github.com/Gasterbuzzer/NewSafetyHelp/releases/latest)
-[![Download](https://img.shields.io/github/downloads/gasterbuzzer/NewSafetyHelp/total)](https://github.com/Gasterbuzzer/NewSafetyHelp/releases)
-[![Wiki](https://img.shields.io/badge/Wiki-GitHub-blue?style=flat&logo=github)](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
 
 A mod that allows adding and modifying content for the game Home Safety Hotline. \
 This mod also includes multiple fixes for different bugs present in the base game.
