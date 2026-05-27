@@ -342,7 +342,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         public static void ShowCallerTimerUI(MainCanvasBehavior __instance, CustomCCaller currentCaller)
         {
             /*
-             * Updating icons before creating gameobjects.
+             * Updating icons before creating GameObjects.
              */
 
             (bool foundModifier, VariableChanged<Sprite> value) clockBaseModifier =
@@ -441,6 +441,29 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             }
 
             clocKSymbolTransform.anchoredPosition = clockPadding;
+            
+            /*
+             * Add clock base:
+             */
+
+            GameObject clockSymbolHand = new GameObject("ClockSymbolHand");
+            clockSymbolHand.transform.SetParent(clockSymbol.transform, false);
+
+            clockSymbolHand.AddComponent<CanvasRenderer>();
+
+            Image clockSymbolHandImage = clockSymbolHand.AddComponent<Image>();
+            clockSymbolHandImage.sprite = clockHandSprite;
+
+            // Fill parent
+            RectTransform handSymbolRectTransform = clockSymbolHand.GetComponent<RectTransform>();
+
+            handSymbolRectTransform.anchorMin = Vector2.zero;
+            handSymbolRectTransform.anchorMax = Vector2.one;
+            handSymbolRectTransform.offsetMin = Vector2.zero;
+            handSymbolRectTransform.offsetMax = Vector2.zero;
+
+            // Set to start (Pointing up)
+            clockSymbolHand.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
             /*
              * Show specific timer UI.
