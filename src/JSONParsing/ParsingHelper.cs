@@ -83,12 +83,19 @@ namespace NewSafetyHelp.JSONParsing
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="key">Key to be found.</param>
         /// <param name="target">Target to write the value to.</param>
+        /// <param name="setHasChangedToFalseOnFail">Sets the HasChanged value to false if we failed to parse the key.
+        /// One can disable this behavior by setting this variable to false.</param>
         /// <typeparam name="T">Type of the target.</typeparam>
-        public static void TryAssignWithChangedBool<T>(JObject jObjectParsed, string key, ref VariableChanged<T> target)
+        public static void TryAssignWithChangedBool<T>(JObject jObjectParsed, string key, ref VariableChanged<T> target,
+            bool setHasChangedToFalseOnFail = true)
         {
             if (!jObjectParsed.TryGetValue(key, out var token))
             {
-                target.HasChanged = false;
+                if (setHasChangedToFalseOnFail)
+                {
+                    target.HasChanged = false;
+                }
+
                 return;
             }
 
@@ -112,7 +119,7 @@ namespace NewSafetyHelp.JSONParsing
 
             foreach (var singleKey in keys)
             {
-                TryAssignWithChangedBool(jObjectParsed, singleKey, ref target);
+                TryAssignWithChangedBool(jObjectParsed, singleKey, ref target, false);
             }
         }
 
