@@ -375,12 +375,22 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             VariableChanged<float> timedCallerProfileClockSize = new VariableChanged<float>
             {
-                Data = 50f
+                Data = 57.5f
             };
         
             VariableChanged<float> timedCallerProfileClockSizeMultiplier = new VariableChanged<float>
             {
                 Data = 1f
+            };
+            
+            VariableChanged<float> timedCallerProfileClockPadX = new VariableChanged<float>
+            {
+                Data = 5f
+            };
+        
+            VariableChanged<float> timedCallerProfileClockPadY = new VariableChanged<float>
+            {
+                Data = 5f
             };
 
             /*
@@ -732,6 +742,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_size_multiplier",
                 ref timedCallerProfileClockSizeMultiplier);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_vertical_spacing",
+                ref timedCallerProfileClockPadY);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_horizontal_spacing",
+                ref timedCallerProfileClockPadX);
+            
             /*
              * Cheats / Settings
              */
@@ -836,6 +852,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 TimedCallerClockHand = timedCallerClockHand,
                 TimedCallerProfileClockSize = timedCallerProfileClockSize,
                 TimedCallerProfileClockSizeMultiplier = timedCallerProfileClockSizeMultiplier,
+                TimedCallerProfileClockPadX = timedCallerProfileClockPadX,
+                TimedCallerProfileClockPadY = timedCallerProfileClockPadY,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

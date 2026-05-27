@@ -281,14 +281,24 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         
         public VariableChanged<float> TimedCallerProfileClockSize = new VariableChanged<float>
         {
-            Data = 50f
+            Data = 57.5f
         };
         
         public VariableChanged<float> TimedCallerProfileClockSizeMultiplier = new VariableChanged<float>
         {
             Data = 1f
         };
-
+        
+        public VariableChanged<float> TimedCallerProfileClockPadX = new VariableChanged<float>
+        {
+            Data = 5f
+        };
+        
+        public VariableChanged<float> TimedCallerProfileClockPadY = new VariableChanged<float>
+        {
+            Data = 5f
+        };
+        
         /*
          * Cheats / Settings Section
          */

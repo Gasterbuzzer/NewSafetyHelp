@@ -395,7 +395,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             clocKSymbolTransform.anchoredPosition = new Vector2(0f, 0f);
 
-            float clockSymbolSize = 50f;
+            float clockSymbolSize = 57.5f;
             
             (bool foundModifier, VariableChanged<float> value) timedCallerProfileClockSize =
                 CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerProfileClockSize,
@@ -417,6 +417,30 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             
             clocKSymbolTransform.offsetMax = new Vector2(0f, clockSymbolSize);
             clocKSymbolTransform.offsetMin = new Vector2(-clockSymbolSize, 0f);
+            
+            // Now we also pad a bit:
+            
+            Vector2 clockPadding = new Vector2(5, -5);
+            
+            (bool foundModifier, VariableChanged<float> value) timedCallerProfileClockPadX =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerProfileClockPadX,
+                    vCs => vCs.HasChanged);
+            
+            (bool foundModifier, VariableChanged<float> value) timedCallerProfileClockPadY =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerProfileClockPadY,
+                    vCs => vCs.HasChanged);
+            
+            if (timedCallerProfileClockPadX.foundModifier)
+            {
+                 clockPadding.x = timedCallerProfileClockPadX.value.Data;
+            }
+            
+            if (timedCallerProfileClockPadY.foundModifier)
+            {
+                clockPadding.y = -timedCallerProfileClockPadY.value.Data;
+            }
+
+            clocKSymbolTransform.anchoredPosition = clockPadding;
 
             /*
              * Show specific timer UI.
