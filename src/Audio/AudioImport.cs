@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using MelonLoader;
 using NewSafetyHelp.HelperFunctions;
+using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -71,6 +72,10 @@ namespace NewSafetyHelp.Audio
         private static IEnumerator LoadAudio(Action<AudioClip> callback, string path,
             AudioType audioType = AudioType.MPEG)
         {
+            bool fromHotReload = ReloadJSONParsing.IsInHotReload;
+            
+            yield return AudioLoadThrottler.WaitForSlot(fromHotReload); 
+            
             LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
 
             Time.timeScale = 0;
@@ -125,6 +130,8 @@ namespace NewSafetyHelp.Audio
                 }
 
                 CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
+                
+                AudioLoadThrottler.ReleaseSlot(fromHotReload);
 
                 // If all audios finished loading we continue letting the game run.
                 if (CurrentLoadingAudios.Count <= 0)
@@ -133,6 +140,7 @@ namespace NewSafetyHelp.Audio
                 }
             }
         }
+        
 
         /// <summary>
         /// Calls the CallerController "Start" function to reload audio / imports again.

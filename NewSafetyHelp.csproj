@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Audio\AudioImport.cs" />
+    <Compile Include="src\Audio\AudioLoadThrottler.cs" />
     <Compile Include="src\Audio\AudioPatches\PlaySoundPatches.cs" />
     <Compile Include="src\Audio\AudioPatches\UISoundPatch.cs" />
     <Compile Include="src\Audio\Music\Data\CustomMusic.cs" />
