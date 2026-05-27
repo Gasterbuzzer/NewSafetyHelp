@@ -372,6 +372,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
+            
+            VariableChanged<float> timedCallerProfileClockSize = new VariableChanged<float>
+            {
+                Data = 50f
+            };
+        
+            VariableChanged<float> timedCallerProfileClockSizeMultiplier = new VariableChanged<float>
+            {
+                Data = 1f
+            };
 
             /*
              * Cheats / Settings Section
@@ -715,6 +725,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "timed_caller_clock_hand_image_name",
                 ref timedCallerClockHand, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_size",
+                ref timedCallerProfileClockSize);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_size_multiplier",
+                ref timedCallerProfileClockSizeMultiplier);
 
             /*
              * Cheats / Settings
@@ -818,6 +834,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 TimedCallerCriticalSoundPath = timedCallerCriticalSoundPath,
                 TimedCallerBaseClock = timedCallerBaseClock,
                 TimedCallerClockHand = timedCallerClockHand,
+                TimedCallerProfileClockSize = timedCallerProfileClockSize,
+                TimedCallerProfileClockSizeMultiplier = timedCallerProfileClockSizeMultiplier,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

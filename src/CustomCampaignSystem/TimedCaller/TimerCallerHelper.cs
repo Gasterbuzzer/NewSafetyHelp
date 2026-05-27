@@ -395,8 +395,28 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 
             clocKSymbolTransform.anchoredPosition = new Vector2(0f, 0f);
 
-            clocKSymbolTransform.offsetMax = new Vector2(0f, 25f);
-            clocKSymbolTransform.offsetMin = new Vector2(-25f, 0f);
+            float clockSymbolSize = 50f;
+            
+            (bool foundModifier, VariableChanged<float> value) timedCallerProfileClockSize =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerProfileClockSize,
+                    vCs => vCs.HasChanged);
+
+            if (timedCallerProfileClockSize.foundModifier)
+            {
+                clockSymbolSize = timedCallerProfileClockSize.value.Data;
+            }
+            
+            (bool foundModifier, VariableChanged<float> value) timedCallerProfileClockSizeMultiplier =
+                CustomCampaignGlobal.GetActiveModifierValue(c => c.TimedCallerProfileClockSizeMultiplier,
+                    vCs => vCs.HasChanged);
+
+            if (timedCallerProfileClockSizeMultiplier.foundModifier)
+            {
+                clockSymbolSize *= timedCallerProfileClockSizeMultiplier.value.Data;
+            }
+            
+            clocKSymbolTransform.offsetMax = new Vector2(0f, clockSymbolSize);
+            clocKSymbolTransform.offsetMin = new Vector2(-clockSymbolSize, 0f);
 
             /*
              * Show specific timer UI.
