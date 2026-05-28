@@ -135,6 +135,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
 
             /*
+             * Date Section
+             */
+
+            VariableChanged<string> dateLabelOverwritten = new VariableChanged<string>
+            {
+                Data = "NO_DATE_SET"
+            };
+
+            /*
              * Background
              */
             List<Sprite> backgroundSprites = new List<Sprite>();
@@ -372,22 +381,22 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<float> timedCallerProfileClockSize = new VariableChanged<float>
             {
                 Data = 57.5f
             };
-        
+
             VariableChanged<float> timedCallerProfileClockSizeMultiplier = new VariableChanged<float>
             {
                 Data = 1f
             };
-            
+
             VariableChanged<float> timedCallerProfileClockPadX = new VariableChanged<float>
             {
                 Data = 5f
             };
-        
+
             VariableChanged<float> timedCallerProfileClockPadY = new VariableChanged<float>
             {
                 Data = 5f
@@ -438,6 +447,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              */
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "desktop_username_text", ref username);
+
+            /*
+             * Date Section
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "date_label_custom_text",
+                ref dateLabelOverwritten);
 
             /*
              * Desktop Backgrounds
@@ -735,19 +751,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "timed_caller_clock_hand_image_name",
                 ref timedCallerClockHand, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_size",
                 ref timedCallerProfileClockSize);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_size_multiplier",
                 ref timedCallerProfileClockSizeMultiplier);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_vertical_spacing",
                 ref timedCallerProfileClockPadY);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_horizontal_spacing",
                 ref timedCallerProfileClockPadX);
-            
+
             /*
              * Cheats / Settings
              */
@@ -767,6 +783,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 OnlyIfGameFinished = onlyIfGameFinished,
 
                 UsernameText = username,
+
+                DateLabelOverwritten = dateLabelOverwritten,
 
                 DesktopBackgrounds = backgroundSprites,
                 GameFinishedBackground = gameFinishedBackgroundSprite,

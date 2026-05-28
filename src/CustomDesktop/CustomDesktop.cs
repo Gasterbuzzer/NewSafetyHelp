@@ -751,7 +751,7 @@ namespace NewSafetyHelp.CustomDesktop
 
                 if (MyText == null)
                 {
-                    LoggingHelper.ErrorLog("'MyText' Field of 'DateTextController' is null! Calling original.");
+                    LoggingHelper.ReflectionError(nameof(MyText));
                     return true;
                 }
 
@@ -829,6 +829,17 @@ namespace NewSafetyHelp.CustomDesktop
 
                     if (customCampaign == null)
                     {
+                        LoggingHelper.CampaignNullError();
+                        return false;
+                    }
+
+                    (bool foundModifier, VariableChanged<string> value) dateOverwrite =
+                        CustomCampaignGlobal.GetActiveModifierValue(m => m.DateLabelOverwritten,
+                            vCs => vCs.HasChanged);
+
+                    if (dateOverwrite.foundModifier)
+                    {
+                        text.text = dateOverwrite.value.Data;
                         return false;
                     }
 

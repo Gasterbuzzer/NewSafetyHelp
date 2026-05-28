@@ -27,6 +27,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         };
 
         /*
+         * Date Section
+         */
+
+        public VariableChanged<string> DateLabelOverwritten = new VariableChanged<string>
+        {
+            Data = "NO_DATE_SET"
+        };
+
+        /*
          * Desktop Background Section
          */
         public List<Sprite> DesktopBackgrounds = new List<Sprite>();
@@ -278,27 +287,27 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
-        
+
         public VariableChanged<float> TimedCallerProfileClockSize = new VariableChanged<float>
         {
             Data = 57.5f
         };
-        
+
         public VariableChanged<float> TimedCallerProfileClockSizeMultiplier = new VariableChanged<float>
         {
             Data = 1f
         };
-        
+
         public VariableChanged<float> TimedCallerProfileClockPadX = new VariableChanged<float>
         {
             Data = 5f
         };
-        
+
         public VariableChanged<float> TimedCallerProfileClockPadY = new VariableChanged<float>
         {
             Data = 5f
         };
-        
+
         /*
          * Cheats / Settings Section
          */
