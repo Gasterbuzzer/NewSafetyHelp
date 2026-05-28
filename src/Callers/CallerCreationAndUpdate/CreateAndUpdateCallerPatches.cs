@@ -4,7 +4,6 @@ using System.Reflection;
 using JetBrains.Annotations;
 using MelonLoader;
 using NewSafetyHelp.CustomCampaignSystem;
-using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.JSONParsing;
@@ -216,10 +215,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                 if (callerAudioSource.clip != null)
                 {
-                    if (!TimedCallerPatches.HoldButtonClosePatch.IsInHold)
-                    {
-                        callerAudioSource.Play();
-                    }
+                    callerAudioSource.Play();
                 }
             }
         }
@@ -237,9 +233,6 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
             private static bool Prefix(CallerController __instance, ref CallerProfile profile)
             {
                 LoggingHelper.DebugLog("New caller is calling.");
-                
-                // For hold callers.
-                TimedCallerPatches.HoldButtonClosePatch.IsInHold = false;
 
                 if (profile == null)
                 {

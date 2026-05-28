@@ -910,8 +910,11 @@ namespace NewSafetyHelp.Callers
                         {
                             GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                         }
-
-                        __instance.PlayCallAudio();
+                        
+                        if (GlobalVariables.mainCanvasScript.callWindow.activeSelf)
+                        {
+                            __instance.PlayCallAudio();
+                        }
 
                         if (DelayedLargeWindowDisplayRoutine == null || WaitTillCallEndRoutine == null)
                         {

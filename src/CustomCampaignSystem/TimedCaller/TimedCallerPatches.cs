@@ -1,17 +1,53 @@
-﻿using NewSafetyHelp.Callers.CallerModel;
+﻿using System.Collections;
+using System.Reflection;
+using NewSafetyHelp.Callers.CallerModel;
+using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
 {
     public static class TimedCallerPatches
     {
+        [HarmonyLib.HarmonyPatch(typeof(CallerController), "PlayCallAudio", typeof(CallerProfile))]
+        public static class PlayCallAudioPatch
+        {
+            private static Coroutine playCallAudioRoutine;
+            
+            private static readonly MethodInfo PlayCallAudioRoutineMethod = typeof(CallerController).GetMethod("PlayCallAudioRoutine",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            
+            /// <summary>
+            /// A patch that stores a reference to the started coroutine, so that later, a function may stop it.
+            /// </summary>
+            /// <param name="__instance"></param>
+            /// <param name="profile"></param>
+            /// <returns></returns>
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(CallerController __instance, CallerProfile profile)
+            {
+                IEnumerator playCallAudioWithProfile = (IEnumerator) PlayCallAudioRoutineMethod.Invoke(__instance, new object[] {profile});
+                
+                // OLD: __instance.PlayCallAudioRoutine(profile)
+                playCallAudioRoutine = __instance.StartCoroutine(playCallAudioWithProfile);
+                GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
+                
+                return false; // Skip the original coroutine
+            }
+
+            /// <summary>
+            /// Stops the call audio.
+            /// </summary>
+            public static void StopCallAudioRoutine()
+            {
+                if (playCallAudioRoutine != null)
+                {
+                    GlobalVariables.callerControllerScript.StopCoroutine(playCallAudioRoutine);
+                }
+            }
+        }
+        
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "CloseButton", typeof(bool), typeof(bool))]
         public static class HoldButtonClosePatch
         {
-            /// <summary>
-            /// If the caller is already set on hold.
-            /// </summary>
-            public static bool IsInHold = true;
-            
             /// <summary>
             /// Patches the hold buttons function (that closes the popup) to start timers for custom callers if necessary.
             /// </summary>
@@ -21,7 +57,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallWindowBehavior __instance, ref bool playHoldSound, ref bool playHoldMusic)
             {
-                IsInHold = true;
+                // Stop any active audio.
+                GlobalVariables.callerControllerScript.StopCallAudio();
+                
+                // Stop any call coroutines (that are attempting to play the audio in a bit)
+                PlayCallAudioPatch.StopCallAudioRoutine();
                 
                 if (playHoldSound)
                 {
@@ -39,6 +79,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 
                 __instance.gameObject.SetActive(false);
                 
+                GlobalVariables.callerControllerScript.StopCallAudio();
+                
                 // If we start the timer of the timed caller.
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -54,7 +96,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 // Moving the "StopCallAudio" lower, possibly fixes the timing mismatch of not stopping the caller audio.
                 // Also updated the starting of the caller audio to not happen if halted.
                 GlobalVariables.callerControllerScript.StopCallAudio();
-
+                
                 return false; // Skip function with false.
             }
         }
