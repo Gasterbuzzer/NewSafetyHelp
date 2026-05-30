@@ -74,8 +74,9 @@ namespace NewSafetyHelp.Audio
         {
             bool fromHotReload = ReloadJSONParsing.IsInHotReload;
             
-            yield return AudioLoadThrottler.WaitForSlot(fromHotReload); 
+            yield return AudioLoadThrottler.WaitForSlot(!fromHotReload); 
             
+            // (Bool: We pass if we skip the waiting for slot.)
             LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
 
             Time.timeScale = 0;

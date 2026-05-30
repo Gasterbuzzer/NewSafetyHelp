@@ -8,7 +8,7 @@ namespace NewSafetyHelp.Audio
     {
         private static int activeLoadCount;
 
-        private const int MaxConcurrentLoads = 50;
+        private const int MaxConcurrentLoads = 5;
         
         private const long MemoryPressureThreshold = 3_000_000_000L;
 
