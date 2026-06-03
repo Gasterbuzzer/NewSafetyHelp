@@ -48,6 +48,11 @@ It should contain the full absolute path to the games' folder.
 It can also start the game after building, if you set scripts variable to true.\
 Other than that, enjoy.
 
+# Contributors
+
+- @dinofluffer : For providing audio and image assets for timed callers. Has also provided many suggestions for the project.
+- @arcademaster101: For providing many suggestions such as being able to change ringtones.
+
 # Contributing and Providing ideas
 
 Contributions are very welcome and help improve the mod for others. \
