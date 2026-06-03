@@ -21,7 +21,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         {
             // Invalid JSON.
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
-                string.IsNullOrEmpty(usermodFolderPath)) 
+                string.IsNullOrEmpty(usermodFolderPath))
             {
                 LoggingHelper.ErrorLog("Provided JSON could not be parsed as a video. Possible syntax mistake?");
                 return;
@@ -43,7 +43,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                LoggingHelper.DebugLog("Found Text file program before the custom campaign was found / does not exist.");
+                LoggingHelper.DebugLog(
+                    "Found Text file program before the custom campaign was found / does not exist.");
 
                 GlobalParsingVariables.PendingCustomCampaignTextFile.Add(customTextFile);
             }
@@ -57,6 +58,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             int unlockDay = 0;
 
+            /*
+             * Priority by which the text file appears in order.
+             * Higher Priority => Gets shown first.
+             */
+            int orderPriority = 0;
+
             // New Accuracy Settings
             bool ignoreAccuracyChecks = false;
             List<GeneralAccuracyType> unlockAccuracy = null;
@@ -69,13 +76,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool unlockWhenGameFinished = false;
 
             ParsingHelper.TryAssign(jObjectParsed, "text_file_desktop_name", ref fileNameOnDesktop);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
+
             ParsingHelper.TryAssign(jObjectParsed, "text_file_unlock_day", ref unlockDay);
+
+            ParsingHelper.TryAssign(jObjectParsed, "text_file_order_priority", ref orderPriority);
 
             ParsingHelper.TryAssign(jObjectParsed, "text_file_contents", ref textFileContents);
 
-            AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy, ref ignoreAccuracyChecks,
+            AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy,
+                ref ignoreAccuracyChecks,
                 "text_file_required_accuracy", "text_file_accuracy_days",
                 "text_file_accuracy_check_type");
 
@@ -89,10 +100,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 FileNameOnDesktop = fileNameOnDesktop,
                 CustomCampaignName = customCampaignName,
-                
+
                 TextFileContents = textFileContents,
 
                 UnlockDay = unlockDay,
+
+                OrderPriority = orderPriority,
 
                 UnlockAccuracy = unlockAccuracy,
                 UnlockRequiredCallers = unlockRequiredCallers,

@@ -59,10 +59,20 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     customCampaign.SortEmailsInCustomCampaign();
                 }
+                
+                if (customCampaign.CustomVideos.Count > 0)
+                {
+                    customCampaign.SortCustomVideoFiles();
+                }
 
                 if (customCampaign.CustomCutscenes.Count > 0)
                 {
                     customCampaign.SortCutsceneInCustomCampaign();
+                }
+                
+                if (customCampaign.CustomTextProgramFiles.Count > 0)
+                {
+                    customCampaign.SortTextFiles();
                 }
                 
                 if (customCampaign.CustomCallersInCampaign.Count > 0)

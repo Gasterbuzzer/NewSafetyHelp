@@ -61,6 +61,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Unlock
             int videoUnlockDay = 0;
             
+            /*
+             * Priority by which this video gets to be shown first on the desktop.
+             * The higher the priority the earlier it appears on the desktop.
+             */
+            int orderPriority = 0;
+                
             // New Accuracy Settings
             List<GeneralAccuracyType> unlockAccuracy = null;
             bool ignoreAccuracyChecks = true;
@@ -72,7 +78,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "video_desktop_name", ref videoName);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
+            
             ParsingHelper.TryAssign(jObjectParsed, "video_unlock_day", ref videoUnlockDay);
+            
+            ParsingHelper.TryAssign(jObjectParsed, "video_order_priority", ref orderPriority);
 
             VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "video_file_name", ref videoFilePath,
                 jsonFolderPath, usermodFolderPath);
@@ -97,6 +106,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 VideoURL = videoFilePath,
 
                 UnlockDay = videoUnlockDay,
+                
+                OrderPriority = orderPriority,
                 
                 IgnoreAccuracyChecks = ignoreAccuracyChecks,
                 

@@ -14,6 +14,12 @@ namespace NewSafetyHelp.CustomVideos
         public string VideoURL = null;
 
         public int UnlockDay = 1;
+        
+        /*
+         * Priority by which this video gets to be shown first on the desktop.
+         * The higher the priority the earlier it appears on the desktop.
+         */
+        public int OrderPriority = 0;
 
         // Uses a reference to check if a Game Object belongs to the custom video.
         public GameObject ReferenceToCreatedVideo = null;

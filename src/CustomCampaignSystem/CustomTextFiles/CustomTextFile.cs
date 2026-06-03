@@ -14,6 +14,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
         public string TextFileContents = "Empty";
 
         public int UnlockDay = 0;
+
+        /*
+         * Priority by which the text file appears in order.
+         * Higher Priority => Gets shown first.
+         */
+        public int OrderPriority = 0;
         
         // New Accuracy Settings
         [CanBeNull] public List<GeneralAccuracyType> UnlockAccuracy = null;

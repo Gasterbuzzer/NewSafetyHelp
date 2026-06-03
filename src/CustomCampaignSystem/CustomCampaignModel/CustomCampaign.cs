@@ -27,7 +27,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public List<List<string>> LoadingTexts = new List<List<string>>();
 
         /*
-         * In Game
+         * Callers
          */
 
         // Caller in the campaign
@@ -39,13 +39,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // Game Over Callers in the campaign
         public List<CustomCCaller> CustomGameOverCallersInCampaign = new List<CustomCCaller>();
 
+        public int GameOverThreshold = 60; // Game Over Threshold
+        public int WarningThreshold = 60; // Warning Threshold
+
+        // Amount of calls per day until the warning is allowed to appear.
+        public List<int> WarningCallThresholdCallerAmounts = new List<int>();
+
+        /*
+         * Entries
+         */
+
         // Entries that exist only in this campaign.  
         public List<EntryMetadata> EntriesOnlyInCampaign = new List<EntryMetadata>();
 
         // Entries that should only replace in custom campaign.
         public List<EntryMetadata> EntryReplaceOnlyInCampaign = new List<EntryMetadata>();
-
-        public List<string> CampaignDayStrings = new List<string>();
 
         // Removes all existing entries and only shows custom entries.
         public bool RemoveExistingEntries = false;
@@ -60,11 +68,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // If one however, does want it to be included, then one can use this option.
         public bool DoShowNewTagForMainGameEntries = false;
 
-        public int GameOverThreshold = 60; // Game Over Threshold
-        public int WarningThreshold = 60; // Warning Threshold
+        /*
+         * Modifications
+         */
 
-        // Amount of calls per day until the warning is allowed to appear.
-        public List<int> WarningCallThresholdCallerAmounts = new List<int>();
+        public List<string> CampaignDayStrings = new List<string>();
 
         public bool SkipCallersCorrectly = false; // If all the callers should be marked as correct and skipped.
         public bool GameOverImmunity = false; // If gameover is avoided.
@@ -77,7 +85,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public int DesktopDateStartDay = -1;
         public bool UseEuropeDateFormat = false;
 
-        // Saving
+        /*
+         * Saving
+         */
+
         public MelonPreferences_Category CampaignSaveCategory = null;
 
         public int CurrentDay = 1;
@@ -130,13 +141,22 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public bool SavedAccuracyToggle = false;
         public bool SavedCallSkipToggle = false;
 
-        // Video Cutscenes
+        // Saved scores for the day. (Used for unlocking emails or icons)
+        public List<float> SavedDayScores = new List<float>();
+
+        /*
+         * Video Cutscenes
+         */
+
         public string EndCutsceneVideoName = ""; // Video shown at the end of the game.
         public string GameOverCutsceneVideoName = ""; // Video shown at game over.
 
         public List<CustomCutscene> CustomCutscenes = new List<CustomCutscene>();
 
-        // Music
+        /*
+         * Music
+         */
+
         public bool AlwaysRandomMusic = true; // If the provided music is to be always randomly chosen. 
 
         public bool RemoveDefaultMusic = false; // If to remove the default music from the game.
@@ -145,14 +165,20 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         public List<CustomMusic> CustomIntermissionMusic = new List<CustomMusic>(); // List of intermission music.
 
-        // Wait Time between callers
+        /*
+         * Wait Time between callers
+         */
+
         // (1 element => Always this wait time;
         // 2 elements => Between those two times;
         // 3+ => Pick any of the ones two chose from)
         public List<float> WaitBetweenCallers = new List<float>();
         public bool EnableCustomWaitBetweenCallers = false;
 
-        // Always enabled Programs on Desktop
+        /*
+         * Always enabled Programs on Desktop
+         */
+
         public bool EntryBrowserAlwaysActive = false;
         public bool ScorecardAlwaysActive = false;
         public bool ArtbookAlwaysActive = false;
@@ -164,16 +190,20 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // Changes the sprite (if not null) of the main game desktop icon.
         public Sprite ChangeMainGameDesktopIcon = null;
 
-        // Always enable in main game
-
         // If to show the "Next Caller" button, which skips the next caller wait time.
         public bool AlwaysSkipCallButton = false;
 
-        // Email
+        /*
+         * Emails
+         */
+
         public bool RemoveDefaultEmails = true;
         public List<CustomEmail> Emails = new List<CustomEmail>(); // List of custom emails.
 
-        // Backgrounds
+        /*
+         * Backgrounds
+         */
+
         public List<Sprite> BackgroundSprites = new List<Sprite>();
         public Sprite GameFinishedBackground = null;
 
@@ -186,18 +216,23 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // If to disable the color the background green the same as the main game does.
         public bool DisableGreenColorBackground = false;
 
-        // Video Programs
+        /*
+         * Video Programs
+         */
+
         public bool DisableAllDefaultVideos = true;
 
         public List<CustomVideo> CustomVideos = new List<CustomVideo>();
 
-        // Text Files
+        /*
+         * Text Files
+         */
+
         public List<CustomTextFile> CustomTextProgramFiles = new List<CustomTextFile>();
 
-        // Saved scores for the day. (Used for unlocking emails or icons)
-        public List<float> SavedDayScores = new List<float>();
-
-        // Themes
+        /*
+         * Themes
+         */
 
         public bool DisablePickingThemeOption = false; // If true, it will hide the option to set the theme.
 
@@ -215,15 +250,34 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // List of (conditional) themes that apply for certain days and apply to a certain theme only.
         public List<CustomTheme> CustomThemesDays = new List<CustomTheme>();
 
-        // Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
+        /*
+         * Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
+         */
 
         // All the different modifiers.
         public List<ModifierSource> ModifierSources = new List<ModifierSource>();
 
-        // Ringtones
+        /*
+         * Ringtones
+         */
+
         public bool DoNotAccountDefaultRingtone = true;
         public List<CustomRingtone.CustomRingtone> CustomRingtones = new List<CustomRingtone.CustomRingtone>();
 
+        /*
+         * Helper functions for custom campaigns.
+         */
+        
+        /// <summary>
+        /// Sorts the custom callers to the correct order.
+        /// This merely helps with performance.
+        /// </summary>
+        public void SortCustomCallersInCustomCampaign()
+        {
+            CustomCallersInCampaign =
+                CustomCallersInCampaign.OrderBy(customCCaller => customCCaller.OrderInCampaign).ToList();
+        }
+        
         /// <summary>
         /// Sorts the emails to the correct priorities and days.
         /// </summary>
@@ -241,12 +295,24 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         }
 
         /// <summary>
-        /// Sorts the emails to the correct priorities and days.
+        /// Sorts the custom videos to the correct priorities and unlock days.
         /// </summary>
-        public void SortCustomCallersInCustomCampaign()
+        public void SortCustomVideoFiles()
         {
-            CustomCallersInCampaign =
-                CustomCallersInCampaign.OrderBy(customCCaller => customCCaller.OrderInCampaign).ToList();
+            CustomVideos = CustomVideos.OrderByDescending(customVideo => customVideo.OrderPriority)
+                .ThenByDescending(customVideo => customVideo.UnlockDay)
+                .ThenBy(customVideo => customVideo.DesktopName).ToList();
+        }
+
+        /// <summary>
+        /// Sorts the text files to the correct priorities and unlock days.
+        /// </summary>
+        public void SortTextFiles()
+        {
+            CustomTextProgramFiles = CustomTextProgramFiles
+                .OrderByDescending(customTextFile => customTextFile.OrderPriority)
+                .ThenByDescending(customTextFile => customTextFile.UnlockDay)
+                .ThenBy(customTextFile => customTextFile.FileNameOnDesktop).ToList();
         }
     }
 }
