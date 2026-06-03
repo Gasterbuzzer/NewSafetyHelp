@@ -35,8 +35,8 @@ You can also check out the wiki for more detailed instructions. ([Link](https://
 See the Wiki here on GitHub for the documentation and some tutorials: [Link](https://github.com/Gasterbuzzer/NewSafetyHelp/wiki)
 
 # MelonLoader Information
-It has been tested with MelonLoader version 0.7.2 and below (Minimum: 0.5.7). \
-As of the latest release, the newest version is 0.7.2. \
+It has been tested with MelonLoader version 0.7.3 and below (Minimum: 0.5.7). \
+As of the latest release, the newest version is 0.7.3. \
 If any MelonLoader version that is higher or lower do not work, feel free to contact me.
 
 # Building the project
