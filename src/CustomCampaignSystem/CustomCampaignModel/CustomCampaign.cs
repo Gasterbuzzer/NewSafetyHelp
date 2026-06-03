@@ -299,8 +299,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         /// </summary>
         public void SortCustomVideoFiles()
         {
-            CustomVideos = CustomVideos.OrderByDescending(customVideo => customVideo.OrderPriority)
-                .ThenByDescending(customVideo => customVideo.UnlockDay)
+            CustomVideos = CustomVideos.OrderByDescending(customVideo => customVideo.UnlockDay)
+                .ThenByDescending(customVideo => customVideo.OrderPriority)
                 .ThenBy(customVideo => customVideo.DesktopName).ToList();
         }
 
@@ -310,8 +310,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public void SortTextFiles()
         {
             CustomTextProgramFiles = CustomTextProgramFiles
-                .OrderByDescending(customTextFile => customTextFile.OrderPriority)
-                .ThenByDescending(customTextFile => customTextFile.UnlockDay)
+                .OrderByDescending(customTextFile => customTextFile.UnlockDay)
+                .ThenByDescending(customTextFile => customTextFile.OrderPriority)
                 .ThenBy(customTextFile => customTextFile.FileNameOnDesktop).ToList();
         }
     }
