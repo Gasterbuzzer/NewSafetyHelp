@@ -16,7 +16,8 @@ namespace NewSafetyHelp.LoggingSystem
             VIDEO,
             TEXT_FILE,
             ENTRY,
-            CUTSCENE
+            CUTSCENE,
+            MEMORY
         }
 
         private enum LoggingLevel
@@ -101,6 +102,13 @@ namespace NewSafetyHelp.LoggingSystem
                     
                     case LoggingCategory.CUTSCENE:
                         if (!GlobalPreferences.ShowDebugLogs.Value)
+                        {
+                            return false;
+                        }
+                        break;
+                    
+                    case LoggingCategory.MEMORY:
+                        if (!GlobalPreferences.ShowMemoryLog.Value)
                         {
                             return false;
                         }

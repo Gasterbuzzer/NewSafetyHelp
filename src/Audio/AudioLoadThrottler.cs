@@ -9,8 +9,8 @@ namespace NewSafetyHelp.Audio
         private static int activeLoadCount;
 
         private const int MaxConcurrentLoads = 5;
-        
-        private const long MemoryPressureThreshold = 3_000_000_000L;
+
+        private const long MemoryPressureThreshold = 2_500_000_000L; // 2.5 GB
 
         /// <summary>
         /// Coroutine for waiting for an open slot before executing.
@@ -22,23 +22,23 @@ namespace NewSafetyHelp.Audio
             {
                 yield break;
             }
-            
+
             // We check if we are above capacity. (Shouldn't usually happen)
             while (activeLoadCount >= MaxConcurrentLoads)
             {
                 yield return null;
             }
-            
+
             // We then check if our allocated memory is exceeding normal levels.
-            // If we do, we simply wait until we do not exceed 1.8GB of memory.
+            // If we do, we simply wait until we do not exceed the memory.
             while (Profiler.GetTotalAllocatedMemoryLong() > MemoryPressureThreshold)
             {
                 yield return new WaitForSecondsRealtime(Random.Range(0.1f, 0.7f));
             }
-            
+
             System.Threading.Interlocked.Increment(ref activeLoadCount);
         }
-        
+
         /// <summary>
         /// Release slot that was being used.
         /// </summary>
@@ -48,7 +48,7 @@ namespace NewSafetyHelp.Audio
             {
                 return;
             }
-            
+
             System.Threading.Interlocked.Decrement(ref activeLoadCount);
         }
     }

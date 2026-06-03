@@ -4,7 +4,9 @@ using MelonLoader;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.EntryManager.EntryUnlocker;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -53,6 +55,10 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             IsInHotReload = true;
+
+            LoggingHelper.DebugLog(
+                $"Current allocated memory (before hot reload): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                LoggingHelper.LoggingCategory.MEMORY);
 
             // We stop all audio sources.
             // This makes sure that FMOD later can't try to hold anything.
@@ -144,11 +150,21 @@ namespace NewSafetyHelp.JSONParsing
             GC.WaitForPendingFinalizers();
             GC.Collect(2, GCCollectionMode.Forced);
 
+            yield return Resources.UnloadUnusedAssets();
+
             // Wait a frame to process.
             yield return null;
 
+            LoggingHelper.DebugLog(
+                $"Current allocated memory (after clear): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                LoggingHelper.LoggingCategory.MEMORY);
+
             // We restart the JSON parsing.
             MainClassForMonsterEntries.StartingJSONParsing(GlobalVariables.entryUnlockScript);
+
+            LoggingHelper.DebugLog(
+                $"Current allocated memory (after loading all JSON files): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                LoggingHelper.LoggingCategory.MEMORY);
 
             // We reload the scene and all values should be correctly loaded?
             if (wasInCustomCampaign

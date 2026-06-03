@@ -167,6 +167,9 @@ namespace NewSafetyHelp.CustomDesktop
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnCutsceneLogToggle,
                         "Enable Cutscene Logs", GlobalPreferences.ShowCutsceneLog.Value);
+                    
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnMemoryLogToggle,
+                        "Enable Memory Usage Logs", GlobalPreferences.ShowMemoryLog.Value);
 
                     InGameSettingHelper.CreateButton(developerSettings, (e) =>
                     {

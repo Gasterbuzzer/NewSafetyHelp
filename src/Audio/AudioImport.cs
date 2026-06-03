@@ -9,6 +9,7 @@ using NewSafetyHelp.JSONParsing;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Profiling;
 
 namespace NewSafetyHelp.Audio
 {
@@ -73,9 +74,9 @@ namespace NewSafetyHelp.Audio
             AudioType audioType = AudioType.MPEG)
         {
             bool fromHotReload = ReloadJSONParsing.IsInHotReload;
-            
-            yield return AudioLoadThrottler.WaitForSlot(!fromHotReload); 
-            
+
+            yield return AudioLoadThrottler.WaitForSlot(!fromHotReload);
+
             // (Bool: We pass if we skip the waiting for slot.)
             LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
 
@@ -131,7 +132,11 @@ namespace NewSafetyHelp.Audio
                 }
 
                 CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
-                
+
+                LoggingHelper.DebugLog(
+                    $"Current allocated memory (audio is waiting for slot): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                    LoggingHelper.LoggingCategory.MEMORY);
+
                 AudioLoadThrottler.ReleaseSlot(fromHotReload);
 
                 // If all audios finished loading we continue letting the game run.
@@ -141,7 +146,7 @@ namespace NewSafetyHelp.Audio
                 }
             }
         }
-        
+
 
         /// <summary>
         /// Calls the CallerController "Start" function to reload audio / imports again.
