@@ -634,9 +634,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 return;
             }
 
-            LoggingHelper.InfoLog($"Found in the original list {entryName} / {newID}." +
-                                  " Now replacing/updating (for the main campaign / custom campaign)" +
-                                  $" the entry with given information for {entryName} / {newID}.");
+            LoggingHelper.InfoLog($"Found in the original list {entryName} / {newID}. " +
+                                  "Now replacing/updating (for the main campaign / custom campaign) " +
+                                  $"the entry with given information for {entryName} / {newID}.");
 
             // Portrait
             if (!string.IsNullOrEmpty(entryPortraitLocation))

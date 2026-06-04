@@ -240,7 +240,8 @@ namespace NewSafetyHelp.EntryManager
         }
 
         /// <summary>
-        /// Finds an Entry by name or ID and returns a reference to it. It returns the first find, to avoid any issues you can search via ID.
+        /// Finds an Entry by name or ID and returns a reference to it.
+        /// It returns the first find, to avoid any issues you can search via ID.
         /// </summary>
         /// <param name="monsterProfiles"> Reference of the monsterProfile to replace find the entry in. </param>
         /// <param name="entryName"> Name of the entry to find. </param>
