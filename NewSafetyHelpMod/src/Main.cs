@@ -13,7 +13,6 @@ using UnityEngine.SceneManagement;
 using NewSafetyHelp.VersionChecker;
 
 // ReSharper disable RedundantDefaultMemberInitializer
-
 namespace NewSafetyHelp
 {
     public class NewSafetyHelpMainClass : MelonMod
