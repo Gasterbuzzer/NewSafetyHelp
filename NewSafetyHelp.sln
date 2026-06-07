@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewSafetyHelp", "NewSafetyHelp.csproj", "{9E2A6C17-9BEE-4DB1-A42F-F7C09A8601D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewSafetyHelpMod/NewSafetyHelp", "NewSafetyHelpMod/NewSafetyHelp.csproj", "{9E2A6C17-9BEE-4DB1-A42F-F7C09A8601D6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{336DE634-AC02-42CC-AFAF-4B073E006C75}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
