@@ -3,6 +3,8 @@
 /obj
 config.txt
 /bin
+/NewSafetyHelpMod/obj
+/NewSafetyHelpMod/bin
 
 .idea/
 *.iml
