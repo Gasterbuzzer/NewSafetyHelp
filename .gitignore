@@ -5,6 +5,7 @@ config.txt
 /bin
 /NewSafetyHelpMod/obj
 /NewSafetyHelpMod/bin
+/NewSafetyHelpMod/NewSafetyHelp.csproj.user
 
 .idea/
 *.iml
