@@ -216,7 +216,22 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
-
+        
+        public VariableChanged<bool> FinalCutsceneReturnTo3DScreen = new VariableChanged<bool>
+        {
+            Data = false
+        };
+        
+        public VariableChanged<bool> FinalCutsceneStayInCustomCampaign = new VariableChanged<bool>
+        {
+            Data = false
+        };
+        
+        public VariableChanged<bool> FinalCutsceneDisableSkippingKeys = new VariableChanged<bool>
+        {
+            Data = false
+        };
+        
         public string FinalCutsceneAudioPath = null;
 
         /*

@@ -310,6 +310,22 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
+            
+            VariableChanged<bool> finalCutsceneReturnTo3DScreen = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            
+            VariableChanged<bool> finalCutsceneStayInCustomCampaign = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            
+            VariableChanged<bool> finalCutsceneDisableSkippingKeys = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
 
             string finalCutsceneAudioPath = null;
 
@@ -716,6 +732,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_stop_audio_after_fade",
                 ref finalCutsceneStopAudioAfterFade);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_return_to_computer_start_menu",
+                ref finalCutsceneReturnTo3DScreen);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_stay_in_custom_campaign",
+                ref finalCutsceneStayInCustomCampaign);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_disable_skipping",
+                ref finalCutsceneDisableSkippingKeys);
+            
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
                 ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
 
@@ -854,6 +877,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FinalCutsceneAudioPath = finalCutsceneAudioPath,
                 FinalCutsceneAudio = finalCutsceneAudio,
                 FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
+                FinalCutsceneReturnTo3DScreen = finalCutsceneReturnTo3DScreen,
+                FinalCutsceneStayInCustomCampaign = finalCutsceneStayInCustomCampaign,
+                FinalCutsceneDisableSkippingKeys = finalCutsceneDisableSkippingKeys,
 
                 DisablePhoneStatic = disablePhoneStatic,
                 UseClockInsteadOfTimer = useClockInsteadOfTimer,

@@ -8,6 +8,10 @@ namespace NewSafetyHelp.CustomDesktop.Utils
 {
     public static class CustomCampaignSceneSwitcher
     {
+        /// <summary>
+        /// Changes the games state being in a custom campaign.
+        /// </summary>
+        /// <param name="customCampaignName">Name of the custom campaign to switch to.</param>
         public static void ChangeToCustomCampaignSettings(string customCampaignName)
         {
             LoggingHelper.InfoLog($"Changing to custom campaign: {customCampaignName}.",
@@ -24,6 +28,10 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             LoggingHelper.DebugLog("Finished changing into custom campaign.");
         }
 
+        /// <summary>
+        /// Goes back to the main game (if in custom campaign).
+        /// </summary>
+        /// <param name="alsoLoadMainMenu">If to also reload / load the main menu desktop scene.</param>
         public static void BackToMainGame(bool alsoLoadMainMenu = true)
         {
             LoggingHelper.InfoLog("Going back to the main game.",
@@ -37,6 +45,22 @@ namespace NewSafetyHelp.CustomDesktop.Utils
 
             // Load old values.
             GlobalVariables.saveManagerScript.Load();
+
+            // Reload Scene (Mainly to hide the fact that it is actually seamless.)
+            if (alsoLoadMainMenu)
+            {
+                SceneManager.LoadScene("MainMenuScene");
+            }
+        }
+        
+        /// <summary>
+        /// Saves the custom campaign values and then loads the desktop scene if requested.
+        /// </summary>
+        /// <param name="alsoLoadMainMenu">If to also reload / load the main menu desktop scene.</param>
+        public static void SaveAndLoadDesktopScene(bool alsoLoadMainMenu = true)
+        {
+            // Save values
+            CustomCampaignSaving.SaveCustomCampaignInfo();
 
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
             if (alsoLoadMainMenu)

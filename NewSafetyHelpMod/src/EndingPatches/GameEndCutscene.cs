@@ -13,6 +13,22 @@ using UnityEngine;
 
 namespace NewSafetyHelp.EndingPatches
 {
+
+    /// <summary>
+    /// MonoBehaviour class for capturing input to skip the cutscene.
+    /// </summary>
+    public class CutsceneSkipInput : MonoBehaviour
+    {
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                LoggingHelper.InfoLog("Skipping cutscene.");
+                GameEndCutscene.EndingCutsceneRoutinePatch.StopCutsceneAndReturn();
+            }
+        }
+    }
+    
     public static class GameEndCutscene
     {
         // Cached animator lookups.
@@ -324,8 +340,28 @@ namespace NewSafetyHelp.EndingPatches
                     {
                         mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.endClip;
                     }
-                }
+                    
+                    (bool foundModifier, VariableChanged<bool> value) finalCutsceneDisableSkippingKeys = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.FinalCutsceneDisableSkippingKeys, vCb => vCb.HasChanged);
 
+                    // Adds component to be able to skip the cutscene.
+                    if (mainCanvasBehavior.videoPlayer.gameObject.GetComponent<CutsceneSkipInput>() == null)
+                    {
+                        if (finalCutsceneDisableSkippingKeys.foundModifier)
+                        {
+                            if (!finalCutsceneDisableSkippingKeys.value.Data)
+                            {
+                                mainCanvasBehavior.videoPlayer.gameObject.AddComponent<CutsceneSkipInput>();
+                            }
+                        }
+                        else
+                        {
+                            mainCanvasBehavior.videoPlayer.gameObject.AddComponent<CutsceneSkipInput>();
+                        }
+                    }
+                }
+                
                 mainCanvasBehavior.videoPlayer.Play();
 
                 if (!CustomCampaignGlobal.InCustomCampaign)
@@ -338,6 +374,7 @@ namespace NewSafetyHelp.EndingPatches
 
                     if (customCampaign == null)
                     {
+                        LoggingHelper.CampaignNullError();
                         yield break;
                     }
                     
@@ -360,8 +397,20 @@ namespace NewSafetyHelp.EndingPatches
                             yield return null;
                         }
 
-                        // Afterward we load all main game values.
-                        CustomCampaignSceneSwitcher.BackToMainGame(false);
+                        (bool foundModifier, VariableChanged<bool> value) finalCutsceneStayInCustomCampaign = 
+                            CustomCampaignGlobal.GetActiveModifierValue(
+                                c => c.FinalCutsceneStayInCustomCampaign, vCb => vCb.HasChanged);
+
+                        if (finalCutsceneStayInCustomCampaign.foundModifier 
+                            && finalCutsceneStayInCustomCampaign.value.Data)
+                        {
+                            CustomCampaignSceneSwitcher.SaveAndLoadDesktopScene(false);
+                        }
+                        else
+                        {
+                            // Afterward we load all main game values.
+                            CustomCampaignSceneSwitcher.BackToMainGame(false);
+                        }
                     }
                     else // If not, we show the default one.
                     {
@@ -394,7 +443,101 @@ namespace NewSafetyHelp.EndingPatches
 
                 yield return new WaitForSeconds(2f);
 
-                mainCanvasBehavior.ExitToStartMenu();
+                LoggingHelper.DebugLog("Finished game end cutscene.");
+                
+                // Main Campaign
+                if (!CustomCampaignGlobal.InCustomCampaign)
+                {
+                    mainCanvasBehavior.ExitToStartMenu();
+                }
+                // Custom Campaign
+                else
+                {
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        LoggingHelper.CampaignNullError();
+                        yield break;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<bool> value) finalCutsceneReturnTo3DScreen = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.FinalCutsceneReturnTo3DScreen, vCb => vCb.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<bool> value) finalCutsceneStayInCustomCampaign = 
+                        CustomCampaignGlobal.GetActiveModifierValue(
+                            c => c.FinalCutsceneStayInCustomCampaign, vCb => vCb.HasChanged);
+                    
+                    if (finalCutsceneReturnTo3DScreen.foundModifier 
+                        && finalCutsceneReturnTo3DScreen.value.Data)
+                    {
+                        mainCanvasBehavior.ExitToStartMenu();
+                    }
+                    else
+                    {
+                        if (finalCutsceneStayInCustomCampaign.foundModifier 
+                            && finalCutsceneStayInCustomCampaign.value.Data)
+                        {
+                            CustomCampaignSceneSwitcher.SaveAndLoadDesktopScene();
+                        }
+                        else
+                        {
+                            CustomCampaignSceneSwitcher.BackToMainGame();
+                        }
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Stops the cutscene from playing and returns to the desktop / start menu.
+            /// </summary>
+            public static void StopCutsceneAndReturn()
+            {
+                GlobalVariables.mainCanvasScript.videoPlayer.Stop();
+
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                if (customCampaign == null)
+                {
+                    LoggingHelper.CampaignNullError();
+                    return;
+                }
+
+                (bool foundModifier, VariableChanged<bool> value) finalCutsceneReturnTo3DScreen =
+                    CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.FinalCutsceneReturnTo3DScreen, vCb => vCb.HasChanged);
+                
+                (bool foundModifier, VariableChanged<bool> value) finalCutsceneStayInCustomCampaign = 
+                    CustomCampaignGlobal.GetActiveModifierValue(
+                        c => c.FinalCutsceneStayInCustomCampaign, vCb => vCb.HasChanged);
+                
+                if (finalCutsceneReturnTo3DScreen.foundModifier && finalCutsceneReturnTo3DScreen.value.Data)
+                {
+                    if (finalCutsceneStayInCustomCampaign.foundModifier 
+                        && finalCutsceneStayInCustomCampaign.value.Data)
+                    {
+                        CustomCampaignSceneSwitcher.SaveAndLoadDesktopScene(false);
+                    }
+                    else
+                    {
+                        CustomCampaignSceneSwitcher.BackToMainGame(false);
+                    }
+                    
+                    GlobalVariables.mainCanvasScript.ExitToStartMenu();
+                }
+                else
+                {
+                    if (finalCutsceneStayInCustomCampaign.foundModifier 
+                        && finalCutsceneStayInCustomCampaign.value.Data)
+                    {
+                        CustomCampaignSceneSwitcher.SaveAndLoadDesktopScene();
+                    }
+                    else
+                    {
+                        CustomCampaignSceneSwitcher.BackToMainGame();
+                    }
+                }
             }
         }
     }
