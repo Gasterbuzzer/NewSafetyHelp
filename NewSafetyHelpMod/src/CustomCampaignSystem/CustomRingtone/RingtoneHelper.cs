@@ -66,7 +66,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomRingtone
             float chosenPhoneCallPercentage = Random.Range(0, percentageSum);
 
             LoggingHelper.DebugLog(() =>
-                    $"ChosenPhoneCall Percentage: '{chosenPhoneCallPercentage}'.\n" +
+                    $"(Random Number that was chosen) ChosenPhoneCall Percentage: '{chosenPhoneCallPercentage}'.\n" +
                     $"percentageSum: '{percentageSum}'.\n" +
                     $"doNotAccountDefaultRingtone: '{doNotAccountDefaultRingtone}'.\n" +
                     $"Do we have any append ringtones?: '{workingList.Count > 0}'.\n" +
