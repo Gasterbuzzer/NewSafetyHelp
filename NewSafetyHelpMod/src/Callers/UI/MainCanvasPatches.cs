@@ -6,11 +6,13 @@ using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
@@ -260,6 +262,40 @@ namespace NewSafetyHelp.Callers.UI
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     AccuracyCallerHelper.StartOfDayCallerID = GlobalVariables.callerControllerScript.currentCallerID;
+
+                    CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                    if (customCampaign == null)
+                    {
+                        LoggingHelper.CampaignNullError();
+                        yield break;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) inGameProgramIconVC =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.InGameProgramIcon,
+                            vCs => vCs.HasChanged);
+                    
+                    (bool foundModifier, VariableChanged<bool> value) inGameProgramIconCenter =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.InGameProgramIconCenter,
+                            vCs => vCs.HasChanged);
+
+                    GameObject inGameProgramIcon = GameObject.Find("MainCanvas/Panel/WindowsBar/ProgramLogo");
+
+                    if (inGameProgramIcon == null)
+                    {
+                        LoggingHelper.ErrorLog("Could not find Program Logo to change.");
+                        yield break;
+                    }
+                    
+                    if (inGameProgramIconVC.foundModifier)
+                    {
+                        inGameProgramIcon.GetComponent<Image>().sprite = inGameProgramIconVC.value.Data;
+                    }
+
+                    if (inGameProgramIconCenter.foundModifier && inGameProgramIconCenter.value.Data)
+                    {
+                        inGameProgramIcon.GetComponent<RectTransform>().pivot = new Vector2(0.75f, 0.75f);
+                    }
                 }
 
                 if (!GlobalVariables.arcadeMode)

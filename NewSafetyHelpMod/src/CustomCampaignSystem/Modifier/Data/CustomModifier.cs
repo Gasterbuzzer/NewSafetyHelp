@@ -322,6 +322,20 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = 5f
         };
+        
+        /*
+         * In Game Modifications
+         */
+        
+        public VariableChanged<Sprite> InGameProgramIcon = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<bool> InGameProgramIconCenter = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         /*
          * Cheats / Settings Section

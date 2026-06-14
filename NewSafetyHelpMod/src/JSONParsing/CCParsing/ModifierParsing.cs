@@ -310,17 +310,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<bool> finalCutsceneReturnTo3DScreen = new VariableChanged<bool>
             {
                 Data = false
             };
-            
+
             VariableChanged<bool> finalCutsceneStayInCustomCampaign = new VariableChanged<bool>
             {
                 Data = false
             };
-            
+
             VariableChanged<bool> finalCutsceneDisableSkippingKeys = new VariableChanged<bool>
             {
                 Data = false
@@ -416,6 +416,20 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             VariableChanged<float> timedCallerProfileClockPadY = new VariableChanged<float>
             {
                 Data = 5f
+            };
+            
+            /*
+             * In Game Modifications
+             */
+
+            VariableChanged<Sprite> inGameProgramIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+            
+            VariableChanged<bool> inGameProgramIconCenter = new VariableChanged<bool>
+            {
+                Data = false
             };
 
             /*
@@ -738,7 +752,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref finalCutsceneStayInCustomCampaign);
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "final_cutscene_disable_skipping",
                 ref finalCutsceneDisableSkippingKeys);
-            
+
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
                 ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
 
@@ -786,6 +800,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_profile_clock_horizontal_spacing",
                 ref timedCallerProfileClockPadX);
+
+            /*
+             * In Game Modifications
+             */
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "in_game_program_icon",
+                ref inGameProgramIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_program_icon_center",
+                ref inGameProgramIconCenter);
 
             /*
              * Cheats / Settings
@@ -898,6 +922,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 TimedCallerProfileClockSizeMultiplier = timedCallerProfileClockSizeMultiplier,
                 TimedCallerProfileClockPadX = timedCallerProfileClockPadX,
                 TimedCallerProfileClockPadY = timedCallerProfileClockPadY,
+
+                InGameProgramIcon = inGameProgramIcon,
+                InGameProgramIconCenter = inGameProgramIconCenter,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading
