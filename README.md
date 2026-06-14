@@ -50,7 +50,8 @@ Other than that, enjoy.
 
 # Contributors
 
-- @dinofluffer : For providing audio and image assets for timed callers. Has also provided many suggestions for the project.
+- @dinofluffer : For providing the mod's thumbnail and for providing audio and image assets for timed callers. Has also
+  provided many suggestions for the project.
 - @arcademaster101: For providing many suggestions, such as being able to change ringtones.
 
 # Contributing and Providing ideas
