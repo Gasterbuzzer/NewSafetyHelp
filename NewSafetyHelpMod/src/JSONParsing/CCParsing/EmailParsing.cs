@@ -4,6 +4,7 @@ using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
@@ -71,50 +72,75 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // Url that is opened on click
             Uri emailClickUrl = null;
-            
+
             // Image
             Sprite emailImage = null;
-            
+
             string emailAnimatedVideo = null;
+
+            VariableChanged<bool> emailAnimatedVideoShouldLoop = new VariableChanged<bool>
+            {
+                Data = true
+            };
 
             // Unlock
             bool unlockWhenGameFinished = false;
-            
+
             int emailUnlockDay = 0;
-            
+
             float unlockThreshold = 0;
-            
+
             int emailPriority = 0;
-            
+
             // For this email to appear, it may require some callers to be correct or false.
             List<CallerRequirement> unlockRequiredCallers = null;
-            
+
             // New Unlock System
             List<GeneralAccuracyType> unlockAccuracy = null;
             bool useOldAccuracyChecks = true;
 
+            // --------------------------------------------------------------------------------------------------------
+            
             ParsingHelper.TryAssign(jObjectParsed, "email_in_main_campaign", ref inMainCampaign);
             ParsingHelper.TryAssign(jObjectParsed, "email_custom_campaign_name", ref customCampaignName);
+            
             ParsingHelper.TryAssign(jObjectParsed, "email_subject", ref emailSubject);
             ParsingHelper.TryAssign(jObjectParsed, "email_sender", ref emailSender);
             ParsingHelper.TryAssign(jObjectParsed, "email_body", ref emailBody);
+            
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_day", ref emailUnlockDay);
             ParsingHelper.TryAssign(jObjectParsed, "unlock_when_game_finished", ref unlockWhenGameFinished);
+            
             ParsingHelper.TryAssign(jObjectParsed, "email_priority", ref emailPriority);
-            
+
+            /*
+             * Unlock Requirements
+             */
             CallerRequirementParsingHelper.TryAssignCallerRequirement(jObjectParsed, ref unlockRequiredCallers);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "email_unlock_threshold", ref unlockThreshold);
-            
+
             AccuracyParsingHelper.TryAssignListGeneralAccuracyType(jObjectParsed, ref unlockAccuracy,
                 ref useOldAccuracyChecks);
 
+            /*
+             * Image
+             */
             ImageParsingHelper.TryAssignSprite(jObjectParsed, "email_image", ref emailImage, jsonFolderPath,
                 usermodFolderPath, customCampaignName);
-            
+
+            /*
+             * Animated Image
+             */
             bool hasAnimatedVideo = VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "email_animated_image",
                 ref emailAnimatedVideo, jsonFolderPath, usermodFolderPath);
             
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "email_animated_image_should_loop",
+                ref emailAnimatedVideoShouldLoop);
+
+            /*
+             * URL
+             */
             URLParsingHelper.TryAssignURL(jObjectParsed, "email_click_url", ref emailClickUrl);
 
             return new CustomEmail
@@ -124,24 +150,25 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 EmailSubject = emailSubject,
                 SenderName = emailSender,
                 EmailBody = emailBody,
-                
+
                 EmailClickURL = emailClickUrl,
-                
+
                 EmailPriority = emailPriority,
-                
+
                 UnlockWhenGameFinished = unlockWhenGameFinished,
 
                 UnlockDay = emailUnlockDay,
                 UnlockThreshold = unlockThreshold,
                 UnlockAccuracy = unlockAccuracy,
                 UseOldAccuracyChecks = useOldAccuracyChecks,
-                
+
                 UnlockRequiredCallers = unlockRequiredCallers,
 
                 EmailImage = emailImage,
-                
+
                 EmailAnimatedVideo = emailAnimatedVideo,
-                HasAnimatedVideo = hasAnimatedVideo
+                HasAnimatedVideo = hasAnimatedVideo,
+                EmailAnimatedVideoShouldLoop = emailAnimatedVideoShouldLoop
             };
         }
     }

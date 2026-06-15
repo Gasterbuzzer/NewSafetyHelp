@@ -82,6 +82,16 @@ namespace NewSafetyHelp.MainGameBugFixes
                                     LoggingHelper.LoggingCategory.EMAIL);
                                 
                                 EmailHelper.SetVideoUrlEmail(customEmail.EmailAnimatedVideo);
+
+                                if (customEmail.EmailAnimatedVideoShouldLoop.HasChanged)
+                                {
+                                    EmailHelper.SetLoopInAnimatedImage(customEmail.EmailAnimatedVideoShouldLoop.Data);
+                                }
+                                else
+                                {
+                                    EmailHelper.SetLoopInAnimatedImage(true);
+                                }
+                                
                                 showVideo = true;
                             }
                             else
