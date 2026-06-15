@@ -1,72 +1,84 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using UnityEngine;
 
 namespace NewSafetyHelp.Callers.CallerModel
 {
-    
     public class CustomCCaller : CustomCampaignElementBase
     {
         // Base Values
         public RichAudioClip CallerClip = null; // Caller Clip
         public string CallerClipPath = ""; // Caller Clip Path
         public bool IsCallerClipLoaded = false; // Tells if the caller clip is still loading.
-        
+
         public string CallTranscript = "NO_TRANSCRIPT"; // Call Transcript
         public string CallerName = "NO_CALLER_NAME"; // Caller Name
         public Sprite CallerImage = null; // Caller Image
 
         // Animated Portrait
-        public string CallerAnimatedPortraitURL = null; 
+        public string CallerAnimatedPortraitURL = null;
         public bool CallerHasAnimatedPortrait = false;
-        
-        public int ConsequenceCallerID = -1; // If this caller is a consequence caller, here would be the ID of that original caller.
+
+        public VariableChanged<bool> CallerAnimatedPortraitShouldLoop = new VariableChanged<bool>
+        {
+            Data = true
+        };
+
+        public int
+            ConsequenceCallerID =
+                -1; // If this caller is a consequence caller, here would be the ID of that original caller.
 
         public bool CallerIncreasesTier = false;
 
         public bool LastDayCaller = false; // If this caller will end the day.
 
-        public bool DownedNetworkCaller = false; // If the caller will down the network (Meaning entry information cannot be accessed)
-        
+        public bool
+            DownedNetworkCaller =
+                false; // If the caller will down the network (Meaning entry information cannot be accessed)
+
 
         // Entry (Monster)
         // (Used when the caller asks for help and to check if that name is valid).
-        public string EntryNameAttached = "NO_MONSTER_NAME"; 
+        public string EntryNameAttached = "NO_MONSTER_NAME";
 
         public int EntryIDAttached = -1; // Similar to name but allows also ID to work.
-        
+
         // Call Order
-        
+
         // Order in campaign, used when creating the call list array.
         // If two entries have the same order, the last one will replace it.
         // As another info, if there is not enough space, it will simply not be added.
         public readonly int OrderInCampaign;
-        
+
         // Custom Campaign Settings
         public bool InCustomCampaign = false;
-        
+
         // Special Values
-        
+
         // Warning Call
         public bool IsWarningCaller = false;
         public int WarningCallDay = -1; // If set to -1, it will work for every day if not provided.
-        
+
         // GameOver Call
         public bool IsGameOverCaller = false;
         public int GameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
-        
+
         // Accuracy Caller
         public bool IsAccuracyCaller = false; // If this caller is an accuracy caller.
         public List<CallerAccuracyType> AccuracyChecks = new List<CallerAccuracyType>(); // List of all accuracy checks.
-        public bool CountEveryCallerForLocalAccuracy = false; 
+        public bool CountEveryCallerForLocalAccuracy = false;
         // If we take into account every type of callers when computing the accuracy.
-        
+
         // Timed Caller
         public bool IsTimedCaller = false; // If this caller has a timer before it automatically ends the call.
         public float TimedCallerDuration = 0;
 
         // Constructor
-        public CustomCCaller(int orderInCampaign) { OrderInCampaign = orderInCampaign;}
+        public CustomCCaller(int orderInCampaign)
+        {
+            OrderInCampaign = orderInCampaign;
+        }
     }
 }

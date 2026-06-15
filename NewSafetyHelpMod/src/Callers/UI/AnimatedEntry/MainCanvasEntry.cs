@@ -16,7 +16,7 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
             LARGE_CALLER,
             CORNER_CALLER
         }
-        
+
         // Public reference to the animated portrait.
         private static GameObject animatedEntryPortrait;
         private static GameObject animatedCallerPortrait;
@@ -25,16 +25,18 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
 
         private static GameObject GetEntryPortrait()
         {
-            return GameObject.Find("MainCanvas").transform.Find("Panel").transform.Find("MainEntryScrollWindow").transform.Find("Viewport").transform.Find("Content").transform.Find("Portrait").gameObject;
+            return GameObject.Find("MainCanvas").transform.Find("Panel").transform.Find("MainEntryScrollWindow")
+                .transform.Find("Viewport").transform.Find("Content").transform.Find("Portrait").gameObject;
         }
-        
+
         /// <summary>
         /// Finds the animated caller portrait.
         /// </summary>
         /// <returns></returns>
         private static GameObject GetCallerPortrait()
         {
-            return GameObject.Find("MainCanvas").transform.Find("CallPopup").transform.Find("CurrentCall").transform.Find("CallerPortrait").gameObject;
+            return GameObject.Find("MainCanvas").transform.Find("CallPopup").transform.Find("CurrentCall").transform
+                .Find("CallerPortrait").gameObject;
         }
 
         /// <summary>
@@ -45,21 +47,21 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
         private static void UpdateVisibilityPortrait(PortraitType portraitToUpdate, bool showPortrait = false)
         {
             Image chosenPortrait = null;
-            
+
             switch (portraitToUpdate)
             {
                 case PortraitType.ENTRY:
                     chosenPortrait = GetEntryPortrait().GetComponent<Image>();
                     break;
-                
+
                 case PortraitType.CALLER:
                     chosenPortrait = GetCallerPortrait().GetComponent<Image>();
                     break;
-                
+
                 case PortraitType.LARGE_CALLER:
                     chosenPortrait = GlobalVariables.mainCanvasScript.largeCallerPortrait;
                     break;
-                
+
                 case PortraitType.CORNER_CALLER:
                     chosenPortrait = GlobalVariables.mainCanvasScript.callerPortrait;
                     break;
@@ -70,7 +72,45 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
                 chosenPortrait.enabled = showPortrait;
             }
         }
-        
+
+        /// <summary>
+        /// Sets the video to loop or not.
+        /// </summary>
+        /// <param name="shouldLoop">If the video should loop or not.</param>
+        /// <param name="chosenPortrait">Which portrait to update.</param>
+        public static void SetVideoLoop(bool shouldLoop, PortraitType chosenPortrait)
+        {
+            GameObject animatedImageGameObject = null;
+
+            switch (chosenPortrait)
+            {
+                case PortraitType.ENTRY:
+                    animatedImageGameObject = animatedEntryPortrait;
+                    break;
+
+                case PortraitType.CALLER:
+                    animatedImageGameObject = animatedCallerPortrait;
+                    break;
+
+                case PortraitType.LARGE_CALLER:
+                    animatedImageGameObject = animatedCallerLargePortrait;
+                    break;
+
+                case PortraitType.CORNER_CALLER:
+                    animatedImageGameObject = animatedCallerCornerPortrait;
+                    break;
+            }
+
+            if (shouldLoop)
+            {
+                AnimatedImageHelper.EnableVideoLoop(animatedImageGameObject);
+            }
+            else
+            {
+                AnimatedImageHelper.DisableVideoLoop(animatedImageGameObject);
+            }
+        }
+
         /// <summary>
         /// Sets the url to the given to url to the given animated portrait.
         /// </summary>
@@ -81,21 +121,21 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
             GameObject animatedImageGameObject = null;
 
             UpdateVisibilityPortrait(chosenPortrait);
-            
+
             switch (chosenPortrait)
             {
                 case PortraitType.ENTRY:
                     animatedImageGameObject = animatedEntryPortrait;
                     break;
-                
+
                 case PortraitType.CALLER:
                     animatedImageGameObject = animatedCallerPortrait;
                     break;
-                
+
                 case PortraitType.LARGE_CALLER:
                     animatedImageGameObject = animatedCallerLargePortrait;
                     break;
-                
+
                 case PortraitType.CORNER_CALLER:
                     animatedImageGameObject = animatedCallerCornerPortrait;
                     break;
@@ -106,7 +146,7 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
                 AnimatedImageHelper.SetVideoUrl(url, animatedImageGameObject);
             }
         }
-        
+
         /// <summary>
         /// Restores the normal image portrait.
         /// </summary>
@@ -119,31 +159,31 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
                 case PortraitType.ENTRY:
                     animatedImageGameObject = animatedEntryPortrait;
                     break;
-                
+
                 case PortraitType.CALLER:
                     animatedImageGameObject = animatedCallerPortrait;
                     break;
-                
+
                 case PortraitType.LARGE_CALLER:
                     if (animatedCallerLargePortrait == null)
                     {
                         return;
                     }
-                    
+
                     animatedCallerLargePortrait.SetActive(false);
-                    
+
                     animatedImageGameObject = animatedCallerLargePortrait;
-                    
+
                     break;
-                
+
                 case PortraitType.CORNER_CALLER:
                     animatedImageGameObject = animatedCallerCornerPortrait;
                     break;
             }
-            
+
             // Show normal portrait again.
             UpdateVisibilityPortrait(chosenPortrait, true);
-            
+
             if (animatedImageGameObject != null)
             {
                 RestoreNormalPortrait(animatedImageGameObject);
@@ -157,18 +197,18 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
         {
             // Disable video player.
             VideoPlayer videoPlayerComponent = animatedImageGameObject.GetComponent<VideoPlayer>();
-            
+
             videoPlayerComponent.Stop();
-            
-            if(videoPlayerComponent.targetTexture != null)
+
+            if (videoPlayerComponent.targetTexture != null)
             {
                 videoPlayerComponent.targetTexture.Release();
                 Object.Destroy(videoPlayerComponent.targetTexture);
             }
-            
+
             animatedImageGameObject.SetActive(false);
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "Start")]
         public static class StartPatch
         {
@@ -179,17 +219,18 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MainCanvasBehavior __instance)
             {
-                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
 
                 if (shakeAnimationString == null)
                 {
                     LoggingHelper.ErrorLog("'shakeAnimationString' not found. Calling original function.");
                     return true;
                 }
-                
+
                 __instance.StartCoroutine(__instance.StartSoftwareRoutine());
-                
-                if (GlobalVariables.arcadeMode && (bool) (Object) __instance.callTimer)
+
+                if (GlobalVariables.arcadeMode && (bool)(Object)__instance.callTimer)
                 {
                     __instance.callTimer.SetActive(true);
                     __instance.livesPanel.SetActive(true);
@@ -201,18 +242,18 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
                     {
                         animatedEntryPortrait = AnimatedImageHelper.CreateAnimatedPortrait(GetEntryPortrait());
                     }
-                    
+
                     if (animatedCallerPortrait == null)
                     {
                         animatedCallerPortrait = AnimatedImageHelper.CreateAnimatedPortrait(GetCallerPortrait());
                     }
-                    
+
                     if (animatedCallerLargePortrait == null)
                     {
                         animatedCallerLargePortrait = AnimatedImageHelper.CreateAnimatedPortrait(
                             GlobalVariables.mainCanvasScript.largeCallerPortrait.gameObject);
                     }
-                    
+
                     if (animatedCallerCornerPortrait == null)
                     {
                         animatedCallerCornerPortrait = AnimatedImageHelper.CreateAnimatedPortrait(
@@ -224,10 +265,10 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
                 {
                     return false;
                 }
-                
+
                 // OLD: __instance.shakeAnimationString = "xmasShake";
                 shakeAnimationString.SetValue(__instance, "xmasShake");
-                
+
                 return false; // Skip function with false.
             }
         }

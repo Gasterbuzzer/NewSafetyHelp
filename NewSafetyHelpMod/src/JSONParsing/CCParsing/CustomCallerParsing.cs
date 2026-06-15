@@ -4,6 +4,7 @@ using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -58,19 +59,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Custom Caller Audio Path (Later gets added with coroutine) 
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed,
                 customCCaller.CallerClipPath,
-                    clip =>
+                clip =>
+                {
+                    customCCaller.CallerClip = clip;
+                    customCCaller.IsCallerClipLoaded = true;
+
+                    // We finished loading all audios.
+                    // We call the start function again.
+                    if (AudioImport.CurrentLoadingAudios.Count <= 0)
                     {
-                        customCCaller.CallerClip = clip;
-                        customCCaller.IsCallerClipLoaded = true;
-                        
-                        // We finished loading all audios.
-                        // We call the start function again.
-                        if (AudioImport.CurrentLoadingAudios.Count <= 0)
-                        {
-                            AudioImport.ReCallCallerListStart();
-                        }
-                    }, 
-                    jsonFolderPath, "custom_caller_audio_clip_name");
+                        AudioImport.ReCallCallerListStart();
+                    }
+                },
+                jsonFolderPath, "custom_caller_audio_clip_name");
 
             // Now after parsing all values, we add the custom caller to our map
             if (inMainCampaign)
@@ -114,7 +115,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ref string customCallerMonsterName, ref string customCallerAudioPath, ref int orderInCampaign,
             int mainCampaignCallAmount, Dictionary<int, CustomCCaller> customCallerMainGame)
         {
-            // Caller Information
+            /*
+             * Caller Information
+             */
             string customCallerName = "NO_CUSTOM_CALLER_NAME";
             string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
 
@@ -126,31 +129,51 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             int customCallerConsequenceCallerID =
                 -1; // If this call is due to a consequence caller. You can provide it here.
 
+            // 99% of times should never be used. Scream at the person who uses it in a bad way.
+            int customCallerMonsterID = -1;
+
+
+            /*
+             * Image / Video
+             */
             Sprite customCallerImage = null;
-            
+
             string callerAnimatedPortraitURL = null;
 
-            // 99% of times should never be used. Scream at the person who uses it in a bad way.
-            int customCallerMonsterID = -1; 
+            VariableChanged<bool> callerAnimatedPortraitShouldLoop = new VariableChanged<bool>
+            {
+                Data = true
+            };
 
-            // Warning Call
+            /*
+             * Warning Call
+             */
             bool isWarningCaller = false;
             int warningCallDay = -1; // If set to -1, it will work for every day if not provided.
 
-            // GameOver Call
+            /*
+             * GameOver Call
+             */
             bool isGameOverCaller = false;
             int gameOverCallDay = -1; // If set to -1, it will work for every day if not provided.
 
-            // Accuracy Caller
+            /*
+             * Accuracy Caller
+             */
             bool isAccuracyCaller = false; // If this caller is an accuracy caller.
             List<CallerAccuracyType> accuracyChecks = new List<CallerAccuracyType>(); // How it should be checked for.
-            bool countEveryCallerForLocalAccuracy = false;
+
             // If the accuracy check should consider every caller for the day.
-            
-            // Timed Caller
+            bool countEveryCallerForLocalAccuracy = false;
+
+            /*
+             * Timed Caller
+             */
             bool isTimedCaller = false;
             float timedCallerDuration = 0;
-            
+
+            // --------------------------------------------------------------------------------------------------------
+
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
                 customCampaignName = (string)customCampaignAttachedValue;
@@ -161,7 +184,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                LoggingHelper.ErrorLog("Provided custom caller is not attached to either custom campaign or main campaign?");
+                LoggingHelper.ErrorLog(
+                    "Provided custom caller is not attached to either custom campaign or main campaign?");
             }
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
@@ -177,46 +201,65 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_last_caller_day", ref isLastCallerOfDay);
 
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "custom_caller_audio_clip_name",
-                ref customCallerAudioPath,  jsonFolderPath, usermodFolderPath, customCallerName);
+                ref customCallerAudioPath, jsonFolderPath, usermodFolderPath, customCallerName);
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_consequence_caller_id",
                 ref customCallerConsequenceCallerID);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_downed_network", ref downedCall);
 
-            // Warning Caller Section
+            /*
+             * Warning Caller Section
+             */
 
             ParsingHelper.TryAssign(jObjectParsed, "is_warning_caller", ref isWarningCaller);
             ParsingHelper.TryAssign(jObjectParsed, "warning_caller_day", ref warningCallDay);
 
-            // GameOver Caller Section
+            /*
+             * GameOver Caller Section
+             */
 
             ParsingHelper.TryAssign(jObjectParsed, "is_gameover_caller", ref isGameOverCaller);
             ParsingHelper.TryAssign(jObjectParsed, "gameover_caller_day", ref gameOverCallDay);
-            
-            // Accuracy Caller Section
+
+            /*
+             *  Accuracy Caller Section
+             */
 
             bool isAccuracyCallerChanged = false;
             ParsingHelper.TryAssignWithBool(jObjectParsed, "is_accuracy_caller", ref isAccuracyCaller,
                 ref isAccuracyCallerChanged);
-            
-            bool doWeHaveAccuracyCall = AccuracyParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
-            if (!isAccuracyCallerChanged 
+
+            bool doWeHaveAccuracyCall =
+                AccuracyParsingHelper.TryAssignListAccuracyType(jObjectParsed, ref accuracyChecks);
+
+            if (!isAccuracyCallerChanged
                 && doWeHaveAccuracyCall)
             {
                 isAccuracyCaller = true;
             }
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "accuracy_caller_count_total_day_instead",
                 ref countEveryCallerForLocalAccuracy);
 
-            // Animated Portrait
+            /*
+             * Animated Portrait
+             */
+
             bool callerHasAnimatedPortrait = VideoParsingHelper.TryAssignVideoPath(jObjectParsed,
                 "custom_caller_animated_portrait_name",
                 ref callerAnimatedPortraitURL, jsonFolderPath, usermodFolderPath);
-            
-            // Timed Caller
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "custom_caller_animated_portrait_should_loop",
+                ref callerAnimatedPortraitShouldLoop);
+
+            /*
+             * Timed Caller
+             */
+
             ParsingHelper.TryAssign(jObjectParsed, "is_timed_caller", ref isTimedCaller);
             ParsingHelper.TryAssign(jObjectParsed, "timed_caller_duration", ref timedCallerDuration);
+
+            // -------------------------------------------------------------------------------------------------------
 
             // Check if order is valid and if not, we warn the user.
             if (orderInCampaign < 0 && !isWarningCaller && !isGameOverCaller)
@@ -240,20 +283,21 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignName = customCampaignName,
                 LastDayCaller = isLastCallerOfDay,
                 DownedNetworkCaller = downedCall,
-                
-                CallerAnimatedPortraitURL =  callerAnimatedPortraitURL,
+
+                CallerAnimatedPortraitURL = callerAnimatedPortraitURL,
                 CallerHasAnimatedPortrait = callerHasAnimatedPortrait,
+                CallerAnimatedPortraitShouldLoop = callerAnimatedPortraitShouldLoop,
 
                 IsWarningCaller = isWarningCaller,
                 WarningCallDay = warningCallDay,
 
                 IsGameOverCaller = isGameOverCaller,
                 GameOverCallDay = gameOverCallDay,
-                
+
                 IsAccuracyCaller = isAccuracyCaller,
                 AccuracyChecks = accuracyChecks,
                 CountEveryCallerForLocalAccuracy = countEveryCallerForLocalAccuracy,
-                
+
                 IsTimedCaller = isTimedCaller,
                 TimedCallerDuration = timedCallerDuration
             };
