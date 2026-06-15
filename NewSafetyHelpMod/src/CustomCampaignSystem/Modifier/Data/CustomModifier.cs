@@ -43,6 +43,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();
         public bool BlackBackgroundOnAnimatedBackground = false;
+        
+        public VariableChanged<bool> AnimatedDesktopBackgroundShouldLoop = new VariableChanged<bool>
+        {
+            Data = true
+        };
 
         // If to disable the color the background green (or custom) the same as the main game does.
         public bool DisableColorBackground = false;

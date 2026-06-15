@@ -156,6 +156,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Animated Backgrounds
             List<string> animatedDesktopBackgrounds = new List<string>();
             bool blackBackgroundOnAnimatedBackground = false;
+            
+            VariableChanged<bool> animatedDesktopBackgroundShouldLoop = new VariableChanged<bool>
+            {
+                Data = true
+            };
 
             /*
              * Desktop Logo
@@ -515,6 +520,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",
                 ref blackBackgroundOnAnimatedBackground);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "animated_desktop_background_should_loop",
+                ref animatedDesktopBackgroundShouldLoop);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "game_finished_desktop_background",
                 ref gameFinishedBackgroundSprite, jsonFolderPath, usermodFolderPath, customCampaignName);
@@ -835,8 +843,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DesktopBackgrounds = backgroundSprites,
                 GameFinishedBackground = gameFinishedBackgroundSprite,
+                
                 AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
                 BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
+                AnimatedDesktopBackgroundShouldLoop = animatedDesktopBackgroundShouldLoop,
+                
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,
 

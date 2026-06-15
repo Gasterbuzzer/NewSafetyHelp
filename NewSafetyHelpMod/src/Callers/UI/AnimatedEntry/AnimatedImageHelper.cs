@@ -6,6 +6,15 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
 {
     public static class AnimatedImageHelper
     {
+        /// <summary>
+        /// Creates a given animated portrait that contains a video player to show a video with.
+        /// </summary>
+        /// <param name="animatedPortrait">Original portrait to use as reference.</param>
+        /// <param name="deleteChildren">If to remove all children after copy.</param>
+        /// <param name="deleteDaySpriteSwapper">If to delete the component DayNumSpriteSwapper.</param>
+        /// <param name="setAsFirstChild">If order matters, this will set the animated portrait as first child.</param>
+        /// <param name="disableVideoClicking">If to disable clicking on the animated portrait.</param>
+        /// <returns>Newly created GameObject that represents the animated portrait.</returns>
         public static GameObject CreateAnimatedPortrait(GameObject animatedPortrait, bool deleteChildren = false,
             bool deleteDaySpriteSwapper = false, bool setAsFirstChild = false, bool disableVideoClicking = true)
         {
@@ -76,6 +85,11 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
             return portraitAnimated;
         }
         
+        /// <summary>
+        /// Sets the URL to play in given animated portrait that contains a video player.
+        /// </summary>
+        /// <param name="url">Video to play (Local file)</param>
+        /// <param name="animatedPortrait">Animated portrait with video player.</param>
         public static void SetVideoUrl(string url, GameObject animatedPortrait)
         {
             VideoPlayer videoPlayerComponent = animatedPortrait.GetComponent<VideoPlayer>();
@@ -92,6 +106,28 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
             
             // Activate the portrait
             animatedPortrait.SetActive(true);
+        }
+        
+        /// <summary>
+        /// Disables the video player from looping.
+        /// </summary>
+        /// <param name="animatedPortrait">Animated portrait with video player.</param>
+        public static void DisableVideoLoop(GameObject animatedPortrait)
+        {
+            VideoPlayer videoPlayerComponent = animatedPortrait.GetComponent<VideoPlayer>();
+
+            videoPlayerComponent.isLooping = false;
+        }
+        
+        /// <summary>
+        /// Sets the video play to loop.
+        /// </summary>
+        /// <param name="animatedPortrait">Animated portrait with video player.</param>
+        public static void EnableVideoLoop(GameObject animatedPortrait)
+        {
+            VideoPlayer videoPlayerComponent = animatedPortrait.GetComponent<VideoPlayer>();
+
+            videoPlayerComponent.isLooping = true;
         }
     }
 }
