@@ -104,6 +104,27 @@ namespace NewSafetyHelp.CustomDesktop.Utils
         }
 
         /// <summary>
+        /// Sets the animated image in emails to either loop or not.
+        /// </summary>
+        /// <param name="shouldLoop">Should it loop?</param>
+        public static void SetLoopInAnimatedImage(bool shouldLoop)
+        {
+            if (animatedEmail == null)
+            {
+                return;
+            }
+
+            if (shouldLoop)
+            {
+                AnimatedImageHelper.EnableVideoLoop(animatedEmail);
+            }
+            else
+            {
+                AnimatedImageHelper.DisableVideoLoop(animatedEmail);
+            }
+        }
+
+        /// <summary>
         /// For buttons sets the correct event.
         /// </summary>
         /// <param name="hasNoURL">If when setting the URL, if to simply strip all events.</param>

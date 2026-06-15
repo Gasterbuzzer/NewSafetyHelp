@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using UnityEngine;
 
 namespace NewSafetyHelp.Emails
@@ -21,6 +22,11 @@ namespace NewSafetyHelp.Emails
 
         [CanBeNull] public string EmailAnimatedVideo = null;
         public bool HasAnimatedVideo = false;
+        
+        public VariableChanged<bool> EmailAnimatedVideoShouldLoop = new VariableChanged<bool>
+        {
+            Data = true
+        };
 
         // On click URL.
         // This opens up this website on the browser when the attachment is clicked on.
