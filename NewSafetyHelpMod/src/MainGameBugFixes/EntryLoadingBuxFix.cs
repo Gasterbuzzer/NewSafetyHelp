@@ -100,10 +100,18 @@ namespace NewSafetyHelp.MainGameBugFixes
                     {
                         MainCanvasEntry.SetVideoUrl(currentlySelectedEntry.VideoUrlPortrait,
                             MainCanvasEntry.PortraitType.ENTRY);
+
+                        if (currentlySelectedEntry.VideoPortraitShouldLoop.HasChanged)
+                        {
+                            MainCanvasEntry.SetVideoLoop(currentlySelectedEntry.VideoPortraitShouldLoop.Data,
+                                MainCanvasEntry.PortraitType.ENTRY);
+                        }
                     }
                     else
                     {
                         MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.ENTRY);
+                        
+                        MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.ENTRY);
                     }
                 }
                 

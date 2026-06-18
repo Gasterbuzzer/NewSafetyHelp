@@ -26,17 +26,15 @@ namespace NewSafetyHelp.Callers.CallerModel
             Data = true
         };
 
-        public int
-            ConsequenceCallerID =
-                -1; // If this caller is a consequence caller, here would be the ID of that original caller.
+        // If this caller is a consequence caller, here would be the ID of that original caller.
+        public int ConsequenceCallerID = -1;
 
         public bool CallerIncreasesTier = false;
 
         public bool LastDayCaller = false; // If this caller will end the day.
 
-        public bool
-            DownedNetworkCaller =
-                false; // If the caller will down the network (Meaning entry information cannot be accessed)
+        // If the caller will down the network (Meaning entry information cannot be accessed)
+        public bool DownedNetworkCaller = false;
 
 
         // Entry (Monster)
