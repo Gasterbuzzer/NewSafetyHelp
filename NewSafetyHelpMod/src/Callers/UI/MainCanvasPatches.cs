@@ -296,6 +296,16 @@ namespace NewSafetyHelp.Callers.UI
                     {
                         inGameProgramIcon.GetComponent<RectTransform>().pivot = new Vector2(0.75f, 0.75f);
                     }
+                    
+                    // Change Animation
+
+                    if (true)
+                    {
+                        GameObject logoAnimationGO =
+                            GameObject.Find("MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation");
+
+                        logoAnimationGO.GetComponent<Animator>();
+                    }
                 }
 
                 if (!GlobalVariables.arcadeMode)

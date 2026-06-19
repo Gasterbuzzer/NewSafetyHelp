@@ -10,7 +10,7 @@ namespace NewSafetyHelp.Audio
 
         private const int MaxConcurrentLoads = 5;
 
-        private const long MemoryPressureThreshold = 2_500_000_000L; // 2.5 GB
+        private const long MemoryPressureThreshold = 2_000_000_000L; // 2.0 GB
 
         /// <summary>
         /// Coroutine for waiting for an open slot before executing.

@@ -341,6 +341,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = false
         };
+        
+        public VariableChanged<List<Sprite>> ClockInLogoAnimation = new VariableChanged<List<Sprite>>
+        {
+            Data = new List<Sprite>()
+        };
 
         /*
          * Cheats / Settings Section

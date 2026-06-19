@@ -436,6 +436,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = false
             };
+            
+            VariableChanged<List<Sprite>> clockInLogoAnimation = new VariableChanged<List<Sprite>>
+            {
+                Data = new List<Sprite>()
+            };
 
             /*
              * Cheats / Settings Section
@@ -818,6 +823,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_program_icon_center",
                 ref inGameProgramIconCenter);
+            
+            ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
+                "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
 
             /*
              * Cheats / Settings
@@ -936,6 +944,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 InGameProgramIcon = inGameProgramIcon,
                 InGameProgramIconCenter = inGameProgramIconCenter,
+                ClockInLogoAnimation = clockInLogoAnimation,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading
