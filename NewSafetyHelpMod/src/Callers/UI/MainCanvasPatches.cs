@@ -10,6 +10,7 @@ using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.LoggingSystem;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -310,6 +311,46 @@ namespace NewSafetyHelp.Callers.UI
                         
                         // MainCanvas/CallPopup/IncomingCall/Image
                         mainCanvas.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Image>().sprite = inGamePhoneIcon.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<string> value) incomingCallTitle =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallTitle,
+                            vCs => vCs.HasChanged);
+
+                    if (incomingCallTitle.foundModifier)
+                    {
+                        // MainCanvas/CallPopup/WindowsBar/ProgramTitle
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = incomingCallTitle.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<string> value) incomingCallLabel =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallLabel,
+                            vCs => vCs.HasChanged);
+
+                    if (incomingCallLabel.foundModifier)
+                    {
+                        // MainCanvas/CallPopup/IncomingCall/IncomingText
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>().text = incomingCallLabel.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<string> value) incomingCallAnswerButtonText =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallAnswerButtonText,
+                            vCs => vCs.HasChanged);
+
+                    if (incomingCallAnswerButtonText.foundModifier)
+                    {
+                        // MainCanvas/CallPopup/IncomingCall/AnswerButton/Text (TMP)
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>().text = incomingCallAnswerButtonText.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) incomingCallAnswerButtonImage =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallAnswerButtonImage,
+                            vCs => vCs.HasChanged);
+                    
+                    if (incomingCallAnswerButtonImage.foundModifier)
+                    {
+                        // MainCanvas/CallPopup/IncomingCall/AnswerButton/Image
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(1).GetComponent<Image>().sprite = incomingCallAnswerButtonImage.value.Data;
                     }
                     
                     // Change Animation

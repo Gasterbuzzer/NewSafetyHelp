@@ -156,7 +156,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Animated Backgrounds
             List<string> animatedDesktopBackgrounds = new List<string>();
             bool blackBackgroundOnAnimatedBackground = false;
-            
+
             VariableChanged<bool> animatedDesktopBackgroundShouldLoop = new VariableChanged<bool>
             {
                 Data = true
@@ -422,7 +422,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = 5f
             };
-            
+
             /*
              * In Game Modifications
              */
@@ -431,18 +431,38 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<bool> inGameProgramIconCenter = new VariableChanged<bool>
             {
                 Data = false
             };
-            
+
             VariableChanged<List<Sprite>> clockInLogoAnimation = new VariableChanged<List<Sprite>>
             {
                 Data = new List<Sprite>()
             };
-            
+
             VariableChanged<Sprite> inGamePhoneIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> incomingCallTitle = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> incomingCallLabel = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> incomingCallAnswerButtonText = new VariableChanged<string>
+            {
+                Data = null
+            };
+            
+            VariableChanged<Sprite> incomingCallAnswerButtonImage = new VariableChanged<Sprite>
             {
                 Data = null
             };
@@ -530,7 +550,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",
                 ref blackBackgroundOnAnimatedBackground);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "animated_desktop_background_should_loop",
                 ref animatedDesktopBackgroundShouldLoop);
 
@@ -825,13 +845,25 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "in_game_program_icon",
                 ref inGameProgramIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_program_icon_center",
                 ref inGameProgramIconCenter);
-            
+
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "in_game_phone_call_icon",
                 ref inGamePhoneIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "incoming_call_title",
+                ref incomingCallTitle);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "incoming_call_label_text",
+                ref incomingCallLabel);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "incoming_call_answer_button_text",
+                ref incomingCallAnswerButtonText);
             
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "incoming_call_answer_button_image",
+                ref incomingCallAnswerButtonImage, jsonFolderPath, usermodFolderPath, customCampaignName);
+
             ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
                 "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
 
@@ -859,11 +891,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DesktopBackgrounds = backgroundSprites,
                 GameFinishedBackground = gameFinishedBackgroundSprite,
-                
+
                 AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
                 BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
                 AnimatedDesktopBackgroundShouldLoop = animatedDesktopBackgroundShouldLoop,
-                
+
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,
 
@@ -954,6 +986,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 InGameProgramIconCenter = inGameProgramIconCenter,
                 InGamePhoneIcon = inGamePhoneIcon,
                 ClockInLogoAnimation = clockInLogoAnimation,
+                IncomingCallTitle = incomingCallTitle,
+                IncomingCallLabel = incomingCallLabel,
+                IncomingCallAnswerButtonText = incomingCallAnswerButtonText,
+                IncomingCallAnswerButtonImage = incomingCallAnswerButtonImage,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading

@@ -43,7 +43,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();
         public bool BlackBackgroundOnAnimatedBackground = false;
-        
+
         public VariableChanged<bool> AnimatedDesktopBackgroundShouldLoop = new VariableChanged<bool>
         {
             Data = true
@@ -221,22 +221,22 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
-        
+
         public VariableChanged<bool> FinalCutsceneReturnTo3DScreen = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public VariableChanged<bool> FinalCutsceneStayInCustomCampaign = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public VariableChanged<bool> FinalCutsceneDisableSkippingKeys = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public string FinalCutsceneAudioPath = null;
 
         /*
@@ -327,26 +327,46 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = 5f
         };
-        
+
         /*
          * In Game Modifications
          */
-        
+
         public VariableChanged<Sprite> InGameProgramIcon = new VariableChanged<Sprite>
         {
             Data = null
         };
-        
+
         public VariableChanged<bool> InGameProgramIconCenter = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public VariableChanged<Sprite> InGamePhoneIcon = new VariableChanged<Sprite>
         {
             Data = null
         };
+
+        public VariableChanged<string> IncomingCallTitle = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<string> IncomingCallLabel = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<string> IncomingCallAnswerButtonText = new VariableChanged<string>
+        {
+            Data = null
+        };
         
+        public VariableChanged<Sprite> IncomingCallAnswerButtonImage = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+
         public VariableChanged<List<Sprite>> ClockInLogoAnimation = new VariableChanged<List<Sprite>>
         {
             Data = new List<Sprite>()
