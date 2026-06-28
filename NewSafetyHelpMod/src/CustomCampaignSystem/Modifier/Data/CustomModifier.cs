@@ -361,7 +361,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
-        
+
         public VariableChanged<Sprite> IncomingCallAnswerButtonImage = new VariableChanged<Sprite>
         {
             Data = null
@@ -384,6 +384,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
 
         // If to disable the desktop loading.
         public bool DisableDesktopLoading = false;
+
+        public VariableChanged<bool> SelectPreviouslySelectedEntryInSubmitWindow = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         /*
          * Removed/Unfinished Section

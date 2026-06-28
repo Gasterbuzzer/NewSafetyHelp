@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Reflection;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace NewSafetyHelp.MainGameBugFixes
@@ -17,11 +18,11 @@ namespace NewSafetyHelp.MainGameBugFixes
             {
                 // Close popup instead of creating another error popup.
                 __instance.ConfirmButton();
-                
+
                 return false; // Skip the original function
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(GenericErrorPopupBehavior), "OnEnable")]
         public static class OnEnableFix
         {
@@ -40,16 +41,20 @@ namespace NewSafetyHelp.MainGameBugFixes
                 }
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(SubmitWindowBehavior), "OnEnable")]
         public static class SubmitAnswerCloseButtonFix
         {
+            private static readonly MethodInfo PopulateDropdownList =
+                typeof(SubmitWindowBehavior).GetMethod("PopulateDropdownList",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+
             /// <summary>
             /// Fixes the error popup from having two buttons.
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
-            private static void Prefix(SubmitWindowBehavior __instance)
+            private static bool Prefix(SubmitWindowBehavior __instance)
             {
                 GameObject closeButton = __instance.transform.Find("WindowsBar").Find("CloseButton").gameObject;
 
@@ -57,6 +62,15 @@ namespace NewSafetyHelp.MainGameBugFixes
                 {
                     Object.Destroy(closeButton.GetComponent<Button>());
                 }
+
+                __instance.answerToSubmit = null;
+                __instance.submitButton.SetActive(true);
+                __instance.loadingText.SetActive(false);
+
+                // OLD: __instance.PopulateDropdownList();
+                PopulateDropdownList.Invoke(__instance, null);
+
+                return false; // Skip original function. 
             }
         }
     }

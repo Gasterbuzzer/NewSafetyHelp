@@ -25,7 +25,7 @@ namespace NewSafetyHelp.Callers.UI
     {
         // Cached animator lookups.
         private static readonly int Glitch = Animator.StringToHash("glitch");
-        
+
         private static readonly List<string> DefaultDayNames = new List<string>
             { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
@@ -271,11 +271,11 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.CampaignNullError();
                         yield break;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<Sprite> value) inGameProgramIconVC =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.InGameProgramIcon,
                             vCs => vCs.HasChanged);
-                    
+
                     (bool foundModifier, VariableChanged<bool> value) inGameProgramIconCenter =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.InGameProgramIconCenter,
                             vCs => vCs.HasChanged);
@@ -287,7 +287,7 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.ErrorLog("Could not find Program Logo to change.");
                         yield break;
                     }
-                    
+
                     if (inGameProgramIconVC.foundModifier)
                     {
                         inGameProgramIcon.GetComponent<Image>().sprite = inGameProgramIconVC.value.Data;
@@ -297,7 +297,7 @@ namespace NewSafetyHelp.Callers.UI
                     {
                         inGameProgramIcon.GetComponent<RectTransform>().pivot = new Vector2(0.75f, 0.75f);
                     }
-                    
+
                     (bool foundModifier, VariableChanged<Sprite> value) inGamePhoneIcon =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.InGamePhoneIcon,
                             vCs => vCs.HasChanged);
@@ -305,14 +305,16 @@ namespace NewSafetyHelp.Callers.UI
                     if (inGamePhoneIcon.foundModifier)
                     {
                         GameObject mainCanvas = GameObject.Find("MainCanvas");
-                        
+
                         // MainCanvas/CallPopup/WindowsBar/ProgramLogo
-                        mainCanvas.transform.GetChild(3).GetChild(0).GetChild(2).GetComponent<Image>().sprite = inGamePhoneIcon.value.Data;
-                        
+                        mainCanvas.transform.GetChild(3).GetChild(0).GetChild(2).GetComponent<Image>().sprite =
+                            inGamePhoneIcon.value.Data;
+
                         // MainCanvas/CallPopup/IncomingCall/Image
-                        mainCanvas.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Image>().sprite = inGamePhoneIcon.value.Data;
+                        mainCanvas.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Image>().sprite =
+                            inGamePhoneIcon.value.Data;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<string> value) incomingCallTitle =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallTitle,
                             vCs => vCs.HasChanged);
@@ -320,9 +322,10 @@ namespace NewSafetyHelp.Callers.UI
                     if (incomingCallTitle.foundModifier)
                     {
                         // MainCanvas/CallPopup/WindowsBar/ProgramTitle
-                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = incomingCallTitle.value.Data;
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(0).GetChild(3)
+                            .GetComponent<TextMeshProUGUI>().text = incomingCallTitle.value.Data;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<string> value) incomingCallLabel =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallLabel,
                             vCs => vCs.HasChanged);
@@ -330,9 +333,10 @@ namespace NewSafetyHelp.Callers.UI
                     if (incomingCallLabel.foundModifier)
                     {
                         // MainCanvas/CallPopup/IncomingCall/IncomingText
-                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>().text = incomingCallLabel.value.Data;
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(1)
+                            .GetComponent<TextMeshProUGUI>().text = incomingCallLabel.value.Data;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<string> value) incomingCallAnswerButtonText =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallAnswerButtonText,
                             vCs => vCs.HasChanged);
@@ -340,19 +344,21 @@ namespace NewSafetyHelp.Callers.UI
                     if (incomingCallAnswerButtonText.foundModifier)
                     {
                         // MainCanvas/CallPopup/IncomingCall/AnswerButton/Text (TMP)
-                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>().text = incomingCallAnswerButtonText.value.Data;
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(0)
+                            .GetComponent<TextMeshProUGUI>().text = incomingCallAnswerButtonText.value.Data;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<Sprite> value) incomingCallAnswerButtonImage =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.IncomingCallAnswerButtonImage,
                             vCs => vCs.HasChanged);
-                    
+
                     if (incomingCallAnswerButtonImage.foundModifier)
                     {
                         // MainCanvas/CallPopup/IncomingCall/AnswerButton/Image
-                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(1).GetComponent<Image>().sprite = incomingCallAnswerButtonImage.value.Data;
+                        GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(1)
+                            .GetComponent<Image>().sprite = incomingCallAnswerButtonImage.value.Data;
                     }
-                    
+
                     // Change Animation
 
                     // TODO: Finish the replacement of the logo animation
@@ -451,8 +457,8 @@ namespace NewSafetyHelp.Callers.UI
                 GlobalVariables.UISoundControllerScript.PlayUISound(
                     GlobalVariables.UISoundControllerScript.correctSound);
 
-                if (!GlobalVariables.arcadeMode 
-                    && GlobalVariables.currentDay == 7 
+                if (!GlobalVariables.arcadeMode
+                    && GlobalVariables.currentDay == 7
                     && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     yield return new WaitForSeconds(0.4f);
@@ -740,7 +746,7 @@ namespace NewSafetyHelp.Callers.UI
                         }
 
                         // This is set to true if the caller is allowed to down the network.
-                        if (customCCaller.DownedNetworkCaller) 
+                        if (customCCaller.DownedNetworkCaller)
                         {
                             __result = true;
                             return false;
@@ -752,7 +758,7 @@ namespace NewSafetyHelp.Callers.UI
                 return false; // Skip function with false.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "LoadCallerAnswers")]
         public static class LoadCallerAnswersPatch
         {

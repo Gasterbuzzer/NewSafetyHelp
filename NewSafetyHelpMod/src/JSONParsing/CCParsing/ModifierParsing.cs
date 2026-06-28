@@ -461,7 +461,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<Sprite> incomingCallAnswerButtonImage = new VariableChanged<Sprite>
             {
                 Data = null
@@ -476,6 +476,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // If to skip the initial desktop loading portion.
             bool disableDesktopLoading = false;
+
+            VariableChanged<bool> selectPreviouslySelectedEntryInSubmitWindow = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
             /*
              * --------------------------------------------------------------------------------------------------------
@@ -860,7 +865,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "incoming_call_answer_button_text",
                 ref incomingCallAnswerButtonText);
-            
+
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "incoming_call_answer_button_image",
                 ref incomingCallAnswerButtonImage, jsonFolderPath, usermodFolderPath, customCampaignName);
 
@@ -874,6 +879,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref showDefaultUIAccuracyText);
 
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_default_show_last_selected",
+                ref selectPreviouslySelectedEntryInSubmitWindow);
 
             /*
              * Creating the modifier object.
@@ -992,7 +1000,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 IncomingCallAnswerButtonImage = incomingCallAnswerButtonImage,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
-                DisableDesktopLoading = disableDesktopLoading
+                DisableDesktopLoading = disableDesktopLoading,
+                SelectPreviouslySelectedEntryInSubmitWindow = selectPreviouslySelectedEntryInSubmitWindow
             };
         }
     }
