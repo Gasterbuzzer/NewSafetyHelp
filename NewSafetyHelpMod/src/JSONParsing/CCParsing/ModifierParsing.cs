@@ -441,6 +441,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = new List<Sprite>()
             };
+            
+            VariableChanged<Sprite> inGamePhoneIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
 
             /*
              * Cheats / Settings Section
@@ -824,6 +829,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_program_icon_center",
                 ref inGameProgramIconCenter);
             
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "in_game_phone_call_icon",
+                ref inGamePhoneIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
             ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
                 "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
 
@@ -944,6 +952,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 InGameProgramIcon = inGameProgramIcon,
                 InGameProgramIconCenter = inGameProgramIconCenter,
+                InGamePhoneIcon = inGamePhoneIcon,
                 ClockInLogoAnimation = clockInLogoAnimation,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,

@@ -2,7 +2,6 @@
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
-using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.Desktop
@@ -239,7 +238,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             }
                         }
 
-                        LoggingHelper.TestLog($"{shouldLoopAnimatedBackground.foundModifier} and {shouldLoopAnimatedBackground.value.Data}");
                         if (shouldLoopAnimatedBackground.foundModifier)
                         {
                             if (shouldLoopAnimatedBackground.value.Data)

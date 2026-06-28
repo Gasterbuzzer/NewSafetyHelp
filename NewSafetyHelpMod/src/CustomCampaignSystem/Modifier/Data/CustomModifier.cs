@@ -342,6 +342,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = false
         };
         
+        public VariableChanged<Sprite> InGamePhoneIcon = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+        
         public VariableChanged<List<Sprite>> ClockInLogoAnimation = new VariableChanged<List<Sprite>>
         {
             Data = new List<Sprite>()

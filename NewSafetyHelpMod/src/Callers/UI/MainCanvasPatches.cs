@@ -297,9 +297,25 @@ namespace NewSafetyHelp.Callers.UI
                         inGameProgramIcon.GetComponent<RectTransform>().pivot = new Vector2(0.75f, 0.75f);
                     }
                     
+                    (bool foundModifier, VariableChanged<Sprite> value) inGamePhoneIcon =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.InGamePhoneIcon,
+                            vCs => vCs.HasChanged);
+
+                    if (inGamePhoneIcon.foundModifier)
+                    {
+                        GameObject mainCanvas = GameObject.Find("MainCanvas");
+                        
+                        // MainCanvas/CallPopup/WindowsBar/ProgramLogo
+                        mainCanvas.transform.GetChild(3).GetChild(0).GetChild(2).GetComponent<Image>().sprite = inGamePhoneIcon.value.Data;
+                        
+                        // MainCanvas/CallPopup/IncomingCall/Image
+                        mainCanvas.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Image>().sprite = inGamePhoneIcon.value.Data;
+                    }
+                    
                     // Change Animation
 
-                    if (true)
+                    // TODO: Finish the replacement of the logo animation
+                    if (false)
                     {
                         GameObject logoAnimationGO =
                             GameObject.Find("MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation");
