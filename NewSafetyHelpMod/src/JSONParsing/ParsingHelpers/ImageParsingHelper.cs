@@ -179,7 +179,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             {
                 TryAssignSpriteList(jObjectParsed, key, ref target.Data, jsonFolderPath, usermodFolderPath, ignoreIfNull);
 
-                if (target.Data.Count == 0)
+                if (target.Data.Count > 0)
                 {
                     target.HasChanged = true;
                 }

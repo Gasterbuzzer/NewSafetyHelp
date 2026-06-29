@@ -377,13 +377,16 @@ namespace NewSafetyHelp.Callers.UI
 
                     // Change Animation
 
-                    // TODO: Finish the replacement of the logo animation
-                    if (false)
+                    (bool foundModifier, VariableChanged<List<Sprite>> value) clockInLogoAnimation =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimation,
+                            vCs => vCs.HasChanged);
+                    
+                    if (clockInLogoAnimation.foundModifier)
                     {
                         GameObject logoAnimationGO =
                             GameObject.Find("MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation");
 
-                        logoAnimationGO.GetComponent<Animator>();
+                        logoAnimationGO.GetComponent<Animator>().enabled = false;
                     }
                 }
 
@@ -419,6 +422,7 @@ namespace NewSafetyHelp.Callers.UI
                         mainCanvasBehavior.softwareStartupPanel.SetActive(true);
                         mainCanvasBehavior.clockInPanel.SetActive(false);
                         mainCanvasBehavior.logoPanel.SetActive(false);
+                        
                         GlobalVariables.fade.FadeOut(1f);
 
                         yield return new WaitForSeconds(1f);
@@ -428,7 +432,75 @@ namespace NewSafetyHelp.Callers.UI
                             GlobalVariables.UISoundControllerScript.computerFanSpin,
                             GlobalVariables.UISoundControllerScript.myFanSpinLoopingSource));
 
-                        yield return new WaitForSeconds(6f);
+                        if (CustomCampaignGlobal.InCustomCampaign)
+                        {
+                            (bool foundModifier, VariableChanged<List<Sprite>> value) clockInLogoAnimation =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimation,
+                                    vCs => vCs.HasChanged);
+                            
+                            (bool foundModifier, VariableChanged<float> value) clockInLogoAnimationFadeDuration =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimationFadeDuration,
+                                    vCs => vCs.HasChanged);
+                            
+                            (bool foundModifier, VariableChanged<float> value) clockInLogoAnimationHoldDuration =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimationHoldDuration,
+                                    vCs => vCs.HasChanged);
+
+                            
+                            float totalFadeInOutDuration = 1.82f;
+                            float totalHoldFrameDuration = 1.42f;
+
+                            if (clockInLogoAnimationFadeDuration.foundModifier)
+                            {
+                                totalFadeInOutDuration = clockInLogoAnimationFadeDuration.value.Data;
+                            }
+                            
+                            if (clockInLogoAnimationHoldDuration.foundModifier)
+                            {
+                                totalHoldFrameDuration = clockInLogoAnimationHoldDuration.value.Data;
+                            }
+
+                            if (clockInLogoAnimation.foundModifier)
+                            {
+                                int frameAmount = clockInLogoAnimation.value.Data.Count;
+
+                                if (frameAmount > 0)
+                                {
+                                    float frameDuration = totalFadeInOutDuration / frameAmount;
+
+                                    GameObject logoAnimationGameObject =
+                                        GameObject.Find("MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation");
+
+                                    Image logoAnimationImageComponent = logoAnimationGameObject.GetComponent<Image>();
+
+                                    logoAnimationImageComponent.sprite = clockInLogoAnimation.value.Data[0];
+
+                                    for (int i = 0; i < frameAmount; i++)
+                                    {
+                                        logoAnimationImageComponent.sprite = clockInLogoAnimation.value.Data[i];
+                                        
+                                        yield return new WaitForSeconds(frameDuration);
+                                    }
+
+                                    yield return new WaitForSeconds(totalHoldFrameDuration);
+
+                                    for (int i = frameAmount - 1; i >= 0; i--)
+                                    {
+                                        logoAnimationImageComponent.sprite = clockInLogoAnimation.value.Data[i];
+                                        
+                                        yield return new WaitForSeconds(frameDuration);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                yield return new WaitForSeconds(6f);
+                            }
+                        }
+                        else
+                        {
+                            yield return new WaitForSeconds(6f);
+                        }
 
                         if (CustomCampaignGlobal.InCustomCampaign)
                         {

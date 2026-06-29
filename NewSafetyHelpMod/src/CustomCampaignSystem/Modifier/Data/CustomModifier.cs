@@ -401,6 +401,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = new List<Sprite>()
         };
+        
+        public VariableChanged<float> ClockInLogoAnimationFadeDuration = new VariableChanged<float>
+        {
+            Data = 1.82f
+        };
+        
+        public VariableChanged<float> ClockInLogoAnimationHoldDuration = new VariableChanged<float>
+        {
+            Data = 1.42f
+        };
 
         /*
          * Cheats / Settings Section
