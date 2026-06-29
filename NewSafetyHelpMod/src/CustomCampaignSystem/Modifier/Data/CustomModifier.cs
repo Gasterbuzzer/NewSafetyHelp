@@ -366,6 +366,27 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
+        
+        public VariableChanged<RichAudioClip> ClockDayStartedAudio = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> ClockDayStartedAudioPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<RichAudioClip> DayStartedAudio = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> DayStartedAudioPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+
 
         public VariableChanged<List<Sprite>> ClockInLogoAnimation = new VariableChanged<List<Sprite>>
         {

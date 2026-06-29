@@ -414,8 +414,28 @@ namespace NewSafetyHelp.Callers.UI
 
                         yield return new WaitForSeconds(6f);
 
-                        GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
-                            .correctSound);
+                        if (CustomCampaignGlobal.InCustomCampaign)
+                        {
+                            (bool foundModifier, VariableChanged<RichAudioClip> value) clockDayStartedAudio =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockDayStartedAudio,
+                                    vCs => vCs.HasChanged);
+
+                            if (clockDayStartedAudio.foundModifier)
+                            {
+                                GlobalVariables.UISoundControllerScript.PlayUISound(clockDayStartedAudio.value.Data);
+                            }
+                            else
+                            {
+                                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
+                                    .correctSound);
+                            }
+                        }
+                        else
+                        {
+                            GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
+                                .correctSound);
+                        }
+                        
 
                         if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                         {
@@ -454,8 +474,28 @@ namespace NewSafetyHelp.Callers.UI
                 }
 
                 mainCanvasBehavior.softwareStartupPanel.SetActive(false);
-                GlobalVariables.UISoundControllerScript.PlayUISound(
-                    GlobalVariables.UISoundControllerScript.correctSound);
+
+                if (CustomCampaignGlobal.InCustomCampaign)
+                {
+                    (bool foundModifier, VariableChanged<RichAudioClip> value) dayStartedAudio =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.DayStartedAudio,
+                            vCs => vCs.HasChanged);
+
+                    if (dayStartedAudio.foundModifier)
+                    {
+                        GlobalVariables.UISoundControllerScript.PlayUISound(dayStartedAudio.value.Data);
+                    }
+                    else
+                    {
+                        GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
+                            .correctSound);
+                    }
+                }
+                else
+                {
+                    GlobalVariables.UISoundControllerScript.PlayUISound(
+                        GlobalVariables.UISoundControllerScript.correctSound);
+                }
 
                 if (!GlobalVariables.arcadeMode
                     && GlobalVariables.currentDay == 7
@@ -555,6 +595,7 @@ namespace NewSafetyHelp.Callers.UI
 
                 GlobalVariables.UISoundControllerScript.PlayUISound(
                     GlobalVariables.UISoundControllerScript.correctSound);
+                
                 GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                 mainCanvasBehavior.softwareStartupPanel.SetActive(true);
                 mainCanvasBehavior.clockInPanel.SetActive(true);

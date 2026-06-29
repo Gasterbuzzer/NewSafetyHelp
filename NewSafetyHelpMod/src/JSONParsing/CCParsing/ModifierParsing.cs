@@ -73,6 +73,26 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 },
                 jsonFolderPath, "timed_caller_critical_audio_name");
 
+            /*
+             * In Game Audio
+             */
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.ClockDayStartedAudioPath,
+                clip =>
+                {
+                    customModifier.ClockDayStartedAudio.Data = clip;
+                    customModifier.ClockDayStartedAudio.HasChanged = true;
+                },
+                jsonFolderPath, "in_game_clock_start_audio_name");
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.DayStartedAudioPath,
+                clip =>
+                {
+                    customModifier.DayStartedAudio.Data = clip;
+                    customModifier.DayStartedAudio.HasChanged = true;
+                },
+                jsonFolderPath, "in_game_day_start_audio_name");
+
             // Add to correct campaign.
             CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
 
@@ -437,11 +457,6 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = false
             };
 
-            VariableChanged<List<Sprite>> clockInLogoAnimation = new VariableChanged<List<Sprite>>
-            {
-                Data = new List<Sprite>()
-            };
-
             VariableChanged<Sprite> inGamePhoneIcon = new VariableChanged<Sprite>
             {
                 Data = null
@@ -465,6 +480,31 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             VariableChanged<Sprite> incomingCallAnswerButtonImage = new VariableChanged<Sprite>
             {
                 Data = null
+            };
+
+            VariableChanged<RichAudioClip> clockDayStartedAudio = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> clockDayStartedAudioPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<RichAudioClip> dayStartedAudio = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> dayStartedAudioPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<List<Sprite>> clockInLogoAnimation = new VariableChanged<List<Sprite>>
+            {
+                Data = new List<Sprite>()
             };
 
             /*
@@ -869,6 +909,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "incoming_call_answer_button_image",
                 ref incomingCallAnswerButtonImage, jsonFolderPath, usermodFolderPath, customCampaignName);
 
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_clock_start_audio_name",
+                ref clockDayStartedAudioPath, jsonFolderPath, usermodFolderPath);
+
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_day_start_audio_name",
+                ref dayStartedAudioPath, jsonFolderPath, usermodFolderPath);
+
             ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
                 "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
 
@@ -998,6 +1044,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 IncomingCallLabel = incomingCallLabel,
                 IncomingCallAnswerButtonText = incomingCallAnswerButtonText,
                 IncomingCallAnswerButtonImage = incomingCallAnswerButtonImage,
+
+                DayStartedAudio = dayStartedAudio,
+                DayStartedAudioPath = dayStartedAudioPath,
+                ClockDayStartedAudio = clockDayStartedAudio,
+                ClockDayStartedAudioPath = clockDayStartedAudioPath,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading,
