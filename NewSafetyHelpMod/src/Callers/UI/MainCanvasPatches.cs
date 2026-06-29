@@ -358,6 +358,22 @@ namespace NewSafetyHelp.Callers.UI
                         GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(1)
                             .GetComponent<Image>().sprite = incomingCallAnswerButtonImage.value.Data;
                     }
+                    
+                    (bool foundModifier, VariableChanged<RichAudioClip> value) inGameLogoFadeInAudio =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.InGameLogoFadeInAudio,
+                            vCs => vCs.HasChanged);
+
+                    if (inGameLogoFadeInAudio.foundModifier)
+                    {
+                        // MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation
+
+                        AudioSource logoAudioSource = GameObject.Find("MainCanvas").transform.GetChild(0).GetChild(12)
+                            .GetChild(1)
+                            .GetComponent<AudioSource>();
+
+                        logoAudioSource.clip = inGameLogoFadeInAudio.value.Data.clip;
+                        logoAudioSource.volume = inGameLogoFadeInAudio.value.Data.volume;
+                    }
 
                     // Change Animation
 

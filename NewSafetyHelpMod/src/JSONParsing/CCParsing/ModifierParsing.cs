@@ -93,6 +93,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 },
                 jsonFolderPath, "in_game_day_start_audio_name");
 
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.InGameLogoFadeInAudioPath,
+                clip =>
+                {
+                    customModifier.InGameLogoFadeInAudio.Data = clip;
+                    customModifier.InGameLogoFadeInAudio.HasChanged = true;
+                },
+                jsonFolderPath, "in_game_logo_fade_in_sound");
+
             // Add to correct campaign.
             CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
 
@@ -498,6 +506,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
 
             VariableChanged<string> dayStartedAudioPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<RichAudioClip> inGameLogoFadeInAudio = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> inGameLogoFadeInAudioPath = new VariableChanged<string>
             {
                 Data = null
             };
@@ -915,6 +933,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_day_start_audio_name",
                 ref dayStartedAudioPath, jsonFolderPath, usermodFolderPath);
 
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_logo_fade_in_sound",
+                ref inGameLogoFadeInAudioPath, jsonFolderPath, usermodFolderPath);
+
             ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
                 "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
 
@@ -1049,6 +1070,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DayStartedAudioPath = dayStartedAudioPath,
                 ClockDayStartedAudio = clockDayStartedAudio,
                 ClockDayStartedAudioPath = clockDayStartedAudioPath,
+                InGameLogoFadeInAudio = inGameLogoFadeInAudio,
+                InGameLogoFadeInAudioPath = inGameLogoFadeInAudioPath,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading,
