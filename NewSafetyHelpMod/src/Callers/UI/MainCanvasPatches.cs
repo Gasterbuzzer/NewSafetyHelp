@@ -302,10 +302,21 @@ namespace NewSafetyHelp.Callers.UI
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.InGamePhoneIcon,
                             vCs => vCs.HasChanged);
 
+                    (bool foundModifier, VariableChanged<bool> value) inGamePhoneIconCenter =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.InGamePhoneIconCenter,
+                            vCs => vCs.HasChanged);
+
+                    GameObject mainCanvas = GameObject.Find("MainCanvas");
+
+                    if (inGamePhoneIconCenter.foundModifier)
+                    {
+                        // MainCanvas/CallPopup/WindowsBar/ProgramLogo
+                        mainCanvas.transform.GetChild(3).GetChild(0).GetChild(2).GetComponent<RectTransform>().pivot =
+                            new Vector2(0.75f, 0.75f);
+                    }
+
                     if (inGamePhoneIcon.foundModifier)
                     {
-                        GameObject mainCanvas = GameObject.Find("MainCanvas");
-
                         // MainCanvas/CallPopup/WindowsBar/ProgramLogo
                         mainCanvas.transform.GetChild(3).GetChild(0).GetChild(2).GetComponent<Image>().sprite =
                             inGamePhoneIcon.value.Data;

@@ -346,6 +346,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
+        
+        public VariableChanged<bool> InGamePhoneIconCenter = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         public VariableChanged<string> IncomingCallTitle = new VariableChanged<string>
         {
