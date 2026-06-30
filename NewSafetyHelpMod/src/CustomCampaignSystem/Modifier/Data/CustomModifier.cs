@@ -386,12 +386,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
-        
+
         public VariableChanged<RichAudioClip> InGameLogoFadeInAudio = new VariableChanged<RichAudioClip>
         {
             Data = null
         };
-        
+
         public VariableChanged<string> InGameLogoFadeInAudioPath = new VariableChanged<string>
         {
             Data = null
@@ -401,12 +401,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = new List<Sprite>()
         };
-        
+
+        public VariableChanged<float> ClockInLogoAnimationScale = new VariableChanged<float>
+        {
+            Data = 1.0f
+        };
+
         public VariableChanged<float> ClockInLogoAnimationFadeDuration = new VariableChanged<float>
         {
             Data = 1.82f
         };
-        
+
         public VariableChanged<float> ClockInLogoAnimationHoldDuration = new VariableChanged<float>
         {
             Data = 1.42f

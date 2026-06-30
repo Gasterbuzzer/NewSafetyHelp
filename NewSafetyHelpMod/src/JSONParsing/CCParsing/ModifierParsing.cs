@@ -525,6 +525,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = new List<Sprite>()
             };
 
+            VariableChanged<float> clockInLogoAnimationScale = new VariableChanged<float>
+            {
+                Data = 1.0f
+            };
+
             VariableChanged<float> clockInLogoAnimationFadeDuration = new VariableChanged<float>
             {
                 Data = 1.82f
@@ -945,15 +950,18 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_logo_fade_in_sound",
                 ref inGameLogoFadeInAudioPath, jsonFolderPath, usermodFolderPath);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_fade_duration",
                 ref clockInLogoAnimationFadeDuration);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_hold_duration",
                 ref clockInLogoAnimationHoldDuration);
 
             ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
                 "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_scale",
+                ref clockInLogoAnimationScale);
 
             /*
              * Cheats / Settings
@@ -1077,6 +1085,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 InGameProgramIconCenter = inGameProgramIconCenter,
                 InGamePhoneIcon = inGamePhoneIcon,
                 ClockInLogoAnimation = clockInLogoAnimation,
+                ClockInLogoAnimationScale = clockInLogoAnimationScale,
                 ClockInLogoAnimationFadeDuration = clockInLogoAnimationFadeDuration,
                 ClockInLogoAnimationHoldDuration = clockInLogoAnimationHoldDuration,
                 IncomingCallTitle = incomingCallTitle,

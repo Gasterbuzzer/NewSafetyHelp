@@ -358,7 +358,7 @@ namespace NewSafetyHelp.Callers.UI
                         GameObject.Find("MainCanvas").transform.GetChild(3).GetChild(1).GetChild(2).GetChild(1)
                             .GetComponent<Image>().sprite = incomingCallAnswerButtonImage.value.Data;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<RichAudioClip> value) inGameLogoFadeInAudio =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.InGameLogoFadeInAudio,
                             vCs => vCs.HasChanged);
@@ -380,7 +380,7 @@ namespace NewSafetyHelp.Callers.UI
                     (bool foundModifier, VariableChanged<List<Sprite>> value) clockInLogoAnimation =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimation,
                             vCs => vCs.HasChanged);
-                    
+
                     if (clockInLogoAnimation.foundModifier)
                     {
                         GameObject logoAnimationGO =
@@ -422,7 +422,7 @@ namespace NewSafetyHelp.Callers.UI
                         mainCanvasBehavior.softwareStartupPanel.SetActive(true);
                         mainCanvasBehavior.clockInPanel.SetActive(false);
                         mainCanvasBehavior.logoPanel.SetActive(false);
-                        
+
                         GlobalVariables.fade.FadeOut(1f);
 
                         yield return new WaitForSeconds(1f);
@@ -437,27 +437,43 @@ namespace NewSafetyHelp.Callers.UI
                             (bool foundModifier, VariableChanged<List<Sprite>> value) clockInLogoAnimation =
                                 CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimation,
                                     vCs => vCs.HasChanged);
-                            
+
+                            (bool foundModifier, VariableChanged<float> value) clockInLogoAnimationScale =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimationScale,
+                                    vCs => vCs.HasChanged);
+
                             (bool foundModifier, VariableChanged<float> value) clockInLogoAnimationFadeDuration =
                                 CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimationFadeDuration,
                                     vCs => vCs.HasChanged);
-                            
+
                             (bool foundModifier, VariableChanged<float> value) clockInLogoAnimationHoldDuration =
                                 CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimationHoldDuration,
                                     vCs => vCs.HasChanged);
 
-                            
+
                             float totalFadeInOutDuration = 1.82f;
                             float totalHoldFrameDuration = 1.42f;
+
+                            GameObject logoAnimationGameObject =
+                                GameObject.Find("MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation");
+
+                            Image logoAnimationImageComponent = logoAnimationGameObject.GetComponent<Image>();
 
                             if (clockInLogoAnimationFadeDuration.foundModifier)
                             {
                                 totalFadeInOutDuration = clockInLogoAnimationFadeDuration.value.Data;
                             }
-                            
+
                             if (clockInLogoAnimationHoldDuration.foundModifier)
                             {
                                 totalHoldFrameDuration = clockInLogoAnimationHoldDuration.value.Data;
+                            }
+
+                            if (clockInLogoAnimationScale.foundModifier)
+                            {
+                                logoAnimationGameObject.GetComponent<RectTransform>().localScale =
+                                    new Vector3(clockInLogoAnimationScale.value.Data,
+                                        clockInLogoAnimationScale.value.Data, clockInLogoAnimationScale.value.Data);
                             }
 
                             if (clockInLogoAnimation.foundModifier)
@@ -468,17 +484,12 @@ namespace NewSafetyHelp.Callers.UI
                                 {
                                     float frameDuration = totalFadeInOutDuration / frameAmount;
 
-                                    GameObject logoAnimationGameObject =
-                                        GameObject.Find("MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation");
-
-                                    Image logoAnimationImageComponent = logoAnimationGameObject.GetComponent<Image>();
-
                                     logoAnimationImageComponent.sprite = clockInLogoAnimation.value.Data[0];
 
                                     for (int i = 0; i < frameAmount; i++)
                                     {
                                         logoAnimationImageComponent.sprite = clockInLogoAnimation.value.Data[i];
-                                        
+
                                         yield return new WaitForSeconds(frameDuration);
                                     }
 
@@ -487,7 +498,7 @@ namespace NewSafetyHelp.Callers.UI
                                     for (int i = frameAmount - 1; i >= 0; i--)
                                     {
                                         logoAnimationImageComponent.sprite = clockInLogoAnimation.value.Data[i];
-                                        
+
                                         yield return new WaitForSeconds(frameDuration);
                                     }
                                 }
@@ -514,7 +525,8 @@ namespace NewSafetyHelp.Callers.UI
                             }
                             else
                             {
-                                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
+                                GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables
+                                    .UISoundControllerScript
                                     .correctSound);
                             }
                         }
@@ -523,7 +535,7 @@ namespace NewSafetyHelp.Callers.UI
                             GlobalVariables.UISoundControllerScript.PlayUISound(GlobalVariables.UISoundControllerScript
                                 .correctSound);
                         }
-                        
+
 
                         if (GlobalVariables.currentDay == 7 && !CustomCampaignGlobal.InCustomCampaign)
                         {
@@ -683,7 +695,7 @@ namespace NewSafetyHelp.Callers.UI
 
                 GlobalVariables.UISoundControllerScript.PlayUISound(
                     GlobalVariables.UISoundControllerScript.correctSound);
-                
+
                 GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                 mainCanvasBehavior.softwareStartupPanel.SetActive(true);
                 mainCanvasBehavior.clockInPanel.SetActive(true);
