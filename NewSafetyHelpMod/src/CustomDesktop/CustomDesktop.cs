@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.ARG;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
@@ -237,6 +238,12 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         return true;
                     }
+                    
+                    /*
+                     * ARG Section
+                     */
+                    
+                    ARGHelper.CreateInputCapture();
 
                     DesktopModifierSnapshot desktopModifierSnapshot = CustomCampaignGlobal.GetModifierDesktopSnapshot();
 

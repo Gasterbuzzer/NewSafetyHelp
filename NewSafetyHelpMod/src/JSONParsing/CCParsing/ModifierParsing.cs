@@ -469,12 +469,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<bool> inGamePhoneIconCenter = new VariableChanged<bool>
             {
                 Data = false
             };
-
 
             VariableChanged<string> incomingCallTitle = new VariableChanged<string>
             {
@@ -935,7 +934,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "in_game_phone_call_icon",
                 ref inGamePhoneIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_phone_call_icon_center",
                 ref inGamePhoneIconCenter);
 
@@ -968,7 +967,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
                 "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_scale",
                 ref clockInLogoAnimationScale);
 

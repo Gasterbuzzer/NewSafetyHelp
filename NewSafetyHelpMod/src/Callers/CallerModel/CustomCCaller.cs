@@ -35,8 +35,7 @@ namespace NewSafetyHelp.Callers.CallerModel
 
         // If the caller will down the network (Meaning entry information cannot be accessed)
         public bool DownedNetworkCaller = false;
-
-
+        
         // Entry (Monster)
         // (Used when the caller asks for help and to check if that name is valid).
         public string EntryNameAttached = "NO_MONSTER_NAME";

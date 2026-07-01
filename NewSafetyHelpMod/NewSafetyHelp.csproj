@@ -124,6 +124,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ARG\ARGHelper.cs" />
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\Audio\AudioLoadThrottler.cs" />
     <Compile Include="src\Audio\AudioPatches\PlaySoundPatches.cs" />
