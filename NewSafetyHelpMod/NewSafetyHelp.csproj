@@ -149,6 +149,8 @@
     <Compile Include="src\Callers\UI\NextCaller.cs" />
     <Compile Include="src\Callers\UI\UIFallbacks.cs" />
     <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreen.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Custom3DScreenPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />

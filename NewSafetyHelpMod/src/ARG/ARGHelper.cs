@@ -22,22 +22,22 @@ namespace NewSafetyHelp.ARG
         {
             private static List<KeyCode> keyPresses = new List<KeyCode>
             {
-                KeyCode.UpArrow,
+                KeyCode.DownArrow,
                 KeyCode.DownArrow,
                 KeyCode.UpArrow,
-                KeyCode.RightArrow,
-                KeyCode.Space
+                KeyCode.LeftArrow,
+                KeyCode.RightArrow
             };
 
             private static float lastPressTime = 0;
             private static int lastKeyPressedIndex = 0;
 
-            private static readonly float timeOutTime = 2f;
+            private const float TimeOutTime = 2f;
 
             private void Update()
             {
                 if (lastKeyPressedIndex > 0
-                    && Time.time - lastPressTime > timeOutTime)
+                    && Time.time - lastPressTime > TimeOutTime)
                 {
                     lastKeyPressedIndex = 0;
                 }
@@ -62,6 +62,9 @@ namespace NewSafetyHelp.ARG
             }
         }
 
+        /// <summary>
+        /// Open up the HTML page in browser for the ARG:
+        /// </summary>
         public static void OpenARGHTML()
         {
             LoggingHelper.InfoLog("Opening HTML file in browser.");
@@ -90,6 +93,9 @@ namespace NewSafetyHelp.ARG
                 });
         }
 
+        /// <summary>
+        /// Creates the input capture for the ARG in the selected custom campaign.
+        /// </summary>
         public static void CreateInputCapture()
         {
             // Prevent this in main campaign or not correct custom campaign.
