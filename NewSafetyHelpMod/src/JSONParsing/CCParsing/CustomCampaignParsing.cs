@@ -219,6 +219,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignTextFile,
                 ref customCampaign.CustomTextProgramFiles, customCampaignName, "text file");
             
+            // Check if any custom 3D shave to be added to a custom campaign.
+            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaign3DComputerScreens,
+                ref customCampaign.CustomComputer3DScreens, customCampaignName, "custom 3D screen");
+            
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }

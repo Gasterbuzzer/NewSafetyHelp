@@ -27,6 +27,7 @@ namespace NewSafetyHelp.JSONParsing
             Ringtone,
             TextProgram,
             Cutscene,
+            Computer3DScreen,
             Invalid
         }
 
@@ -78,6 +79,11 @@ namespace NewSafetyHelp.JSONParsing
                 if (customCampaign.CustomCallersInCampaign.Count > 0)
                 {
                     customCampaign.SortCustomCallersInCustomCampaign();
+                }
+                
+                if (customCampaign.CustomComputer3DScreens.Count > 0)
+                {
+                    customCampaign.SortComputer3DScreens();
                 }
             }
 
@@ -179,6 +185,12 @@ namespace NewSafetyHelp.JSONParsing
                             LoggingHelper.InfoLog(
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as a cutscene.");
                             CutsceneParsing.CreateCutscene(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+                        
+                        case JSONParseTypes.Computer3DScreen: // The provided JSON is a 3D Computer Screen (for custom campaigns).
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a 3D Computer Screen.");
+                            Computer3DScreenParsing.Create3DComputerScreen(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -319,6 +331,16 @@ namespace NewSafetyHelp.JSONParsing
                 }, json))
             {
                 return JSONParseTypes.Cutscene;
+            }
+            
+            // 3D Computer Screen was provided
+            if (ParsingHelper.ContainsKeys(new List<string>
+                {
+                    "computer_3D_screen_custom_campaign_attached",
+                    "computer_3D_screen_in_main_campaign", "computer_3D_screen_priority"
+                }, json))
+            {
+                return JSONParseTypes.Computer3DScreen;
             }
 
             // Unknown JSON type or failed parsing the file.

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen;
 using NewSafetyHelp.CustomCampaignSystem.CustomRingtone;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
@@ -34,6 +35,7 @@ namespace NewSafetyHelp.JSONParsing
         public static List<CustomRingtone> PendingCustomCampaignRingtones = new List<CustomRingtone>();
         public static List<CustomTextFile> PendingCustomCampaignTextFile = new List<CustomTextFile>();
         public static List<CustomCutscene> PendingCustomCampaignCutscenes = new List<CustomCutscene>();
+        public static List<Computer3DScreen> PendingCustomCampaign3DComputerScreens = new List<Computer3DScreen>();
         
         // Configuration
         // ID Offset for Entries in the custom campaign.

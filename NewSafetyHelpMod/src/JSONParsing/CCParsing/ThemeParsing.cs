@@ -2,10 +2,10 @@
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
+using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using static NewSafetyHelp.CustomThemes.ColorHelper;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
 {
@@ -25,7 +25,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 LoggingHelper.ErrorLog("Provided JSON could not be parsed as a theme. Possible syntax mistake?");
                 return;
             }
-            
+
             // Campaign Values
             string customCampaignName = "";
 
@@ -35,7 +35,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             CustomCampaign customCampaign =
                 CustomCampaignGlobal.CustomCampaignsAvailable.Find(customCampaignSearch =>
                     customCampaignSearch.CampaignName == customCampaignName);
-            
+
             if (customTheme.InMainCampaign)
             {
                 GlobalParsingVariables.MainGameThemes.Add(customTheme);
@@ -65,14 +65,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         private static CustomTheme ParseTheme(ref JObject jObjectParsed, ref string customCampaignName)
         {
             bool inMainCampaign = false; // If available in main campaign.
-            
+
             string themeName = "NO THEME NAME SET";
-            
+
             string attachedToTheme = null; // If a conditional theme, what theme is it attached to?
-            
+
             // If theme is a conditional theme (Not null). If general (equal to null)
             List<int> unlockDays = null;
-            
+
             // Theme Colors
             ColorPalette themeColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
             themeColorPalette.colorSwatch = new Color[4];
@@ -91,7 +91,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 inMainCampaign = themeInMainCampaignValue.Value<bool>();
             }
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "theme_name", ref themeName);
             ParsingHelper.TryAssign(jObjectParsed, "attached_to_theme", ref attachedToTheme);
 
@@ -105,7 +105,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     unlockDays = new List<int>();
 
-                    foreach (JToken unlockDayToken in (JArray) unlockDayValue)
+                    foreach (JToken unlockDayToken in (JArray)unlockDayValue)
                     {
                         unlockDays.Add(unlockDayToken.Value<int>());
                     }
@@ -114,77 +114,42 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             if (jObjectParsed.TryGetValue("title_bar_color", out JToken titleBarColorValue))
             {
-                SetColor(ref titleBarColorValue, ref themeColorPalette, 0);
+                ColorParsingHelper.SetColor(ref titleBarColorValue, ref themeColorPalette, 0);
             }
-            
+
             if (jObjectParsed.TryGetValue("menu_color", out JToken menuColorValue))
             {
-                SetColor(ref menuColorValue, ref themeColorPalette, 1);
+                ColorParsingHelper.SetColor(ref menuColorValue, ref themeColorPalette, 1);
             }
-            
+
             if (jObjectParsed.TryGetValue("third_color", out JToken thirdColorValue))
             {
-                SetColor(ref thirdColorValue, ref themeColorPalette, 2);
+                ColorParsingHelper.SetColor(ref thirdColorValue, ref themeColorPalette, 2);
             }
-            
+
             if (jObjectParsed.TryGetValue("entry_font_color", out JToken entryFontColorValue))
             {
-                SetColor(ref entryFontColorValue, ref themeColorPalette, 2);
+                ColorParsingHelper.SetColor(ref entryFontColorValue, ref themeColorPalette, 2);
             }
-            
+
             if (jObjectParsed.TryGetValue("main_window_color", out JToken mainWindowColorValue))
             {
-                SetColor(ref mainWindowColorValue, ref themeColorPalette, 3);
+                ColorParsingHelper.SetColor(ref mainWindowColorValue, ref themeColorPalette, 3);
             }
-            
-            return new CustomTheme()
+
+            return new CustomTheme
             {
                 InMainCampaign = inMainCampaign,
-                
+
                 ThemeName = themeName,
                 CustomCampaignName = customCampaignName,
-                
+
                 AttachedToTheme = attachedToTheme,
-                
+
                 UnlockDays = unlockDays,
-                
+
                 CustomThemePalette = themeColorPalette
             };
-        }
-
-        private static void SetColor(ref JToken jsonValue, ref ColorPalette themeColorPalette, int colorIndex)
-        {
-            if (jsonValue.Type == JTokenType.Array)
-            {
-                // We first create a list and all floats.
-                // If we have 3 colors, we simply add these, if we have four,
-                // we interpret the 4th value as the alpha value.
-                List<float> desktopBackgroundColorList = new List<float>();
-
-                foreach (JToken desktopBackgroundColorToken in (JArray) jsonValue)
-                {
-                    desktopBackgroundColorList.Add(desktopBackgroundColorToken.Value<float>());
-                }
-
-                switch (desktopBackgroundColorList.Count)
-                {
-                    case 3:
-                        themeColorPalette.colorSwatch[colorIndex] = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
-                            GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]));
-                        break;
-
-                    case 4:
-                        themeColorPalette.colorSwatch[colorIndex] = new Color(GetConvertedColorFloat(desktopBackgroundColorList[0]),
-                            GetConvertedColorFloat(desktopBackgroundColorList[1]), GetConvertedColorFloat(desktopBackgroundColorList[2]), 
-                            GetConvertedColorFloat(desktopBackgroundColorList[3]));
-                        break;
-
-                    default:
-                        LoggingHelper.ErrorLog("Provided color for setting color is invalid! " +
-                                               "Make sure it's 3 or 4 values.");
-                        break;
-                }
-            }
         }
     }
 }

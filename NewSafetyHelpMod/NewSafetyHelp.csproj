@@ -150,6 +150,7 @@
     <Compile Include="src\Callers\UI\UIFallbacks.cs" />
     <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreen.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreenHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Custom3DScreenPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
     <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />
     <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\Computer3DScreenParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CutsceneParsing.cs" />
@@ -236,6 +238,7 @@
     <Compile Include="src\JSONParsing\ParsingHelpers\ArtbookParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\CallerRequirementParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\ColorParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\IDParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\ImageParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\PendingParsingHelper.cs" />

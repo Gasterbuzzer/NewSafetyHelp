@@ -3,6 +3,7 @@ using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
@@ -269,6 +270,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         public bool DoNotAccountDefaultRingtone = true;
         public List<CustomRingtone.CustomRingtone> CustomRingtones = new List<CustomRingtone.CustomRingtone>();
+        
+        /*
+         * Computer 3D Scenes
+         */
+
+        public List<Computer3DScreen> CustomComputer3DScreens = new List<Computer3DScreen>();
 
         /*
          * Helper functions for custom campaigns.
@@ -319,6 +326,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
                 .OrderByDescending(customTextFile => customTextFile.UnlockDay)
                 .ThenByDescending(customTextFile => customTextFile.OrderPriority)
                 .ThenBy(customTextFile => customTextFile.FileNameOnDesktop).ToList();
+        }
+        
+        /// <summary>
+        /// Sorts the computer 3D screens to the correct priorities.
+        /// </summary>
+        public void SortComputer3DScreens()
+        {
+            CustomComputer3DScreens = CustomComputer3DScreens
+                .OrderByDescending(computer3DScreen => computer3DScreen.ApplyPriority) .ToList();
         }
     }
 }

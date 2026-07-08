@@ -20,7 +20,7 @@ namespace NewSafetyHelp.ARG
         /// </summary>
         public class ARGCaptureInput : MonoBehaviour
         {
-            private static List<KeyCode> keyPresses = new List<KeyCode>
+            private static readonly List<KeyCode> KeyPresses = new List<KeyCode>
             {
                 KeyCode.DownArrow,
                 KeyCode.DownArrow,
@@ -42,14 +42,14 @@ namespace NewSafetyHelp.ARG
                     lastKeyPressedIndex = 0;
                 }
 
-                KeyCode expectedKey = keyPresses[lastKeyPressedIndex];
+                KeyCode expectedKey = KeyPresses[lastKeyPressedIndex];
 
                 if (Input.GetKeyDown(expectedKey))
                 {
                     lastKeyPressedIndex++;
                     lastPressTime = Time.time;
 
-                    if (lastKeyPressedIndex >= keyPresses.Count)
+                    if (lastKeyPressedIndex >= KeyPresses.Count)
                     {
                         OpenARGHTML();
                         lastKeyPressedIndex = 0;
