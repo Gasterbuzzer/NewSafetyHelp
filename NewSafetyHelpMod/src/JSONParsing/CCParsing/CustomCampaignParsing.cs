@@ -276,6 +276,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             List<int> warningCallThresholdCallerAmounts = new List<int>();
 
+            // Saving
+            
+            VariableChanged<bool> shouldResetGameBeatenVariableOnReset = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            
             // Video Cutscenes
             string endCutscenePath = "";
             string gameOverCutscenePath = "";
@@ -405,6 +412,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
             
+            // Saving
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "reset_game_beaten_on_week_reset", ref shouldResetGameBeatenVariableOnReset);
+            
+            // Cutscenes
             VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_end_cutscene_video_name",
                 ref endCutscenePath, jsonFolderPath, usermodFolderPath);
             
@@ -493,6 +504,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 WarningThreshold = warningThreshold,
                 WarningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
 
+                ShouldResetGameBeatenVariableOnReset = shouldResetGameBeatenVariableOnReset,
+                
                 EndCutsceneVideoName = endCutscenePath,
                 GameOverCutsceneVideoName = gameOverCutscenePath,
                 

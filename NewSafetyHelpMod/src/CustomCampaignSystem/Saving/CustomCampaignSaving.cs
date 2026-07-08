@@ -492,11 +492,22 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             currentCampaign.SavedCallerArrayLength = 0;
 
             // Special Values
-            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
-            currentCampaign.SavedGameFinished = 0;
 
-            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
-            currentCampaign.SavedGameFinishedDisplay = 0;
+            bool shouldResetGameFinishedBooleans = false;
+            
+            if (currentCampaign.ShouldResetGameBeatenVariableOnReset.HasChanged)
+            {
+                shouldResetGameFinishedBooleans = currentCampaign.ShouldResetGameBeatenVariableOnReset.Data;
+            }
+
+            if (shouldResetGameFinishedBooleans)
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
+                currentCampaign.SavedGameFinished = 0;
+
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
+                currentCampaign.SavedGameFinishedDisplay = 0;
+            }
             
             // Options
             currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value = 0;

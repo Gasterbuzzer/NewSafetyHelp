@@ -143,6 +143,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> SavedDayScores = new List<float>();
+        
+        // The custom campaign logic resets the game beaten booleans to false when a reset happens, this prevents it.
+        public VariableChanged<bool> ShouldResetGameBeatenVariableOnReset = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         /*
          * Video Cutscenes
