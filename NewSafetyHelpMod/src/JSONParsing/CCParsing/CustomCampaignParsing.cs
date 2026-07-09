@@ -337,6 +337,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             bool doNotAccountDefaultRingtone = true;
             
+            // Computer 3D Screen
+            
+            VariableChanged<bool> skip3DComputerScreenForCustomCampaign = new VariableChanged<bool>
+            {
+                Data = true
+            };
+            
             /*
              * Parsing the JSON File
              */
@@ -471,8 +478,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_desktop_logo_name", ref customDesktopLogo,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
             
+            // Theme
             ParsingHelper.TryAssign(jObjectParsed, new List<string>{"defaultTheme", "default_theme"}, ref defaultTheme);
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
+            
+            // Ringtone
             ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
 
             ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "waiting_time", ref waitBetweenCallers);
@@ -480,6 +490,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 enableCustomWaitBetweenCallers = true;
             }
+            
+            // 3D Computer Screen
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "skip_3D_computer_screen",
+                ref skip3DComputerScreenForCustomCampaign);
             
             return new CustomCampaign
             {
@@ -544,6 +558,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DisablePickingThemeOption = disablePickingThemeOption,
                 
                 DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone,
+                
+                Skip3DComputerScreenForCustomCampaign = skip3DComputerScreenForCustomCampaign,
                 
                 WaitBetweenCallers = waitBetweenCallers,
                 EnableCustomWaitBetweenCallers = enableCustomWaitBetweenCallers

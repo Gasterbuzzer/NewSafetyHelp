@@ -1,5 +1,6 @@
 ﻿using System;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Saving;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine.SceneManagement;
@@ -24,7 +25,20 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             CustomCampaignSaving.LoadFromFileCustomCampaignInfo();
 
             // Reload Scene (Mainly to hide the fact that it is actually seamless.)
-            SceneManager.LoadScene("MainMenuScene");
+
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            
+            if (customCampaign != null 
+                && customCampaign.Skip3DComputerScreenForCustomCampaign.HasChanged 
+                && !customCampaign.Skip3DComputerScreenForCustomCampaign.Data)
+            {
+                SceneManager.LoadScene("Computer3DScene");
+            }
+            else
+            {
+                SceneManager.LoadScene("MainMenuScene");
+            }
+            
             LoggingHelper.DebugLog("Finished changing into custom campaign.");
         }
 

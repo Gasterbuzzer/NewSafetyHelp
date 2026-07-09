@@ -276,6 +276,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
          */
 
         public List<Computer3DScreen> CustomComputer3DScreens = new List<Computer3DScreen>();
+        
+        public VariableChanged<bool> Skip3DComputerScreenForCustomCampaign = new VariableChanged<bool>
+        {
+            Data = true
+        };
 
         /*
          * Helper functions for custom campaigns.
@@ -334,7 +339,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public void SortComputer3DScreens()
         {
             CustomComputer3DScreens = CustomComputer3DScreens
-                .OrderByDescending(computer3DScreen => computer3DScreen.ApplyPriority) .ToList();
+                .OrderByDescending(computer3DScreen => computer3DScreen.ApplyPriority).ToList();
         }
     }
 }
