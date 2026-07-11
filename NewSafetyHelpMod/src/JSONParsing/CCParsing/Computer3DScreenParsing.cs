@@ -32,7 +32,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Campaign Values
             string customCampaignName = "";
 
-            Computer3DScreen custom3DScreen = Parse3DComputerScreen(ref jObjectParsed, ref customCampaignName);
+            Computer3DScreen custom3DScreen = Parse3DComputerScreen(ref jObjectParsed, ref customCampaignName,
+                usermodFolderPath, jsonFolderPath);
 
             // Add to correct campaign.
             CustomCampaign customCampaign =
@@ -53,7 +54,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         }
 
         private static Computer3DScreen Parse3DComputerScreen(ref JObject jObjectParsed, ref string customCampaignName,
-            string usermodFolderPath = "", string jsonFolderPath = "")
+            string usermodFolderPath, string jsonFolderPath)
         {
             /*
              * Properties
@@ -247,6 +248,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "particle_image_name",
                 ref particleTexture, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            LoggingHelper.TestLog($"{particleTexture.HasChanged}");
 
             // Creating the object
             return new Computer3DScreen

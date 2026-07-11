@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using NewSafetyHelp.LoggingSystem;
+using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 {
@@ -153,14 +154,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 
                         if (computer3DScreen.ParticleTexture.HasChanged)
                         {
-                            Material particleTexture = new Material(Shader.Find("Sprites/Default"));
-                            particleTexture.mainTexture = computer3DScreen.ParticleTexture.Data.texture;
-
+                            LoggingHelper.TestLog("Test");
+                            
                             ParticleSystemRenderer particleSystemRenderer = GameObject.Find("model").transform
                                 .Find("Particle System")
                                 .GetComponent<ParticleSystemRenderer>();
 
-                            particleSystemRenderer.material = particleTexture;
+                            particleSystemRenderer.material.mainTexture = computer3DScreen.ParticleTexture.Data.texture;
                         }
                     }
                 }
