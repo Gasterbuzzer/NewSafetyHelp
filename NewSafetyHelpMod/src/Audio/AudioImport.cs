@@ -73,19 +73,13 @@ namespace NewSafetyHelp.Audio
         private static IEnumerator LoadAudio(Action<AudioClip> callback, string path,
             AudioType audioType = AudioType.MPEG)
         {
-            bool fromHotReload = ReloadJSONParsing.IsInHotReload;
+            long audioFileSize = 0;
 
-            yield return AudioLoadThrottler.WaitForSlot(!fromHotReload);
-
-            // (Bool: We pass if we skip the waiting for slot.)
-            LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
-
-            Time.timeScale = 0;
-
-            CurrentLoadingAudios.Add($"{path}{audioType.ToString()}");
-
-            // First we check if the file exists
-            if (!File.Exists(path))
+            if (File.Exists(path))
+            {
+                audioFileSize = new FileInfo(path).Length;
+            }
+            else
             {
                 LoggingHelper.ErrorLog($"Given path to file {path} of type {audioType.ToString()} does not exist.");
 
@@ -100,6 +94,22 @@ namespace NewSafetyHelp.Audio
 
                 yield break;
             }
+
+            CurrentLoadingAudios.Add($"{path}{audioType.ToString()}");
+
+            bool fromHotReload = ReloadJSONParsing.IsInHotReload;
+
+            LoggingHelper.DebugLog(
+                $"Current allocated memory (audio is waiting for slot): '{Profiler.GetTotalAllocatedMemoryLong()}' " +
+                $"(File size '{audioFileSize}').",
+                LoggingHelper.LoggingCategory.MEMORY);
+
+            yield return AudioLoadThrottler.WaitForSlot(fromHotReload, audioFileSize);
+
+            // (Bool: We pass if we skip the waiting for slot.)
+            LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
+
+            Time.timeScale = 0;
 
             string url = "file://" + path;
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
@@ -134,7 +144,8 @@ namespace NewSafetyHelp.Audio
                 CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
 
                 LoggingHelper.DebugLog(
-                    $"Current allocated memory (audio is waiting for slot): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                    $"Current allocated memory (audio finished loading in): '{Profiler.GetTotalAllocatedMemoryLong()}' " +
+                    $"(File size '{audioFileSize}').",
                     LoggingHelper.LoggingCategory.MEMORY);
 
                 AudioLoadThrottler.ReleaseSlot(fromHotReload);

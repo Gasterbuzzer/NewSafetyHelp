@@ -1,5 +1,4 @@
-﻿using NewSafetyHelp.LoggingSystem;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 {
@@ -20,12 +19,55 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 
                     if (computer3DScreen != null)
                     {
-                        LoggingHelper.TestLog("Test");
-                        
+                        /*
+                         * Lights
+                         */
+
                         if (computer3DScreen.MainLightColor.HasChanged)
                         {
-                            GameObject.Find("Directional Light").GetComponent<Light>().color =
+                            GameObject.Find("Point Light (1)").GetComponent<Light>().color =
                                 computer3DScreen.MainLightColor.Data;
+                        }
+
+                        if (computer3DScreen.DisableMainLight.HasChanged)
+                        {
+                            GameObject.Find("Point Light (1)").SetActive(!computer3DScreen.DisableMainLight.Data);
+                        }
+
+                        if (computer3DScreen.SecondMainLightColor.HasChanged)
+                        {
+                            GameObject.Find("Directional Light").GetComponent<Light>().color =
+                                computer3DScreen.SecondMainLightColor.Data;
+                        }
+
+                        if (computer3DScreen.DisableSecondMainLight.HasChanged)
+                        {
+                            GameObject.Find("Directional Light")
+                                .SetActive(!computer3DScreen.DisableSecondMainLight.Data);
+                        }
+                        
+                        if (computer3DScreen.DeskLightColor.HasChanged)
+                        {
+                            GameObject.Find("Point Light (3)").GetComponent<Light>().color =
+                                computer3DScreen.DeskLightColor.Data;
+                        }
+
+                        if (computer3DScreen.DisableDeskLight.HasChanged)
+                        {
+                            GameObject.Find("Point Light (3)")
+                                .SetActive(!computer3DScreen.DisableDeskLight.Data);
+                        }
+                        
+                        if (computer3DScreen.KeyboardLightColor.HasChanged)
+                        {
+                            GameObject.Find("Point Light").GetComponent<Light>().color =
+                                computer3DScreen.KeyboardLightColor.Data;
+                        }
+
+                        if (computer3DScreen.DisableKeyboardLight.HasChanged)
+                        {
+                            GameObject.Find("Point Light")
+                                .SetActive(!computer3DScreen.DisableKeyboardLight.Data);
                         }
                     }
                 }

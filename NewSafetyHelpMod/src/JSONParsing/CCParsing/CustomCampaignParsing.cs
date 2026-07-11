@@ -24,17 +24,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         public static void CreateCustomCampaign(JObject jObjectParsed, string usermodFolderPath = "",
             string jsonFolderPath = "")
         {
-            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object || string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
+            if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
+                string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a custom campaign. Possible syntax mistake?");
+                LoggingHelper.ErrorLog(
+                    "Provided JSON could not be parsed as a custom campaign. Possible syntax mistake?");
                 return;
             }
-            
+
             string customCampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
-            
+
             CustomCampaign customCampaign = ParseCampaignFile(ref jObjectParsed, ref usermodFolderPath,
-                    ref jsonFolderPath, ref customCampaignName);
-            
+                ref jsonFolderPath, ref customCampaignName);
+
             // Check if any callers have to be added to this campaign.
             if (GlobalParsingVariables.PendingCustomCampaignCustomCallers.Count > 0)
             {
@@ -46,7 +48,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (customCallerCC.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog($"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
+                        LoggingHelper.DebugLog(
+                            $"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
 
                         if (customCallerCC.IsGameOverCaller)
                         {
@@ -65,39 +68,41 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     }
                 }
             }
-            
+
 
             // Check if any entries have to be added to this campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEntries,
                 ref customCampaign.EntriesOnlyInCampaign, customCampaignName, "entries");
 
             // Check if any entries have to be added to this campaign.
-            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignReplaceEntries,
+            PendingParsingHelper.AddPendingElementsToCampaign(
+                ref GlobalParsingVariables.PendingCustomCampaignReplaceEntries,
                 ref customCampaign.EntryReplaceOnlyInCampaign, customCampaignName, "replace-entries");
 
             // Check if any emails have to be added to a custom campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEmails,
                 ref customCampaign.Emails, customCampaignName, "emails");
-            
+
             // Check if any videos have to be added to a custom campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignVideos,
                 ref customCampaign.CustomVideos, customCampaignName, "videos");
-            
+
             // Check if any cutscenes have to be added to a custom campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignCutscenes,
                 ref customCampaign.CustomCutscenes, customCampaignName, "cutscenes");
-            
+
             // Check if any music has to be added to a custom campaign.
             if (GlobalParsingVariables.PendingCustomCampaignMusic.Count > 0)
             {
                 // Create a copy of the list to iterate over
                 List<CustomMusic> tempList = new List<CustomMusic>(GlobalParsingVariables.PendingCustomCampaignMusic);
-                
+
                 foreach (CustomMusic missingMusic in tempList)
                 {
                     if (missingMusic.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog(() => $"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
+                        LoggingHelper.DebugLog(() =>
+                            $"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
 
                         if (missingMusic.IsIntermissionMusic)
                         {
@@ -107,54 +112,61 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         {
                             customCampaign.CustomMusic.Add(missingMusic);
                         }
-                        
+
                         GlobalParsingVariables.PendingCustomCampaignMusic.Remove(missingMusic);
                     }
                 }
             }
-            
+
             customCampaign.ModifierSources = new List<ModifierSource>
             {
                 new ModifierSource
                 {
                     ModifierName = "General Modifier",
-                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays == null && !modifier.OnlyIfGameFinished
+                    RequirementForAddingToModifierList = modifier =>
+                        modifier.UnlockDays == null && !modifier.OnlyIfGameFinished
                 },
-                
+
                 new ModifierSource
                 {
                     ModifierName = "General Modifier when game is finished.",
                     SourceCondition = c => c.SavedGameFinished == 1 || c.SavedGameFinishedDisplay == 1,
-                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays == null && modifier.OnlyIfGameFinished
+                    RequirementForAddingToModifierList =
+                        modifier => modifier.UnlockDays == null && modifier.OnlyIfGameFinished
                 },
-                
+
                 new ModifierSource
                 {
                     ModifierName = "Day Modifier",
-                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays != null && !modifier.OnlyIfGameFinished,
-                    ModifierExtraSelectionCondition = modifier => modifier.UnlockDays != null && modifier.UnlockDays.Contains(GlobalVariables.currentDay)
+                    RequirementForAddingToModifierList =
+                        modifier => modifier.UnlockDays != null && !modifier.OnlyIfGameFinished,
+                    ModifierExtraSelectionCondition = modifier =>
+                        modifier.UnlockDays != null && modifier.UnlockDays.Contains(GlobalVariables.currentDay)
                 },
-                
+
                 new ModifierSource
                 {
                     ModifierName = "Day Modifier when the game is finished.",
                     SourceCondition = c => c.SavedGameFinished == 1 || c.SavedGameFinishedDisplay == 1,
-                    RequirementForAddingToModifierList = modifier => modifier.UnlockDays != null && modifier.OnlyIfGameFinished,
-                    ModifierExtraSelectionCondition = modifier => modifier.UnlockDays != null && modifier.UnlockDays.Contains(GlobalVariables.currentDay)
+                    RequirementForAddingToModifierList =
+                        modifier => modifier.UnlockDays != null && modifier.OnlyIfGameFinished,
+                    ModifierExtraSelectionCondition = modifier =>
+                        modifier.UnlockDays != null && modifier.UnlockDays.Contains(GlobalVariables.currentDay)
                 }
             };
-            
+
             // Check if any modifier has to be added to a custom campaign.
             if (GlobalParsingVariables.PendingCustomCampaignModifiers.Count > 0)
             {
                 // Create a copy of the list to iterate over
-                List<CustomModifier> tempList = new List<CustomModifier>(GlobalParsingVariables.PendingCustomCampaignModifiers);
+                List<CustomModifier> tempList =
+                    new List<CustomModifier>(GlobalParsingVariables.PendingCustomCampaignModifiers);
 
                 foreach (CustomModifier missingModifier in tempList)
                 {
                     if (missingModifier.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog(() => 
+                        LoggingHelper.DebugLog(() =>
                             $"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
 
                         if (missingModifier.UnlockDays == null)
@@ -179,12 +191,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                                 customCampaign.ModifierSources[3].Modifiers.Add(missingModifier);
                             }
                         }
-                        
+
                         GlobalParsingVariables.PendingCustomCampaignModifiers.Remove(missingModifier);
                     }
                 }
             }
-            
+
             // Check if any theme has to be added to a custom campaign.
             if (GlobalParsingVariables.PendingCustomCampaignThemes.Count > 0)
             {
@@ -195,7 +207,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     if (missingTheme.CustomCampaignName == customCampaignName)
                     {
-                        LoggingHelper.DebugLog(() => $"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
+                        LoggingHelper.DebugLog(() =>
+                            $"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
 
                         if (missingTheme.UnlockDays == null)
                         {
@@ -205,28 +218,29 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         {
                             customCampaign.CustomThemesDays.Add(missingTheme);
                         }
-                        
+
                         GlobalParsingVariables.PendingCustomCampaignThemes.Remove(missingTheme);
                     }
                 }
             }
-            
+
             // Check if any ringtone has to be added to a custom campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignRingtones,
                 ref customCampaign.CustomRingtones, customCampaignName, "ringtone");
-            
+
             // Check if any text files have to be added to a custom campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignTextFile,
                 ref customCampaign.CustomTextProgramFiles, customCampaignName, "text file");
-            
+
             // Check if any custom 3D shave to be added to a custom campaign.
-            PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaign3DComputerScreens,
+            PendingParsingHelper.AddPendingElementsToCampaign(
+                ref GlobalParsingVariables.PendingCustomCampaign3DComputerScreens,
                 ref customCampaign.CustomComputer3DScreens, customCampaignName, "custom 3D screen");
-            
+
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }
-        
+
         /// <summary>
         /// Parses the custom campaign values.
         /// </summary>
@@ -241,34 +255,37 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Desktop
             string customCampaignDesktopName = "NO_NAME\nPROVIDED";
             Sprite customCampaignSprite = null;
-                    
+
             // Initialize the strings empty.
             List<List<string>> loadingTexts = new List<List<string>>
             {
-                new List<string> {""}, // First inner list with one empty string
-                new List<string> {""}  // Second inner list with one empty string
+                new List<string> { "" }, // First inner list with one empty string
+                new List<string> { "" } // Second inner list with one empty string
             };
-            
+
             // Date and Username
             string desktopUsernameText = "";
             int desktopDateStartYear = -1;
             int desktopDateStartMonth = -1;
             int desktopDateStartDay = -1;
             bool useEuropeDateFormat = false;
-                    
+
             // Campaign Settings
             int customCampaignDays = 7;
-                    
+
             List<string> customCampaignDaysNames = new List<string>();
-                    
+
             bool removeAllExistingEntries = false;
-            
+
             // If the starter entries are supposed to have the DLC entries.
             bool useDLCEntries = false;
 
-            bool resetDefaultEntriesPermission = false; // If all default entries should have their permission set to 0. (Also hides NEW tag from entry name)
+            bool
+                resetDefaultEntriesPermission =
+                    false; // If all default entries should have their permission set to 0. (Also hides NEW tag from entry name)
 
-            bool doShowNewTagForMainGameEntries = false; // If to show the NEW in entry names when the permission is set 0 for the first day.
+            bool doShowNewTagForMainGameEntries =
+                false; // If to show the NEW in entry names when the permission is set 0 for the first day.
 
             bool skipCallersCorrectly = false; // If to always skip callers with the answer being marked as "correct".
 
@@ -281,21 +298,21 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             List<int> warningCallThresholdCallerAmounts = new List<int>();
 
             // Saving
-            
+
             VariableChanged<bool> shouldResetGameBeatenVariableOnReset = new VariableChanged<bool>
             {
                 Data = false
             };
-            
+
             // Video Cutscenes
             string endCutscenePath = "";
             string gameOverCutscenePath = "";
-            
+
             // Music
             bool useRandomMusic = true;
-            
+
             bool removeDefaultMusic = false; // If to remove the default music from the game.
-            
+
             // Wait Time between callers
             List<float> waitBetweenCallers = new List<float>();
             bool enableCustomWaitBetweenCallers = false;
@@ -326,28 +343,28 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool disableDesktopLogo = false;
             Sprite customDesktopLogo = null;
             float customDesktopLogoTransparency = 0.2627f;
-            
+
             // Themes
-            
+
             bool disablePickingThemeOption = false; // If true, it will hide the option to set the theme.
 
             string defaultTheme = null;
-            
+
             // Ringtone
 
             bool doNotAccountDefaultRingtone = true;
-            
+
             // Computer 3D Screen
-            
+
             VariableChanged<bool> skip3DComputerScreenForCustomCampaign = new VariableChanged<bool>
             {
                 Data = true
             };
-            
+
             /*
              * Parsing the JSON File
              */
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_name", ref customCampaignName);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_desktop_name", ref customCampaignDesktopName);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref desktopUsernameText);
@@ -357,51 +374,58 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "use_europe_date_format", ref useEuropeDateFormat);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_days", ref customCampaignDays);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_remove_main_entries", ref removeAllExistingEntries);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "use_dlc_entries", ref useDLCEntries);
-            
-            if (jObjectParsed.TryGetValue("custom_campaign_empty_main_entries_permission", out var customCampaignEmptyMainEntriesPermissionValue))
+
+            if (jObjectParsed.TryGetValue("custom_campaign_empty_main_entries_permission",
+                    out var customCampaignEmptyMainEntriesPermissionValue))
             {
                 resetDefaultEntriesPermission = customCampaignEmptyMainEntriesPermissionValue.Value<bool>();
 
-                ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_show_new_tag_for_main_entries", ref doShowNewTagForMainGameEntries);
+                ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_show_new_tag_for_main_entries",
+                    ref doShowNewTagForMainGameEntries);
             }
-            
+
             // Sanity check in case it was passed but no entries have been reset to 0th permission.
-            if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out _) && !resetDefaultEntriesPermission)
+            if (jObjectParsed.TryGetValue("custom_campaign_show_new_tag_for_main_entries", out _) &&
+                !resetDefaultEntriesPermission)
             {
-                LoggingHelper.WarningLog("Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
+                LoggingHelper.WarningLog(
+                    "Provided option to show 'NEW' tag for main game entries but main game entries are not being reset?");
             }
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_gameover_threshold", ref gameOverThreshold);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_warning_threshold", ref warningThreshold);
-            
+
             if (jObjectParsed.TryGetValue("custom_campaign_days_names", out var customCampaignDaysNamesValue))
             {
-                JArray _customCampaignDays = (JArray) customCampaignDaysNamesValue;
+                JArray _customCampaignDays = (JArray)customCampaignDaysNamesValue;
 
                 foreach (JToken campaignDay in _customCampaignDays)
                 {
-                    customCampaignDaysNames.Add((string) campaignDay);
+                    customCampaignDaysNames.Add((string)campaignDay);
                 }
             }
 
-            ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_icon_image_name", ref customCampaignSprite, jsonFolderPath,
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_campaign_icon_image_name",
+                ref customCampaignSprite, jsonFolderPath,
                 usermodFolderPath, customCampaignName);
-            
-            if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text1", out var customCampaignLoadingDesktopText1Value))
+
+            if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text1",
+                    out var customCampaignLoadingDesktopText1Value))
             {
-                JArray _loadingText = (JArray) customCampaignLoadingDesktopText1Value;
+                JArray _loadingText = (JArray)customCampaignLoadingDesktopText1Value;
 
                 loadingTexts[0] = new List<string>();
 
                 for (int i = 0; i < _loadingText.Count; i++)
                 {
-                    loadingTexts[0].Add((string) _loadingText[i]);
+                    loadingTexts[0].Add((string)_loadingText[i]);
                 }
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text2", out var customCampaignLoadingDesktopText2Value))
+            if (jObjectParsed.TryGetValue("custom_campaign_loading_desktop_text2",
+                    out var customCampaignLoadingDesktopText2Value))
             {
                 JArray _loadingText = (JArray)customCampaignLoadingDesktopText2Value;
 
@@ -409,30 +433,32 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 for (int i = 0; i < _loadingText.Count; i++)
                 {
-                    loadingTexts[1].Add((string) _loadingText[i]);
+                    loadingTexts[1].Add((string)_loadingText[i]);
                 }
             }
 
-            if (jObjectParsed.TryGetValue("custom_campaign_threshold_amount", out var customCampaignThresholdAmountValue))
+            if (jObjectParsed.TryGetValue("custom_campaign_threshold_amount",
+                    out var customCampaignThresholdAmountValue))
             {
                 JArray thresholdAmount = (JArray)customCampaignThresholdAmountValue;
 
                 for (int i = 0; i < thresholdAmount.Count; i++)
                 {
-                    warningCallThresholdCallerAmounts.Add((int) thresholdAmount[i]);
+                    warningCallThresholdCallerAmounts.Add((int)thresholdAmount[i]);
                 }
             }
-            
+
             // Saving
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "reset_game_beaten_on_week_reset", ref shouldResetGameBeatenVariableOnReset);
-            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "reset_game_beaten_on_week_reset",
+                ref shouldResetGameBeatenVariableOnReset);
+
             // Cutscenes
             VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_end_cutscene_video_name",
                 ref endCutscenePath, jsonFolderPath, usermodFolderPath);
-            
+
             VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "custom_campaign_gameover_cutscene_video_name",
                 ref gameOverCutscenePath, jsonFolderPath, usermodFolderPath);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "always_randomize_music", ref useRandomMusic);
             ParsingHelper.TryAssign(jObjectParsed, "remove_default_music", ref removeDefaultMusic);
             ParsingHelper.TryAssign(jObjectParsed, "entry_browser_always_active", ref entryBrowserAlwaysActive);
@@ -443,17 +469,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "rename_main_game_desktop_icon", ref renameMainProgram);
             ParsingHelper.TryAssign(jObjectParsed, "disable_main_campaign_videos", ref disableDefaultVideos);
             ParsingHelper.TryAssign(jObjectParsed, "remove_default_emails", ref removeAllDefaultEmails);
-            
-            ImageParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path", ref changeMainProgramSprite,
+
+            ImageParsingHelper.TryAssignSprite(jObjectParsed, "main_game_desktop_icon_path",
+                ref changeMainProgramSprite,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
-            if (jObjectParsed.TryGetValue("custom_campaign_desktop_backgrounds", out var customCampaignDesktopBackgrounds))
+
+            if (jObjectParsed.TryGetValue("custom_campaign_desktop_backgrounds",
+                    out var customCampaignDesktopBackgrounds))
             {
                 JArray backgroundNames = (JArray)customCampaignDesktopBackgrounds;
 
                 for (int i = 0; i < backgroundNames.Count; i++)
                 {
-                    if (string.IsNullOrEmpty((string) backgroundNames[i]))
+                    if (string.IsNullOrEmpty((string)backgroundNames[i]))
                     {
                         LoggingHelper.ErrorLog($"Did not find '{backgroundNames[i]}'. Adding null.");
                         backgroundSprites.Add(null);
@@ -471,17 +499,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "disable_desktop_logo", ref disableDesktopLogo);
             ParsingHelper.TryAssign(jObjectParsed, "disable_green_color_on_desktop", ref disableGreenColorBackground);
-            ParsingHelper.TryAssign(jObjectParsed, "custom_desktop_logo_transparency", ref customDesktopLogoTransparency);
+            ParsingHelper.TryAssign(jObjectParsed, "custom_desktop_logo_transparency",
+                ref customDesktopLogoTransparency);
             ParsingHelper.TryAssign(jObjectParsed, "skip_callers_correctly", ref skipCallersCorrectly);
             ParsingHelper.TryAssign(jObjectParsed, "game_over_immunity", ref gameOverImmunity);
-            
+
             ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_desktop_logo_name", ref customDesktopLogo,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             // Theme
-            ParsingHelper.TryAssign(jObjectParsed, new List<string>{"defaultTheme", "default_theme"}, ref defaultTheme);
+            ParsingHelper.TryAssign(jObjectParsed, new List<string> { "defaultTheme", "default_theme" },
+                ref defaultTheme);
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
-            
+
             // Ringtone
             ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
 
@@ -490,11 +520,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 enableCustomWaitBetweenCallers = true;
             }
-            
+
             // 3D Computer Screen
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "skip_3D_computer_screen",
                 ref skip3DComputerScreenForCustomCampaign);
-            
+
             return new CustomCampaign
             {
                 CampaignName = customCampaignName,
@@ -507,7 +537,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 UseDLCEntries = useDLCEntries,
                 ResetDefaultEntriesPermission = resetDefaultEntriesPermission,
                 DoShowNewTagForMainGameEntries = doShowNewTagForMainGameEntries,
-                
+
                 SkipCallersCorrectly = skipCallersCorrectly,
 
                 LoadingTexts = loadingTexts,
@@ -523,10 +553,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 WarningCallThresholdCallerAmounts = warningCallThresholdCallerAmounts,
 
                 ShouldResetGameBeatenVariableOnReset = shouldResetGameBeatenVariableOnReset,
-                
+
                 EndCutsceneVideoName = endCutscenePath,
                 GameOverCutsceneVideoName = gameOverCutscenePath,
-                
+
                 AlwaysRandomMusic = useRandomMusic,
                 RemoveDefaultMusic = removeDefaultMusic,
 
@@ -553,14 +583,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomDesktopLogoTransparency = customDesktopLogoTransparency,
 
                 DisableGreenColorBackground = disableGreenColorBackground,
-                
+
                 DefaultTheme = defaultTheme,
                 DisablePickingThemeOption = disablePickingThemeOption,
-                
+
                 DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone,
-                
+
                 Skip3DComputerScreenForCustomCampaign = skip3DComputerScreenForCustomCampaign,
-                
+
                 WaitBetweenCallers = waitBetweenCallers,
                 EnableCustomWaitBetweenCallers = enableCustomWaitBetweenCallers
             };

@@ -54,18 +54,70 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
         private static Computer3DScreen Parse3DComputerScreen(ref JObject jObjectParsed, ref string customCampaignName)
         {
-            // Properties
+            /*
+             * Properties
+             */
             bool inMainCampaign = false;
 
             int applyPriority = 0;
 
-            // Lights
+            /*
+             * Lights
+             */
+
             VariableChanged<Color> mainLightColor = new VariableChanged<Color>
             {
                 Data = new Color()
             };
 
-            // Properties
+            VariableChanged<bool> disableMainLight = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<Color> secondMainLightColor = new VariableChanged<Color>
+            {
+                Data = new Color()
+            };
+
+            VariableChanged<bool> disableSecondMainLight = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<Color> deskLightColor = new VariableChanged<Color>
+            {
+                Data = new Color()
+            };
+
+            VariableChanged<bool> disableDeskLight = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<Color> keyboardLightColor = new VariableChanged<Color>
+            {
+                Data = new Color()
+            };
+
+            VariableChanged<bool> disableKeyboardLight = new VariableChanged<bool>
+            {
+                Data = false
+            };
+            
+            VariableChanged<Color> RightLightColor = new VariableChanged<Color>
+            {
+                Data = new Color()
+            };
+
+            VariableChanged<bool> DisableRightLight = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            /*
+             * Properties
+             */
             ParsingHelper.TryAssign(jObjectParsed, "computer_3D_screen_custom_campaign_attached",
                 ref customCampaignName);
 
@@ -73,16 +125,49 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "computer_3D_screen_priority", ref applyPriority);
 
-            // Lights
+            /*
+             * Lights
+             */
             ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_main_light_color", ref mainLightColor);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_main_light",
+                ref disableMainLight);
+
+            ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_second_main_light_color",
+                ref secondMainLightColor);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_second_main_light",
+                ref disableSecondMainLight);
+            
+            ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_desk_light_color",
+                ref deskLightColor);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_desk_light",
+                ref disableDeskLight);
+            
+            ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_keyboard_light_color",
+                ref keyboardLightColor);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_keyboard_light",
+                ref disableKeyboardLight);
 
             return new Computer3DScreen
             {
                 CustomCampaignName = customCampaignName,
                 InMainCampaign = inMainCampaign,
                 ApplyPriority = applyPriority,
+
+                MainLightColor = mainLightColor,
+                DisableMainLight = disableMainLight,
+
+                SecondMainLightColor = secondMainLightColor,
+                DisableSecondMainLight = disableSecondMainLight,
+
+                DeskLightColor = deskLightColor,
+                DisableDeskLight = disableDeskLight,
                 
-                MainLightColor = mainLightColor
+                KeyboardLightColor = keyboardLightColor,
+                DisableKeyboardLight = disableKeyboardLight
             };
         }
     }
