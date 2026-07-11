@@ -99,6 +99,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
             Data = new Color()
         };
 
+        public VariableChanged<bool> DisablePostProcessing = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Particle Settings
          */
@@ -124,6 +129,20 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         };
 
         public VariableChanged<Sprite> ParticleTexture = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+
+        /*
+         * Title Settings
+         */
+
+        public VariableChanged<string> TitleText = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<Sprite> TitleLogo = new VariableChanged<Sprite>
         {
             Data = null
         };

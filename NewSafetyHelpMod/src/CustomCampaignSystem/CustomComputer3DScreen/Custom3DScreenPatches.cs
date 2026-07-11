@@ -1,5 +1,6 @@
-﻿using NewSafetyHelp.LoggingSystem;
+﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 {
@@ -12,7 +13,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
             /// Changes the update to ignore any key presses.
             /// </summary>
             // ReSharper disable once UnusedMember.Local
-            private static void Prefix(StartMenuBehavior __instance)
+            private static void Prefix()
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -115,6 +116,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                                 computer3DScreen.BackgroundColor.Data;
                         }
 
+                        if (computer3DScreen.DisablePostProcessing.HasChanged)
+                        {
+                            GameObject.Find("Main Camera/Post-process Volume")
+                                .SetActive(!computer3DScreen.DisablePostProcessing.Data);
+                        }
+
                         /*
                          * Particle Settings
                          */
@@ -154,13 +161,27 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 
                         if (computer3DScreen.ParticleTexture.HasChanged)
                         {
-                            LoggingHelper.TestLog("Test");
-                            
                             ParticleSystemRenderer particleSystemRenderer = GameObject.Find("model").transform
                                 .Find("Particle System")
                                 .GetComponent<ParticleSystemRenderer>();
 
                             particleSystemRenderer.material.mainTexture = computer3DScreen.ParticleTexture.Data.texture;
+                        }
+
+                        if (computer3DScreen.TitleText.HasChanged)
+                        {
+                            AnimatedText animatedText =
+                                GameObject.Find("TitleCanvas/Text (TMP)").GetComponent<AnimatedText>();
+
+                            animatedText.textFrames = new[] { computer3DScreen.TitleText.Data };
+                            GameObject.Find("TitleCanvas/Text (TMP)").GetComponent<TextMeshProUGUI>().text =
+                                computer3DScreen.TitleText.Data;
+                        }
+
+                        if (computer3DScreen.TitleLogo.HasChanged)
+                        {
+                            GameObject.Find("TitleCanvas/Image").GetComponent<Image>().sprite =
+                                computer3DScreen.TitleLogo.Data;
                         }
                     }
                 }
@@ -174,10 +195,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
             /// Changes the update to ignore any key presses.
             /// </summary>
             // ReSharper disable once UnusedMember.Local
-            private static bool Prefix(StartMenuBehavior __instance)
+            private static void Prefix()
             {
-                // TODO: REMOVE BEFORE GIVING IT TO SOMEONE OR ELSE RIP.
-                return false;
+                //return false;
             }
         }
     }

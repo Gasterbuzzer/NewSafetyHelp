@@ -145,6 +145,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = new Color()
             };
 
+            VariableChanged<bool> disablePostProcessing = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             /*
              * Particle Settings
              */
@@ -170,6 +175,20 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
 
             VariableChanged<Sprite> particleTexture = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
+            /*
+             * Title Settings
+             */
+
+            VariableChanged<string> titleText = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<Sprite> titleLogo = new VariableChanged<Sprite>
             {
                 Data = null
             };
@@ -236,6 +255,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_background_color",
                 ref backgroundColor);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_post_processing",
+                ref disablePostProcessing);
+
             /*
              * Particle Settings
              */
@@ -248,8 +270,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "particle_image_name",
                 ref particleTexture, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
-            LoggingHelper.TestLog($"{particleTexture.HasChanged}");
+
+            /*
+             * Title Settings
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "title_text", ref titleText);
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "title_logo", ref titleLogo,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             // Creating the object
             return new Computer3DScreen
@@ -278,12 +306,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DisableTable = disableTable,
 
                 BackgroundColor = backgroundColor,
+                DisablePostProcessing = disablePostProcessing,
 
                 DisableParticles = disableParticles,
                 ParticleEmissionRate = particleEmissionRate,
                 ParticleStartSize = particleStartSize,
                 ParticleColor = particleColor,
-                ParticleTexture = particleTexture
+                ParticleTexture = particleTexture,
+
+                TitleText = titleText,
+                TitleLogo = titleLogo
             };
         }
     }
