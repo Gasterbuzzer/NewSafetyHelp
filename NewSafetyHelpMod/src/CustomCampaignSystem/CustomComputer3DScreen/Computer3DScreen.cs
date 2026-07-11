@@ -50,7 +50,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         {
             Data = false
         };
-        
+
         public VariableChanged<Color> KeyboardLightColor = new VariableChanged<Color>
         {
             Data = new Color()
@@ -60,7 +60,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         {
             Data = false
         };
-        
+
         public VariableChanged<Color> RightLightColor = new VariableChanged<Color>
         {
             Data = new Color()
@@ -69,6 +69,63 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         public VariableChanged<bool> DisableRightLight = new VariableChanged<bool>
         {
             Data = false
+        };
+
+        /*
+         * 3D Objects Settings
+         */
+
+        public VariableChanged<bool> DisableComputerScreen = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<bool> DisableKeyboard = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<bool> DisableTable = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        /*
+         * Camera Settings
+         */
+
+        public VariableChanged<Color> BackgroundColor = new VariableChanged<Color>
+        {
+            Data = new Color()
+        };
+
+        /*
+         * Particle Settings
+         */
+
+        public VariableChanged<bool> DisableParticles = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<int> ParticleEmissionRate = new VariableChanged<int>
+        {
+            Data = 10
+        };
+
+        public VariableChanged<float> ParticleStartSize = new VariableChanged<float>
+        {
+            Data = 0.01f
+        };
+
+        public VariableChanged<Color> ParticleColor = new VariableChanged<Color>
+        {
+            Data = new Color()
+        };
+
+        public VariableChanged<Sprite> ParticleTexture = new VariableChanged<Sprite>
+        {
+            Data = null
         };
     }
 }

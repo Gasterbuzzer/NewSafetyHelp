@@ -45,7 +45,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                             GameObject.Find("Directional Light")
                                 .SetActive(!computer3DScreen.DisableSecondMainLight.Data);
                         }
-                        
+
                         if (computer3DScreen.DeskLightColor.HasChanged)
                         {
                             GameObject.Find("Point Light (3)").GetComponent<Light>().color =
@@ -57,7 +57,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                             GameObject.Find("Point Light (3)")
                                 .SetActive(!computer3DScreen.DisableDeskLight.Data);
                         }
-                        
+
                         if (computer3DScreen.KeyboardLightColor.HasChanged)
                         {
                             GameObject.Find("Point Light").GetComponent<Light>().color =
@@ -68,6 +68,99 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                         {
                             GameObject.Find("Point Light")
                                 .SetActive(!computer3DScreen.DisableKeyboardLight.Data);
+                        }
+
+                        if (computer3DScreen.RightLightColor.HasChanged)
+                        {
+                            GameObject.Find("model").transform.Find("Point Light (2)").GetComponent<Light>().color =
+                                computer3DScreen.RightLightColor.Data;
+                        }
+
+                        if (computer3DScreen.DisableRightLight.HasChanged)
+                        {
+                            GameObject.Find("model").transform.Find("Point Light (2)").gameObject
+                                .SetActive(!computer3DScreen.DisableRightLight.Data);
+                        }
+
+                        /*
+                         * 3D Objects Settings
+                         */
+
+                        if (computer3DScreen.DisableComputerScreen.HasChanged)
+                        {
+                            GameObject.Find("model").transform.Find("diannao").gameObject
+                                .SetActive(!computer3DScreen.DisableComputerScreen.Data);
+                        }
+
+                        if (computer3DScreen.DisableKeyboard.HasChanged)
+                        {
+                            GameObject.Find("model").transform.Find("jianpan").gameObject
+                                .SetActive(!computer3DScreen.DisableKeyboard.Data);
+                        }
+
+                        if (computer3DScreen.DisableTable.HasChanged)
+                        {
+                            GameObject.Find("Cube")
+                                .SetActive(!computer3DScreen.DisableTable.Data);
+                        }
+
+                        /*
+                         * Camera Settings
+                         */
+
+                        if (computer3DScreen.BackgroundColor.HasChanged)
+                        {
+                            GameObject.Find("Main Camera").GetComponent<Camera>().backgroundColor =
+                                computer3DScreen.BackgroundColor.Data;
+                        }
+
+                        /*
+                         * Particle Settings
+                         */
+
+                        if (computer3DScreen.DisableParticles.HasChanged)
+                        {
+                            GameObject.Find("model").transform.Find("Particle System").gameObject
+                                .SetActive(!computer3DScreen.DisableParticles.Data);
+                        }
+
+                        if (computer3DScreen.ParticleEmissionRate.HasChanged)
+                        {
+                            ParticleSystem.EmissionModule particleEmission = GameObject.Find("model").transform
+                                .Find("Particle System")
+                                .GetComponent<ParticleSystem>().emission;
+
+                            particleEmission.rateOverTime = computer3DScreen.ParticleEmissionRate.Data;
+                        }
+
+                        if (computer3DScreen.ParticleStartSize.HasChanged)
+                        {
+                            ParticleSystem.MainModule particleMain = GameObject.Find("model").transform
+                                .Find("Particle System")
+                                .GetComponent<ParticleSystem>().main;
+
+                            particleMain.startSize = computer3DScreen.ParticleStartSize.Data;
+                        }
+
+                        if (computer3DScreen.ParticleColor.HasChanged)
+                        {
+                            ParticleSystem.MainModule particleMain = GameObject.Find("model").transform
+                                .Find("Particle System")
+                                .GetComponent<ParticleSystem>().main;
+
+                            particleMain.startColor = computer3DScreen.ParticleColor.Data;
+                        }
+
+                        if (computer3DScreen.ParticleTexture.HasChanged)
+                        {
+                            Material particleTexture = new Material(Shader.Find("Sprites/Default"));
+                            particleTexture.mainTexture = computer3DScreen.ParticleTexture.Data.texture;
+
+                            ParticleSystemRenderer particleSystemRenderer = GameObject.Find("model").transform
+                                .Find("Particle System")
+                                .GetComponent<ParticleSystemRenderer>();
+
+                            particleSystemRenderer.material = particleTexture;
                         }
                     }
                 }
@@ -83,7 +176,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(StartMenuBehavior __instance)
             {
-                // TODO: REMOVE BEFORE GIVING IT TO SOMEONE; OR ELSE RIP.
+                // TODO: REMOVE BEFORE GIVING IT TO SOMEONE OR ELSE RIP.
                 return false;
             }
         }

@@ -52,7 +52,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
-        private static Computer3DScreen Parse3DComputerScreen(ref JObject jObjectParsed, ref string customCampaignName)
+        private static Computer3DScreen Parse3DComputerScreen(ref JObject jObjectParsed, ref string customCampaignName,
+            string usermodFolderPath = "", string jsonFolderPath = "")
         {
             /*
              * Properties
@@ -104,15 +105,72 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = false
             };
-            
-            VariableChanged<Color> RightLightColor = new VariableChanged<Color>
+
+            VariableChanged<Color> rightLightColor = new VariableChanged<Color>
             {
                 Data = new Color()
             };
 
-            VariableChanged<bool> DisableRightLight = new VariableChanged<bool>
+            VariableChanged<bool> disableRightLight = new VariableChanged<bool>
             {
                 Data = false
+            };
+
+            /*
+             * 3D Objects Settings
+             */
+
+            VariableChanged<bool> disableComputerScreen = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<bool> disableKeyboard = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<bool> disableTable = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            /*
+             * Camera Settings
+             */
+
+            VariableChanged<Color> backgroundColor = new VariableChanged<Color>
+            {
+                Data = new Color()
+            };
+
+            /*
+             * Particle Settings
+             */
+
+            VariableChanged<bool> disableParticles = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<int> particleEmissionRate = new VariableChanged<int>
+            {
+                Data = 10
+            };
+
+            VariableChanged<float> particleStartSize = new VariableChanged<float>
+            {
+                Data = 0.01f
+            };
+
+            VariableChanged<Color> particleColor = new VariableChanged<Color>
+            {
+                Data = new Color()
+            };
+
+            VariableChanged<Sprite> particleTexture = new VariableChanged<Sprite>
+            {
+                Data = null
             };
 
             /*
@@ -138,19 +196,59 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_second_main_light",
                 ref disableSecondMainLight);
-            
+
             ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_desk_light_color",
                 ref deskLightColor);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_desk_light",
                 ref disableDeskLight);
-            
+
             ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_keyboard_light_color",
                 ref keyboardLightColor);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_keyboard_light",
                 ref disableKeyboardLight);
 
+            ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_right_light_color",
+                ref rightLightColor);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_right_light",
+                ref disableRightLight);
+
+            /*
+             * 3D Objects Settings
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_screen_object",
+                ref disableComputerScreen);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_keyboard_object",
+                ref disableKeyboard);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_table_object",
+                ref disableTable);
+
+            /*
+             * Camera Settings
+             */
+
+            ColorParsingHelper.ParseColor(jObjectParsed, "computer_3D_screen_background_color",
+                ref backgroundColor);
+
+            /*
+             * Particle Settings
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_particles", ref disableParticles);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "particle_emission_rate", ref particleEmissionRate);
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "particle_start_size", ref particleStartSize);
+
+            ColorParsingHelper.ParseColor(jObjectParsed, "particle_color", ref particleColor);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "particle_image_name",
+                ref particleTexture, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            // Creating the object
             return new Computer3DScreen
             {
                 CustomCampaignName = customCampaignName,
@@ -165,9 +263,24 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DeskLightColor = deskLightColor,
                 DisableDeskLight = disableDeskLight,
-                
+
                 KeyboardLightColor = keyboardLightColor,
-                DisableKeyboardLight = disableKeyboardLight
+                DisableKeyboardLight = disableKeyboardLight,
+
+                RightLightColor = rightLightColor,
+                DisableRightLight = disableRightLight,
+
+                DisableComputerScreen = disableComputerScreen,
+                DisableKeyboard = disableKeyboard,
+                DisableTable = disableTable,
+
+                BackgroundColor = backgroundColor,
+
+                DisableParticles = disableParticles,
+                ParticleEmissionRate = particleEmissionRate,
+                ParticleStartSize = particleStartSize,
+                ParticleColor = particleColor,
+                ParticleTexture = particleTexture
             };
         }
     }
