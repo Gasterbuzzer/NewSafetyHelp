@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomCampaignSystem;
+﻿using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
@@ -34,6 +35,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             Computer3DScreen custom3DScreen = Parse3DComputerScreen(ref jObjectParsed, ref customCampaignName,
                 usermodFolderPath, jsonFolderPath);
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed,
+                custom3DScreen.MusicPath,
+                clip => { custom3DScreen.Music = clip; },
+                jsonFolderPath, "computer_3D_screen_music_clip_name");
 
             // Add to correct campaign.
             CustomCampaign customCampaign =
@@ -183,7 +189,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Title Settings
              */
 
-            VariableChanged<string> titleText = new VariableChanged<string>
+            VariableChanged<List<string>> titleText = new VariableChanged<List<string>>
             {
                 Data = null
             };
@@ -191,6 +197,32 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             VariableChanged<Sprite> titleLogo = new VariableChanged<Sprite>
             {
                 Data = null
+            };
+
+            /*
+             * 3D Screen Music
+             */
+
+            string musicPath = null;
+
+            VariableChanged<bool> bringMusicCloser = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<bool> centerMusic = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<float> musicVolume = new VariableChanged<float>
+            {
+                Data = 0.07f
+            };
+
+            VariableChanged<bool> disableMusic = new VariableChanged<bool>
+            {
+                Data = false
             };
 
             /*
@@ -275,9 +307,29 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Title Settings
              */
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "title_text", ref titleText);
+            ParsingHelper.TryAssignListOrSingleElementVariableChanged(jObjectParsed, "title_text", ref titleText);
+
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "title_logo", ref titleLogo,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            /*
+             * 3D Screen Music
+             */
+
+            AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "computer_3D_screen_music_clip_name",
+                ref musicPath, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "computer_3D_screen_music_move_closer",
+                ref bringMusicCloser);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "computer_3D_screen_center_music",
+                ref centerMusic);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "computer_3D_screen_music_volume",
+                ref musicVolume);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_music",
+                ref disableMusic);
 
             // Creating the object
             return new Computer3DScreen
@@ -315,7 +367,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ParticleTexture = particleTexture,
 
                 TitleText = titleText,
-                TitleLogo = titleLogo
+                TitleLogo = titleLogo,
+
+                MusicPath = musicPath,
+                BringMusicCloser = bringMusicCloser,
+                CenterMusic = centerMusic,
+                MusicVolume = musicVolume,
+                DisableMusic = disableMusic
             };
         }
     }

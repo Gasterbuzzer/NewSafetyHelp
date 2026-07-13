@@ -22,6 +22,75 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                     if (computer3DScreen != null)
                     {
                         /*
+                         * Music Settings
+                         */
+
+                        if (computer3DScreen.Music != null
+                            && computer3DScreen.Music.clip != null)
+                        {
+                            AudioSource[] audioSources =
+                                GameObject.Find("MusicController").GetComponents<AudioSource>();
+
+                            foreach (AudioSource audioSource in audioSources)
+                            {
+                                audioSource.clip = computer3DScreen.Music.clip;
+
+                                if (audioSource.playOnAwake
+                                    && !audioSource.isPlaying)
+                                {
+                                    audioSource.Play();
+                                }
+                            }
+                        }
+
+                        if (computer3DScreen.BringMusicCloser.HasChanged
+                            && computer3DScreen.BringMusicCloser.Data)
+                        {
+                            AudioSource[] audioSources =
+                                GameObject.Find("MusicController").GetComponents<AudioSource>();
+
+                            foreach (AudioSource audioSource in audioSources)
+                            {
+                                audioSource.minDistance = 5;
+                            }
+                        }
+
+                        if (computer3DScreen.CenterMusic.HasChanged
+                            && computer3DScreen.CenterMusic.Data)
+                        {
+                            AudioSource[] audioSources =
+                                GameObject.Find("MusicController").GetComponents<AudioSource>();
+
+                            foreach (AudioSource audioSource in audioSources)
+                            {
+                                audioSource.spatialBlend = 0.5f;
+                            }
+                        }
+
+                        if (computer3DScreen.MusicVolume.HasChanged)
+                        {
+                            AudioSource[] audioSources =
+                                GameObject.Find("MusicController").GetComponents<AudioSource>();
+
+                            foreach (AudioSource audioSource in audioSources)
+                            {
+                                audioSource.volume = computer3DScreen.MusicVolume.Data;
+                            }
+                        }
+
+                        if (computer3DScreen.DisableMusic.HasChanged
+                            && computer3DScreen.DisableMusic.Data)
+                        {
+                            AudioSource[] audioSources =
+                                GameObject.Find("MusicController").GetComponents<AudioSource>();
+
+                            foreach (AudioSource audioSource in audioSources)
+                            {
+                                audioSource.enabled = false;
+                            }
+                        }
+
+                        /*
                          * Lights
                          */
 
@@ -168,14 +237,27 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                             particleSystemRenderer.material.mainTexture = computer3DScreen.ParticleTexture.Data.texture;
                         }
 
+                        /*
+                         * Title Settings
+                         */
+
                         if (computer3DScreen.TitleText.HasChanged)
                         {
                             AnimatedText animatedText =
                                 GameObject.Find("TitleCanvas/Text (TMP)").GetComponent<AnimatedText>();
 
-                            animatedText.textFrames = new[] { computer3DScreen.TitleText.Data };
-                            GameObject.Find("TitleCanvas/Text (TMP)").GetComponent<TextMeshProUGUI>().text =
-                                computer3DScreen.TitleText.Data;
+                            animatedText.textFrames = new string[computer3DScreen.TitleText.Data.Count];
+
+                            for (int i = 0; i < computer3DScreen.TitleText.Data.Count; i++)
+                            {
+                                animatedText.textFrames[i] = computer3DScreen.TitleText.Data[i];
+                            }
+
+                            if (computer3DScreen.TitleText.Data.Count >= 1)
+                            {
+                                GameObject.Find("TitleCanvas/Text (TMP)").GetComponent<TextMeshProUGUI>().text =
+                                    computer3DScreen.TitleText.Data[0];
+                            }
                         }
 
                         if (computer3DScreen.TitleLogo.HasChanged)
@@ -195,9 +277,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
             /// Changes the update to ignore any key presses.
             /// </summary>
             // ReSharper disable once UnusedMember.Local
-            private static void Prefix()
+            private static bool Prefix()
             {
-                //return false;
+                return false;
             }
         }
     }

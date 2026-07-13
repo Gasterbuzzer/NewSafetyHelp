@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomCampaignSystem.Abstract;
+﻿using System.Collections.Generic;
+using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using UnityEngine;
 
@@ -137,7 +138,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
          * Title Settings
          */
 
-        public VariableChanged<string> TitleText = new VariableChanged<string>
+        public VariableChanged<List<string>> TitleText = new VariableChanged<List<string>>
         {
             Data = null
         };
@@ -145,6 +146,33 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         public VariableChanged<Sprite> TitleLogo = new VariableChanged<Sprite>
         {
             Data = null
+        };
+
+        /*
+         * 3D Screen Music
+         */
+        public string MusicPath = null;
+
+        public RichAudioClip Music = null;
+
+        public VariableChanged<bool> BringMusicCloser = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<bool> CenterMusic = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<float> MusicVolume = new VariableChanged<float>
+        {
+            Data = 0.07f
+        };
+
+        public VariableChanged<bool> DisableMusic = new VariableChanged<bool>
+        {
+            Data = false
         };
     }
 }
