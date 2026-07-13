@@ -269,18 +269,5 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                 }
             }
         }
-
-        [HarmonyLib.HarmonyPatch(typeof(StartMenuBehavior), "Update")]
-        public static class UpdateMenuTest
-        {
-            /// <summary>
-            /// Changes the update to ignore any key presses.
-            /// </summary>
-            // ReSharper disable once UnusedMember.Local
-            private static bool Prefix()
-            {
-                return false;
-            }
-        }
     }
 }
