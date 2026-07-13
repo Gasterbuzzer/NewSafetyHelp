@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using MelonLoader;
+using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.EntryManager.EntryUnlocker;
@@ -76,6 +77,8 @@ namespace NewSafetyHelp.JSONParsing
 
             // Wait a frame.
             yield return null;
+
+            AudioCache.RemoveEntireCache();
 
             // Remove all custom campaigns.
             CustomCampaignGlobal.CustomCampaignsAvailable.Clear();
