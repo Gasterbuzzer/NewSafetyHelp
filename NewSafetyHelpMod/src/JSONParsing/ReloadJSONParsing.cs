@@ -57,7 +57,8 @@ namespace NewSafetyHelp.JSONParsing
             IsInHotReload = true;
 
             LoggingHelper.DebugLog(
-                $"Current allocated memory (before hot reload): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                $"Current allocated memory (before hot reload): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; " +
+                $"Reserved: '{Profiler.GetTotalReservedMemoryLong()}'.",
                 LoggingHelper.LoggingCategory.MEMORY);
 
             // We stop all audio sources.
@@ -156,14 +157,16 @@ namespace NewSafetyHelp.JSONParsing
             yield return null;
 
             LoggingHelper.DebugLog(
-                $"Current allocated memory (after clear): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                $"Current allocated memory (after clear): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; " +
+                $"Reserved: '{Profiler.GetTotalReservedMemoryLong()}'.",
                 LoggingHelper.LoggingCategory.MEMORY);
 
             // We restart the JSON parsing.
             MainClassForMonsterEntries.StartingJSONParsing(GlobalVariables.entryUnlockScript);
 
             LoggingHelper.DebugLog(
-                $"Current allocated memory (after loading all JSON files): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
+                $"Current allocated memory (after loading all JSON files): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; " +
+                $"Reserved: '{Profiler.GetTotalReservedMemoryLong()}'.",
                 LoggingHelper.LoggingCategory.MEMORY);
 
             // We reload the scene and all values should be correctly loaded?

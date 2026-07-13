@@ -100,7 +100,7 @@ namespace NewSafetyHelp.Audio
             bool fromHotReload = ReloadJSONParsing.IsInHotReload;
 
             LoggingHelper.DebugLog(
-                $"Current allocated memory (audio is waiting for slot): '{Profiler.GetTotalAllocatedMemoryLong()}' " +
+                $"Current allocated memory (audio is waiting for slot): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
                 $"(File size '{audioFileSize}').",
                 LoggingHelper.LoggingCategory.MEMORY);
 
@@ -144,7 +144,7 @@ namespace NewSafetyHelp.Audio
                 CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
 
                 LoggingHelper.DebugLog(
-                    $"Current allocated memory (audio finished loading in): '{Profiler.GetTotalAllocatedMemoryLong()}' " +
+                    $"Current allocated memory (audio finished loading in): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
                     $"(File size '{audioFileSize}').",
                     LoggingHelper.LoggingCategory.MEMORY);
 
@@ -170,10 +170,15 @@ namespace NewSafetyHelp.Audio
                 return;
             }
 
-            CallerController ccInstance = GameObject.Find("CallerController").GetComponent<CallerController>();
+            GameObject callerController = GameObject.Find("CallerController");
 
-            // Call again.
-            StartCallerController.Invoke(ccInstance, null);
+            if (callerController != null)
+            {
+                CallerController ccInstance = callerController.GetComponent<CallerController>();
+
+                // Call again.
+                StartCallerController.Invoke(ccInstance, null);
+            }
         }
 
         /// <summary>

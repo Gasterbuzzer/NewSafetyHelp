@@ -33,7 +33,7 @@ namespace NewSafetyHelp.Audio
             // We then check if our allocated memory is exceeding normal levels.
             // If we do, we simply wait until we do not exceed the memory.
 
-            long allocatedMemory = Profiler.GetTotalAllocatedMemoryLong();
+            long allocatedMemory = Profiler.GetTotalReservedMemoryLong();
 
             int blockedTimes = 0;
 
@@ -42,7 +42,7 @@ namespace NewSafetyHelp.Audio
             {
                 yield return new WaitForSecondsRealtime(Random.Range(0.1f, 0.7f));
 
-                allocatedMemory = Profiler.GetTotalAllocatedMemoryLong();
+                allocatedMemory = Profiler.GetTotalReservedMemoryLong();
 
                 if (blockedTimes >= 5)
                 {
