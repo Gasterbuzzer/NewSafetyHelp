@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Reflection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,11 +10,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         [HarmonyLib.HarmonyPatch(typeof(StartMenuBehavior), "Start")]
         public static class StartMenuPatches
         {
+            private static readonly FieldInfo CanStartField =
+                typeof(StartMenuBehavior).GetField("canStart", BindingFlags.NonPublic | BindingFlags.Instance);
+
             /// <summary>
             /// Changes the update to ignore any key presses.
             /// </summary>
             // ReSharper disable once UnusedMember.Local
-            private static void Prefix()
+            private static void Prefix(StartMenuBehavior __instance)
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -21,6 +25,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 
                     if (computer3DScreen != null)
                     {
+                        /*
+                         * Properties
+                         */
+                        if (computer3DScreen.SkipClickTime.HasChanged
+                            && computer3DScreen.SkipClickTime.Data)
+                        {
+                            CanStartField.SetValue(__instance, true);
+                        }
+
                         /*
                          * Music Settings
                          */

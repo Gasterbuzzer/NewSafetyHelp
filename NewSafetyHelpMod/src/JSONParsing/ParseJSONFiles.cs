@@ -337,7 +337,8 @@ namespace NewSafetyHelp.JSONParsing
             if (ParsingHelper.ContainsKeys(new List<string>
                 {
                     "computer_3D_screen_custom_campaign_attached",
-                    "computer_3D_screen_in_main_campaign", "computer_3D_screen_priority"
+                    "computer_3D_screen_in_main_campaign", "computer_3D_screen_priority",
+                    "computer_3D_screen_skip_click_wait_time"
                 }, json))
             {
                 return JSONParseTypes.Computer3DScreen;

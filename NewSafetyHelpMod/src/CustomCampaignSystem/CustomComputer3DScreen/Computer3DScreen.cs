@@ -18,6 +18,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         /// </summary>
         public int ApplyPriority = 0;
 
+        public VariableChanged<bool> SkipClickTime = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Lights
          */

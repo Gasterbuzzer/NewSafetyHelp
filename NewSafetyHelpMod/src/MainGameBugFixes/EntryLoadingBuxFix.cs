@@ -22,16 +22,17 @@ namespace NewSafetyHelp.MainGameBugFixes
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "UpdateSelectedEntry", typeof(MonsterProfile))]
         public static class MainCanvasUpdateSelectedEntryPatch
         {
-            private static readonly MethodInfo IsNetworkDown = typeof(MainCanvasBehavior).
-                GetMethod("IsNetworkDown",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            private static readonly MethodInfo SelectMonsterPortrait = typeof(MainCanvasBehavior).
-                GetMethod("SelectMonsterPortrait",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            private static readonly MethodInfo UpdateLayoutGroupMethod = typeof(MainCanvasBehavior).
-                GetMethod("UpdateLayoutGroup",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            
+            private static readonly MethodInfo IsNetworkDown = typeof(MainCanvasBehavior).GetMethod("IsNetworkDown",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+            private static readonly MethodInfo SelectMonsterPortrait = typeof(MainCanvasBehavior).GetMethod(
+                "SelectMonsterPortrait",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+            private static readonly MethodInfo UpdateLayoutGroupMethod = typeof(MainCanvasBehavior).GetMethod(
+                "UpdateLayoutGroup",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
             /// <summary>
             /// UpdateSelectedEntry patch to fix the double loading bug.
             /// </summary>
@@ -46,32 +47,33 @@ namespace NewSafetyHelp.MainGameBugFixes
                         nameof(SelectMonsterPortrait), nameof(UpdateLayoutGroupMethod));
                     return true;
                 }
-                
+
                 // If the same profile gets selected, simply ignore it.
-                if (__instance.selectedMonsterProfile != null 
+                if (__instance.selectedMonsterProfile != null
                     && __instance.selectedMonsterProfile.Equals(profile))
                 {
                     return false;
                 }
-                
+
                 __instance.selectedMonsterProfile = profile;
-                
+
                 // Original: __instance.IsNetworkDown()
-                if ((bool) IsNetworkDown.Invoke(__instance, null)) 
+                if ((bool)IsNetworkDown.Invoke(__instance, null))
                 {
                     profile = __instance.errorProfile;
                     __instance.cameraAnimator.SetTrigger(Glitch);
                 }
-                
+
                 __instance.selectedMonsterPortraitImage.gameObject.SetActive(false);
                 __instance.monsterAudioSamplePlayer.SetActive(false);
-                
+
                 if (profile.monsterPortrait != null)
                 {
                     __instance.selectedMonsterPortraitImage.gameObject.SetActive(true);
 
                     // Original: __instance.SelectMonsterPortrait(profile);
-                    __instance.selectedMonsterPortraitImage.sprite = (Sprite) SelectMonsterPortrait.Invoke(__instance, new object[] {profile});
+                    __instance.selectedMonsterPortraitImage.sprite =
+                        (Sprite)SelectMonsterPortrait.Invoke(__instance, new object[] { profile });
 
                     if (hasActiveEasterEgg)
                     {
@@ -79,7 +81,7 @@ namespace NewSafetyHelp.MainGameBugFixes
                         MelonCoroutines.Stop(easterEggCoroutine);
                         hasActiveEasterEgg = false;
                     }
-                    
+
                     if (__instance.selectedMonsterProfile.name == "Boggart")
                     {
                         easterEggCoroutine = MelonCoroutines.Start(EasterEgg(() =>
@@ -94,10 +96,12 @@ namespace NewSafetyHelp.MainGameBugFixes
                 {
                     EntryMetadata currentlySelectedEntry =
                         CustomCampaignGlobal.GetEntryFromActiveCampaign(profile.monsterName);
-                    
+
                     if (currentlySelectedEntry != null
                         && currentlySelectedEntry.IsVideoPortrait)
                     {
+                        __instance.selectedMonsterPortraitImage.gameObject.SetActive(true);
+
                         MainCanvasEntry.SetVideoUrl(currentlySelectedEntry.VideoUrlPortrait,
                             MainCanvasEntry.PortraitType.ENTRY);
 
@@ -110,19 +114,19 @@ namespace NewSafetyHelp.MainGameBugFixes
                     else
                     {
                         MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.ENTRY);
-                        
+
                         MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.ENTRY);
                     }
                 }
-                
+
                 if (profile.monsterAudioClip != null)
                 {
                     __instance.monsterAudioSamplePlayer.SetActive(true);
                 }
-                
+
                 __instance.selectedMonsterTitle.text = profile.monsterName;
                 __instance.selectedMonsterDescription.text = profile.monsterDescription;
-                
+
                 // Fix loading bug that causes the animation to play twice.
                 AnimatorStateInfo state = __instance.screenLoader.GetCurrentAnimatorStateInfo(0);
 
@@ -136,44 +140,47 @@ namespace NewSafetyHelp.MainGameBugFixes
                     __instance.screenLoader.ResetTrigger(ScreenLoad);
                     __instance.screenLoader.Play(ScreenLoad, 0, 0f);
                 }
-                
+
                 // Original: __instance.UpdateLayoutGroup(__instance.mainEntryLayoutGroup)
-                IEnumerator UpdateLayoutGroup = (IEnumerator) UpdateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.mainEntryLayoutGroup});
+                IEnumerator UpdateLayoutGroup =
+                    (IEnumerator)UpdateLayoutGroupMethod.Invoke(__instance,
+                        new object[] { __instance.mainEntryLayoutGroup });
                 __instance.StartCoroutine(UpdateLayoutGroup);
-                
+
                 if (GlobalVariables.UISoundControllerScript != null)
                 {
                     GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                 }
-                
+
                 __instance.selectedEntryScrollbar.value = 1f;
-                
+
                 return false; // Skip original
             }
 
             private static IEnumerator EasterEgg(Action updateSpriteAction)
             {
                 hasActiveEasterEgg = true;
-                
+
                 yield return new WaitForSeconds(603);
-                
+
                 updateSpriteAction();
             }
         }
-        
+
         /// <summary>
         /// For EntryCanvas, not for MainCanvasBehavior like above. If you have a change, please update both.
         /// </summary>
         [HarmonyLib.HarmonyPatch(typeof(EntryCanvasStandaloneBehavior), "UpdateSelectedEntry", typeof(MonsterProfile))]
         public static class EntryCanvasUpdateSelectedEntryPatch
         {
-            private static readonly MethodInfo SelectMonsterPortrait = typeof(EntryCanvasStandaloneBehavior).
-                GetMethod("SelectMonsterPortrait",
+            private static readonly MethodInfo SelectMonsterPortrait = typeof(EntryCanvasStandaloneBehavior).GetMethod(
+                "SelectMonsterPortrait",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+            private static readonly MethodInfo UpdateLayoutGroupMethod =
+                typeof(EntryCanvasStandaloneBehavior).GetMethod("UpdateLayoutGroup",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            private static readonly MethodInfo UpdateLayoutGroupMethod = typeof(EntryCanvasStandaloneBehavior).
-                GetMethod("UpdateLayoutGroup",
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            
+
             /// <summary>
             /// UpdateSelectedEntry patch to fix the double loading bug.
             /// </summary>
@@ -190,45 +197,49 @@ namespace NewSafetyHelp.MainGameBugFixes
                 }
 
                 // If the same profile gets selected, simply ignore it.
-                if (__instance.selectedMonsterProfile != null 
+                if (__instance.selectedMonsterProfile != null
                     && __instance.selectedMonsterProfile.Equals(profile))
                 {
                     return false;
                 }
-                
+
                 __instance.selectedMonsterProfile = profile;
                 __instance.selectedMonsterPortraitImage.gameObject.SetActive(false);
                 __instance.monsterAudioSamplePlayer.SetActive(false);
-                
+
                 if (profile.monsterPortrait != null)
                 {
                     __instance.selectedMonsterPortraitImage.gameObject.SetActive(true);
-                    
+
                     // Original: __instance.SelectMonsterPortrait(profile);
-                    __instance.selectedMonsterPortraitImage.sprite = (Sprite) SelectMonsterPortrait.Invoke(__instance, new object[] {profile});
+                    __instance.selectedMonsterPortraitImage.sprite =
+                        (Sprite)SelectMonsterPortrait.Invoke(__instance, new object[] { profile });
                 }
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     EntryMetadata currentlySelectedEntry =
                         CustomCampaignGlobal.GetEntryFromActiveCampaign(profile.monsterName);
-                    
+
                     if (currentlySelectedEntry != null
                         && currentlySelectedEntry.IsVideoPortrait)
                     {
-                        EntryCanvasStandaloneEntry.SetVideoUrlEntryStandaloneCanvas(currentlySelectedEntry.VideoUrlPortrait);
+                        __instance.selectedMonsterPortraitImage.gameObject.SetActive(true);
+
+                        EntryCanvasStandaloneEntry.SetVideoUrlEntryStandaloneCanvas(currentlySelectedEntry
+                            .VideoUrlPortrait);
                     }
                     else
                     {
                         EntryCanvasStandaloneEntry.RestoreNormalPortrait();
                     }
                 }
-                
+
                 if (profile.monsterAudioClip != null)
                 {
                     __instance.monsterAudioSamplePlayer.SetActive(true);
                 }
-                
+
                 __instance.selectedMonsterTitle.text = profile.monsterName;
                 __instance.selectedMonsterDescription.text = profile.monsterDescription;
 
@@ -245,18 +256,20 @@ namespace NewSafetyHelp.MainGameBugFixes
                     __instance.screenLoader.ResetTrigger(ScreenLoad);
                     __instance.screenLoader.Play(ScreenLoad, 0, 0f);
                 }
-                
+
                 // Original: __instance.UpdateLayoutGroup(__instance.mainEntryLayoutGroup)
-                IEnumerator UpdateLayoutGroup = (IEnumerator) UpdateLayoutGroupMethod.Invoke(__instance, new object[] {__instance.mainEntryLayoutGroup});
+                IEnumerator UpdateLayoutGroup =
+                    (IEnumerator)UpdateLayoutGroupMethod.Invoke(__instance,
+                        new object[] { __instance.mainEntryLayoutGroup });
                 __instance.StartCoroutine(UpdateLayoutGroup);
-                
+
                 if (GlobalVariables.UISoundControllerScript != null)
                 {
                     GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                 }
-                
+
                 __instance.selectedEntryScrollbar.value = 1f;
-                
+
                 return false; // Skip original
             }
         }

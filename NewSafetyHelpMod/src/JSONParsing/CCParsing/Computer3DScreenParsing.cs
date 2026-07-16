@@ -69,6 +69,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             int applyPriority = 0;
 
+            VariableChanged<bool> skipClickTime = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             /*
              * Lights
              */
@@ -235,6 +240,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "computer_3D_screen_priority", ref applyPriority);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "computer_3D_screen_skip_click_wait_time",
+                ref skipClickTime);
+
             /*
              * Lights
              */
@@ -337,6 +345,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignName = customCampaignName,
                 InMainCampaign = inMainCampaign,
                 ApplyPriority = applyPriority,
+
+                SkipClickTime = skipClickTime,
 
                 MainLightColor = mainLightColor,
                 DisableMainLight = disableMainLight,
