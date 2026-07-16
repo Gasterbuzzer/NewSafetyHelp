@@ -11,7 +11,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
          * Conditions of Modifier Section
          */
 
-        // Days the theme appears in, if set to null, it will apply every day.
+        // Days the modifier appears in, if set to null, it will apply every day.
         // If a single day was added only, then we only have single day added.
         [CanBeNull] public List<int> UnlockDays = null;
 

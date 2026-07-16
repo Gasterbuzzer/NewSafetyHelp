@@ -349,6 +349,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool disablePickingThemeOption = false; // If true, it will hide the option to set the theme.
 
             string defaultTheme = null;
+            
+            VariableChanged<bool> removeDefaultThemes = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
             // Ringtone
 
@@ -511,6 +516,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, new List<string> { "defaultTheme", "default_theme" },
                 ref defaultTheme);
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "remove_default_themes", ref removeDefaultThemes);
 
             // Ringtone
             ParsingHelper.TryAssign(jObjectParsed, "do_not_account_default_ringtone", ref doNotAccountDefaultRingtone);
@@ -586,6 +593,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DefaultTheme = defaultTheme,
                 DisablePickingThemeOption = disablePickingThemeOption,
+                RemoveDefaultThemes = removeDefaultThemes,
 
                 DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone,
 

@@ -256,6 +256,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         // List of (conditional) themes that apply for certain days and apply to a certain theme only.
         public List<CustomTheme> CustomThemesDays = new List<CustomTheme>();
+        
+        public VariableChanged<bool> RemoveDefaultThemes = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         /*
          * Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
