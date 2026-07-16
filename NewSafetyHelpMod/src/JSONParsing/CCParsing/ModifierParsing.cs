@@ -560,6 +560,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = false
             };
 
+            VariableChanged<bool> selectCurrentlyMainViewSelectedEntryInSubmitWindow = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             /*
              * --------------------------------------------------------------------------------------------------------
              */
@@ -982,6 +987,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_default_show_last_selected",
                 ref selectPreviouslySelectedEntryInSubmitWindow);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_show_current_selected",
+                ref selectCurrentlyMainViewSelectedEntryInSubmitWindow);
+
             /*
              * Creating the modifier object.
              */
@@ -1111,7 +1119,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading,
-                SelectPreviouslySelectedEntryInSubmitWindow = selectPreviouslySelectedEntryInSubmitWindow
+                SelectPreviouslySelectedEntryInSubmitWindow = selectPreviouslySelectedEntryInSubmitWindow,
+                SelectCurrentlyMainViewSelectedEntryInSubmitWindow = selectCurrentlyMainViewSelectedEntryInSubmitWindow
             };
         }
     }

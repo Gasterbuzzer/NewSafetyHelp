@@ -440,6 +440,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = false
         };
 
+        public VariableChanged<bool> SelectCurrentlyMainViewSelectedEntryInSubmitWindow = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Removed/Unfinished Section
          */
