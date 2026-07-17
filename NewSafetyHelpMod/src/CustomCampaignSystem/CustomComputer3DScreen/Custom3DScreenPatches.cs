@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
+using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 
 namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
@@ -188,6 +190,23 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                                 .SetActive(!computer3DScreen.DisableTable.Data);
                         }
 
+                        // Testing for Sun.
+                        /*GameObject cubeGameObject = GameObject.Find("Cube");
+                        
+                        Material tableMaterial = cubeGameObject.GetComponent<MeshRenderer>().material;
+                        tableMaterial.EnableKeyword("_EMISSION");
+                        tableMaterial.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+                        tableMaterial.SetColor("_EmissionColor", Color.white * 500f);
+                        
+                        LoggingHelper.TestLog(tableMaterial.shader.name);
+                        LoggingHelper.TestLog($"{tableMaterial.IsKeywordEnabled("_EMISSION")}");
+                        LoggingHelper.TestLog($"{tableMaterial.GetColor("_EmissionColor")}");
+
+                        GameObject postProcessVolumeGameObject = GameObject.Find("Post-process Volume");
+                        Bloom bloomPV = (Bloom) postProcessVolumeGameObject.GetComponent<PostProcessVolume>().profile.settings[1];
+
+                        bloomPV.intensity.Override(10f);
+                        bloomPV.threshold.Override(1f);*/
                         /*
                          * Camera Settings
                          */
@@ -279,6 +298,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                                 computer3DScreen.TitleLogo.Data;
                         }
                     }
+                }
+            }
+
+            [HarmonyLib.HarmonyPatch(typeof(StartMenuBehavior), "Update")]
+            public static class UpdateMenuTest
+            {
+                /// <summary>
+                /// Changes the update to ignore any key presses.
+                /// </summary>
+                // ReSharper disable once UnusedMember.Local
+                private static bool Prefix()
+                {
+                    return false;
                 }
             }
         }

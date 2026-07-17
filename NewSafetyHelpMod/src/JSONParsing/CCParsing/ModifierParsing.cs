@@ -545,6 +545,21 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 1.42f
             };
 
+            VariableChanged<string> submitWindowTitle = new VariableChanged<string>
+            {
+                Data = null
+            };
+            
+            VariableChanged<string> submitWindowText = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<Sprite> submitWindowIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
             /*
              * Cheats / Settings Section
              */
@@ -976,6 +991,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_scale",
                 ref clockInLogoAnimationScale);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_title",
+                ref submitWindowTitle);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_text",
+                ref submitWindowText);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "submit_window_icon",
+                ref submitWindowIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+
             /*
              * Cheats / Settings
              */
@@ -1109,6 +1133,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 IncomingCallLabel = incomingCallLabel,
                 IncomingCallAnswerButtonText = incomingCallAnswerButtonText,
                 IncomingCallAnswerButtonImage = incomingCallAnswerButtonImage,
+                SubmitWindowTitle = submitWindowTitle,
+                SubmitWindowText = submitWindowText,
+                SubmitWindowIcon = submitWindowIcon,
 
                 DayStartedAudio = dayStartedAudio,
                 DayStartedAudioPath = dayStartedAudioPath,

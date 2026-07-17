@@ -386,6 +386,39 @@ namespace NewSafetyHelp.Callers.UI
                         logoAudioSource.volume = inGameLogoFadeInAudio.value.Data.volume;
                     }
 
+                    (bool foundModifier, VariableChanged<string> value) submitWindowTitle =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.SubmitWindowTitle,
+                            vCs => vCs.HasChanged);
+
+                    if (submitWindowTitle.foundModifier)
+                    {
+                        // MainCanvas/SubmitAnswerPopup/WindowsBar/ProgramTitle
+                        GameObject.Find("MainCanvas").transform.GetChild(2).GetChild(0).GetChild(3)
+                            .GetComponent<TextMeshProUGUI>().text = submitWindowTitle.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<string> value) submitWindowText =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.SubmitWindowText,
+                            vCs => vCs.HasChanged);
+
+                    if (submitWindowText.foundModifier)
+                    {
+                        // MainCanvas/SubmitAnswerPopup/Text (TMP)
+                        GameObject.Find("MainCanvas").transform.GetChild(2).GetChild(1)
+                            .GetComponent<TextMeshProUGUI>().text = submitWindowText.value.Data;
+                    }
+                    
+                    (bool foundModifier, VariableChanged<Sprite> value) submitWindowIcon =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.SubmitWindowIcon,
+                            vCs => vCs.HasChanged);
+
+                    if (submitWindowIcon.foundModifier)
+                    {
+                        // MainCanvas/SubmitAnswerPopup/WindowsBar/ProgramLogo
+                        GameObject.Find("MainCanvas").transform.GetChild(2).GetChild(0).GetChild(2)
+                            .GetComponent<Image>().sprite = submitWindowIcon.value.Data;
+                    }
+
                     // Change Animation
 
                     (bool foundModifier, VariableChanged<List<Sprite>> value) clockInLogoAnimation =

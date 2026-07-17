@@ -421,6 +421,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = 1.42f
         };
+        
+        public VariableChanged<string> SubmitWindowTitle = new VariableChanged<string>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> SubmitWindowText = new VariableChanged<string>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<Sprite> SubmitWindowIcon = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
 
         /*
          * Cheats / Settings Section
