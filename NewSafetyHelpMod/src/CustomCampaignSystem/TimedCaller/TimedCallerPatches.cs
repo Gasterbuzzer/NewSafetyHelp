@@ -11,10 +11,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         public static class PlayCallAudioPatch
         {
             private static Coroutine playCallAudioRoutine;
-            
-            private static readonly MethodInfo PlayCallAudioRoutineMethod = typeof(CallerController).GetMethod("PlayCallAudioRoutine",
+
+            private static readonly MethodInfo PlayCallAudioRoutineMethod = typeof(CallerController).GetMethod(
+                "PlayCallAudioRoutine",
                 BindingFlags.Instance | BindingFlags.NonPublic);
-            
+
             /// <summary>
             /// A patch that stores a reference to the started coroutine, so that later, a function may stop it.
             /// </summary>
@@ -24,12 +25,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance, CallerProfile profile)
             {
-                IEnumerator playCallAudioWithProfile = (IEnumerator) PlayCallAudioRoutineMethod.Invoke(__instance, new object[] {profile});
-                
+                IEnumerator playCallAudioWithProfile =
+                    (IEnumerator)PlayCallAudioRoutineMethod.Invoke(__instance, new object[] { profile });
+
                 // OLD: __instance.PlayCallAudioRoutine(profile)
                 playCallAudioRoutine = __instance.StartCoroutine(playCallAudioWithProfile);
                 GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
-                
+
                 return false; // Skip the original coroutine
             }
 
@@ -44,7 +46,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 }
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "CloseButton", typeof(bool), typeof(bool))]
         public static class HoldButtonClosePatch
         {
@@ -59,10 +61,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             {
                 // Stop any active audio.
                 GlobalVariables.callerControllerScript.StopCallAudio();
-                
+
                 // Stop any call coroutines (that are attempting to play the audio in a bit)
                 PlayCallAudioPatch.StopCallAudioRoutine();
-                
+
                 if (playHoldSound)
                 {
                     GlobalVariables.UISoundControllerScript.PlayUISound(
@@ -74,29 +76,38 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                     GlobalVariables.musicControllerScript.StartRandomMusic();
                     GlobalVariables.mainCanvasScript.largeCallerPortrait.gameObject.SetActive(false);
                 }
-                
+
                 GlobalVariables.callerControllerScript.StopLargeWindowRoutine();
-                
+
                 __instance.gameObject.SetActive(false);
-                
+
                 GlobalVariables.callerControllerScript.StopCallAudio();
-                
+
                 // If we start the timer of the timed caller.
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCCaller currentCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                    CustomCCaller currentCaller =
+                        CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript
+                            .currentCallerID);
+
+                    CallerProfile currentCallerProfile = GlobalVariables.callerControllerScript.currentCallerProfile;
+
+                    bool isWarningOrGameOverCaller =
+                        currentCallerProfile == GlobalVariables.callerControllerScript.warningCall
+                        || currentCallerProfile == GlobalVariables.callerControllerScript.gameOverCall;
 
                     if (currentCaller != null
-                        && currentCaller.IsTimedCaller)
+                        && currentCaller.IsTimedCaller
+                        && !isWarningOrGameOverCaller)
                     {
                         TimerCallerHelper.StartTimedCallerTimer(currentCaller.TimedCallerDuration);
                     }
                 }
-                
+
                 // Moving the "StopCallAudio" lower, possibly fixes the timing mismatch of not stopping the caller audio.
                 // Also updated the starting of the caller audio to not happen if halted.
                 GlobalVariables.callerControllerScript.StopCallAudio();
-                
+
                 return false; // Skip function with false.
             }
         }

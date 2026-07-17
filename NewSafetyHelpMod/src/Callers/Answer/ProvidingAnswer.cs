@@ -544,6 +544,8 @@ namespace NewSafetyHelp.Callers.Answer
 
             private static IEnumerator SubmitRoutine(SubmitWindowBehavior __instance)
             {
+                bool permissionError = false;
+                
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     TimerCallerHelper.StopTimedCallerTimer();
@@ -555,6 +557,8 @@ namespace NewSafetyHelp.Callers.Answer
                 if (submitWindowBehavior.answerToSubmit == null)
                 {
                     GlobalVariables.mainCanvasScript.CreateError("ERROR: INSUFFICIENT PERMISSIONS.");
+
+                    permissionError = true;
                 }
                 else
                 {
@@ -587,7 +591,8 @@ namespace NewSafetyHelp.Callers.Answer
                     submitWindowBehavior.gameObject.SetActive(false);
                 }
 
-                if (CustomCampaignGlobal.InCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign 
+                    && !permissionError)
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 

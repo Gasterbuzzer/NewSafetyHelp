@@ -52,46 +52,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.InGamePatches
                                 vCs => vCs.HasChanged);
 
                     if (selectPreviouslySelectedEntryInSubmitWindow.foundModifier
-                        && selectPreviouslySelectedEntryInSubmitWindow.value.Data
-                        && LastSelectedEntry != null)
+                        && selectPreviouslySelectedEntryInSubmitWindow.value.Data)
                     {
-                        int index = __instance.myDropdown.options.FindIndex(option =>
-                            option.text == LastSelectedEntry.monsterName);
-
-                        if (index < 0)
-                        {
-                            LoggingHelper.DebugLog("Entry to be selected not found.");
-
-                            __instance.myDropdown.value = 0;
-                            __instance.myDropdown.RefreshShownValue();
-                            
-                            __instance.OnDropdownItemSelected();
-                        }
-                        else
-                        {
-                            __instance.myDropdown.value = index;
-                            __instance.myDropdown.RefreshShownValue();
-                        }
-                    }
-                    else if (selectCurrentlyMainViewSelectedEntryInSubmitWindow.foundModifier
-                             && selectCurrentlyMainViewSelectedEntryInSubmitWindow.value.Data)
-                    {
-                        if (GlobalVariables.mainCanvasScript.selectedMonsterTitle.text.ToLower().Trim() ==
-                            "no entry selected."
-                            && string.IsNullOrEmpty(GlobalVariables.mainCanvasScript.selectedMonsterDescription.text
-                                .ToLower().Trim()))
-                        {
-                            LoggingHelper.DebugLog("No entry selected. Defaulting to first entry.");
-
-                            __instance.myDropdown.value = 0;
-                            __instance.myDropdown.RefreshShownValue();
-                            
-                            __instance.OnDropdownItemSelected();
-                        }
-                        else
+                        if (LastSelectedEntry != null)
                         {
                             int index = __instance.myDropdown.options.FindIndex(option =>
-                                option.text == GlobalVariables.mainCanvasScript.selectedMonsterTitle.text);
+                                option.text == LastSelectedEntry.monsterName);
 
                             if (index < 0)
                             {
@@ -99,13 +65,64 @@ namespace NewSafetyHelp.CustomCampaignSystem.InGamePatches
 
                                 __instance.myDropdown.value = 0;
                                 __instance.myDropdown.RefreshShownValue();
-                                
+
                                 __instance.OnDropdownItemSelected();
                             }
                             else
                             {
+                                LoggingHelper.DebugLog($"Selected entry with ID: '{index}'.");
+
                                 __instance.myDropdown.value = index;
                                 __instance.myDropdown.RefreshShownValue();
+                                
+                                __instance.OnDropdownItemSelected();
+                            }
+                        }
+                        else
+                        {
+                            LoggingHelper.DebugLog("Entry to be selected not found (No last selected entry).");
+
+                            __instance.myDropdown.value = 0;
+                            __instance.myDropdown.RefreshShownValue();
+
+                            __instance.OnDropdownItemSelected();
+                        }
+                    }
+                    else if (selectCurrentlyMainViewSelectedEntryInSubmitWindow.foundModifier
+                             && selectCurrentlyMainViewSelectedEntryInSubmitWindow.value.Data)
+                    {
+                        if (GlobalVariables.mainCanvasScript.selectedMonsterProfile == null)
+                        {
+                            LoggingHelper.DebugLog("No entry selected. Defaulting to first entry.");
+
+                            __instance.myDropdown.value = 0;
+                            __instance.myDropdown.RefreshShownValue();
+
+                            __instance.OnDropdownItemSelected();
+                        }
+                        else
+                        {
+                            int index = __instance.myDropdown.options.FindIndex(option =>
+                                option.text == GlobalVariables.mainCanvasScript.selectedMonsterProfile.monsterName);
+
+                            if (index < 0)
+                            {
+                                LoggingHelper.DebugLog("Entry to be selected not found.");
+
+                                __instance.myDropdown.value = 0;
+                                __instance.myDropdown.RefreshShownValue();
+
+                                __instance.OnDropdownItemSelected();
+                            }
+                            else
+                            {
+                                LoggingHelper.DebugLog(
+                                    $"Selected entry '{GlobalVariables.mainCanvasScript.selectedMonsterProfile.monsterName}' (Index: {index}) in dropdown.");
+
+                                __instance.myDropdown.value = index;
+                                __instance.myDropdown.RefreshShownValue();
+                                
+                                __instance.OnDropdownItemSelected();
                             }
                         }
                     }
