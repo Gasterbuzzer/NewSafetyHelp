@@ -65,6 +65,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Uri linkAppClickURL = null;
 
             int linkAppPriority = 0;
+            
+            VariableChanged<string> desktopName = new VariableChanged<string>
+            {
+                Data = "No Name Provided"
+            };
+
+            VariableChanged<Sprite> desktopIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
 
             VariableChanged<string> desktopName = new VariableChanged<string>
             {
@@ -99,6 +109,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "link_app_unlock_when_game_finished", ref unlockWhenGameFinished);
 
             ParsingHelper.TryAssign(jObjectParsed, "link_app_priority", ref linkAppPriority);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "link_app_desktop_name", ref desktopName);
+            
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "link_app_desktop_icon", ref desktopIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "link_app_desktop_name", ref desktopName);
 
@@ -129,6 +144,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 LinkAppClickURL = linkAppClickURL,
 
                 LinkAppPriority = linkAppPriority,
+                
+                DesktopName = desktopName,
+                DesktopIcon = desktopIcon,
 
                 DesktopName = desktopName,
                 DesktopIcon = desktopIcon,
