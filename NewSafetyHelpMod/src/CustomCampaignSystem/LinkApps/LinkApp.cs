@@ -4,6 +4,8 @@ using JetBrains.Annotations;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.LinkApps
 {
@@ -25,6 +27,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.LinkApps
         // Please make sure to double-check that this is set correctly!
         [CanBeNull] public Uri LinkAppClickURL;
 
+        public VariableChanged<string> DesktopName = new VariableChanged<string>
+        {
+            Data = "No Name Provided"
+        };
+
+        public VariableChanged<Sprite> DesktopIcon = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+
         /*
          * Requirements
          */
@@ -37,5 +49,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.LinkApps
         // If the player requires to finish the game first.
         // NOTE: It also requires the checks to be true.
         public bool UnlockWhenGameFinished = false;
+
+        public GameObject GameObjectReference = null;
     }
 }

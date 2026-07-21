@@ -30,6 +30,7 @@ namespace NewSafetyHelp.InGameSettings
         public static MelonPreferences_Entry<bool> ShowTextFileDebugLog; // If to show the logs for text file info.
         public static MelonPreferences_Entry<bool> ShowCutsceneLog; // If to show the logs for cutscenes info.
         public static MelonPreferences_Entry<bool> ShowMemoryLog; // If to show the logs for memory usage info.
+        public static MelonPreferences_Entry<bool> ShowLinkAppLog; // If to show the logs for link apps.
 
         public static void InitializeMelonPreferences()
         {
@@ -57,6 +58,7 @@ namespace NewSafetyHelp.InGameSettings
             ShowTextFileDebugLog = mainModSettings.CreateEntry("ShowTextFileDebugLog", false);
             ShowCutsceneLog = mainModSettings.CreateEntry("ShowCutsceneLog", false);
             ShowMemoryLog = mainModSettings.CreateEntry("ShowMemoryLog", false);
+            ShowLinkAppLog = mainModSettings.CreateEntry("ShowLinkAppLog", false);
         }
     }
 }

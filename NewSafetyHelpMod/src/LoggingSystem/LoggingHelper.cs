@@ -17,7 +17,8 @@ namespace NewSafetyHelp.LoggingSystem
             TEXT_FILE,
             ENTRY,
             CUTSCENE,
-            MEMORY
+            MEMORY,
+            LINK_APP
         }
 
         private enum LoggingLevel
@@ -46,7 +47,7 @@ namespace NewSafetyHelp.LoggingSystem
                     return false;
                 }
             }
-            
+
             if (loggingCategory != LoggingCategory.NONE)
             {
                 switch (loggingCategory)
@@ -56,62 +57,79 @@ namespace NewSafetyHelp.LoggingSystem
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.THEME:
                         if (!GlobalPreferences.ShowThemeDebugLog.Value)
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.RINGTONE:
                         if (!GlobalPreferences.ShowRingtoneDebugLog.Value)
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.EMAIL:
                         if (!GlobalPreferences.ShowEmailDebugLog.Value)
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.VIDEO:
                         if (!GlobalPreferences.ShowVideoDebugLog.Value)
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.ENTRY:
                         if (!GlobalPreferences.ShowEntryDebugLog.Value)
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.TEXT_FILE:
                         if (!GlobalPreferences.ShowTextFileDebugLog.Value)
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.CUTSCENE:
                         if (!GlobalPreferences.ShowDebugLogs.Value)
                         {
                             return false;
                         }
+
                         break;
-                    
+
                     case LoggingCategory.MEMORY:
                         if (!GlobalPreferences.ShowMemoryLog.Value)
                         {
                             return false;
                         }
+
+                        break;
+
+                    case LoggingCategory.LINK_APP:
+                        if (!GlobalPreferences.ShowLinkAppLog.Value)
+                        {
+                            return false;
+                        }
+
                         break;
                 }
             }
@@ -146,12 +164,13 @@ namespace NewSafetyHelp.LoggingSystem
                 case LoggingLevel.INFO:
                     if (consoleColor != null)
                     {
-                        MelonLogger.Msg((ConsoleColor) consoleColor, $"INFO: {loggingMessage}");
+                        MelonLogger.Msg((ConsoleColor)consoleColor, $"INFO: {loggingMessage}");
                     }
                     else
                     {
                         MelonLogger.Msg($"INFO: {loggingMessage}");
                     }
+
                     break;
 
                 case LoggingLevel.DEBUG:
@@ -194,7 +213,7 @@ namespace NewSafetyHelp.LoggingSystem
                 Log(loggingMessage, LoggingLevel.INFO, consoleColor);
             }
         }
-        
+
         /// <summary>
         /// Logs info messages to the console.
         /// Overload: Provides a lambda function to avoid constructing the string if it is not known if to print yet.
@@ -226,7 +245,7 @@ namespace NewSafetyHelp.LoggingSystem
                 Log(loggingMessage, LoggingLevel.DEBUG, consoleColor);
             }
         }
-        
+
         /// <summary>
         /// Logs a debug messages to the console. Only enabled if debug is enabled.
         /// Overload: Provides a lambda function to avoid constructing the string if it is not known if to print yet.
@@ -240,7 +259,7 @@ namespace NewSafetyHelp.LoggingSystem
             if (CheckLoggingCategory(loggingCategory, true))
             {
                 string loggingMessage = loggingMessageConstructor();
-                
+
                 Log(loggingMessage, LoggingLevel.DEBUG, consoleColor);
             }
         }
@@ -270,13 +289,14 @@ namespace NewSafetyHelp.LoggingSystem
                 Log(loggingMessage, LoggingLevel.ERROR);
             }
         }
-        
+
         /// <summary>
         /// Logs a critical error messages to the console.
         /// </summary>
         /// <param name="loggingMessage">Message to log.</param>
         /// <param name="loggingCategory">If it belongs to a logging category, which one it is.</param>
-        public static void CriticalErrorLog(string loggingMessage, LoggingCategory loggingCategory = LoggingCategory.NONE)
+        public static void CriticalErrorLog(string loggingMessage,
+            LoggingCategory loggingCategory = LoggingCategory.NONE)
         {
             if (CheckLoggingCategory(loggingCategory))
             {
@@ -306,18 +326,18 @@ namespace NewSafetyHelp.LoggingSystem
             ErrorLog("Custom Campaign is null, even though custom campaign is active. " +
                      "Calling either original function or cancelling the current operation.");
         }
-        
+
         /// <summary>
         /// Logs that some variables reflected are null. Provide them via "nameof()".
         /// </summary>
         /// <param name="differentVariableNames">All the variables names to display in the error.</param>
         public static void ReflectionError(params string[] differentVariableNames)
         {
-            string reflectionErrorMessage = 
+            string reflectionErrorMessage =
                 "Method or Field reflection failed. " +
                 $"Possible variables that failed: '{string.Join("' '", differentVariableNames)}'. " +
                 "Calling original function.";
-            
+
             Log(reflectionErrorMessage, LoggingLevel.ERROR);
         }
     }

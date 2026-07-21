@@ -5,16 +5,18 @@ using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
 using NewSafetyHelp.CustomCampaignSystem.LinkApps;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
 {
     public static class LinkAppParsing
     {
         /// <summary>
-        /// Creates an email from a JSON file.
+        /// Creates a link app from a JSON file.
         /// </summary>
         /// <param name="jObjectParsed">JSON Parsed</param>
         /// <param name="usermodFolderPath">Filepath to JSON file.</param>
@@ -33,7 +35,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             string customCampaignName = "";
 
             LinkApp customLinkApp = ParseLinkApp(ref jObjectParsed,
-                ref customCampaignName);
+                ref customCampaignName, usermodFolderPath, jsonFolderPath);
 
             // Add to correct campaign.
             CustomCampaign customCampaign =
@@ -52,7 +54,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
         }
 
-        private static LinkApp ParseLinkApp(ref JObject jObjectParsed, ref string customCampaignName)
+        private static LinkApp ParseLinkApp(ref JObject jObjectParsed, ref string customCampaignName,
+            string usermodFolderPath, string jsonFolderPath)
         {
             /*
              * General Properties
@@ -62,6 +65,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             Uri linkAppClickURL = null;
 
             int linkAppPriority = 0;
+            
+            VariableChanged<string> desktopName = new VariableChanged<string>
+            {
+                Data = "No Name Provided"
+            };
+
+            VariableChanged<Sprite> desktopIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
 
             /*
              * Requirements
@@ -72,7 +85,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             int unlockDay = 0;
 
-            // For this email to appear, it may require some callers to be correct or false.
+            // For this link app to appear, it may require some callers to be correct or false.
             List<CallerRequirement> unlockRequiredCallers = null;
 
             List<GeneralAccuracyType> unlockAccuracy = null;
@@ -86,6 +99,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "link_app_unlock_when_game_finished", ref unlockWhenGameFinished);
 
             ParsingHelper.TryAssign(jObjectParsed, "link_app_priority", ref linkAppPriority);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "link_app_desktop_name", ref desktopName);
+            
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "link_app_desktop_icon", ref desktopIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
 
             /*
              * Unlock Requirements
@@ -111,6 +129,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 LinkAppClickURL = linkAppClickURL,
 
                 LinkAppPriority = linkAppPriority,
+                
+                DesktopName = desktopName,
+                DesktopIcon = desktopIcon,
 
                 UnlockWhenGameFinished = unlockWhenGameFinished,
 
