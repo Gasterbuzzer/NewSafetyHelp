@@ -436,6 +436,22 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
+        
+        public VariableChanged<List<Sprite>> ClockInAnimation = new VariableChanged<List<Sprite>>
+        {
+            Data = new List<Sprite>()
+        };
+        
+        public VariableChanged<float> ClockInAnimationDuration = new VariableChanged<float>
+        {
+            Data = 2.25f
+        };
+        
+        public VariableChanged<float> ClockInAnimationScale = new VariableChanged<float>
+        {
+            Data = 1f
+        };
+
 
         /*
          * Cheats / Settings Section

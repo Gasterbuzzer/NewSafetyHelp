@@ -559,6 +559,21 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
+            
+            VariableChanged<List<Sprite>> clockInAnimation = new VariableChanged<List<Sprite>>
+            {
+                Data = new List<Sprite>()
+            };
+            
+            VariableChanged<float> clockInAnimationDuration = new VariableChanged<float>
+            {
+                Data = 2.25f
+            };
+            
+            VariableChanged<float> clockInAnimationScale = new VariableChanged<float>
+            {
+                Data = 1f
+            };
 
             /*
              * Cheats / Settings Section
@@ -999,6 +1014,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "submit_window_icon",
                 ref submitWindowIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
+                "in_game_clock_in_animation", ref clockInAnimation, jsonFolderPath, usermodFolderPath);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_animation_duration",
+                ref clockInAnimationDuration);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_animation_scale",
+                ref clockInAnimationScale);
 
             /*
              * Cheats / Settings
@@ -1136,6 +1160,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 SubmitWindowTitle = submitWindowTitle,
                 SubmitWindowText = submitWindowText,
                 SubmitWindowIcon = submitWindowIcon,
+                ClockInAnimation = clockInAnimation,
+                ClockInAnimationDuration = clockInAnimationDuration,
+                ClockInAnimationScale = clockInAnimationScale,
 
                 DayStartedAudio = dayStartedAudio,
                 DayStartedAudioPath = dayStartedAudioPath,

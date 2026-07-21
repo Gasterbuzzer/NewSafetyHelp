@@ -207,6 +207,8 @@ namespace NewSafetyHelp.Callers.UI
                 "WriteDayString",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
+            private static Coroutine clockInAnimationCoroutine;
+
             /// <summary>
             /// Patches start software routine to work better with custom campaigns.
             /// </summary>
@@ -396,7 +398,7 @@ namespace NewSafetyHelp.Callers.UI
                         GameObject.Find("MainCanvas").transform.GetChild(2).GetChild(0).GetChild(3)
                             .GetComponent<TextMeshProUGUI>().text = submitWindowTitle.value.Data;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<string> value) submitWindowText =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.SubmitWindowText,
                             vCs => vCs.HasChanged);
@@ -407,7 +409,7 @@ namespace NewSafetyHelp.Callers.UI
                         GameObject.Find("MainCanvas").transform.GetChild(2).GetChild(1)
                             .GetComponent<TextMeshProUGUI>().text = submitWindowText.value.Data;
                     }
-                    
+
                     (bool foundModifier, VariableChanged<Sprite> value) submitWindowIcon =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.SubmitWindowIcon,
                             vCs => vCs.HasChanged);
@@ -431,6 +433,51 @@ namespace NewSafetyHelp.Callers.UI
                             GameObject.Find("MainCanvas/Panel/SoftwareIntroPanel/LogoAnimation");
 
                         logoAnimationGO.GetComponent<Animator>().enabled = false;
+                    }
+
+                    (bool foundModifier, VariableChanged<List<Sprite>> value) clockInAnimation =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInAnimation,
+                            vCs => vCs.HasChanged);
+
+                    (bool foundModifier, VariableChanged<float> value) clockInAnimationDuration =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInAnimationDuration,
+                            vCs => vCs.HasChanged);
+
+                    (bool foundModifier, VariableChanged<float> value) clockInAnimationScale =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInAnimationScale,
+                            vCs => vCs.HasChanged);
+
+                    if (clockInAnimation.foundModifier)
+                    {
+                        GameObject clockInAnimationGO =
+                            GameObject.Find("MainCanvas/Panel").transform.GetChild(12).GetChild(0).gameObject;
+
+                        clockInAnimationGO.GetComponent<Animator>().enabled = false;
+
+                        float animationDuration = 2.25f;
+
+                        if (clockInAnimationDuration.foundModifier)
+                        {
+                            animationDuration = clockInAnimationDuration.value.Data;
+                        }
+
+                        Image clockInAnimationImage = clockInAnimationGO.GetComponent<Image>();
+
+                        clockInAnimationImage.preserveAspect = true;
+
+                        clockInAnimationCoroutine = __instance.StartCoroutine(
+                            CustomClockInAnimation(clockInAnimationImage, clockInAnimation.value.Data,
+                                animationDuration));
+                    }
+
+                    if (clockInAnimationScale.foundModifier)
+                    {
+                        GameObject clockInAnimationGO =
+                            GameObject.Find("MainCanvas/Panel").transform.GetChild(12).GetChild(0).gameObject;
+
+                        RectTransform clockInAnimationRectTransform = clockInAnimationGO.GetComponent<RectTransform>();
+
+                        clockInAnimationRectTransform.sizeDelta *= clockInAnimationScale.value.Data;
                     }
                 }
 
@@ -606,6 +653,11 @@ namespace NewSafetyHelp.Callers.UI
                             yield return null;
                         }
 
+                        if (clockInAnimationCoroutine != null)
+                        {
+                            __instance.StopCoroutine(clockInAnimationCoroutine);
+                        }
+
                         yield return new WaitForSeconds(5f);
                     }
                 }
@@ -683,6 +735,45 @@ namespace NewSafetyHelp.Callers.UI
 
                 GlobalVariables.callerControllerScript.StartCallRoutine();
                 GlobalVariables.introIsPlaying = false;
+            }
+
+            /// <summary>
+            /// Custom Coroutine for rendering a custom clock in animation.
+            /// </summary>
+            /// <param name="clockInAnimationImage">Image that contains the clock animation to show on.</param>
+            /// <param name="clockInAnimation">List of sprites that contain the frames for the animation.</param>
+            /// <param name="clockInAnimationDuration">Duration of the animation.</param>
+            /// <returns>Coroutine Object to run.</returns>
+            private static IEnumerator CustomClockInAnimation(Image clockInAnimationImage,
+                List<Sprite> clockInAnimation, float clockInAnimationDuration)
+            {
+                float frameLength = clockInAnimationDuration / clockInAnimation.Count;
+
+                if (clockInAnimation.Count <= 0)
+                {
+                    LoggingHelper.WarningLog("Provided clock in animation has no images/frames to show.");
+                    yield break;
+                }
+
+                clockInAnimationImage.sprite = clockInAnimation[0];
+
+                int frameIndex = 0;
+
+                while (true)
+                {
+                    clockInAnimationImage.sprite = clockInAnimation[frameIndex];
+
+                    yield return new WaitForSeconds(frameLength);
+
+                    if (frameIndex >= clockInAnimation.Count - 1)
+                    {
+                        frameIndex = 0;
+                    }
+                    else
+                    {
+                        frameIndex++;
+                    }
+                }
             }
         }
 

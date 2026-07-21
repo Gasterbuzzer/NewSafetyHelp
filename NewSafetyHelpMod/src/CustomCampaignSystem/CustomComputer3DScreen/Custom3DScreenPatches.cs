@@ -301,7 +301,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                 }
             }
 
-            [HarmonyLib.HarmonyPatch(typeof(StartMenuBehavior), "Update")]
+            /*[HarmonyLib.HarmonyPatch(typeof(StartMenuBehavior), "Update")]
             public static class UpdateMenuTest
             {
                 /// <summary>
@@ -312,7 +312,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                 {
                     return false;
                 }
-            }
+            }*/
         }
     }
 }
