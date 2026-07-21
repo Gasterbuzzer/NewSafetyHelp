@@ -232,10 +232,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignTextFile,
                 ref customCampaign.CustomTextProgramFiles, customCampaignName, "text file");
 
-            // Check if any custom 3D shave to be added to a custom campaign.
+            // Check if any custom 3D have to be added to a custom campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(
                 ref GlobalParsingVariables.PendingCustomCampaign3DComputerScreens,
                 ref customCampaign.CustomComputer3DScreens, customCampaignName, "custom 3D screen");
+
+            // Check if any link apps have to be added to a custom campaign.
+            PendingParsingHelper.AddPendingElementsToCampaign(
+                ref GlobalParsingVariables.PendingCustomCampaignLinkApps,
+                ref customCampaign.LinkApps, customCampaignName, "link app");
 
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
@@ -349,7 +354,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool disablePickingThemeOption = false; // If true, it will hide the option to set the theme.
 
             string defaultTheme = null;
-            
+
             VariableChanged<bool> removeDefaultThemes = new VariableChanged<bool>
             {
                 Data = false
@@ -516,7 +521,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, new List<string> { "defaultTheme", "default_theme" },
                 ref defaultTheme);
             ParsingHelper.TryAssign(jObjectParsed, "disable_theme_dropdown", ref disablePickingThemeOption);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "remove_default_themes", ref removeDefaultThemes);
 
             // Ringtone

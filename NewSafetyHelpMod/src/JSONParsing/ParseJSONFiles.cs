@@ -28,6 +28,7 @@ namespace NewSafetyHelp.JSONParsing
             TextProgram,
             Cutscene,
             Computer3DScreen,
+            LinkApp,
             Invalid
         }
 
@@ -60,7 +61,7 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     customCampaign.SortEmailsInCustomCampaign();
                 }
-                
+
                 if (customCampaign.CustomVideos.Count > 0)
                 {
                     customCampaign.SortCustomVideoFiles();
@@ -70,20 +71,25 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     customCampaign.SortCutsceneInCustomCampaign();
                 }
-                
+
                 if (customCampaign.CustomTextProgramFiles.Count > 0)
                 {
                     customCampaign.SortTextFiles();
                 }
-                
+
                 if (customCampaign.CustomCallersInCampaign.Count > 0)
                 {
                     customCampaign.SortCustomCallersInCustomCampaign();
                 }
-                
+
                 if (customCampaign.CustomComputer3DScreens.Count > 0)
                 {
                     customCampaign.SortComputer3DScreens();
+                }
+
+                if (customCampaign.LinkApps.Count > 0)
+                {
+                    customCampaign.SortLinkApps();
                 }
             }
 
@@ -186,11 +192,19 @@ namespace NewSafetyHelp.JSONParsing
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as a cutscene.");
                             CutsceneParsing.CreateCutscene(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
-                        
-                        case JSONParseTypes.Computer3DScreen: // The provided JSON is a 3D Computer Screen (for custom campaigns).
+
+                        case JSONParseTypes.Computer3DScreen
+                            : // The provided JSON is a 3D Computer Screen (for custom campaigns).
                             LoggingHelper.InfoLog(
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as a 3D Computer Screen.");
                             Computer3DScreenParsing.Create3DComputerScreen(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+
+                        case JSONParseTypes.LinkApp
+                            : // The provided JSON is a Link App (for custom campaigns).
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as a link app.");
+                            LinkAppParsing.CreateLinkApp(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -248,9 +262,12 @@ namespace NewSafetyHelp.JSONParsing
             }
 
             // Entry was provided.
-            if (ParsingHelper.ContainsKeys(new List<string> { "monster_name", "replace_entry", "caller_name",
+            if (ParsingHelper.ContainsKeys(new List<string>
+                {
+                    "monster_name", "replace_entry", "caller_name",
                     "entry_name", "entry_description", "monster_description", "monster_portrait_image_name",
-                    "entry_portrait_image_name", "monster_audio_clip_name", "entry_audio_clip_name" }, json))
+                    "entry_portrait_image_name", "monster_audio_clip_name", "entry_audio_clip_name"
+                }, json))
             {
                 return JSONParseTypes.Entry;
             }
@@ -332,7 +349,7 @@ namespace NewSafetyHelp.JSONParsing
             {
                 return JSONParseTypes.Cutscene;
             }
-            
+
             // 3D Computer Screen was provided
             if (ParsingHelper.ContainsKeys(new List<string>
                 {
@@ -342,6 +359,17 @@ namespace NewSafetyHelp.JSONParsing
                 }, json))
             {
                 return JSONParseTypes.Computer3DScreen;
+            }
+
+            // Link App was provided
+            if (ParsingHelper.ContainsKeys(new List<string>
+                {
+                    "link_app_custom_campaign_name",
+                    "link_app_unlock_day", "link_app_unlock_when_game_finished",
+                    "link_app_priority", "link_app_click_url"
+                }, json))
+            {
+                return JSONParseTypes.LinkApp;
             }
 
             // Unknown JSON type or failed parsing the file.

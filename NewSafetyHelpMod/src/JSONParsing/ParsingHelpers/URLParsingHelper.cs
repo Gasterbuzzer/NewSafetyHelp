@@ -8,7 +8,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
     public static class URLParsingHelper
     {
         /// <summary>
-        /// Assigns a URL to be clicked on an email attachment.
+        /// Assigns a URL to be clicked on a given location.
         /// </summary>
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>
         /// <param name="key">Key to be found.</param>
@@ -22,13 +22,13 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             string givenStringURL = token.Value<string>();
 
-            if (!URLVerification.SetEmailClickURL(givenStringURL, ref target))
+            if (!URLVerification.SetClickURL(givenStringURL, ref target))
             {
                 LoggingHelper.WarningLog($"Provided URL with the key '{key}' is invalid. Unable of setting url.");
                 return false;
             }
 
-            LoggingHelper.DebugLog($"Found email URL: '{target.AbsoluteUri.Substring(0, 10)}[...]'. " +
+            LoggingHelper.DebugLog($"Found click URL: '{target.AbsoluteUri.Substring(0, 10)}[...]'. " +
                                    "It has been marked as valid.");
 
             return true;

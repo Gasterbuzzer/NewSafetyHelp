@@ -5,6 +5,7 @@ using NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen;
 using NewSafetyHelp.CustomCampaignSystem.CustomRingtone;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
+using NewSafetyHelp.CustomCampaignSystem.LinkApps;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -36,6 +37,7 @@ namespace NewSafetyHelp.JSONParsing
         public static List<CustomTextFile> PendingCustomCampaignTextFile = new List<CustomTextFile>();
         public static List<CustomCutscene> PendingCustomCampaignCutscenes = new List<CustomCutscene>();
         public static List<Computer3DScreen> PendingCustomCampaign3DComputerScreens = new List<Computer3DScreen>();
+        public static List<LinkApp> PendingCustomCampaignLinkApps = new List<LinkApp>();
         
         // Configuration
         // ID Offset for Entries in the custom campaign.
