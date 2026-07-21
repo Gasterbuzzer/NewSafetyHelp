@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.LinkApps;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -138,6 +139,25 @@ namespace NewSafetyHelp.CustomCampaignSystem
             }
 
             return customCampaign.Emails.Find(customEmail => customEmail.ReferenceToEmailObject == emailToFind);
+        }
+
+        /// <summary>
+        /// Gets the link app from custom campaign.
+        /// </summary>
+        /// <param name="linkAppGameObject">GameObject of the Link App Icon</param>
+        /// <returns>(LinkApp) Of the associated link app.</returns>
+        [CanBeNull]
+        public static LinkApp GetLinkAppFromActiveCampaign(GameObject linkAppGameObject)
+        {
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                return null;
+            }
+
+            return customCampaign.LinkApps.Find(linkApp =>
+                linkApp.GameObjectReference == linkAppGameObject);
         }
 
         /// <summary>
@@ -436,7 +456,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
             if (removeDefaultThemes)
             {
                 int activeThemeIndex = customCampaign.ActiveTheme;
-                
+
                 if (activeThemeIndex >= 0
                     && customCampaign.CustomThemesGeneral != null
                     && activeThemeIndex < customCampaign.CustomThemesGeneral.Count) // We have a general theme.
@@ -454,12 +474,13 @@ namespace NewSafetyHelp.CustomCampaignSystem
 
                 if (activeDayThemeIndex >= 0
                     && customCampaign.CustomThemesDays != null
-                    && activeDayThemeIndex < customCampaign.CustomThemesDays.Count) // We have a (conditional) days theme.
+                    && activeDayThemeIndex <
+                    customCampaign.CustomThemesDays.Count) // We have a (conditional) days theme.
                 {
                     isCustomTheme = true;
                     return customCampaign.CustomThemesDays[activeDayThemeIndex];
                 }
-                
+
                 return null;
             }
 
