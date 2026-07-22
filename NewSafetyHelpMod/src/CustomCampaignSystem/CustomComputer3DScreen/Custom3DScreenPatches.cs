@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
-using NewSafetyHelp.LoggingSystem;
+using NewSafetyHelp.Audio;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 
 namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
@@ -192,12 +191,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 
                         // Testing for Sun.
                         /*GameObject cubeGameObject = GameObject.Find("Cube");
-                        
+
                         Material tableMaterial = cubeGameObject.GetComponent<MeshRenderer>().material;
                         tableMaterial.EnableKeyword("_EMISSION");
                         tableMaterial.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
                         tableMaterial.SetColor("_EmissionColor", Color.white * 500f);
-                        
+
                         LoggingHelper.TestLog(tableMaterial.shader.name);
                         LoggingHelper.TestLog($"{tableMaterial.IsKeywordEnabled("_EMISSION")}");
                         LoggingHelper.TestLog($"{tableMaterial.GetColor("_EmissionColor")}");
@@ -297,6 +296,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                             GameObject.Find("TitleCanvas/Image").GetComponent<Image>().sprite =
                                 computer3DScreen.TitleLogo.Data;
                         }
+
+                        /*GameObject imageTest = GameObject.Find("TitleCanvas/Image");
+                        
+                        GameObject test = Object.Instantiate(imageTest, imageTest.transform.parent);
+
+                        test.GetComponent<Image>().sprite = EmbeddedTimerData.ClockBase;
+
+                        test.GetComponent<RectTransform>().localPosition = new Vector3(-100, 200, 0);*/
                     }
                 }
             }

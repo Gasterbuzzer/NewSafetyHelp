@@ -207,8 +207,6 @@ namespace NewSafetyHelp.Callers.UI
                 "WriteDayString",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
-            private static Coroutine clockInAnimationCoroutine;
-
             /// <summary>
             /// Patches start software routine to work better with custom campaigns.
             /// </summary>
@@ -465,7 +463,7 @@ namespace NewSafetyHelp.Callers.UI
 
                         clockInAnimationImage.preserveAspect = true;
 
-                        clockInAnimationCoroutine = __instance.StartCoroutine(
+                        __instance.StartCoroutine(
                             CustomClockInAnimation(clockInAnimationImage, clockInAnimation.value.Data,
                                 animationDuration));
                     }
@@ -651,11 +649,6 @@ namespace NewSafetyHelp.Callers.UI
                         while (!mainCanvasBehavior.clockedIn)
                         {
                             yield return null;
-                        }
-
-                        if (clockInAnimationCoroutine != null)
-                        {
-                            __instance.StopCoroutine(clockInAnimationCoroutine);
                         }
 
                         yield return new WaitForSeconds(5f);
