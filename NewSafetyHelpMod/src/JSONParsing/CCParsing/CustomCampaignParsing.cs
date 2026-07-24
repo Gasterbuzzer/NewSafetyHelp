@@ -372,6 +372,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
 
             /*
+             * Campaign Load Settings
+             */
+
+            VariableChanged<bool> fadeInCustomCampaign = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            /*
              * Parsing the JSON File
              */
 
@@ -537,6 +546,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "skip_3D_computer_screen",
                 ref skip3DComputerScreenForCustomCampaign);
 
+            // Campaign Load Settings
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "custom_campaign_fade_to_black",
+                ref fadeInCustomCampaign);
+
             return new CustomCampaign
             {
                 CampaignName = customCampaignName,
@@ -603,6 +617,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DoNotAccountDefaultRingtone = doNotAccountDefaultRingtone,
 
                 Skip3DComputerScreenForCustomCampaign = skip3DComputerScreenForCustomCampaign,
+
+                FadeInCustomCampaign = fadeInCustomCampaign,
 
                 WaitBetweenCallers = waitBetweenCallers,
                 EnableCustomWaitBetweenCallers = enableCustomWaitBetweenCallers

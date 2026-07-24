@@ -303,7 +303,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 
                         test.GetComponent<Image>().sprite = EmbeddedTimerData.ClockBase;
 
-                        test.GetComponent<RectTransform>().localPosition = new Vector3(-100, 200, 0);*/
+                        test.GetComponent<RectTransform>().localPosition = new Vector3(-100, 200, -5);*/
                     }
                 }
             }

@@ -201,7 +201,8 @@ namespace NewSafetyHelp.JSONParsing
                 yield return null;
             }
 
-            CustomCampaignSceneSwitcher.ChangeToCustomCampaignSettings(activeCustomCampaignName);
+            MelonCoroutines.Start(
+                CustomCampaignSceneSwitcher.ChangeToCustomCampaignSettings(activeCustomCampaignName, true));
 
             while (SceneManager.GetActiveScene().name != "MainMenuScene"
                    || !SceneManager.GetActiveScene().isLoaded)

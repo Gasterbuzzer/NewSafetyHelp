@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Saving;
 using NewSafetyHelp.LoggingSystem;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace NewSafetyHelp.CustomDesktop.Utils
@@ -13,7 +15,8 @@ namespace NewSafetyHelp.CustomDesktop.Utils
         /// Changes the games state being in a custom campaign.
         /// </summary>
         /// <param name="customCampaignName">Name of the custom campaign to switch to.</param>
-        public static void ChangeToCustomCampaignSettings(string customCampaignName)
+        /// <param name="inHotReload">If the changing comes from a hot reload.</param>
+        public static IEnumerator ChangeToCustomCampaignSettings(string customCampaignName, bool inHotReload)
         {
             LoggingHelper.InfoLog($"Changing to custom campaign: {customCampaignName}.",
                 consoleColor: ConsoleColor.Green);
@@ -24,12 +27,20 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             // Load Custom Campaign values
             CustomCampaignSaving.LoadFromFileCustomCampaignInfo();
 
-            // Reload Scene (Mainly to hide the fact that it is actually seamless.)
-
             CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-            
-            if (customCampaign != null 
-                && customCampaign.Skip3DComputerScreenForCustomCampaign.HasChanged 
+
+            if (customCampaign != null
+                && customCampaign.FadeInCustomCampaign.HasChanged
+                && customCampaign.FadeInCustomCampaign.Data
+                && !inHotReload)
+            {
+                GlobalVariables.fade.FadeIn();
+                yield return new WaitForSeconds(1f);
+            }
+
+            // Reload Scene (Mainly to hide the fact that it is actually seamless.)
+            if (customCampaign != null
+                && customCampaign.Skip3DComputerScreenForCustomCampaign.HasChanged
                 && !customCampaign.Skip3DComputerScreenForCustomCampaign.Data)
             {
                 SceneManager.LoadScene("Computer3DScene");
@@ -38,7 +49,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             {
                 SceneManager.LoadScene("MainMenuScene");
             }
-            
+
             LoggingHelper.DebugLog("Finished changing into custom campaign.");
         }
 
@@ -66,7 +77,7 @@ namespace NewSafetyHelp.CustomDesktop.Utils
                 SceneManager.LoadScene("MainMenuScene");
             }
         }
-        
+
         /// <summary>
         /// Saves the custom campaign values and then loads the desktop scene if requested.
         /// </summary>

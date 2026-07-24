@@ -287,6 +287,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         {
             Data = true
         };
+        
+        /*
+         * Campaign Load Settings
+         */
+        
+        public VariableChanged<bool> FadeInCustomCampaign = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         /*
          * Link Apps
