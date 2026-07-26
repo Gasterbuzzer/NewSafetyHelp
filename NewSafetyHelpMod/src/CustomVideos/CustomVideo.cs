@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomVideos
@@ -14,20 +15,25 @@ namespace NewSafetyHelp.CustomVideos
         public string VideoURL = null;
 
         public int UnlockDay = 1;
-        
+
         /*
          * Priority by which this video gets to be shown first on the desktop.
          * The higher the priority the earlier it appears on the desktop.
          */
         public int OrderPriority = 0;
 
+        public VariableChanged<int> GameObjectOrder = new VariableChanged<int>
+        {
+            Data = 0
+        };
+
         // Uses a reference to check if a Game Object belongs to the custom video.
         public GameObject ReferenceToCreatedVideo = null;
-        
+
         // Per default, videos always unlock on the correct unlock day.
         // But we may wish to use the new accuracy system, so we provide the option to override.
         public bool IgnoreAccuracyChecks = true;
-        
+
         // New Accuracy Settings
         [CanBeNull] public List<GeneralAccuracyType> UnlockAccuracy = null;
 

@@ -805,7 +805,8 @@ namespace NewSafetyHelp.Callers
                                 {
                                     __instance.warningCall
                                 });
-                            GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true);   
+
+                            GivenWarning.SetValue(__instance, true); // __instance.givenWarning = true;
                         }
                         else
                         {
@@ -910,7 +911,7 @@ namespace NewSafetyHelp.Callers
                         {
                             GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.Stop();
                         }
-                        
+
                         if (GlobalVariables.mainCanvasScript.callWindow.activeSelf)
                         {
                             __instance.PlayCallAudio();

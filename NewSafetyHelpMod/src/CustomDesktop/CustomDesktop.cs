@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.ARG;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
+using NewSafetyHelp.CustomCampaignSystem.LinkApps;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.CustomVideos;
@@ -167,9 +169,12 @@ namespace NewSafetyHelp.CustomDesktop
 
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnCutsceneLogToggle,
                         "Enable Cutscene Logs", GlobalPreferences.ShowCutsceneLog.Value);
-                    
+
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnMemoryLogToggle,
                         "Enable Memory Usage Logs", GlobalPreferences.ShowMemoryLog.Value);
+
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnLinkApp,
+                        "Enable Link App Logs", GlobalPreferences.ShowLinkAppLog.Value);
 
                     InGameSettingHelper.CreateButton(developerSettings, (e) =>
                     {
@@ -237,6 +242,12 @@ namespace NewSafetyHelp.CustomDesktop
                     {
                         return true;
                     }
+
+                    /*
+                     * ARG Section
+                     */
+
+                    ARGHelper.CreateInputCapture();
 
                     DesktopModifierSnapshot desktopModifierSnapshot = CustomCampaignGlobal.GetModifierDesktopSnapshot();
 
@@ -653,6 +664,18 @@ namespace NewSafetyHelp.CustomDesktop
                         foreach (CustomTextFile customTextFile in customCampaign.CustomTextProgramFiles)
                         {
                             CustomTextFileHelper.CreateCustomTextFile(customTextFile);
+                        }
+                    }
+
+                    /*
+                     * Link App Section
+                     */
+
+                    if (customCampaign.LinkApps.Count > 0)
+                    {
+                        foreach (LinkApp linkApp in customCampaign.LinkApps)
+                        {
+                            LinkAppHelper.CreateCustomLinkApp(linkApp);
                         }
                     }
                 }

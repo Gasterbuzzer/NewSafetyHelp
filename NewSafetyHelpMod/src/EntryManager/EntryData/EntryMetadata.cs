@@ -1,5 +1,6 @@
 ﻿using System;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 
 namespace NewSafetyHelp.EntryManager.EntryData
 {
@@ -7,11 +8,11 @@ namespace NewSafetyHelp.EntryManager.EntryData
     {
         public int? ID;
         public string Name { get; }
-        
+
         // Since it's useful to store values outside
         // Entry Values
         public string EntryDescription;
-        
+
         // Extra Info Caller
         public RichAudioClip CallerClip = null; // Caller Clip
         public string CallTranscript = "NO_TRANSCRIPT"; // Call Transcript
@@ -20,7 +21,7 @@ namespace NewSafetyHelp.EntryManager.EntryData
         public float CallerReplaceChance = 0.1f; // Chance that this entry replaces the normal caller.
 
         // If allowed to ignore the saved value and to allow calling again.
-        public bool AllowCallAgainOverRestart = true; 
+        public bool AllowCallAgainOverRestart = true;
 
         // Extra Info
         public bool Replace = false; // If to replace
@@ -31,9 +32,10 @@ namespace NewSafetyHelp.EntryManager.EntryData
 
         // Extra
         public bool AlreadyCalledOnce = false;
+
         // Used for finding currently selected, for replacing audio.
         // Please know that the information is updated for the canvas before the audio is played.
-        public bool CurrentlySelected = false; 
+        public bool CurrentlySelected = false;
 
         // Copy of the Entry
         public MonsterProfile ReferenceCopyEntry = null;
@@ -46,15 +48,24 @@ namespace NewSafetyHelp.EntryManager.EntryData
         public string ConsequenceTranscript = "NO_CONSEQUENCE_TRANSCRIPT";
         public RichAudioClip ConsequenceCallerClip = null; // Consequence Caller Clip
         public UnityEngine.Sprite ConsequenceCallerImage = null; // Consequence Caller Image
-        
+
         // Custom Campaign
         public bool OnlyCustomCampaign = false;
         public bool DeleteEntry = false; // If to delete the entry (Only works in replacing mode)
-        
+
         public string VideoUrlPortrait = String.Empty;
         public bool IsVideoPortrait = false;
 
+        public VariableChanged<bool> VideoPortraitShouldLoop = new VariableChanged<bool>
+        {
+            Data = true
+        };
+
         // Constructor
-        public EntryMetadata(string name, int id) { Name = name; ID = id; }
+        public EntryMetadata(string name, int id)
+        {
+            Name = name;
+            ID = id;
+        }
     }
 }

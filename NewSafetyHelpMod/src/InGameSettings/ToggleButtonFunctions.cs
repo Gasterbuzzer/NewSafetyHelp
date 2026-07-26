@@ -91,6 +91,13 @@ namespace NewSafetyHelp.InGameSettings
             return toggleValue;
         }
 
+        public static bool OnLinkApp(bool toggleValue)
+        {
+            GlobalPreferences.ShowLinkAppLog.Value = toggleValue;
+
+            return toggleValue;
+        }
+
         public static bool OnSkipDayClockInToggle(bool toggleValue)
         {
             GlobalPreferences.SkipDayClockIn.Value = toggleValue;

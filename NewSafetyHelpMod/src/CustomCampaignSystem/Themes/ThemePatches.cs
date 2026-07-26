@@ -27,7 +27,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                         if (theme != null)
                         {
                             bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.ThemeName);
-                        
+
                             if (!alreadyPresent)
                             {
                                 __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.ThemeName));
@@ -45,29 +45,41 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                         return;
                     }
 
+                    if (customCampaign.RemoveDefaultThemes.HasChanged
+                        && customCampaign.RemoveDefaultThemes.Data)
+                    {
+                        __instance.colorDropdown.options.Clear();
+                    }
+
                     foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
                     {
                         if (theme != null)
                         {
                             bool alreadyPresent = __instance.colorDropdown.options.Any(o => o.text == theme.ThemeName);
-                        
+
                             if (!alreadyPresent)
                             {
                                 __instance.colorDropdown.options.Add(new TMP_Dropdown.OptionData(theme.ThemeName));
                             }
                         }
                     }
-                    
+
                     if (customCampaign.DisablePickingThemeOption)
                     {
                         ThemeProgramHelper.DisableThemeDropdownInGame();
                     }
+
+                    if (__instance.colorDropdown.options.Count == 1)
+                    {
+                        __instance.colorDropdown.value = 0;
+                        __instance.colorDropdown.onValueChanged.Invoke(0);
+                    }
                 }
-                
+
                 __instance.colorDropdown.RefreshShownValue();
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(ColorPaletteController), "UpdateColorTheme")]
         public static class UpdateColorThemePatch
         {
@@ -78,11 +90,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ColorPaletteController __instance)
             {
+                // Main Campaign
                 if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     if (GlobalVariables.saveManagerScript.savedColorTheme <= 3)
                     {
-                        normalPaletteUpdate(__instance);
+                        NormalPaletteUpdate(__instance);
                     }
                     else // themeID >= 4
                     {
@@ -94,7 +107,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                                     && GlobalParsingVariables.MainGameThemes[i].CustomThemePalette != null
                                     && GlobalParsingVariables.MainGameThemes[i].CustomThemePalette.colorSwatch != null)
                                 {
-                                    __instance.colorPalette = GlobalParsingVariables.MainGameThemes[i].CustomThemePalette;
+                                    __instance.colorPalette =
+                                        GlobalParsingVariables.MainGameThemes[i].CustomThemePalette;
                                 }
                             }
                         }
@@ -109,36 +123,46 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
+
+                    LoggingHelper.DebugLog(
+                        $"Called with saved color theme: '{GlobalVariables.saveManagerScript.savedColorTheme}' " +
+                        $"and custom campaign activeTheme: '{customCampaign.ActiveTheme}'.",
+                        LoggingHelper.LoggingCategory.THEME);
                     
-                    LoggingHelper.DebugLog($"Called with saved color theme: {GlobalVariables.saveManagerScript.savedColorTheme} " +
-                    $"and custom campaign activeTheme: {customCampaign.ActiveTheme}.", LoggingHelper.LoggingCategory.THEME);
+                    bool removeDefaultThemes = false;
                     
-                    
+                    if (customCampaign.RemoveDefaultThemes.HasChanged)
+                    {
+                        removeDefaultThemes = customCampaign.RemoveDefaultThemes.Data;
+                    }
+
                     // Now if we have not loaded in the default theme ever, we do it now.
-                    if (!string.IsNullOrEmpty(customCampaign.DefaultTheme) 
+                    if (!string.IsNullOrEmpty(customCampaign.DefaultTheme)
                         && !customCampaign.DefaultThemeAppliedOnce)
                     {
-                        int themeID = CustomCampaignGlobal.GetThemeIDFromName(customCampaign.DefaultTheme);
+                        int themeID = CustomCampaignGlobal.GetThemeIDFromName(customCampaign.DefaultTheme, removeDefaultThemes);
 
                         if (themeID > 0)
                         {
+                            LoggingHelper.DebugLog($"Setting first time default theme to: '{themeID}'.");
+                            
                             customCampaign.DefaultThemeAppliedOnce = true;
                             customCampaign.ActiveTheme = themeID;
                         }
                     }
-
-                    if (customCampaign.ActiveTheme <= 3)
+                    
+                    if (!removeDefaultThemes && customCampaign.ActiveTheme <= 3)
                     {
-                        normalPaletteUpdate(__instance);
+                        NormalPaletteUpdate(__instance);
                     }
                     else
                     {
-                        int conditionalTheme = CustomCampaignGlobal.CheckIfConditionalTheme();
-                        
+                        int conditionalTheme = CustomCampaignGlobal.CheckIfConditionalTheme(removeDefaultThemes);
+
                         if (conditionalTheme != -1) // We have a conditional theme that we need to apply.
                         {
-                            CustomTheme theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme);
-                            
+                            CustomTheme theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme, removeDefaultThemes);
+
                             if (theme != null
                                 && theme.CustomThemePalette != null
                                 && theme.CustomThemePalette.colorSwatch != null
@@ -148,21 +172,22 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                             }
                             else
                             {
-                                normalPaletteUpdate(__instance);
+                                NormalPaletteUpdate(__instance);
                             }
                         }
                         else // We don't have a conditional theme to apply.
                         {
                             bool isCustomTheme = false;
-                            CustomTheme theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme);
-                        
-                            LoggingHelper.DebugLog($"Is the theme custom? '{isCustomTheme}'. " +
-                                                   $"Was theme invalid? '{theme != null}'. ");
-                            
-                            LoggingHelper.DebugLog($"How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
-                                                   $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.");
+                            CustomTheme theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme, removeDefaultThemes);
 
-                            if (isCustomTheme 
+                            LoggingHelper.DebugLog($"Is the theme custom? '{isCustomTheme}'. " +
+                                                   $"Was theme valid? '{theme != null}'. ");
+
+                            LoggingHelper.DebugLog(
+                                $"How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
+                                $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.");
+
+                            if (isCustomTheme
                                 && theme != null
                                 && theme.CustomThemePalette != null
                                 && theme.CustomThemePalette.colorSwatch != null
@@ -172,49 +197,49 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                             }
                             else
                             {
-                                normalPaletteUpdate(__instance);
+                                NormalPaletteUpdate(__instance);
                             }
                         }
                     }
                 }
-                
+
                 foreach (AdhereToPalette adhereToPalette in Object.FindObjectsOfType<AdhereToPalette>(true))
                 {
                     adhereToPalette.ChangeColors();
                 }
-                
+
                 return false;
             }
 
-            private static void normalPaletteUpdate(ColorPaletteController __instance)
+            private static void NormalPaletteUpdate(ColorPaletteController __instance)
             {
                 switch (GlobalVariables.saveManagerScript.savedColorTheme)
                 {
                     case 0:
                         __instance.colorPalette = __instance.defaultPalette;
-                            
+
                         if (GlobalVariables.isXmasDLC)
                         {
                             __instance.colorPalette = __instance.xmasPalette;
                         }
-                            
+
                         break;
-                        
+
                     case 1:
                         __instance.colorPalette = __instance.windowsPalette;
                         break;
-                        
+
                     case 2:
                         __instance.colorPalette = __instance.tirePalette;
                         break;
-                        
+
                     case 3:
                         __instance.colorPalette = __instance.nightPalette;
                         break;
                 }
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "ColorThemeChanged")]
         public static class ColorThemeChangedPatch
         {
@@ -238,11 +263,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.ActiveTheme = __instance.colorDropdown.value;
                     GlobalVariables.saveManagerScript.savedColorTheme = __instance.colorDropdown.value;
                 }
-                
+
                 if (!GlobalVariables.colorPaletteController)
                 {
                     return false;
@@ -250,9 +275,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
 
                 LoggingHelper.DebugLog($"Color Palette change called with ID: {__instance.colorDropdown.value}",
                     LoggingHelper.LoggingCategory.THEME);
-                
+
                 GlobalVariables.colorPaletteController.UpdateColorTheme();
-                
+
                 return false; // Skip original function.
             }
         }

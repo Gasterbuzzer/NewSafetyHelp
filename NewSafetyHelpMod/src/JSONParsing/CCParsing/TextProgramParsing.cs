@@ -4,6 +4,7 @@ using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
@@ -64,6 +65,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              */
             int orderPriority = 0;
 
+            VariableChanged<int> gameObjectOrder = new VariableChanged<int>
+            {
+                Data = 0
+            };
+
             // New Accuracy Settings
             bool ignoreAccuracyChecks = false;
             List<GeneralAccuracyType> unlockAccuracy = null;
@@ -82,6 +88,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "text_file_unlock_day", ref unlockDay);
 
             ParsingHelper.TryAssign(jObjectParsed, "text_file_order_priority", ref orderPriority);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "text_file_desktop_position",
+                ref gameObjectOrder);
 
             ParsingHelper.TryAssign(jObjectParsed, "text_file_contents", ref textFileContents);
 
@@ -106,6 +115,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 UnlockDay = unlockDay,
 
                 OrderPriority = orderPriority,
+                GameObjectOrder = gameObjectOrder,
 
                 UnlockAccuracy = unlockAccuracy,
                 UnlockRequiredCallers = unlockRequiredCallers,

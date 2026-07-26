@@ -5,6 +5,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.ParsingHelpers;
@@ -24,7 +25,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ref string entryDescription, ref List<string> arcadeCalls, ref Sprite entryPortrait,
             ref string entryPortraitLocation, ref string entryAudioClipLocation, ref bool deleteReplaceEntry,
             ref bool inCustomCampaign, ref string customCampaignName,
-            ref string videoUrlPortrait, ref bool isVideoPortrait)
+            ref string videoUrlPortrait, ref bool isVideoPortrait, ref VariableChanged<bool> videoPortraitShouldLoop)
         {
             /*
              * Entry Information
@@ -185,7 +186,6 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             }
 
             // Custom Campaign
-
             if (jsonObjectParsed.TryGetValue("attached_custom_campaign_name", out var attachedCustomCampaignName))
             {
                 LoggingHelper.DebugLog("Found an entry that is custom campaign only.",
@@ -201,6 +201,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // Video Entry Portrait
             isVideoPortrait = VideoParsingHelper.TryAssignVideoPath(jsonObjectParsed, "portrait_video_name",
                 ref videoUrlPortrait, jsonFolderPath, usermodFolderPath);
+            
+            ParsingHelper.TryAssignWithChangedBool(jsonObjectParsed, "portrait_video_should_loop",
+                ref videoPortraitShouldLoop);
         }
 
         private static void ParsePhobias(ref JObject jsonObjectParsed, ref bool spiderPhobia,
@@ -302,6 +305,10 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             string videoUrlPortrait = String.Empty;
             bool isVideoPortrait = false;
+            VariableChanged<bool> videoPortraitShouldLoop = new VariableChanged<bool>
+            {
+                Data = true
+            };
 
             // Phobias
             bool spiderPhobia = false;
@@ -328,7 +335,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref accessLevelAdded, ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign,
                 ref entryName, ref entryDescription, ref arcadeCalls, ref entryPortrait,
                 ref entryPortraitLocation, ref entryAudioClipLocation, ref deleteReplaceEntry,
-                ref inCustomCampaign, ref customCampaignName, ref videoUrlPortrait, ref isVideoPortrait);
+                ref inCustomCampaign, ref customCampaignName, ref videoUrlPortrait, ref isVideoPortrait,
+                ref videoPortraitShouldLoop);
 
             // Parse Phobias
             ParsePhobias(ref jObjectParsed, ref spiderPhobia, ref spiderPhobiaIncluded,
@@ -353,7 +361,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref accessLevel, ref onlyDLC,
                 ref includeDLC, ref includeMainCampaign, ref consequenceCallerName, ref consequenceCallerTranscript,
                 ref consequenceCallerPortrait, ref deleteReplaceEntry, ref inCustomCampaign, ref customCampaignName,
-                ref videoUrlPortrait, ref isVideoPortrait);
+                ref videoUrlPortrait, ref isVideoPortrait, ref videoPortraitShouldLoop);
 
             // Caller Audio Path (Later gets added with coroutine)
             if (jObjectParsed.TryGetValue("caller_audio_clip_name", out var callerAudioClipNameValue))
@@ -534,7 +542,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ref bool includeDLC, ref bool includeMainCampaign, ref string consequenceCallerName,
             ref string consequenceCallerTranscript, ref Sprite consequenceCallerPortrait,
             ref bool deleteReplaceEntry, ref bool inCustomCampaign, ref string customCampaignName,
-            ref string videoUrlPortrait, ref bool isVideoPortrait)
+            ref string videoUrlPortrait, ref bool isVideoPortrait, ref VariableChanged<bool> videoPortraitShouldLoop)
         {
             newExtra = new EntryMetadata(entryName, newID)
             {
@@ -571,6 +579,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             newExtra.VideoUrlPortrait = videoUrlPortrait;
             newExtra.IsVideoPortrait = isVideoPortrait;
+            newExtra.VideoPortraitShouldLoop = videoPortraitShouldLoop;
 
             if (deleteReplaceEntry)
             {

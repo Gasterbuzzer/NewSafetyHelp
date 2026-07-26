@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.LinkApps;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -141,6 +142,25 @@ namespace NewSafetyHelp.CustomCampaignSystem
         }
 
         /// <summary>
+        /// Gets the link app from custom campaign.
+        /// </summary>
+        /// <param name="linkAppGameObject">GameObject of the Link App Icon</param>
+        /// <returns>(LinkApp) Of the associated link app.</returns>
+        [CanBeNull]
+        public static LinkApp GetLinkAppFromActiveCampaign(GameObject linkAppGameObject)
+        {
+            CustomCampaign customCampaign = GetActiveCustomCampaign();
+
+            if (customCampaign == null)
+            {
+                return null;
+            }
+
+            return customCampaign.LinkApps.Find(linkApp =>
+                linkApp.GameObjectReference == linkAppGameObject);
+        }
+
+        /// <summary>
         /// Gets the custom entry by its name.
         /// </summary>
         /// <param name="entryName"> Name of the entry to find. </param>
@@ -161,8 +181,9 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// Finds the ID for a given custom theme.
         /// </summary>
         /// <param name="theme">Theme to get the ID from.</param>
+        /// <param name="removeDefaultThemes">Removes the default themes from the calculations.</param>
         /// <returns>ID of the theme if found. -1 if not found or if something went wrong.</returns>
-        private static int GetThemeID(CustomTheme theme)
+        private static int GetThemeID(CustomTheme theme, bool removeDefaultThemes)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -177,7 +198,14 @@ namespace NewSafetyHelp.CustomCampaignSystem
                 int generalIDSearch = customCampaign.CustomThemesGeneral.IndexOf(theme);
                 if (generalIDSearch != -1)
                 {
-                    return generalIDSearch + 4;
+                    if (removeDefaultThemes)
+                    {
+                        return generalIDSearch;
+                    }
+                    else
+                    {
+                        return generalIDSearch + 4;
+                    }
                 }
             }
 
@@ -191,7 +219,14 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         conditionalIDSearch += customCampaign.CustomThemesGeneral.Count;
                     }
 
-                    return conditionalIDSearch + 4;
+                    if (removeDefaultThemes)
+                    {
+                        return conditionalIDSearch;
+                    }
+                    else
+                    {
+                        return conditionalIDSearch + 4;
+                    }
                 }
             }
 
@@ -203,7 +238,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// </summary>
         /// <returns>(Int) null = No valid theme found for the given ID; Otherwise: Theme with the given ID.</returns>
         [CanBeNull]
-        public static CustomTheme GetThemeFromID(int themeID)
+        public static CustomTheme GetThemeFromID(int themeID, bool removeDefaultThemes)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -212,13 +247,46 @@ namespace NewSafetyHelp.CustomCampaignSystem
                 return null;
             }
 
-            // Default them, just return null.
+            int currentThemeID = 0;
+
+            if (removeDefaultThemes)
+            {
+                if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
+                {
+                    foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
+                    {
+                        currentThemeID++;
+
+                        if (theme != null && currentThemeID == themeID)
+                        {
+                            return theme;
+                        }
+                    }
+                }
+
+                if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
+                {
+                    foreach (CustomTheme theme in customCampaign.CustomThemesDays)
+                    {
+                        currentThemeID++;
+
+                        if (theme != null && currentThemeID == themeID)
+                        {
+                            return theme;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            // (Keep Default Themes) Default them, just return null.
             if (themeID <= 3)
             {
                 return null;
             }
 
-            int currentThemeID = 3;
+            currentThemeID = 3;
 
             if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
             {
@@ -253,7 +321,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// Gets the theme's ID from the theme's name.
         /// </summary>
         /// <returns>(Int) -1 = No theme found; Otherwise: ID of Theme.</returns>
-        public static int GetThemeIDFromName(string themeName)
+        public static int GetThemeIDFromName(string themeName, bool removeDefaultThemes)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -262,7 +330,40 @@ namespace NewSafetyHelp.CustomCampaignSystem
                 return -1;
             }
 
-            int currentThemeID = 3;
+            int currentThemeID = -1;
+
+            if (removeDefaultThemes)
+            {
+                if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
+                {
+                    foreach (CustomTheme theme in customCampaign.CustomThemesGeneral)
+                    {
+                        currentThemeID++;
+
+                        if (theme != null && theme.ThemeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return currentThemeID;
+                        }
+                    }
+                }
+
+                if (customCampaign.CustomThemesDays != null && customCampaign.CustomThemesDays.Count > 0)
+                {
+                    foreach (CustomTheme theme in customCampaign.CustomThemesDays)
+                    {
+                        currentThemeID++;
+
+                        if (theme != null && theme.ThemeName.Equals(themeName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return currentThemeID;
+                        }
+                    }
+                }
+
+                return -1;
+            }
+
+            currentThemeID = 3;
 
             if (customCampaign.CustomThemesGeneral != null && customCampaign.CustomThemesGeneral.Count > 0)
             {
@@ -297,7 +398,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// Checks if for the current day there is supposed to be a conditional theme active.
         /// </summary>
         /// <returns>(Int) -1 = No theme to be activated; Otherwise: ID of Theme to be activated.</returns>
-        public static int CheckIfConditionalTheme()
+        public static int CheckIfConditionalTheme(bool removeDefaultThemes)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
 
@@ -308,7 +409,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
             }
 
             bool themeFound = false;
-            CustomTheme currentTheme = GetActiveTheme(ref themeFound);
+            CustomTheme currentTheme = GetActiveTheme(ref themeFound, removeDefaultThemes);
 
             if (currentTheme == null) // Theme is default or not set. No conditional theme can be applied.
             {
@@ -323,7 +424,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                     {
                         if (theme.UnlockDays.Contains(GlobalVariables.currentDay))
                         {
-                            int foundThemeID = GetThemeID(theme);
+                            int foundThemeID = GetThemeID(theme, removeDefaultThemes);
 
                             if (foundThemeID >= 0)
                             {
@@ -343,12 +444,43 @@ namespace NewSafetyHelp.CustomCampaignSystem
         /// <returns>Returns the actual active theme.
         /// Null if we failed or the theme is a default theme from the game.</returns>
         [CanBeNull]
-        public static CustomTheme GetActiveTheme(ref bool isCustomTheme)
+        public static CustomTheme GetActiveTheme(ref bool isCustomTheme, bool removeDefaultThemes)
         {
             CustomCampaign customCampaign = GetActiveCustomCampaign();
 
             if (customCampaign == null)
             {
+                return null;
+            }
+
+            if (removeDefaultThemes)
+            {
+                int activeThemeIndex = customCampaign.ActiveTheme;
+
+                if (activeThemeIndex >= 0
+                    && customCampaign.CustomThemesGeneral != null
+                    && activeThemeIndex < customCampaign.CustomThemesGeneral.Count) // We have a general theme.
+                {
+                    isCustomTheme = true;
+                    return customCampaign.CustomThemesGeneral[activeThemeIndex];
+                }
+
+                int activeDayThemeIndex = customCampaign.ActiveTheme;
+
+                if (customCampaign.CustomThemesGeneral != null)
+                {
+                    activeDayThemeIndex -= customCampaign.CustomThemesGeneral.Count;
+                }
+
+                if (activeDayThemeIndex >= 0
+                    && customCampaign.CustomThemesDays != null
+                    && activeDayThemeIndex <
+                    customCampaign.CustomThemesDays.Count) // We have a (conditional) days theme.
+                {
+                    isCustomTheme = true;
+                    return customCampaign.CustomThemesDays[activeDayThemeIndex];
+                }
+
                 return null;
             }
 

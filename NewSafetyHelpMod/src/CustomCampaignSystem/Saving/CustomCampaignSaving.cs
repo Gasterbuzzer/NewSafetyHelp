@@ -45,7 +45,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             {
                 currentCampaign.CampaignSaveCategory.CreateEntry("savedCallerArrayLength", 0);
             }
-            
+
             for (int i = 0; i < currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCallerArrayLength").Value; i++)
             {
                 if (currentCampaign.CampaignSaveCategory.GetEntry<bool>($"savedCallerCorrectAnswer{i}") == null)
@@ -63,8 +63,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             {
                 currentCampaign.CampaignSaveCategory.CreateEntry("savedGameFinishedDisplay", 0);
             }
-            
-            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
+
+            for (int i = 0; i < currentCampaign.CampaignDays + 1; i++)
             {
                 if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
@@ -88,7 +88,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             }
 
             LoggingHelper.DebugLog("Saving Custom Campaign Info.");
-            
+
             CustomCampaign currentCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             if (currentCampaign == null)
@@ -115,7 +115,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             {
                 currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays").Value = currentCampaign.CurrentDay;
             }
-            
+
             // Current Caller Index
             if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedCurrentCaller") == null)
             {
@@ -217,7 +217,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             }
 
             // Day score
-            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays + 1; i++)
             {
                 if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") == null)
                 {
@@ -228,7 +228,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                     if (currentCampaign.SavedDayScores.Count > i)
                     {
                         // Whatever value where have at that index.
-                        savedCallerCorrectAnswers.Value = currentCampaign.SavedDayScores[i]; 
+                        savedCallerCorrectAnswers.Value = currentCampaign.SavedDayScores[i];
                     }
                     else
                     {
@@ -243,7 +243,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                     {
                         // Whatever value where have at that index.
                         currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}").Value =
-                            currentCampaign.SavedDayScores[i]; 
+                            currentCampaign.SavedDayScores[i];
                     }
                     else
                     {
@@ -255,7 +255,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             // We finished storing all important values. Now we save.
             MelonPreferences.Save();
-        
+
             LoggingHelper.InfoLog($"Finished saving custom campaign {currentCampaign.CampaignName}.");
         }
 
@@ -285,7 +285,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
                     currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
             }
-            
+
             // Check if it was ever saved before. If yes, load and if not then we call save once.
             initializeCustomCampaignOnce();
 
@@ -314,8 +314,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 }
                 else
                 {
-                    LoggingHelper.WarningLog($"While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist!" +
-                                             $" Setting to 0.0 for {i}.");
+                    LoggingHelper.WarningLog(
+                        $"While loading all saved caller answers, 'savedCallerCorrectAnswer{i}' does not exist!" +
+                        $" Setting to 0.0 for {i}.");
                     currentCampaign.SavedCallersCorrectAnswer.Add(false);
                 }
             }
@@ -323,7 +324,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // Saved Day Scores
             // We do +1, since the game never uses day 0 and instead prefers days to start at 1.
             // We could fix this, by simply writing the correct values "-1" day, but this seems simpler.
-            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays + 1; i++)
             {
                 if (currentCampaign.CampaignSaveCategory.GetEntry<float>($"SavedDayScore{i}") != null)
                 {
@@ -375,7 +376,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             GlobalVariables.saveManagerScript.savedGameFinished = currentCampaign.SavedGameFinished;
             GlobalVariables.saveManagerScript.savedGameFinishedDisplay = currentCampaign.SavedGameFinishedDisplay;
 
-            for (int i = 0; i < Mathf.Min(7, currentCampaign.CampaignDays+1); ++i)
+            for (int i = 0; i < Mathf.Min(7, currentCampaign.CampaignDays + 1); ++i)
             {
                 switch (i)
                 {
@@ -440,7 +441,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // Custom Campaigns
 
             // We haven't loaded it in?
-            if (currentCampaign.CampaignSaveCategory == null) 
+            if (currentCampaign.CampaignSaveCategory == null)
             {
                 LoggingHelper.DebugLog("Loading values before saving.");
                 LoadFromFileCustomCampaignInfo();
@@ -482,7 +483,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             // Reset daily score
             currentCampaign.SavedDayScores = new List<float>();
-            for (int i = 0; i < currentCampaign.CampaignDays+1; i++)
+            for (int i = 0; i < currentCampaign.CampaignDays + 1; i++)
             {
                 currentCampaign.CampaignSaveCategory.DeleteEntry($"SavedDayScore{i}");
             }
@@ -492,16 +493,27 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             currentCampaign.SavedCallerArrayLength = 0;
 
             // Special Values
-            currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
-            currentCampaign.SavedGameFinished = 0;
+
+            bool shouldResetGameFinishedBooleans = false;
+
+            if (currentCampaign.ShouldResetGameBeatenVariableOnReset.HasChanged)
+            {
+                shouldResetGameFinishedBooleans = currentCampaign.ShouldResetGameBeatenVariableOnReset.Data;
+            }
+
+            if (shouldResetGameFinishedBooleans)
+            {
+                currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinished").Value = 0;
+                currentCampaign.SavedGameFinished = 0;
+            }
 
             currentCampaign.CampaignSaveCategory.GetEntry<int>("savedGameFinishedDisplay").Value = 0;
             currentCampaign.SavedGameFinishedDisplay = 0;
-            
+
             // Options
             currentCampaign.CampaignSaveCategory.GetEntry<int>("savedColorTheme").Value = 0;
             currentCampaign.ActiveTheme = 0;
-            
+
             // Theme
             currentCampaign.CampaignSaveCategory.GetEntry<bool>("themeShownOnce").Value = false;
             currentCampaign.DefaultThemeAppliedOnce = false;

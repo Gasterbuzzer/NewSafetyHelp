@@ -31,6 +31,11 @@ namespace NewSafetyHelp.CustomVideos
 
             newCustomVideo.name = customVideo.DesktopName + customVideo.VideoURL;
 
+            if (customVideo.GameObjectOrder.HasChanged)
+            {
+                newCustomVideo.transform.SetSiblingIndex(customVideo.GameObjectOrder.Data);
+            }
+
             // Update desktop name
             TextMeshProUGUI textChildGameObjectText = newCustomVideo.transform.Find("TextBackground").transform
                 .Find("ExecutableName").gameObject.GetComponent<TextMeshProUGUI>();

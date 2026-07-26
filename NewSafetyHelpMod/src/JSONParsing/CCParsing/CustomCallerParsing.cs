@@ -126,8 +126,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             bool downedCall = false; // If the entries cannot be accessed while the caller is calling.
 
-            int customCallerConsequenceCallerID =
-                -1; // If this call is due to a consequence caller. You can provide it here.
+            // If this call is due to a consequence caller. You can provide it here.
+            int customCallerConsequenceCallerID = -1;
 
             // 99% of times should never be used. Scream at the person who uses it in a bad way.
             int customCallerMonsterID = -1;

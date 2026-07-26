@@ -173,12 +173,12 @@ namespace NewSafetyHelp.CustomDesktop.Utils
             {
                 imageButtonComponent.onClick.AddListener(() =>
                 {
-                    URLVerification.OpenEmailURI(urlToOpen);
+                    URLVerification.OpenURIInBrowser(urlToOpen);
                 });
                 
                 animatedImageButtonComponent.onClick.AddListener(() =>
                 {
-                    URLVerification.OpenEmailURI(urlToOpen);
+                    URLVerification.OpenURIInBrowser(urlToOpen);
                 });
                 
                 // We also enable the corresponding cursor hover.

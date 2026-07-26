@@ -37,9 +37,22 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
 
                 CallerProfile currentCallerProfile = GlobalVariables.callerControllerScript.currentCallerProfile;
 
+                bool isWarningOrGameOverCaller =
+                    currentCallerProfile == GlobalVariables.callerControllerScript.warningCall
+                    || currentCallerProfile == GlobalVariables.callerControllerScript.gameOverCall;
+
                 __instance.myPortrait.sprite = currentCallerProfile.callerPortrait;
 
-                if (CustomCampaignGlobal.InCustomCampaign)
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && isWarningOrGameOverCaller)
+                {
+                    MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CALLER);
+
+                    MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.CALLER);
+                }
+
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && !isWarningOrGameOverCaller)
                 {
                     CustomCCaller currentCaller =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript
@@ -109,7 +122,23 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                 __instance.callerNameText.text = "CURRENT CALLER: " + profile.callerName.ToUpper();
 
                 __instance.callerPortrait.sprite = profile.callerPortrait;
-                if (CustomCampaignGlobal.InCustomCampaign)
+
+                // If we are in the custom campaign and got a warning caller. We remove everything not used.
+                bool isWarningOrGameOverCaller = profile == GlobalVariables.callerControllerScript.warningCall
+                                                 || profile == GlobalVariables.callerControllerScript.gameOverCall;
+
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && isWarningOrGameOverCaller)
+                {
+                    MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CORNER_CALLER);
+
+                    MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.CORNER_CALLER);
+
+                    TimerCallerHelper.HideCallerTimerUI();
+                }
+
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && !isWarningOrGameOverCaller)
                 {
                     CustomCCaller currentCaller =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript
@@ -147,7 +176,18 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                 }
 
                 __instance.largeCallerPortrait.sprite = profile.callerPortrait;
-                if (CustomCampaignGlobal.InCustomCampaign)
+
+                // If we are in the custom campaign and got a warning caller. We remove everything not used.
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && isWarningOrGameOverCaller)
+                {
+                    MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.LARGE_CALLER);
+
+                    MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.LARGE_CALLER);
+                }
+
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && !isWarningOrGameOverCaller)
                 {
                     CustomCCaller currentCaller =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript

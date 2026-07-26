@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.CallerRequirementHelper;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
@@ -20,7 +21,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
          * Higher Priority => Gets shown first.
          */
         public int OrderPriority = 0;
-        
+
+        public VariableChanged<int> GameObjectOrder = new VariableChanged<int>
+        {
+            Data = 0
+        };
+
         // New Accuracy Settings
         [CanBeNull] public List<GeneralAccuracyType> UnlockAccuracy = null;
 

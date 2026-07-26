@@ -19,11 +19,11 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             }
             
             List<Sprite> artbookFirstImages = new List<Sprite>();
-            bool? singleImageProvided = ImageParsingHelper.TryAssignImageListOrSingleImage(jObjectParsed, firstImageKey,
+            bool? singleImageProvided = ImageParsingHelper.TryAssignSpriteListOrSingleSprite(jObjectParsed, firstImageKey,
                 ref artbookFirstImages, jsonFolderPath, usermodFolderPath);
 
             List<Sprite> artbookSecondImages = new List<Sprite>();
-            bool? singleImage2Provided = ImageParsingHelper.TryAssignImageListOrSingleImage(jObjectParsed,
+            bool? singleImage2Provided = ImageParsingHelper.TryAssignSpriteListOrSingleSprite(jObjectParsed,
                 secondImageKey, ref artbookSecondImages, jsonFolderPath, usermodFolderPath, true);
             
             List<string> artbookTitles = new List<string>();

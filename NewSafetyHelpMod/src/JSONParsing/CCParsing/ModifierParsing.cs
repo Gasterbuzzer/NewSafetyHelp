@@ -73,6 +73,34 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 },
                 jsonFolderPath, "timed_caller_critical_audio_name");
 
+            /*
+             * In Game Audio
+             */
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.ClockDayStartedAudioPath,
+                clip =>
+                {
+                    customModifier.ClockDayStartedAudio.Data = clip;
+                    customModifier.ClockDayStartedAudio.HasChanged = true;
+                },
+                jsonFolderPath, "in_game_clock_start_audio_name");
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.DayStartedAudioPath,
+                clip =>
+                {
+                    customModifier.DayStartedAudio.Data = clip;
+                    customModifier.DayStartedAudio.HasChanged = true;
+                },
+                jsonFolderPath, "in_game_day_start_audio_name");
+
+            AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.InGameLogoFadeInAudioPath,
+                clip =>
+                {
+                    customModifier.InGameLogoFadeInAudio.Data = clip;
+                    customModifier.InGameLogoFadeInAudio.HasChanged = true;
+                },
+                jsonFolderPath, "in_game_logo_fade_in_sound");
+
             // Add to correct campaign.
             CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
 
@@ -156,7 +184,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Animated Backgrounds
             List<string> animatedDesktopBackgrounds = new List<string>();
             bool blackBackgroundOnAnimatedBackground = false;
-            
+
             VariableChanged<bool> animatedDesktopBackgroundShouldLoop = new VariableChanged<bool>
             {
                 Data = true
@@ -422,7 +450,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = 5f
             };
-            
+
             /*
              * In Game Modifications
              */
@@ -431,10 +459,120 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<bool> inGameProgramIconCenter = new VariableChanged<bool>
             {
                 Data = false
+            };
+
+            VariableChanged<Sprite> inGamePhoneIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
+            VariableChanged<bool> inGamePhoneIconCenter = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<string> incomingCallTitle = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> incomingCallLabel = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> incomingCallAnswerButtonText = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<Sprite> incomingCallAnswerButtonImage = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
+            VariableChanged<RichAudioClip> clockDayStartedAudio = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> clockDayStartedAudioPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<RichAudioClip> dayStartedAudio = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> dayStartedAudioPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<RichAudioClip> inGameLogoFadeInAudio = new VariableChanged<RichAudioClip>
+            {
+                Data = null
+            };
+
+            VariableChanged<string> inGameLogoFadeInAudioPath = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<List<Sprite>> clockInLogoAnimation = new VariableChanged<List<Sprite>>
+            {
+                Data = new List<Sprite>()
+            };
+
+            VariableChanged<float> clockInLogoAnimationScale = new VariableChanged<float>
+            {
+                Data = 1.0f
+            };
+
+            VariableChanged<float> clockInLogoAnimationFadeDuration = new VariableChanged<float>
+            {
+                Data = 1.82f
+            };
+
+            VariableChanged<float> clockInLogoAnimationHoldDuration = new VariableChanged<float>
+            {
+                Data = 1.42f
+            };
+
+            VariableChanged<string> submitWindowTitle = new VariableChanged<string>
+            {
+                Data = null
+            };
+            
+            VariableChanged<string> submitWindowText = new VariableChanged<string>
+            {
+                Data = null
+            };
+
+            VariableChanged<Sprite> submitWindowIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+            
+            VariableChanged<List<Sprite>> clockInAnimation = new VariableChanged<List<Sprite>>
+            {
+                Data = new List<Sprite>()
+            };
+            
+            VariableChanged<float> clockInAnimationDuration = new VariableChanged<float>
+            {
+                Data = 2.25f
+            };
+            
+            VariableChanged<float> clockInAnimationScale = new VariableChanged<float>
+            {
+                Data = 1f
             };
 
             /*
@@ -446,6 +584,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             // If to skip the initial desktop loading portion.
             bool disableDesktopLoading = false;
+
+            VariableChanged<bool> selectPreviouslySelectedEntryInSubmitWindow = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<bool> selectCurrentlyMainViewSelectedEntryInSubmitWindow = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
             /*
              * --------------------------------------------------------------------------------------------------------
@@ -520,7 +668,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "remove_background_with_animated_background",
                 ref blackBackgroundOnAnimatedBackground);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "animated_desktop_background_should_loop",
                 ref animatedDesktopBackgroundShouldLoop);
 
@@ -815,9 +963,66 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "in_game_program_icon",
                 ref inGameProgramIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_program_icon_center",
                 ref inGameProgramIconCenter);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "in_game_phone_call_icon",
+                ref inGamePhoneIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_phone_call_icon_center",
+                ref inGamePhoneIconCenter);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "incoming_call_title",
+                ref incomingCallTitle);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "incoming_call_label_text",
+                ref incomingCallLabel);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "incoming_call_answer_button_text",
+                ref incomingCallAnswerButtonText);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "incoming_call_answer_button_image",
+                ref incomingCallAnswerButtonImage, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_clock_start_audio_name",
+                ref clockDayStartedAudioPath, jsonFolderPath, usermodFolderPath);
+
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_day_start_audio_name",
+                ref dayStartedAudioPath, jsonFolderPath, usermodFolderPath);
+
+            AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_logo_fade_in_sound",
+                ref inGameLogoFadeInAudioPath, jsonFolderPath, usermodFolderPath);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_fade_duration",
+                ref clockInLogoAnimationFadeDuration);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_hold_duration",
+                ref clockInLogoAnimationHoldDuration);
+
+            ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
+                "in_game_clock_in_logo_animation", ref clockInLogoAnimation, jsonFolderPath, usermodFolderPath);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_logo_scale",
+                ref clockInLogoAnimationScale);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_title",
+                ref submitWindowTitle);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_text",
+                ref submitWindowText);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "submit_window_icon",
+                ref submitWindowIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
+            
+            ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
+                "in_game_clock_in_animation", ref clockInAnimation, jsonFolderPath, usermodFolderPath);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_animation_duration",
+                ref clockInAnimationDuration);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_animation_scale",
+                ref clockInAnimationScale);
 
             /*
              * Cheats / Settings
@@ -826,6 +1031,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref showDefaultUIAccuracyText);
 
             ParsingHelper.TryAssign(jObjectParsed, "skip_desktop_loading", ref disableDesktopLoading);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_default_show_last_selected",
+                ref selectPreviouslySelectedEntryInSubmitWindow);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_show_current_selected",
+                ref selectCurrentlyMainViewSelectedEntryInSubmitWindow);
 
             /*
              * Creating the modifier object.
@@ -843,11 +1054,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 DesktopBackgrounds = backgroundSprites,
                 GameFinishedBackground = gameFinishedBackgroundSprite,
-                
+
                 AnimatedDesktopBackgrounds = animatedDesktopBackgrounds,
                 BlackBackgroundOnAnimatedBackground = blackBackgroundOnAnimatedBackground,
                 AnimatedDesktopBackgroundShouldLoop = animatedDesktopBackgroundShouldLoop,
-                
+
                 DisableColorBackground = disableGreenColorBackground,
                 DesktopBackgroundColor = desktopBackgroundColor,
 
@@ -936,9 +1147,34 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 InGameProgramIcon = inGameProgramIcon,
                 InGameProgramIconCenter = inGameProgramIconCenter,
+                InGamePhoneIcon = inGamePhoneIcon,
+                InGamePhoneIconCenter = inGamePhoneIconCenter,
+                ClockInLogoAnimation = clockInLogoAnimation,
+                ClockInLogoAnimationScale = clockInLogoAnimationScale,
+                ClockInLogoAnimationFadeDuration = clockInLogoAnimationFadeDuration,
+                ClockInLogoAnimationHoldDuration = clockInLogoAnimationHoldDuration,
+                IncomingCallTitle = incomingCallTitle,
+                IncomingCallLabel = incomingCallLabel,
+                IncomingCallAnswerButtonText = incomingCallAnswerButtonText,
+                IncomingCallAnswerButtonImage = incomingCallAnswerButtonImage,
+                SubmitWindowTitle = submitWindowTitle,
+                SubmitWindowText = submitWindowText,
+                SubmitWindowIcon = submitWindowIcon,
+                ClockInAnimation = clockInAnimation,
+                ClockInAnimationDuration = clockInAnimationDuration,
+                ClockInAnimationScale = clockInAnimationScale,
+
+                DayStartedAudio = dayStartedAudio,
+                DayStartedAudioPath = dayStartedAudioPath,
+                ClockDayStartedAudio = clockDayStartedAudio,
+                ClockDayStartedAudioPath = clockDayStartedAudioPath,
+                InGameLogoFadeInAudio = inGameLogoFadeInAudio,
+                InGameLogoFadeInAudioPath = inGameLogoFadeInAudioPath,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
-                DisableDesktopLoading = disableDesktopLoading
+                DisableDesktopLoading = disableDesktopLoading,
+                SelectPreviouslySelectedEntryInSubmitWindow = selectPreviouslySelectedEntryInSubmitWindow,
+                SelectCurrentlyMainViewSelectedEntryInSubmitWindow = selectCurrentlyMainViewSelectedEntryInSubmitWindow
             };
         }
     }

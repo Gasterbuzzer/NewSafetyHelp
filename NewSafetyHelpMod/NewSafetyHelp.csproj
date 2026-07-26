@@ -90,6 +90,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -124,6 +127,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ARG\ARGHelper.cs" />
+    <Compile Include="src\Audio\AudioCache.cs" />
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\Audio\AudioLoadThrottler.cs" />
     <Compile Include="src\Audio\AudioPatches\PlaySoundPatches.cs" />
@@ -148,6 +153,9 @@
     <Compile Include="src\Callers\UI\NextCaller.cs" />
     <Compile Include="src\Callers\UI\UIFallbacks.cs" />
     <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreen.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreenHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Custom3DScreenPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />
@@ -163,6 +171,7 @@
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCutsceneHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyEmailHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyHelper.cs" />
+    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyLinkAppHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyTextFileHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyVideoHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\CallerAccuracyType.cs" />
@@ -170,6 +179,9 @@
     <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs" />
     <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs" />
+    <Compile Include="src\CustomCampaignSystem\InGamePatches\SelectPreviousEntryPatch.cs" />
+    <Compile Include="src\CustomCampaignSystem\LinkApps\LinkApp.cs" />
+    <Compile Include="src\CustomCampaignSystem\LinkApps\LinkAppHelper.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\DesktopModifierSnapshot.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\ModifierSource.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\VariableChanged.cs" />
@@ -213,10 +225,12 @@
     <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
     <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />
     <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\Computer3DScreenParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CutsceneParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\LinkAppParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\RingtoneParsing.cs" />
@@ -232,6 +246,7 @@
     <Compile Include="src\JSONParsing\ParsingHelpers\ArtbookParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\CallerRequirementParsingHelper.cs" />
+    <Compile Include="src\JSONParsing\ParsingHelpers\ColorParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\IDParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\ImageParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\PendingParsingHelper.cs" />

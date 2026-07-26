@@ -172,6 +172,59 @@ namespace NewSafetyHelp.JSONParsing
         }
 
         /// <summary>
+        /// Attempts to parse the key for a list. (For Variable Changed)
+        /// </summary>
+        /// <param name="jObjectParsed">JSON Object where the key is found.</param>
+        /// <param name="key">Key to be found.</param>
+        /// <param name="target">Targets to write the value to.</param>
+        /// <returns>(Bool) If the parsed value was an array (false) or a single element (true).
+        /// Null if we failed parsing.</returns>
+        public static bool? TryAssignListOrSingleElementVariableChanged<T>(JObject jObjectParsed, string key,
+            ref VariableChanged<List<T>> target)
+        {
+            if (!jObjectParsed.TryGetValue(key, out var token))
+            {
+                return null;
+            }
+
+            if (target.Data == null)
+            {
+                target.Data = new List<T>();
+            }
+
+            if (token.Type == JTokenType.Array)
+            {
+                foreach (JToken element in token)
+                {
+                    T value = element.Value<T>();
+                    target.Data.Add(value);
+                }
+
+                target.HasChanged = true;
+
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    T value = token.Value<T>();
+                    target.Data.Add(value);
+
+                    target.HasChanged = true;
+
+                    return true;
+                }
+                catch
+                {
+                    LoggingHelper.ErrorLog($"For provided key '{key}' " +
+                                           "we were unable of assigning any value, as the wrong value was given.");
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
         /// Attempts to parse the key for a list.
         /// </summary>
         /// <param name="jObjectParsed">JSON Object where the key is found.</param>

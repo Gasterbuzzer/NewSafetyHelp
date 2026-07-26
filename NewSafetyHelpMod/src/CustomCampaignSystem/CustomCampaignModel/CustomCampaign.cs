@@ -3,8 +3,10 @@ using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
+using NewSafetyHelp.CustomCampaignSystem.LinkApps;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
@@ -144,6 +146,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // Saved scores for the day. (Used for unlocking emails or icons)
         public List<float> SavedDayScores = new List<float>();
 
+        // The custom campaign logic resets the game beaten booleans to false when a reset happens, this prevents it.
+        public VariableChanged<bool> ShouldResetGameBeatenVariableOnReset = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Video Cutscenes
          */
@@ -250,6 +258,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // List of (conditional) themes that apply for certain days and apply to a certain theme only.
         public List<CustomTheme> CustomThemesDays = new List<CustomTheme>();
 
+        public VariableChanged<bool> RemoveDefaultThemes = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Modifiers: (These work similar to themes, but they modify a specific aspect on a specific day)
          */
@@ -265,9 +278,35 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public List<CustomRingtone.CustomRingtone> CustomRingtones = new List<CustomRingtone.CustomRingtone>();
 
         /*
-         * Helper functions for custom campaigns.
+         * Computer 3D Scenes
+         */
+
+        public List<Computer3DScreen> CustomComputer3DScreens = new List<Computer3DScreen>();
+
+        public VariableChanged<bool> Skip3DComputerScreenForCustomCampaign = new VariableChanged<bool>
+        {
+            Data = true
+        };
+        
+        /*
+         * Campaign Load Settings
          */
         
+        public VariableChanged<bool> FadeInCustomCampaign = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        /*
+         * Link Apps
+         */
+
+        public List<LinkApp> LinkApps = new List<LinkApp>();
+
+        /*
+         * Helper functions for custom campaigns.
+         */
+
         /// <summary>
         /// Sorts the custom callers to the correct order.
         /// This merely helps with performance.
@@ -277,7 +316,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
             CustomCallersInCampaign =
                 CustomCallersInCampaign.OrderBy(customCCaller => customCCaller.OrderInCampaign).ToList();
         }
-        
+
         /// <summary>
         /// Sorts the emails to the correct priorities and days.
         /// </summary>
@@ -313,6 +352,23 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
                 .OrderByDescending(customTextFile => customTextFile.UnlockDay)
                 .ThenByDescending(customTextFile => customTextFile.OrderPriority)
                 .ThenBy(customTextFile => customTextFile.FileNameOnDesktop).ToList();
+        }
+
+        /// <summary>
+        /// Sorts the computer 3D screens to the correct priorities.
+        /// </summary>
+        public void SortComputer3DScreens()
+        {
+            CustomComputer3DScreens = CustomComputer3DScreens
+                .OrderByDescending(computer3DScreen => computer3DScreen.ApplyPriority).ToList();
+        }
+
+        /// <summary>
+        /// Sorts the link apps to the correct priorities.
+        /// </summary>
+        public void SortLinkApps()
+        {
+            LinkApps = LinkApps.OrderByDescending(linkApp => linkApp.LinkAppPriority).ToList();
         }
     }
 }

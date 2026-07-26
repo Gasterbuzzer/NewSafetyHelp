@@ -10,6 +10,7 @@ using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Profiling;
+using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.Audio
 {
@@ -68,24 +69,18 @@ namespace NewSafetyHelp.Audio
         /// Coroutine that gets an audio clip from a specified path, please note to also provide an audio type, defaulted to MPEG.
         /// </summary>
         /// <param name="callback"> Callback function used for getting the AudioClip back. </param>
-        /// <param name="path"> Path to file. </param>
-        /// <param name="audioType"> Unity AudioType </param>
+        /// <param name="path"> Path to audio file. </param>
+        /// <param name="audioType"> Unity AudioType; Used for proper loading in. </param>
         private static IEnumerator LoadAudio(Action<AudioClip> callback, string path,
             AudioType audioType = AudioType.MPEG)
         {
-            bool fromHotReload = ReloadJSONParsing.IsInHotReload;
+            long audioFileSize;
 
-            yield return AudioLoadThrottler.WaitForSlot(!fromHotReload);
-
-            // (Bool: We pass if we skip the waiting for slot.)
-            LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
-
-            Time.timeScale = 0;
-
-            CurrentLoadingAudios.Add($"{path}{audioType.ToString()}");
-
-            // First we check if the file exists
-            if (!File.Exists(path))
+            if (File.Exists(path))
+            {
+                audioFileSize = new FileInfo(path).Length;
+            }
+            else
             {
                 LoggingHelper.ErrorLog($"Given path to file {path} of type {audioType.ToString()} does not exist.");
 
@@ -100,6 +95,45 @@ namespace NewSafetyHelp.Audio
 
                 yield break;
             }
+
+            // We check if the audio is already being loaded in. If yes, we wait for the audio.
+            if (CurrentLoadingAudios.Contains($"{path}{audioType.ToString()}"))
+            {
+                while (CurrentLoadingAudios.Contains($"{path}{audioType.ToString()}"))
+                {
+                    yield return new WaitForSecondsRealtime(Random.Range(0.1f, 0.7f));
+                }
+            }
+            else
+            {
+                CurrentLoadingAudios.Add($"{path}{audioType.ToString()}");
+            }
+
+            bool fromHotReload = ReloadJSONParsing.IsInHotReload;
+
+            LoggingHelper.DebugLog(
+                $"Current allocated memory (audio is waiting for slot): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
+                $"(File size '{audioFileSize}').",
+                LoggingHelper.LoggingCategory.MEMORY);
+
+            // We try searching our cache first and if we find it, we use that.
+            AudioClip cachedAudio = AudioCache.TryGet(path, false);
+
+            if (cachedAudio != null)
+            {
+                callback(cachedAudio);
+
+                finishAudioImport(path, audioType, audioFileSize, fromHotReload);
+
+                yield break;
+            }
+
+            yield return AudioLoadThrottler.WaitForSlot(fromHotReload, audioFileSize);
+
+            // (Bool: We pass if we skip the waiting for slot.)
+            LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
+
+            Time.timeScale = 0;
 
             string url = "file://" + path;
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
@@ -117,7 +151,11 @@ namespace NewSafetyHelp.Audio
                 {
                     LoggingHelper.InfoLog($"{path} as {audioType.ToString()} has been successfully loaded.");
 
-                    callback(DownloadHandlerAudioClip.GetContent(www)); // Get actual audio clip into a variable.
+                    AudioClip loadedClip = DownloadHandlerAudioClip.GetContent(www);
+
+                    AudioCache.AddCache(path, loadedClip);
+
+                    callback(loadedClip);
                 }
                 else // Failed loading the audio file.
                 {
@@ -131,19 +169,25 @@ namespace NewSafetyHelp.Audio
                                            $" Was the process finished?: {www.isDone}");
                 }
 
-                CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
+                finishAudioImport(path, audioType, audioFileSize, fromHotReload);
+            }
+        }
 
-                LoggingHelper.DebugLog(
-                    $"Current allocated memory (audio is waiting for slot): '{Profiler.GetTotalAllocatedMemoryLong()}'.",
-                    LoggingHelper.LoggingCategory.MEMORY);
+        private static void finishAudioImport(string path, AudioType audioType, long audioFileSize, bool fromHotReload)
+        {
+            CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
 
-                AudioLoadThrottler.ReleaseSlot(fromHotReload);
+            LoggingHelper.DebugLog(
+                $"CACHE: Current allocated memory (audio finished loading in): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
+                $"(File size '{audioFileSize}').",
+                LoggingHelper.LoggingCategory.MEMORY);
 
-                // If all audios finished loading we continue letting the game run.
-                if (CurrentLoadingAudios.Count <= 0)
-                {
-                    Time.timeScale = 1.0f;
-                }
+            AudioLoadThrottler.ReleaseSlot(fromHotReload);
+
+            // If all audios finished loading we continue letting the game run.
+            if (CurrentLoadingAudios.Count <= 0)
+            {
+                Time.timeScale = 1.0f;
             }
         }
 
@@ -159,10 +203,15 @@ namespace NewSafetyHelp.Audio
                 return;
             }
 
-            CallerController ccInstance = GameObject.Find("CallerController").GetComponent<CallerController>();
+            GameObject callerController = GameObject.Find("CallerController");
 
-            // Call again.
-            StartCallerController.Invoke(ccInstance, null);
+            if (callerController != null)
+            {
+                CallerController ccInstance = callerController.GetComponent<CallerController>();
+
+                // Call again.
+                StartCallerController.Invoke(ccInstance, null);
+            }
         }
 
         /// <summary>

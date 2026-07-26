@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.CustomDesktop.Utils;
+﻿using MelonLoader;
+using NewSafetyHelp.CustomDesktop.Utils;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
@@ -14,7 +15,7 @@ namespace NewSafetyHelp.CustomDesktop.CustomDoubleClickButton
 
             if (timeSinceLastClick <= DoubleClickThreshold)
             {
-                CustomCampaignSceneSwitcher.ChangeToCustomCampaignSettings(customCampaignName);
+                MelonCoroutines.Start(CustomCampaignSceneSwitcher.ChangeToCustomCampaignSettings(customCampaignName, false));
             }
             
             lastClickTime = Time.time;

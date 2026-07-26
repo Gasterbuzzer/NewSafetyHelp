@@ -11,7 +11,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
          * Conditions of Modifier Section
          */
 
-        // Days the theme appears in, if set to null, it will apply every day.
+        // Days the modifier appears in, if set to null, it will apply every day.
         // If a single day was added only, then we only have single day added.
         [CanBeNull] public List<int> UnlockDays = null;
 
@@ -43,7 +43,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         // URLs to each animated background.
         public List<string> AnimatedDesktopBackgrounds = new List<string>();
         public bool BlackBackgroundOnAnimatedBackground = false;
-        
+
         public VariableChanged<bool> AnimatedDesktopBackgroundShouldLoop = new VariableChanged<bool>
         {
             Data = true
@@ -221,22 +221,22 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
-        
+
         public VariableChanged<bool> FinalCutsceneReturnTo3DScreen = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public VariableChanged<bool> FinalCutsceneStayInCustomCampaign = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public VariableChanged<bool> FinalCutsceneDisableSkippingKeys = new VariableChanged<bool>
         {
             Data = false
         };
-        
+
         public string FinalCutsceneAudioPath = null;
 
         /*
@@ -327,20 +327,131 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = 5f
         };
-        
+
         /*
          * In Game Modifications
          */
-        
+
         public VariableChanged<Sprite> InGameProgramIcon = new VariableChanged<Sprite>
         {
             Data = null
         };
-        
+
         public VariableChanged<bool> InGameProgramIconCenter = new VariableChanged<bool>
         {
             Data = false
         };
+
+        public VariableChanged<Sprite> InGamePhoneIcon = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+
+        public VariableChanged<bool> InGamePhoneIconCenter = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<string> IncomingCallTitle = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<string> IncomingCallLabel = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<string> IncomingCallAnswerButtonText = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<Sprite> IncomingCallAnswerButtonImage = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+
+        public VariableChanged<RichAudioClip> ClockDayStartedAudio = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+
+        public VariableChanged<string> ClockDayStartedAudioPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<RichAudioClip> DayStartedAudio = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+
+        public VariableChanged<string> DayStartedAudioPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<RichAudioClip> InGameLogoFadeInAudio = new VariableChanged<RichAudioClip>
+        {
+            Data = null
+        };
+
+        public VariableChanged<string> InGameLogoFadeInAudioPath = new VariableChanged<string>
+        {
+            Data = null
+        };
+
+        public VariableChanged<List<Sprite>> ClockInLogoAnimation = new VariableChanged<List<Sprite>>
+        {
+            Data = new List<Sprite>()
+        };
+
+        public VariableChanged<float> ClockInLogoAnimationScale = new VariableChanged<float>
+        {
+            Data = 1.0f
+        };
+
+        public VariableChanged<float> ClockInLogoAnimationFadeDuration = new VariableChanged<float>
+        {
+            Data = 1.82f
+        };
+
+        public VariableChanged<float> ClockInLogoAnimationHoldDuration = new VariableChanged<float>
+        {
+            Data = 1.42f
+        };
+        
+        public VariableChanged<string> SubmitWindowTitle = new VariableChanged<string>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<string> SubmitWindowText = new VariableChanged<string>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<Sprite> SubmitWindowIcon = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+        
+        public VariableChanged<List<Sprite>> ClockInAnimation = new VariableChanged<List<Sprite>>
+        {
+            Data = new List<Sprite>()
+        };
+        
+        public VariableChanged<float> ClockInAnimationDuration = new VariableChanged<float>
+        {
+            Data = 2.25f
+        };
+        
+        public VariableChanged<float> ClockInAnimationScale = new VariableChanged<float>
+        {
+            Data = 1f
+        };
+
 
         /*
          * Cheats / Settings Section
@@ -354,6 +465,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
 
         // If to disable the desktop loading.
         public bool DisableDesktopLoading = false;
+
+        public VariableChanged<bool> SelectPreviouslySelectedEntryInSubmitWindow = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<bool> SelectCurrentlyMainViewSelectedEntryInSubmitWindow = new VariableChanged<bool>
+        {
+            Data = false
+        };
 
         /*
          * Removed/Unfinished Section
