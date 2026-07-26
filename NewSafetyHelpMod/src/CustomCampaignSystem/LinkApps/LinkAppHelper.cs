@@ -83,6 +83,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.LinkApps
                 newCustomLinkApp.GetComponent<Image>().sprite = CustomTextFileHelper.TextFileIcon;
             }
 
+            if (customLinkApp.GameObjectOrder.HasChanged)
+            {
+                newCustomLinkApp.transform.SetSiblingIndex(customLinkApp.GameObjectOrder.Data);
+            }
+
             // Update desktop name
             TextMeshProUGUI textChildGameObjectText = newCustomLinkApp.transform.Find("TextBackground").transform
                 .Find("ExecutableName").gameObject.GetComponent<TextMeshProUGUI>();

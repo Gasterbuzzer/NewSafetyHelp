@@ -22,6 +22,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.LinkApps
         // Higher int => Higher priority
         public int LinkAppPriority = 0;
 
+        public VariableChanged<int> GameObjectOrder = new VariableChanged<int>
+        {
+            Data = 0
+        };
+
         // On click URL.
         // This opens up this website on the browser when the app is opened.
         // Please make sure to double-check that this is set correctly!
