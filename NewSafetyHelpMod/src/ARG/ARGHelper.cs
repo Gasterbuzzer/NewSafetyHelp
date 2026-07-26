@@ -29,8 +29,8 @@ namespace NewSafetyHelp.ARG
                 KeyCode.RightArrow
             };
 
-            private static float lastPressTime = 0;
-            private static int lastKeyPressedIndex = 0;
+            private static float lastPressTime;
+            private static int lastKeyPressedIndex;
 
             private const float TimeOutTime = 2f;
 

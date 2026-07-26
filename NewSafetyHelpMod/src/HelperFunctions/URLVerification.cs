@@ -19,25 +19,34 @@ namespace NewSafetyHelp.HelperFunctions
         {
             if (!Uri.TryCreate(stringURL, UriKind.Absolute, out Uri uri))
             {
-                LoggingHelper.ErrorLog($"Given URL '{stringURL.Substring(0, 10)}[...]' is not a valid URL. " +
-                                       "Unable of setting URL. " +
-                                       "Make sure it is in a valid format: 'http://' or 'https://'.");
+                int stringMaxPrintLength = Math.Min(10, stringURL.Length);
+
+                LoggingHelper.ErrorLog(
+                    $"Given URL '{stringURL.Substring(0, stringMaxPrintLength)}[...]' is not a valid URL. " +
+                    "Unable of setting URL. " +
+                    "Make sure it is in a valid format: 'http://' or 'https://'.");
                 return false;
             }
 
             if (!IsURLAndNotUnsafe(uri))
             {
-                LoggingHelper.ErrorLog($"Given URL '{stringURL.Substring(0, 10)}[...]' is not a accepted URL. " +
-                                       "Unable of setting URL. " +
-                                       "Make sure it is in a valid format: 'http://' or 'https://'.");
+                int stringMaxPrintLength = Math.Min(10, stringURL.Length);
+
+                LoggingHelper.ErrorLog(
+                    $"Given URL '{stringURL.Substring(0, stringMaxPrintLength)}[...]' is not a accepted URL. " +
+                    "Unable of setting URL. " +
+                    "Make sure it is in a valid format: 'http://' or 'https://'.");
                 return false;
             }
 
             if (IsADangerousFileUrl(uri))
             {
-                LoggingHelper.ErrorLog($"Given URL '{stringURL.Substring(0, 10)}[...]' is not a accepted URL. " +
-                                       "Unable of setting URL. " +
-                                       "Please provide an URL that is not a unsafe file type.");
+                int stringMaxPrintLength = Math.Min(10, stringURL.Length);
+
+                LoggingHelper.ErrorLog(
+                    $"Given URL '{stringURL.Substring(0, stringMaxPrintLength)}[...]' is not a accepted URL. " +
+                    "Unable of setting URL. " +
+                    "Please provide an URL that is not a unsafe file type.");
                 return false;
             }
 
@@ -80,8 +89,10 @@ namespace NewSafetyHelp.HelperFunctions
                 return false;
             }
 
+            int stringMaxPrintLength = Math.Min(10, clickURL.AbsoluteUri.Length);
+
             LoggingHelper.DebugLog(() => "Opening URI in browser: " +
-                                         $"'{clickURL.AbsoluteUri.Substring(0, 10)}[...]'.");
+                                         $"'{clickURL.AbsoluteUri.Substring(0, stringMaxPrintLength)}[...]'.");
 
             Process.Start(
                 new ProcessStartInfo

@@ -318,7 +318,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                             mainModule.startSpeed = 0;
                             mainModule.startSize = new ParticleSystem.MinMaxCurve(10f, 25f);
                             mainModule.startRotation = new ParticleSystem.MinMaxCurve(-180f, 180f);
-                            mainModule.startColor = new Color(255f, 220f, 194f, 255f);
+                            mainModule.startColor = new Color(255, 220, 194, 255);
 
                             ParticleSystem.EmissionModule emissionModule = particleSystem.emission;
                             emissionModule.enabled = true;
@@ -332,8 +332,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                                 particleSystem.colorOverLifetime;
                             colorOverLifetimeModule.enabled = true;
                             colorOverLifetimeModule.color =
-                                new ParticleSystem.MinMaxGradient(new Color(255f, 172f, 45f),
-                                    new Color(255f, 157f, 45f));
+                                new ParticleSystem.MinMaxGradient(new Color(255, 172, 45),
+                                    new Color(255, 157, 45));
 
                             ParticleSystemRenderer renderer = sunObject.GetComponent<ParticleSystemRenderer>();
 

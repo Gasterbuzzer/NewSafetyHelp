@@ -112,11 +112,6 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "link_app_desktop_icon", ref desktopIcon,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "link_app_desktop_name", ref desktopName);
-
-            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "link_app_desktop_icon", ref desktopIcon,
-                jsonFolderPath, usermodFolderPath, customCampaignName);
-
             /*
              * Unlock Requirements
              */

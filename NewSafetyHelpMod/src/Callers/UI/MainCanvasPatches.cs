@@ -740,13 +740,13 @@ namespace NewSafetyHelp.Callers.UI
             private static IEnumerator CustomClockInAnimation(Image clockInAnimationImage,
                 List<Sprite> clockInAnimation, float clockInAnimationDuration)
             {
-                float frameLength = clockInAnimationDuration / clockInAnimation.Count;
-
                 if (clockInAnimation.Count <= 0)
                 {
                     LoggingHelper.WarningLog("Provided clock in animation has no images/frames to show.");
                     yield break;
                 }
+
+                float frameLength = clockInAnimationDuration / clockInAnimation.Count;
 
                 clockInAnimationImage.sprite = clockInAnimation[0];
 
