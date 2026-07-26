@@ -285,28 +285,66 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                         {
                             GameObject imageTest = GameObject.Find("TitleCanvas/Image");
 
-                            GameObject subObject = Object.Instantiate(imageTest, imageTest.transform.parent);
+                            GameObject backgroundImage = Object.Instantiate(imageTest, imageTest.transform.parent);
 
-                            subObject.name = "SunObject";
+                            backgroundImage.name = "BackgroundImageObject";
 
-                            subObject.transform.SetAsFirstSibling();
+                            backgroundImage.transform.SetAsFirstSibling();
 
                             if (computer3DScreen.BackgroundImage.HasChanged)
                             {
-                                subObject.GetComponent<Image>().sprite = computer3DScreen.BackgroundImage.Data;
+                                backgroundImage.GetComponent<Image>().sprite = computer3DScreen.BackgroundImage.Data;
                             }
                             else
                             {
-                                subObject.GetComponent<Image>().sprite = EmbeddedTimerData.ClockBase;
+                                backgroundImage.GetComponent<Image>().sprite = EmbeddedTimerData.ClockBase;
                             }
 
-                            subObject.GetComponent<RectTransform>().localPosition = new Vector3(-350, 180, 50);
+                            backgroundImage.GetComponent<RectTransform>().localPosition = new Vector3(-350, 180, 50);
+                        }
+
+                        if (computer3DScreen.AddSun.HasChanged
+                            && computer3DScreen.AddSun.Data)
+                        {
+                            GameObject sunObject = new GameObject("SunObject");
+
+                            sunObject.transform.position = new Vector3(20.64f, 8.31f, -30.11f);
+
+                            ParticleSystem particleSystem = sunObject.AddComponent<ParticleSystem>();
+
+                            ParticleSystem.MainModule mainModule = particleSystem.main;
+
+                            mainModule.startLifetime = new ParticleSystem.MinMaxCurve(5f, 25f);
+                            mainModule.startSpeed = 0;
+                            mainModule.startSize = new ParticleSystem.MinMaxCurve(10f, 25f);
+                            mainModule.startRotation = new ParticleSystem.MinMaxCurve(-180f, 180f);
+                            mainModule.startColor = new Color(255f, 220f, 194f, 255f);
+
+                            ParticleSystem.EmissionModule emissionModule = particleSystem.emission;
+                            emissionModule.enabled = true;
+                            emissionModule.rateOverTime = 100;
+
+                            ParticleSystem.ShapeModule shapeModule = particleSystem.shape;
+                            shapeModule.enabled = true;
+                            shapeModule.shapeType = ParticleSystemShapeType.Sphere;
+
+                            ParticleSystem.ColorOverLifetimeModule colorOverLifetimeModule =
+                                particleSystem.colorOverLifetime;
+                            colorOverLifetimeModule.enabled = true;
+                            colorOverLifetimeModule.color =
+                                new ParticleSystem.MinMaxGradient(new Color(255f, 172f, 45f),
+                                    new Color(255f, 157f, 45f));
+
+                            ParticleSystemRenderer renderer = sunObject.GetComponent<ParticleSystemRenderer>();
+
+                            renderer.maxParticleSize = 3;
+                            renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
                         }
                     }
                 }
             }
 
-            /*[HarmonyLib.HarmonyPatch(typeof(StartMenuBehavior), "Update")]
+            [HarmonyLib.HarmonyPatch(typeof(StartMenuBehavior), "Update")]
             public static class UpdateMenuTest
             {
                 /// <summary>
@@ -317,7 +355,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                 {
                     return false;
                 }
-            }*/
+            }
         }
     }
 }

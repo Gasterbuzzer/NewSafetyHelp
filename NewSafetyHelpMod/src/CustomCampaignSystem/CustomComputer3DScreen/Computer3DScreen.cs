@@ -193,5 +193,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         {
             Data = null
         };
+        
+        public VariableChanged<bool> AddSun = new VariableChanged<bool>
+        {
+            Data = false
+        };
     }
 }

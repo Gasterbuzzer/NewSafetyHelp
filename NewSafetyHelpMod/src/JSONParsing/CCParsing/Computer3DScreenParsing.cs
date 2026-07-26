@@ -244,6 +244,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = null
             };
 
+            VariableChanged<bool> addSun = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             /*
              * Properties
              */
@@ -363,6 +368,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "computer_3D_screen_background_image",
                 ref backgroundImage, jsonFolderPath, usermodFolderPath, customCampaignName);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "computer_3D_screen_add_sun", ref addSun);
+
             // Creating the object
             return new Computer3DScreen
             {
@@ -410,7 +417,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DisableMusic = disableMusic,
 
                 EnableBackgroundImage = enableBackgroundImage,
-                BackgroundImage = backgroundImage
+                BackgroundImage = backgroundImage,
+                AddSun = addSun
             };
         }
     }
