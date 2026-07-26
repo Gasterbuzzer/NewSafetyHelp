@@ -10,7 +10,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
     public static class CustomTextFileHelper
     {
         public static Sprite TextFileIcon;
-        
+
         /// <summary>
         /// Creates a custom text file on the desktop.
         /// </summary>
@@ -21,7 +21,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
             GameObject desktopCreditsProgram =
                 CustomDesktopHelper.GetLeftPrograms().transform.Find("Readme").gameObject;
 
-            GameObject newCustomTextFile = Object.Instantiate(desktopCreditsProgram, desktopCreditsProgram.transform.parent);
+            GameObject newCustomTextFile =
+                Object.Instantiate(desktopCreditsProgram, desktopCreditsProgram.transform.parent);
 
             if (string.IsNullOrEmpty(customTextFile.FileNameOnDesktop))
             {
@@ -35,18 +36,23 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
             {
                 newCustomTextFile.GetComponent<Image>().sprite = TextFileIcon;
             }
-            
+
             // Update desktop name
             TextMeshProUGUI textChildGameObjectText = newCustomTextFile.transform.Find("TextBackground").transform
                 .Find("ExecutableName").gameObject.GetComponent<TextMeshProUGUI>();
 
             textChildGameObjectText.text = customTextFile.FileNameOnDesktop;
-            
+
             // Add text content
             TextFileExecutable textFileExecutable = newCustomTextFile.GetComponent<TextFileExecutable>();
 
             textFileExecutable.myContent = customTextFile.TextFileContents;
-            
+
+            if (customTextFile.GameObjectOrder.HasChanged)
+            {
+                textFileExecutable.transform.SetSiblingIndex(customTextFile.GameObjectOrder.Data);
+            }
+
             // We enable the text file and then check if we disable it.
             newCustomTextFile.SetActive(true);
 
