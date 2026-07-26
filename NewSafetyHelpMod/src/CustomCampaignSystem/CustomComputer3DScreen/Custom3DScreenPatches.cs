@@ -189,23 +189,6 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                                 .SetActive(!computer3DScreen.DisableTable.Data);
                         }
 
-                        // Testing for Sun.
-                        /*GameObject cubeGameObject = GameObject.Find("Cube");
-
-                        Material tableMaterial = cubeGameObject.GetComponent<MeshRenderer>().material;
-                        tableMaterial.EnableKeyword("_EMISSION");
-                        tableMaterial.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
-                        tableMaterial.SetColor("_EmissionColor", Color.white * 500f);
-
-                        LoggingHelper.TestLog(tableMaterial.shader.name);
-                        LoggingHelper.TestLog($"{tableMaterial.IsKeywordEnabled("_EMISSION")}");
-                        LoggingHelper.TestLog($"{tableMaterial.GetColor("_EmissionColor")}");
-
-                        GameObject postProcessVolumeGameObject = GameObject.Find("Post-process Volume");
-                        Bloom bloomPV = (Bloom) postProcessVolumeGameObject.GetComponent<PostProcessVolume>().profile.settings[1];
-
-                        bloomPV.intensity.Override(10f);
-                        bloomPV.threshold.Override(1f);*/
                         /*
                          * Camera Settings
                          */
@@ -297,13 +280,28 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                                 computer3DScreen.TitleLogo.Data;
                         }
 
-                        /*GameObject imageTest = GameObject.Find("TitleCanvas/Image");
-                        
-                        GameObject test = Object.Instantiate(imageTest, imageTest.transform.parent);
+                        if (computer3DScreen.EnableBackgroundImage.HasChanged
+                            && computer3DScreen.EnableBackgroundImage.Data)
+                        {
+                            GameObject imageTest = GameObject.Find("TitleCanvas/Image");
 
-                        test.GetComponent<Image>().sprite = EmbeddedTimerData.ClockBase;
+                            GameObject subObject = Object.Instantiate(imageTest, imageTest.transform.parent);
 
-                        test.GetComponent<RectTransform>().localPosition = new Vector3(-100, 200, -5);*/
+                            subObject.name = "SunObject";
+
+                            subObject.transform.SetAsFirstSibling();
+
+                            if (computer3DScreen.BackgroundImage.HasChanged)
+                            {
+                                subObject.GetComponent<Image>().sprite = computer3DScreen.BackgroundImage.Data;
+                            }
+                            else
+                            {
+                                subObject.GetComponent<Image>().sprite = EmbeddedTimerData.ClockBase;
+                            }
+
+                            subObject.GetComponent<RectTransform>().localPosition = new Vector3(-350, 180, 50);
+                        }
                     }
                 }
             }

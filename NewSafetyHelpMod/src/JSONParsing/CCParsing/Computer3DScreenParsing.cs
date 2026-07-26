@@ -231,6 +231,20 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
 
             /*
+             * Special
+             */
+
+            VariableChanged<bool> enableBackgroundImage = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<Sprite> backgroundImage = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
+            /*
              * Properties
              */
             ParsingHelper.TryAssign(jObjectParsed, "computer_3D_screen_custom_campaign_attached",
@@ -339,6 +353,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "disable_computer_3D_screen_music",
                 ref disableMusic);
 
+            /*
+             * Special
+             */
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "enable_computer_3D_screen_background_image",
+                ref enableBackgroundImage);
+
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "computer_3D_screen_background_image",
+                ref backgroundImage, jsonFolderPath, usermodFolderPath, customCampaignName);
+
             // Creating the object
             return new Computer3DScreen
             {
@@ -383,7 +407,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 BringMusicCloser = bringMusicCloser,
                 CenterMusic = centerMusic,
                 MusicVolume = musicVolume,
-                DisableMusic = disableMusic
+                DisableMusic = disableMusic,
+
+                EnableBackgroundImage = enableBackgroundImage,
+                BackgroundImage = backgroundImage
             };
         }
     }

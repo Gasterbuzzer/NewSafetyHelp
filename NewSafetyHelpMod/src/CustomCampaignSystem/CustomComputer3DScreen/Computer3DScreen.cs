@@ -179,5 +179,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
         {
             Data = false
         };
+
+        /*
+         * Special
+         */
+
+        public VariableChanged<bool> EnableBackgroundImage = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<Sprite> BackgroundImage = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
     }
 }
