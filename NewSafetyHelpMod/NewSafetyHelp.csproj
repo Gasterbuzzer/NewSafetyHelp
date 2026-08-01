@@ -222,6 +222,7 @@
     <Compile Include="src\HelperFunctions\EmbedHelpers.cs" />
     <Compile Include="src\HelperFunctions\URLVerification.cs" />
     <Compile Include="src\ImportFiles\FileImporter.cs" />
+    <Compile Include="src\ImportFiles\ImageCache.cs" />
     <Compile Include="src\ImportFiles\ImageImport.cs" />
     <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
     <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />

@@ -27,17 +27,28 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 return false;
             }
 
-            string imagePath = token.Value<string>();
+            string imageFileName = token.Value<string>();
 
-            if (string.IsNullOrEmpty(imagePath))
+            if (string.IsNullOrEmpty(imageFileName))
             {
-                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}. " +
+                LoggingHelper.ErrorLog($"Invalid file name given for '{imageFileName}' for key '{key}'. " +
                                        $"Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
             }
             else
             {
-                target = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
-                    usermodFolderPath + "\\" + imagePath);
+                string correctPath = ImageImport.GetCorrectImagePath(imageFileName, jsonFolderPath, usermodFolderPath);
+
+                Sprite imageCache = ImageCache.TryGet(correctPath);
+
+                if (imageCache == null)
+                {
+                    imageCache = ImageImport.LoadImage(jsonFolderPath + "\\" + imageFileName,
+                        usermodFolderPath + "\\" + imageFileName);
+
+                    ImageCache.AddCache(correctPath, imageCache);
+                }
+
+                target = imageCache;
             }
 
             return true;
@@ -54,7 +65,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="ignoreIfNull">If to ignore a given image if it is empty or null.</param>
         /// <returns>(Bool) If the parsed value was an array (false) or a single image (true).
         /// Null if we failed parsing.</returns>
-        public static bool? TryAssignSpriteListOrSingleSprite(JObject jObjectParsed, string key, ref List<Sprite> target,
+        public static bool? TryAssignSpriteListOrSingleSprite(JObject jObjectParsed, string key,
+            ref List<Sprite> target,
             string jsonFolderPath, string usermodFolderPath, bool ignoreIfNull = false)
         {
             if (!jObjectParsed.TryGetValue(key, out var token))
@@ -77,19 +89,31 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 try
                 {
                     Sprite value = null;
-                    
-                    string imagePath = token.Value<string>();
 
-                    if (string.IsNullOrEmpty(imagePath))
+                    string imageFileName = token.Value<string>();
+
+                    if (string.IsNullOrEmpty(imageFileName))
                     {
-                        LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}.");
+                        LoggingHelper.ErrorLog($"Invalid file name given for '{imageFileName}' for key '{key}'.");
                     }
                     else
                     {
-                        value = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
-                            usermodFolderPath + "\\" + imagePath);
+                        string correctPath =
+                            ImageImport.GetCorrectImagePath(imageFileName, jsonFolderPath, usermodFolderPath);
+
+                        Sprite imageCache = ImageCache.TryGet(correctPath);
+
+                        if (imageCache == null)
+                        {
+                            imageCache = ImageImport.LoadImage(jsonFolderPath + "\\" + imageFileName,
+                                usermodFolderPath + "\\" + imageFileName);
+
+                            ImageCache.AddCache(correctPath, imageCache);
+                        }
+
+                        value = imageCache;
                     }
-                    
+
                     target.Add(value);
 
                     return true;
@@ -125,9 +149,9 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             foreach (JToken imageName in pathImages)
             {
-                string imagePath = imageName.Value<string>();
+                string imageFileName = imageName.Value<string>();
 
-                if (string.IsNullOrEmpty(imagePath))
+                if (string.IsNullOrEmpty(imageFileName))
                 {
                     if (ignoreIfNull)
                     {
@@ -135,21 +159,31 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}.");
+                        LoggingHelper.ErrorLog($"Invalid file name given for '{imageFileName}' for key '{key}'.");
                     }
                 }
                 else
                 {
-                    target.Add(
-                        ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
-                            usermodFolderPath + "\\" + imagePath)
-                    );
+                    string correctPath =
+                        ImageImport.GetCorrectImagePath(imageFileName, jsonFolderPath, usermodFolderPath);
+
+                    Sprite imageCache = ImageCache.TryGet(correctPath);
+
+                    if (imageCache == null)
+                    {
+                        imageCache = ImageImport.LoadImage(jsonFolderPath + "\\" + imageFileName,
+                            usermodFolderPath + "\\" + imageFileName);
+
+                        ImageCache.AddCache(correctPath, imageCache);
+                    }
+
+                    target.Add(imageCache);
                 }
             }
 
             return true;
         }
-        
+
         /// <summary>
         /// Attempts to parse the key for an image list. (Variable Changed Version)
         /// </summary>
@@ -177,13 +211,14 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             if (token.Type == JTokenType.Array)
             {
-                TryAssignSpriteList(jObjectParsed, key, ref target.Data, jsonFolderPath, usermodFolderPath, ignoreIfNull);
+                TryAssignSpriteList(jObjectParsed, key, ref target.Data, jsonFolderPath, usermodFolderPath,
+                    ignoreIfNull);
 
                 if (target.Data.Count > 0)
                 {
                     target.HasChanged = true;
                 }
-                
+
                 return false;
             }
             else
@@ -191,19 +226,31 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 try
                 {
                     Sprite value = null;
-                    
-                    string imagePath = token.Value<string>();
 
-                    if (string.IsNullOrEmpty(imagePath))
+                    string imageFileName = token.Value<string>();
+
+                    if (string.IsNullOrEmpty(imageFileName))
                     {
-                        LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}.");
+                        LoggingHelper.ErrorLog($"Invalid file name given for '{imageFileName}' for key '{key}'.");
                     }
                     else
                     {
-                        value = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
-                            usermodFolderPath + "\\" + imagePath);
+                        string correctPath =
+                            ImageImport.GetCorrectImagePath(imageFileName, jsonFolderPath, usermodFolderPath);
+
+                        Sprite imageCache = ImageCache.TryGet(correctPath);
+
+                        if (imageCache == null)
+                        {
+                            imageCache = ImageImport.LoadImage(jsonFolderPath + "\\" + imageFileName,
+                                usermodFolderPath + "\\" + imageFileName);
+
+                            ImageCache.AddCache(correctPath, imageCache);
+                        }
+
+                        value = imageCache;
                     }
-                    
+
                     target.Data.Add(value);
                     target.HasChanged = true;
 
@@ -217,7 +264,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 }
             }
         }
-        
+
         /// <summary>
         /// Tries to assign the target list with the images from the given JSON at the given key.
         /// If not found or if any problems happen, it will not add to the list.
@@ -229,7 +276,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="jsonFolderPath">Path to where the JSON is located.</param>
         /// <param name="usermodFolderPath">Path to the parent usermod folder.</param>
         /// <param name="ignoreIfNull">Ignores if the given image is null.</param>
-        public static bool TryAssignSpriteListVariableChanged(JObject jObjectParsed, string key, 
+        public static bool TryAssignSpriteListVariableChanged(JObject jObjectParsed, string key,
             ref VariableChanged<List<Sprite>> target, string jsonFolderPath, string usermodFolderPath,
             bool ignoreIfNull = false)
         {
@@ -247,9 +294,9 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             foreach (JToken imageName in pathImages)
             {
-                string imagePath = imageName.Value<string>();
+                string imageFileName = imageName.Value<string>();
 
-                if (string.IsNullOrEmpty(imagePath))
+                if (string.IsNullOrEmpty(imageFileName))
                 {
                     if (ignoreIfNull)
                     {
@@ -257,15 +304,25 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}.");
+                        LoggingHelper.ErrorLog($"Invalid file name given for '{imageFileName}' for key '{key}'.");
                     }
                 }
                 else
                 {
-                    target.Data.Add(
-                        ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath,
-                            usermodFolderPath + "\\" + imagePath)
-                    );
+                    string correctPath =
+                        ImageImport.GetCorrectImagePath(imageFileName, jsonFolderPath, usermodFolderPath);
+
+                    Sprite imageCache = ImageCache.TryGet(correctPath);
+
+                    if (imageCache == null)
+                    {
+                        imageCache = ImageImport.LoadImage(jsonFolderPath + "\\" + imageFileName,
+                            usermodFolderPath + "\\" + imageFileName);
+
+                        ImageCache.AddCache(correctPath, imageCache);
+                    }
+
+                    target.Data.Add(imageCache);
                 }
             }
 
@@ -276,7 +333,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             return true;
         }
-        
+
         /// <summary>
         /// Tries to assign the target with the image from the given JSON at the given key.
         /// If not found or if any problems happen, it will not write.
@@ -296,23 +353,34 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 return;
             }
 
-            string imagePath = token.Value<string>();
+            string imageName = token.Value<string>();
 
             target = new VariableChanged<Sprite>();
 
-            if (string.IsNullOrEmpty(imagePath))
+            if (string.IsNullOrEmpty(imageName))
             {
-                LoggingHelper.ErrorLog($"Invalid file name given for '{imagePath}' for key {key}. " +
+                LoggingHelper.ErrorLog($"Invalid file name given for '{imageName}' for key '{key}'. " +
                                        $"Not updating {(!string.IsNullOrEmpty(customCampaignName) ? $"for {customCampaignName}." : ".")}");
             }
             else
             {
-                Sprite parsedSprite = ImageImport.LoadImage(jsonFolderPath + "\\" + imagePath, usermodFolderPath + "\\" + imagePath);
-                if (parsedSprite != null)
+                string correctPath = ImageImport.GetCorrectImagePath(imageName, jsonFolderPath, usermodFolderPath);
+
+                Sprite imageCache = ImageCache.TryGet(correctPath);
+
+                if (imageCache == null)
                 {
-                    LoggingHelper.DebugLog($"Loaded in sprite (image) '{imagePath}' successfully.");
+                    imageCache = ImageImport.LoadImage(jsonFolderPath + "\\" + imageName,
+                        usermodFolderPath + "\\" + imageName);
+
+                    ImageCache.AddCache(correctPath, imageCache);
+                }
+
+                if (imageCache != null)
+                {
+                    LoggingHelper.DebugLog($"Loaded in sprite (image) '{imageName}' successfully.");
                     target.HasChanged = true;
-                    target.Data = parsedSprite;
+                    target.Data = imageCache;
                 }
             }
         }
