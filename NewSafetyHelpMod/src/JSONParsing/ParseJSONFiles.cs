@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using MelonLoader.Utils;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.JSONParsing.CCParsing;
+using NewSafetyHelp.JSONParsing.ThunderStoreUserModUnpacker;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
@@ -44,6 +46,8 @@ namespace NewSafetyHelp.JSONParsing
 
             // Before load all JSON files, we first load all embedded audio.
             EmbeddedTimerData.Initialize();
+
+            ModUnpacker.CheckForNotInstalledUserMods();
 
             string userDataPath = FileImporter.GetUserDataFolderPath();
 

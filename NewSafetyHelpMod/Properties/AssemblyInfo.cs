@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("NewSafetyHelp")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCopyright("Copyright © 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,10 +29,10 @@ using System.Runtime.InteropServices;
 //      Minor Version
 //      Build Number
 //
-[assembly: AssemblyVersion("2.6.0")]
-[assembly: AssemblyFileVersion("2.6.0")]
+[assembly: AssemblyVersion("2.6.1")]
+[assembly: AssemblyFileVersion("2.6.1")]
 
-[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "2.6.0", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
+[assembly: MelonInfo(typeof(NewSafetyHelpMainClass), "NewSafetyHelp", "2.6.1", "Gasterbuzzer", "https://github.com/Gasterbuzzer/NewSafetyHelp/releases/")]
 [assembly: MelonAuthorColor(1, 208, 12, 252)]
 [assembly: MelonGame("Night Signal Entertainment", "Home Safety Hotline")]
 [assembly: MelonPriority(99)]

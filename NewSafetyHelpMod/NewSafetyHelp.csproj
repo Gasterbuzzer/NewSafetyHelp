@@ -51,6 +51,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -253,6 +254,7 @@
     <Compile Include="src\JSONParsing\ParsingHelpers\URLParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ParsingHelpers\VideoParsingHelper.cs" />
     <Compile Include="src\JSONParsing\ReloadJSONParsing.cs" />
+    <Compile Include="src\JSONParsing\ThunderStoreUserModUnpacker\ModUnpacker.cs" />
     <Compile Include="src\LoggingSystem\LoggingHelper.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
