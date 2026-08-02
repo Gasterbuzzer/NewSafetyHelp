@@ -55,7 +55,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// </summary>
         /// <param name="jsonValue"></param>
         /// <param name="parsedColor"></param>
-        public static void SetColor(ref JToken jsonValue, ref Color parsedColor)
+        private static void SetColor(ref JToken jsonValue, ref Color parsedColor)
         {
             if (jsonValue.Type == JTokenType.Array)
             {
@@ -95,7 +95,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// </summary>
         /// <param name="jsonValue"></param>
         /// <param name="parsedColor"></param>
-        public static void SetColor(ref JToken jsonValue, ref VariableChanged<Color> parsedColor)
+        private static void SetColor(ref JToken jsonValue, ref VariableChanged<Color> parsedColor)
         {
             if (jsonValue.Type == JTokenType.Array)
             {

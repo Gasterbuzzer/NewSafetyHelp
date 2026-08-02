@@ -346,7 +346,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * 3D Screen Music
              */
 
-            ParsingHelper.TryAssign(jObjectParsed, "computer_3D_screen_music_compress", ref compressAudio);
+            ParsingHelper.TryAssign(jObjectParsed, "computer_3D_screen_compress_music", ref compressAudio);
 
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "computer_3D_screen_music_clip_name",
                 ref musicPath, jsonFolderPath, usermodFolderPath, customCampaignName);
