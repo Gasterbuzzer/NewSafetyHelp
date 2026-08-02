@@ -217,6 +217,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = true
         };
 
+        public bool FinalCutsceneCompressAudio = true;
+        
         public VariableChanged<RichAudioClip> FinalCutsceneAudio = new VariableChanged<RichAudioClip>
         {
             Data = null
@@ -267,6 +269,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = "TIMES UP!\nCALL DISCONNECTED"
         };
+        
+        public bool TimedCallerCompressAudio = true;
 
         public VariableChanged<RichAudioClip> TimedCallerStartSound = new VariableChanged<RichAudioClip>
         {
@@ -371,6 +375,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
+        
+        public bool ClockInAudiosCompressed = true;
 
         public VariableChanged<RichAudioClip> ClockDayStartedAudio = new VariableChanged<RichAudioClip>
         {

@@ -27,13 +27,14 @@ namespace NewSafetyHelp.Audio
         /// </summary>
         /// <param name="callback">CallBack function to write the value to.</param>
         /// <param name="fileName">Filename of the embedded file in the assembly.</param>
+        /// <param name="compressAudio">If to compress the audio.</param>
         /// <param name="audioType">Audio Type (Will be automatically assigned)</param>
-        public static void LoadEmbeddedAudio(Action<AudioClip> callback, string fileName,
+        public static void LoadEmbeddedAudio(Action<AudioClip> callback, string fileName, bool compressAudio,
             AudioType audioType = AudioType.WAV)
         {
             string temporaryEmbeddedAudioPath = EmbedHelpers.ExtractEmbeddedResourceToTempFile(fileName);
 
-            MelonCoroutines.Start(UpdateAudioClip(callback, temporaryEmbeddedAudioPath, audioType));
+            MelonCoroutines.Start(UpdateAudioClip(callback, temporaryEmbeddedAudioPath, compressAudio, audioType));
         }
 
         /// <summary>
@@ -42,8 +43,9 @@ namespace NewSafetyHelp.Audio
         /// <param name="callback">Callback function for returning values
         /// and doing stuff with it that require the coroutine to finish first. </param>
         /// <param name="audioPath">Path to the audio file. </param>
+        /// <param name="compressAudio">If to compress the audio.</param>
         /// <param name="audioType">Audio type to parse. </param>
-        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath,
+        public static IEnumerator UpdateAudioClip(Action<AudioClip> callback, string audioPath, bool compressAudio,
             AudioType audioType = AudioType.WAV)
         {
             AudioClip soundClip = null;
@@ -57,7 +59,7 @@ namespace NewSafetyHelp.Audio
                     LoadAudio
                     (
                         myReturnValue => { soundClip = myReturnValue; },
-                        audioPath, audioType)
+                        audioPath, audioType, compressAudio)
                 );
             }
 
@@ -71,8 +73,9 @@ namespace NewSafetyHelp.Audio
         /// <param name="callback"> Callback function used for getting the AudioClip back. </param>
         /// <param name="path"> Path to audio file. </param>
         /// <param name="audioType"> Unity AudioType; Used for proper loading in. </param>
+        /// <param name="compressAudio">If to compress the audio.</param>
         private static IEnumerator LoadAudio(Action<AudioClip> callback, string path,
-            AudioType audioType = AudioType.MPEG)
+            AudioType audioType = AudioType.MPEG, bool compressAudio = true)
         {
             long audioFileSize;
 
@@ -82,7 +85,7 @@ namespace NewSafetyHelp.Audio
             }
             else
             {
-                LoggingHelper.ErrorLog($"Given path to file {path} of type {audioType.ToString()} does not exist.");
+                LoggingHelper.ErrorLog($"Given path to file '{path}' of type '{audioType.ToString()}' does not exist.");
 
                 // Fix for audio failing to load causing a freeze.
                 CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
@@ -111,9 +114,10 @@ namespace NewSafetyHelp.Audio
 
             bool fromHotReload = ReloadJSONParsing.IsInHotReload;
 
-            LoggingHelper.DebugLog(
-                $"Current allocated memory (audio is waiting for slot): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
-                $"(File size '{audioFileSize}').",
+            LoggingHelper.DebugLog(() =>
+                    $"Current allocated memory (audio is waiting for slot): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; " +
+                    $"Reserved: '{Profiler.GetTotalReservedMemoryLong()}' " +
+                    $"(File size '{audioFileSize}').",
                 LoggingHelper.LoggingCategory.MEMORY);
 
             // We try searching our cache first and if we find it, we use that.
@@ -123,7 +127,7 @@ namespace NewSafetyHelp.Audio
             {
                 callback(cachedAudio);
 
-                finishAudioImport(path, audioType, audioFileSize, fromHotReload);
+                FinishAudioImport(path, audioType, audioFileSize, fromHotReload);
 
                 yield break;
             }
@@ -138,6 +142,12 @@ namespace NewSafetyHelp.Audio
             string url = "file://" + path;
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
             {
+                if (compressAudio
+                    && www.downloadHandler is DownloadHandlerAudioClip handlerAudio)
+                {
+                    handlerAudio.compressed = true;
+                }
+
                 UnityWebRequestAsyncOperation operation = www.SendWebRequest();
 
                 // Wait until the request is done
@@ -146,10 +156,10 @@ namespace NewSafetyHelp.Audio
                     yield return null;
                 }
 
-                if (www.result == UnityWebRequest.Result.Success &&
-                    operation.isDone) // Was able of getting the audio file.
+                if (www.result == UnityWebRequest.Result.Success
+                    && operation.isDone)
                 {
-                    LoggingHelper.InfoLog($"{path} as {audioType.ToString()} has been successfully loaded.");
+                    LoggingHelper.InfoLog($"Audio: '{path}' as {audioType.ToString()} has been successfully loaded.");
 
                     AudioClip loadedClip = DownloadHandlerAudioClip.GetContent(www);
 
@@ -164,22 +174,23 @@ namespace NewSafetyHelp.Audio
                         LoggingHelper.ErrorLog("Audio Loading was not finished. This an an unexpected error.");
                     }
 
-                    LoggingHelper.ErrorLog($"Was unable of loading {path} as audio type {audioType.ToString()}." +
-                                           $" \n Results in the error: {www.error} and the response code is: {www.responseCode}." +
-                                           $" Was the process finished?: {www.isDone}");
+                    LoggingHelper.ErrorLog($"Was unable of loading '{path}' as audio type {audioType.ToString()}. " +
+                                           $"\n Results in the error: '{www.error}' and the response code is: {www.responseCode}. " +
+                                           $"Was the process finished?: '{www.isDone}'.");
                 }
 
-                finishAudioImport(path, audioType, audioFileSize, fromHotReload);
+                FinishAudioImport(path, audioType, audioFileSize, fromHotReload);
             }
         }
 
-        private static void finishAudioImport(string path, AudioType audioType, long audioFileSize, bool fromHotReload)
+        private static void FinishAudioImport(string path, AudioType audioType, long audioFileSize, bool fromHotReload)
         {
             CurrentLoadingAudios.Remove($"{path}{audioType.ToString()}");
 
-            LoggingHelper.DebugLog(
-                $"CACHE: Current allocated memory (audio finished loading in): Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
-                $"(File size '{audioFileSize}').",
+            LoggingHelper.DebugLog(() =>
+                    "CACHE: Current allocated memory (audio finished loading in): " +
+                    $"Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
+                    $"(File size '{audioFileSize}').",
                 LoggingHelper.LoggingCategory.MEMORY);
 
             AudioLoadThrottler.ReleaseSlot(fromHotReload);
@@ -233,7 +244,7 @@ namespace NewSafetyHelp.Audio
         /// Tries to get the Unity's AudioType from a given fileName (path).
         /// </summary>
         /// <param name="fileName"> Path / Filename to be given the AudioType for. </param>
-        public static AudioType GetAudioType(string fileName)
+        private static AudioType GetAudioType(string fileName)
         {
             if (fileName.ToLower().EndsWith(".wav"))
             {

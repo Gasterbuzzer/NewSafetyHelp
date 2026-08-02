@@ -15,7 +15,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         /// <param name="jObjectParsed"> JObject parsed. </param>
         /// <param name="usermodFolderPath">Path to JSON file.</param>
         /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateRingtone(JObject jObjectParsed, string usermodFolderPath = "", string jsonFolderPath = "")
+        public static void CreateRingtone(JObject jObjectParsed, string usermodFolderPath = "",
+            string jsonFolderPath = "")
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
@@ -33,11 +34,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             // Add ringtone clip
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customRingtone.RingtoneClipPath,
                 clip => customRingtone.RingtoneClip = clip,
-                jsonFolderPath, "ringtone_audio_clip_name");
-            
+                jsonFolderPath, customRingtone.CompressAudio, "ringtone_audio_clip_name");
+
             // Add to correct campaign.
             CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
-            
+
             if (customCampaign != null)
             {
                 customCampaign.CustomRingtones.Add(customRingtone);
@@ -54,11 +55,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ref string jsonFolderPath, ref string customCampaignName)
         {
             int unlockDay = 0; // When the ringtone is unlocked.
-            
+
             bool onlyOnUnlockDay = true; // If the ringtone should only play on the unlock day.
 
             string ringtoneAudioPath = ""; // Audio Path to load audio from.
-            
+            bool compressAudio = true;
+
             bool isGlitchedVersion = false;
 
             bool appendRingtone = false; // If this is an append ringtone caller.
@@ -69,6 +71,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "ringtone_audio_clip_name", ref ringtoneAudioPath,
                 jsonFolderPath, usermodFolderPath, customCampaignName);
 
+            ParsingHelper.TryAssign(jObjectParsed, "ringtone_compress_audio", ref compressAudio);
+
             // Unlock Day
             ParsingHelper.TryAssign(jObjectParsed, "unlock_day", ref unlockDay);
 
@@ -76,10 +80,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 onlyOnUnlockDay = false;
             }
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "only_play_on_unlock_day", ref onlyOnUnlockDay);
             ParsingHelper.TryAssign(jObjectParsed, "is_glitched_version", ref isGlitchedVersion);
-            
+
             ParsingHelper.TryAssign(jObjectParsed, "is_append_ringtone", ref appendRingtone);
             if (appendRingtone)
             {
@@ -91,13 +95,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignName = customCampaignName,
 
                 RingtoneClipPath = ringtoneAudioPath,
+                CompressAudio = compressAudio,
 
                 UnlockDay = unlockDay,
-                
+
                 OnlyOnUnlockDay = onlyOnUnlockDay,
-                
+
                 IsGlitchedVersion = isGlitchedVersion,
-                
+
                 AppendRingtone = appendRingtone,
                 PlayChance = playChance
             };

@@ -8,6 +8,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomRingtone
         public string RingtoneClipPath = "";
         
         public RichAudioClip RingtoneClip = null;
+        public bool CompressAudio = true;
         
         // If the ringtone is supposed to appended instead of being the only one.
         public bool AppendRingtone = false;

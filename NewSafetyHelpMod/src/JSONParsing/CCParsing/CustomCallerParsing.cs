@@ -71,7 +71,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                         AudioImport.ReCallCallerListStart();
                     }
                 },
-                jsonFolderPath, "custom_caller_audio_clip_name");
+                jsonFolderPath,
+                customCCaller.CompressAudio,
+                "custom_caller_audio_clip_name");
 
             // Now after parsing all values, we add the custom caller to our map
             if (inMainCampaign)
@@ -118,6 +120,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             /*
              * Caller Information
              */
+            bool compressAudio = true;
+
             string customCallerName = "NO_CUSTOM_CALLER_NAME";
             string customCallerTranscript = "NO_CUSTOM_CALLER_TRANSCRIPT";
 
@@ -173,6 +177,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             float timedCallerDuration = 0;
 
             // --------------------------------------------------------------------------------------------------------
+
+            /*
+             * Caller Information
+             */
+
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_compress_audio", ref compressAudio);
 
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
@@ -272,6 +282,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             return new CustomCCaller(orderInCampaign)
             {
+                CompressAudio = compressAudio,
+
                 CallerName = customCallerName,
                 CallerImage = customCallerImage,
                 CallTranscript = customCallerTranscript,
