@@ -33,7 +33,7 @@ namespace NewSafetyHelp.Audio
                         LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(ClockFivePercent)}' audio clip.");
                     }
                 },
-                "clock_10_percent.wav");
+                "clock_10_percent.wav", true);
 
             AudioImport.LoadEmbeddedAudio(
                 audioClip =>
@@ -48,7 +48,7 @@ namespace NewSafetyHelp.Audio
                         LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(ClockHalfTime)}' audio clip.");
                     }
                 },
-                "clock_half_time.wav");
+                "clock_half_time.wav", true);
 
             AudioImport.LoadEmbeddedAudio(
                 audioClip =>
@@ -63,7 +63,7 @@ namespace NewSafetyHelp.Audio
                         LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(ClockStart)}' audio clip.");
                     }
                 },
-                "clock_start.wav");
+                "clock_start.wav", true);
 
             /*
              * Images

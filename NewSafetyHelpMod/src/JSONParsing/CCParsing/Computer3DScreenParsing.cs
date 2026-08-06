@@ -39,7 +39,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed,
                 custom3DScreen.MusicPath,
                 clip => { custom3DScreen.Music = clip; },
-                jsonFolderPath, "computer_3D_screen_music_clip_name");
+                jsonFolderPath, custom3DScreen.CompressAudio,
+                "computer_3D_screen_music_clip_name");
 
             // Add to correct campaign.
             CustomCampaign customCampaign =
@@ -210,6 +211,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             string musicPath = null;
 
+            bool compressAudio = true;
+
             VariableChanged<bool> bringMusicCloser = new VariableChanged<bool>
             {
                 Data = false
@@ -343,6 +346,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * 3D Screen Music
              */
 
+            ParsingHelper.TryAssign(jObjectParsed, "computer_3D_screen_compress_music", ref compressAudio);
+
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "computer_3D_screen_music_clip_name",
                 ref musicPath, jsonFolderPath, usermodFolderPath, customCampaignName);
 
@@ -411,6 +416,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 TitleLogo = titleLogo,
 
                 MusicPath = musicPath,
+                CompressAudio = compressAudio,
                 BringMusicCloser = bringMusicCloser,
                 CenterMusic = centerMusic,
                 MusicVolume = musicVolume,

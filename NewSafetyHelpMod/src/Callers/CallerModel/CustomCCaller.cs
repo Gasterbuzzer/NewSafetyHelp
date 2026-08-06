@@ -12,6 +12,7 @@ namespace NewSafetyHelp.Callers.CallerModel
         public RichAudioClip CallerClip = null; // Caller Clip
         public string CallerClipPath = ""; // Caller Clip Path
         public bool IsCallerClipLoaded = false; // Tells if the caller clip is still loading.
+        public bool CompressAudio = true;
 
         public string CallTranscript = "NO_TRANSCRIPT"; // Call Transcript
         public string CallerName = "NO_CALLER_NAME"; // Caller Name
@@ -35,7 +36,7 @@ namespace NewSafetyHelp.Callers.CallerModel
 
         // If the caller will down the network (Meaning entry information cannot be accessed)
         public bool DownedNetworkCaller = false;
-        
+
         // Entry (Monster)
         // (Used when the caller asks for help and to check if that name is valid).
         public string EntryNameAttached = "NO_MONSTER_NAME";

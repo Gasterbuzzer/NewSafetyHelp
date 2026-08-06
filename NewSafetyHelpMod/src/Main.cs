@@ -192,7 +192,7 @@ namespace NewSafetyHelp
         {
             LoggingHelper.InfoLog("Now parsing all '.json' files...", consoleColor: ConsoleColor.Green);
 
-            // Read all JSON and add all entries and campaigns (/Calls)
+            // Read all JSON and add all entries and campaigns
             ParseJSONFiles.LoadAllJSON(__instance);
 
             // Create copy after adding all custom entries that belong to the main campaign.

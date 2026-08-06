@@ -44,7 +44,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.FinalCutsceneAudio.Data = clip;
                     customModifier.FinalCutsceneAudio.HasChanged = true;
                 },
-                jsonFolderPath, "final_cutscene_audio_name");
+                jsonFolderPath, customModifier.FinalCutsceneCompressAudio, "final_cutscene_audio_name");
 
             /*
              * Timed Caller Audio
@@ -55,7 +55,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.TimedCallerStartSound.Data = clip;
                     customModifier.TimedCallerStartSound.HasChanged = true;
                 },
-                jsonFolderPath, "timed_caller_start_audio_name");
+                jsonFolderPath, customModifier.TimedCallerCompressAudio, "timed_caller_start_audio_name");
 
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.TimedCallerHalfSoundPath,
                 clip =>
@@ -63,7 +63,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.TimedCallerHalfSound.Data = clip;
                     customModifier.TimedCallerHalfSound.HasChanged = true;
                 },
-                jsonFolderPath, "timed_caller_half_point_audio_name");
+                jsonFolderPath, customModifier.TimedCallerCompressAudio, "timed_caller_half_point_audio_name");
 
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.TimedCallerCriticalSoundPath,
                 clip =>
@@ -71,7 +71,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.TimedCallerCriticalSound.Data = clip;
                     customModifier.TimedCallerCriticalSound.HasChanged = true;
                 },
-                jsonFolderPath, "timed_caller_critical_audio_name");
+                jsonFolderPath, customModifier.TimedCallerCompressAudio, "timed_caller_critical_audio_name");
 
             /*
              * In Game Audio
@@ -83,7 +83,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.ClockDayStartedAudio.Data = clip;
                     customModifier.ClockDayStartedAudio.HasChanged = true;
                 },
-                jsonFolderPath, "in_game_clock_start_audio_name");
+                jsonFolderPath, customModifier.ClockInAudiosCompressed, "in_game_clock_start_audio_name");
 
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.DayStartedAudioPath,
                 clip =>
@@ -91,7 +91,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.DayStartedAudio.Data = clip;
                     customModifier.DayStartedAudio.HasChanged = true;
                 },
-                jsonFolderPath, "in_game_day_start_audio_name");
+                jsonFolderPath, customModifier.ClockInAudiosCompressed, "in_game_day_start_audio_name");
 
             AudioParsingHelper.UpdateAudioAtLocation(jObjectParsed, customModifier.InGameLogoFadeInAudioPath,
                 clip =>
@@ -99,7 +99,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     customModifier.InGameLogoFadeInAudio.Data = clip;
                     customModifier.InGameLogoFadeInAudio.HasChanged = true;
                 },
-                jsonFolderPath, "in_game_logo_fade_in_sound");
+                jsonFolderPath, customModifier.ClockInAudiosCompressed, "in_game_logo_fade_in_sound");
 
             // Add to correct campaign.
             CustomCampaign customCampaign = CustomCampaignGlobal.GetNamedCustomCampaign(customCampaignName);
@@ -339,6 +339,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 1f
             };
 
+            bool finalCutsceneCompressAudio = true;
+
             VariableChanged<RichAudioClip> finalCutsceneAudio = new VariableChanged<RichAudioClip>
             {
                 Data = null
@@ -390,6 +392,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = "TIMES UP!\nCALL DISCONNECTED"
             };
+
+            bool timedCallerCompressAudio = true;
 
             VariableChanged<RichAudioClip> timedCallerStartSound = new VariableChanged<RichAudioClip>
             {
@@ -495,6 +499,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = null
             };
 
+            bool clockInAudiosCompressed = true;
+
             VariableChanged<RichAudioClip> clockDayStartedAudio = new VariableChanged<RichAudioClip>
             {
                 Data = null
@@ -549,7 +555,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<string> submitWindowText = new VariableChanged<string>
             {
                 Data = null
@@ -559,17 +565,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = null
             };
-            
+
             VariableChanged<List<Sprite>> clockInAnimation = new VariableChanged<List<Sprite>>
             {
                 Data = new List<Sprite>()
             };
-            
+
             VariableChanged<float> clockInAnimationDuration = new VariableChanged<float>
             {
                 Data = 2.25f
             };
-            
+
             VariableChanged<float> clockInAnimationScale = new VariableChanged<float>
             {
                 Data = 1f
@@ -912,6 +918,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             AudioParsingHelper.TryAssignAudioPath(jObjectParsed, "final_cutscene_audio_name",
                 ref finalCutsceneAudioPath, jsonFolderPath, usermodFolderPath);
 
+            ParsingHelper.TryAssign(jObjectParsed, "final_cutscene_compress_audio", ref finalCutsceneCompressAudio);
+
             /*
              * Caller Section
              */
@@ -929,6 +937,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "timed_caller_disconnect_message",
                 ref timedCallerDisconnectedMessage);
+
+            ParsingHelper.TryAssign(jObjectParsed, "timed_caller_compress_audio", ref timedCallerCompressAudio);
 
             AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "timed_caller_start_audio_name",
                 ref timedCallerStartSoundPath, jsonFolderPath, usermodFolderPath);
@@ -985,6 +995,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "incoming_call_answer_button_image",
                 ref incomingCallAnswerButtonImage, jsonFolderPath, usermodFolderPath, customCampaignName);
 
+            ParsingHelper.TryAssign(jObjectParsed, "clocked_in_compress_audio", ref clockInAudiosCompressed);
+
             AudioParsingHelper.TryAssignAudioPathWithChangedBool(jObjectParsed, "in_game_clock_start_audio_name",
                 ref clockDayStartedAudioPath, jsonFolderPath, usermodFolderPath);
 
@@ -1008,19 +1020,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_title",
                 ref submitWindowTitle);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "submit_window_text",
                 ref submitWindowText);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "submit_window_icon",
                 ref submitWindowIcon, jsonFolderPath, usermodFolderPath, customCampaignName);
-            
+
             ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
                 "in_game_clock_in_animation", ref clockInAnimation, jsonFolderPath, usermodFolderPath);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_animation_duration",
                 ref clockInAnimationDuration);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_animation_scale",
                 ref clockInAnimationScale);
 
@@ -1121,6 +1133,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FinalCutsceneFadeDuration = finalCutsceneFadeDuration,
                 FinalCutsceneFadePaddingDuration = finalCutsceneFadePaddingDuration,
                 FinalCutsceneAudioPath = finalCutsceneAudioPath,
+                FinalCutsceneCompressAudio = finalCutsceneCompressAudio,
                 FinalCutsceneAudio = finalCutsceneAudio,
                 FinalCutsceneStopAudioAfterFade = finalCutsceneStopAudioAfterFade,
                 FinalCutsceneReturnTo3DScreen = finalCutsceneReturnTo3DScreen,
@@ -1132,6 +1145,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 DigitalClockTickRate = digitalClockTickRate,
                 AnalogClockTickRate = analogClockTickRate,
                 TimedCallerDisconnectedMessage = timedCallerDisconnectedMessage,
+                TimedCallerCompressAudio = timedCallerCompressAudio,
                 TimedCallerStartSound = timedCallerStartSound,
                 TimedCallerStartSoundPath = timedCallerStartSoundPath,
                 TimedCallerHalfSound = timedCallerHalfSound,
@@ -1164,6 +1178,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ClockInAnimationDuration = clockInAnimationDuration,
                 ClockInAnimationScale = clockInAnimationScale,
 
+                ClockInAudiosCompressed = clockInAudiosCompressed,
                 DayStartedAudio = dayStartedAudio,
                 DayStartedAudioPath = dayStartedAudioPath,
                 ClockDayStartedAudio = clockDayStartedAudio,

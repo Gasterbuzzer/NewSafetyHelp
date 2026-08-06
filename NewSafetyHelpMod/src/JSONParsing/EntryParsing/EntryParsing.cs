@@ -25,7 +25,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ref string entryDescription, ref List<string> arcadeCalls, ref Sprite entryPortrait,
             ref string entryPortraitLocation, ref string entryAudioClipLocation, ref bool deleteReplaceEntry,
             ref bool inCustomCampaign, ref string customCampaignName,
-            ref string videoUrlPortrait, ref bool isVideoPortrait, ref VariableChanged<bool> videoPortraitShouldLoop)
+            ref string videoUrlPortrait, ref bool isVideoPortrait, ref VariableChanged<bool> videoPortraitShouldLoop,
+            ref bool compressAudio)
         {
             /*
              * Entry Information
@@ -185,6 +186,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 }
             }
 
+            ParsingHelper.TryAssign(jsonObjectParsed, "entry_compress_audio", ref compressAudio);
+
             // Custom Campaign
             if (jsonObjectParsed.TryGetValue("attached_custom_campaign_name", out var attachedCustomCampaignName))
             {
@@ -201,7 +204,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // Video Entry Portrait
             isVideoPortrait = VideoParsingHelper.TryAssignVideoPath(jsonObjectParsed, "portrait_video_name",
                 ref videoUrlPortrait, jsonFolderPath, usermodFolderPath);
-            
+
             ParsingHelper.TryAssignWithChangedBool(jsonObjectParsed, "portrait_video_should_loop",
                 ref videoPortraitShouldLoop);
         }
@@ -281,6 +284,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             string entryPortraitLocation = "";
 
             string entryAudioClipLocation = "";
+            bool compressAudio = true;
 
             // Caller Audio
             string callerName = "NO_CALLER_NAME";
@@ -336,7 +340,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref entryName, ref entryDescription, ref arcadeCalls, ref entryPortrait,
                 ref entryPortraitLocation, ref entryAudioClipLocation, ref deleteReplaceEntry,
                 ref inCustomCampaign, ref customCampaignName, ref videoUrlPortrait, ref isVideoPortrait,
-                ref videoPortraitShouldLoop);
+                ref videoPortraitShouldLoop, ref compressAudio);
 
             // Parse Phobias
             ParsePhobias(ref jObjectParsed, ref spiderPhobia, ref spiderPhobiaIncluded,
@@ -366,7 +370,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // Caller Audio Path (Later gets added with coroutine)
             if (jObjectParsed.TryGetValue("caller_audio_clip_name", out var callerAudioClipNameValue))
             {
-                string callerAudioClipLocation = (string) callerAudioClipNameValue;
+                string callerAudioClipLocation = (string)callerAudioClipNameValue;
 
                 if (string.IsNullOrEmpty(callerAudioClipLocation) && !replaceEntry)
                 {
@@ -396,8 +400,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                             // Add the audio
                             // ReSharper disable once AccessToModifiedClosure
                             newExtra.CallerClip = AudioImport.CreateRichAudioClip(clip.clip);
-                        }, 
-                        jsonFolderPath);
+                        },
+                        jsonFolderPath,
+                        compressAudio);
                 }
             }
 
@@ -437,16 +442,17 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                             // Add the audio
                             // ReSharper disable once AccessToModifiedClosure
                             newExtra.ConsequenceCallerClip = AudioImport.CreateRichAudioClip(clip.clip);
-                        }, 
-                        jsonFolderPath);
+                        },
+                        jsonFolderPath,
+                        compressAudio);
                 }
             }
 
             // Add the extra information entry.
-            if ((jObjectParsed.ContainsKey("caller_audio_clip_name") 
-                 || includeMainCampaign 
-                 || inCustomCampaign 
-                 || replaceEntry) 
+            if ((jObjectParsed.ContainsKey("caller_audio_clip_name")
+                 || includeMainCampaign
+                 || inCustomCampaign
+                 || replaceEntry)
                 && newExtra != null)
             {
                 GlobalParsingVariables.EntriesMetadata.Add(newExtra);
@@ -482,7 +488,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     {
                         audioLocation = usermodFolderPath + "\\" + entryAudioClipLocation;
                     }
-                    
+
                     AudioParsingHelper.UpdateAudioAtLocationNoKey(audioLocation,
                         clip =>
                         {
@@ -490,13 +496,14 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                             {
                                 foundMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
                             }
-                            
+
                             if (foundMonsterXMAS != null)
                             {
                                 foundMonsterXMAS.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
                             }
-                        }, 
-                        jsonFolderPath);
+                        },
+                        jsonFolderPath,
+                        compressAudio);
                 }
             }
             else // We add it instead of replacing the entry
@@ -519,13 +526,10 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     {
                         audioLocation = usermodFolderPath + "\\" + entryAudioClipLocation;
                     }
-                    
+
                     AudioParsingHelper.UpdateAudioAtLocationNoKey(audioLocation,
-                        clip =>
-                        {
-                            newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
-                        }, 
-                        jsonFolderPath);
+                        clip => { newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip); },
+                        jsonFolderPath, compressAudio);
                 }
             }
 
@@ -629,7 +633,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             else if (inCustomCampaign) // In custom campaign.
             {
                 // Create empty foundMonster to avoid replacing actual values.
-                foundMonster = ScriptableObject.CreateInstance<MonsterProfile>(); 
+                foundMonster = ScriptableObject.CreateInstance<MonsterProfile>();
                 foundMonster.monsterID = newID;
                 foundMonster.monsterName = entryName;
             }

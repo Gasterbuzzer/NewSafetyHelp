@@ -8,6 +8,7 @@ namespace NewSafetyHelp.Audio.Music.Data
         public string MusicClipPath = "";
         
         public RichAudioClip MusicClip = null;
+        public bool CompressAudio = true;
 
         public int UnlockDay = 0;
         

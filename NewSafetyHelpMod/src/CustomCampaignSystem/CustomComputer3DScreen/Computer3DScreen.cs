@@ -160,6 +160,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
 
         public RichAudioClip Music = null;
 
+        public bool CompressAudio = true;
+
         public VariableChanged<bool> BringMusicCloser = new VariableChanged<bool>
         {
             Data = false

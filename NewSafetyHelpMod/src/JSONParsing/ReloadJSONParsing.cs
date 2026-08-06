@@ -5,6 +5,7 @@ using NewSafetyHelp.Audio;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomDesktop.Utils;
 using NewSafetyHelp.EntryManager.EntryUnlocker;
+using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -79,6 +80,7 @@ namespace NewSafetyHelp.JSONParsing
             yield return null;
 
             AudioCache.RemoveEntireCache();
+            ImageCache.RemoveEntireCache();
 
             // Remove all custom campaigns.
             CustomCampaignGlobal.CustomCampaignsAvailable.Clear();

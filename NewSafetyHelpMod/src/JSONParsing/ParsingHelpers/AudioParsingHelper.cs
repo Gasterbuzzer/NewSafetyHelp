@@ -17,10 +17,11 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="audioLocation">Location of the audio to read</param>
         /// <param name="setAudioClip">Function to set the rich audio clip by the function caller.</param>
         /// <param name="jsonFolderPath">Folder path to the JSON.</param>
+        /// <param name="compressAudio">If to compress the audio.</param>
         /// <param name="key">Key for the audio. (Key is merely decorative, will not be used, just checked here)</param>
         public static void UpdateAudioAtLocation(JObject jObjectParsed, string audioLocation,
             // ReSharper disable once RedundantAssignment
-            Action<RichAudioClip> setAudioClip, string jsonFolderPath,
+            Action<RichAudioClip> setAudioClip, string jsonFolderPath, bool compressAudio,
             string key = "audio_clip_location")
         {
             if (setAudioClip == null)
@@ -57,7 +58,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                                     LoggingHelper.ErrorLog($"Failed to load audio clip '{audioLocation}'.");
                                 }
                             },
-                            audioLocation)
+                            audioLocation, compressAudio)
                     );
                 }
             }
@@ -71,10 +72,11 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="audioLocation">Location of the audio to read</param>
         /// <param name="setAudioClip">Function to set the rich audio clip by the function caller.</param>
         /// <param name="jsonFolderPath">Folder path to the JSON.</param>
+        /// <param name="compressAudio">If to compress the audio.</param>
         /// <param name="key">Key for the audio. (Key is merely decorative, will not be used, just checked here)</param>
         public static void UpdateAudioAtLocation(JObject jObjectParsed, VariableChanged<string> audioLocation,
             // ReSharper disable once RedundantAssignment
-            Action<RichAudioClip> setAudioClip, string jsonFolderPath,
+            Action<RichAudioClip> setAudioClip, string jsonFolderPath, bool compressAudio,
             string key = "audio_clip_location")
         {
             if (!audioLocation.HasChanged)
@@ -83,7 +85,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             }
 
             // Call original with the data.
-            UpdateAudioAtLocation(jObjectParsed, audioLocation.Data, setAudioClip, jsonFolderPath, key);
+            UpdateAudioAtLocation(jObjectParsed, audioLocation.Data, setAudioClip, jsonFolderPath, compressAudio, key);
         }
 
         /// <summary>
@@ -92,9 +94,10 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="audioLocation">Location of the audio to read</param>
         /// <param name="setAudioClip">Function to set the rich audio clip by the function caller.</param>
         /// <param name="jsonFolderPath">Folder path to the JSON.</param>
+        /// <param name="compressAudio">If to compress the audio.</param>
         public static void UpdateAudioAtLocationNoKey(string audioLocation,
             // ReSharper disable once RedundantAssignment
-            Action<RichAudioClip> setAudioClip, string jsonFolderPath)
+            Action<RichAudioClip> setAudioClip, string jsonFolderPath, bool compressAudio)
         {
             if (setAudioClip == null)
             {
@@ -104,7 +107,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             if (string.IsNullOrEmpty(audioLocation))
             {
-                LoggingHelper.WarningLog($"No valid audio file given for file in {jsonFolderPath}.");
+                LoggingHelper.WarningLog($"No valid audio file given for file in '{jsonFolderPath}'.");
             }
             // Check if location is valid now, since we are storing it now.
             else if (!File.Exists(audioLocation))
@@ -128,7 +131,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                                 LoggingHelper.ErrorLog($"Failed to load audio clip '{audioLocation}'.");
                             }
                         },
-                        audioLocation)
+                        audioLocation, compressAudio)
                 );
             }
         }

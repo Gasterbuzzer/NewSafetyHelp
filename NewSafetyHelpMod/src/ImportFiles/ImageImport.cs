@@ -11,6 +11,34 @@ namespace NewSafetyHelp.ImportFiles
     public static class ImageImport
     {
         /// <summary>
+        /// Returns the correct image path from the two given paths.
+        /// </summary>
+        /// <param name="imageName">Name of the image.</param>
+        /// <param name="jsonFolderPath">Path to the folder containing the JSON.</param>
+        /// <param name="usermodFolderPath">Path to the usermod itself.</param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static string GetCorrectImagePath(string imageName, string jsonFolderPath, string usermodFolderPath)
+        {
+            if (string.IsNullOrEmpty(imageName.ToLowerInvariant().Trim()))
+            {
+                return null;
+            }
+
+            if (File.Exists(jsonFolderPath + "\\" + imageName))
+            {
+                return jsonFolderPath + "\\" + imageName;
+            }
+
+            if (File.Exists(usermodFolderPath + "\\" + imageName))
+            {
+                return usermodFolderPath + "\\" + imageName;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Function for loading in an image from a provided path and converting it into a Sprite.
         /// </summary>
         /// <param name="imagePath"> Path to the image file. (Includes the image itself in the path) </param>
@@ -118,7 +146,8 @@ namespace NewSafetyHelp.ImportFiles
         [CanBeNull]
         public static Sprite LoadImage(string imagePath, string fallbackImagePath)
         {
-            if (!File.Exists(imagePath) && !File.Exists(fallbackImagePath))
+            if (!File.Exists(imagePath)
+                && !File.Exists(fallbackImagePath))
             {
                 LoggingHelper.ErrorLog("Image file could not be found in either: " +
                                        $"'{imagePath}' or '{fallbackImagePath}'.");
