@@ -143,7 +143,7 @@ namespace NewSafetyHelp.JSONParsing
                         case JSONParseTypes.Entry: // The provided JSON is a standalone entry.
                             LoggingHelper.InfoLog(
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as an entry (monster).");
-                            EntryParsing.EntryParsing.CreateEntryFromJSON(jObjectParse,
+                            EntryParsing.EntryParsing.CreateEntryFromJSON(Path.GetFileName(jsonPathFile), jObjectParse,
                                 usermodFolderPath: modFolderPath,
                                 jsonFolderPath: jsonFolderPath, entryUnlockerInstance: __instance);
                             break;

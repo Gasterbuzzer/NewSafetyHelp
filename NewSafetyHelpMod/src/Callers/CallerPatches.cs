@@ -112,8 +112,8 @@ namespace NewSafetyHelp.Callers
 
                         if (!customCaller.Value.IsCallerClipLoaded)
                         {
-                            LoggingHelper.InfoLog("Audio is still loading for this custom caller." +
-                                                  " It will be updated once the audio has been updated.");
+                            LoggingHelper.InfoLog("Audio is still loading for this custom caller. " +
+                                                  "It will be updated once the audio has been updated.");
                         }
 
                         callerProfile.callerName = customCaller.Value.CallerName;
@@ -205,8 +205,8 @@ namespace NewSafetyHelp.Callers
 
                     if (currentCustomCampaign.CustomCallersInCampaign.Count <= 0)
                     {
-                        LoggingHelper.WarningLog("Custom Campaign has no custom caller assigned!" +
-                                                 " Unexpected behavior will occur when in campaign.");
+                        LoggingHelper.WarningLog("Custom Campaign has no custom caller assigned! " +
+                                                 "Unexpected behavior will occur when in campaign.");
                     }
 
                     // Reference list for consequence caller (after adding all profiles).
@@ -226,14 +226,14 @@ namespace NewSafetyHelp.Callers
                             if (AudioImport.CurrentLoadingAudios.Count > 0)
                             {
                                 LoggingHelper.InfoLog(
-                                    $"Custom Caller '{customCallerCC.CallerName}' is still loading its audio." +
-                                    " Using fallback for now.");
+                                    $"Custom Caller '{customCallerCC.CallerName}' is still loading its audio. " +
+                                    "Using fallback for now.");
                             }
                             else // No Loading Audio
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Custom Caller '{customCallerCC.CallerName}' does not have any valid audio clip!" +
-                                    " Using fallback instead of real audio.");
+                                    $"Custom Caller '{customCallerCC.CallerName}' does not have any valid audio clip! " +
+                                    "Using fallback instead of real audio.");
                             }
 
                             newProfile.callerClip = (RichAudioClip)GetRandomClip.Invoke(__instance, new object[] { });
@@ -246,10 +246,14 @@ namespace NewSafetyHelp.Callers
                         // Sprite
                         if (customCallerCC.CallerImage == null)
                         {
-                            LoggingHelper.WarningLog("Custom Caller " +
-                                                     $"'{(customCallerCC.CallerName != null ? $"{customCallerCC.CallerName}" : "")}'" +
-                                                     " does not have any valid image / sprite." +
-                                                     " Using fallback for now.");
+                            if (!customCallerCC.CallerHasAnimatedPortrait)
+                            {
+                                LoggingHelper.WarningLog("Custom Caller " +
+                                                         $"'{(customCallerCC.CallerName != null ? $"{customCallerCC.CallerName}" : "")}' " +
+                                                         "does not have any valid image / sprite. " +
+                                                         "Using fallback for now.");
+                            }
+
                             newProfile.callerPortrait = (Sprite)GetRandomPicMethod.Invoke(__instance, new object[] { });
                         }
                         else
@@ -286,8 +290,8 @@ namespace NewSafetyHelp.Callers
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided entry (monster) ID for custom caller {customCallerCC.CallerName} was not found!" +
-                                    " Thus will not have any entry (monster).");
+                                    $"Provided entry (monster) ID for custom caller {customCallerCC.CallerName} was not found! " +
+                                    "Thus will not have any entry (monster).");
                                 newProfile.callerMonster = null;
                             }
                             else
@@ -310,8 +314,8 @@ namespace NewSafetyHelp.Callers
                             || customCallerCC.OrderInCampaign >= currentCustomCampaign.CustomCallersInCampaign.Count)
                         {
                             LoggingHelper.ErrorLog(
-                                "Provided order is not valid! (Might be missing a caller(s) in between callers!)" +
-                                $" (Info: Provided Order: {customCallerCC.OrderInCampaign}; " +
+                                "Provided order is not valid! (Might be missing a caller(s) in between callers!) " +
+                                $"(Info: Provided Order: {customCallerCC.OrderInCampaign}; " +
                                 $"CampaignSize: {currentCustomCampaign.CustomCallersInCampaign.Count})");
                         }
                         else
@@ -319,8 +323,8 @@ namespace NewSafetyHelp.Callers
                             if (__instance.callers[customCallerCC.OrderInCampaign] !=
                                 null) // Adding to non-empty caller.
                             {
-                                LoggingHelper.ErrorLog($"Provided caller {newProfile.callerName}" +
-                                                       " has replaced a previous caller at " +
+                                LoggingHelper.ErrorLog($"Provided caller {newProfile.callerName} " +
+                                                       "has replaced a previous caller at " +
                                                        $"position {customCallerCC.OrderInCampaign}! " +
                                                        "Reducing array size by 1 to compensate. Things might break!");
 
@@ -355,16 +359,16 @@ namespace NewSafetyHelp.Callers
                                 }
                                 else
                                 {
-                                    LoggingHelper.ErrorLog("Provided consequence caller cannot be created!" +
-                                                           " Check if was created correctly!" +
-                                                           " (Either original caller or the current consequence caller failed)");
+                                    LoggingHelper.ErrorLog("Provided consequence caller cannot be created! " +
+                                                           "Check if was created correctly! " +
+                                                           "(Either original caller or the current consequence caller failed)");
                                 }
                             }
                             else
                             {
                                 LoggingHelper.ErrorLog(
-                                    "Provided original caller for consequence caller does not exist!" +
-                                    " Check that you have the correct amount of callers!");
+                                    "Provided original caller for consequence caller does not exist! " +
+                                    "Check that you have the correct amount of callers!");
                             }
                         }
                     }
@@ -373,8 +377,8 @@ namespace NewSafetyHelp.Callers
                 // Sanity check to prevent the callers from freezing up.
                 if (__instance.callers.Length < 2)
                 {
-                    LoggingHelper.ErrorLog("Amount of callers is less than 2." +
-                                           " It is highly recommended to have at least 2 to avoid any soft locks by the game.");
+                    LoggingHelper.ErrorLog("Amount of callers is less than 2. " +
+                                           "It is highly recommended to have at least 2 to avoid any soft locks by the game.");
                 }
 
                 return false; // Skip the original function
@@ -425,8 +429,8 @@ namespace NewSafetyHelp.Callers
 
                     if (customCCallerFound == null)
                     {
-                        LoggingHelper.ErrorLog("Was unable of finding the current caller." +
-                                               $" Calling original. For ID: {__instance.currentCallerID}");
+                        LoggingHelper.ErrorLog("Was unable of finding the current caller. " +
+                                               $"Calling original. For ID: {__instance.currentCallerID}");
 
                         foreach (CustomCCaller customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
                                      .CustomCallersInCampaign)
@@ -669,9 +673,9 @@ namespace NewSafetyHelp.Callers
                             }
                         }
 
-                        LoggingHelper.DebugLog("Warning caller check for callers today required:" +
-                                               $" {callersTodayRequiredWarning}." +
-                                               $" Current amount of callers: {__instance.callersToday}.");
+                        LoggingHelper.DebugLog("Warning caller check for callers today required: " +
+                                               $"{callersTodayRequiredWarning}. " +
+                                               $"Current amount of callers: {__instance.callersToday}.");
 
                         if (__instance.callersToday ==
                             callersTodayRequiredWarning) // Now the warning call should appear.
@@ -714,8 +718,8 @@ namespace NewSafetyHelp.Callers
                             // If we found a warning call to replace it, we insert it here.
                             if (warningCCallerToday != null)
                             {
-                                LoggingHelper.DebugLog("Warning caller found to replace!" +
-                                                       $" {warningCCallerToday.CallerName}.");
+                                LoggingHelper.DebugLog("Warning caller found to replace! " +
+                                                       $"{warningCCallerToday.CallerName}.");
 
                                 CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 

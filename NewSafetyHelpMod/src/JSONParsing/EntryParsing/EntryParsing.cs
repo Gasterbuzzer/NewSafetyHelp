@@ -19,7 +19,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 {
     public static class EntryParsing
     {
-        private static void ParseEntry(ref JObject jsonObjectParsed, ref string usermodFolderPath,
+        private static void ParseEntry(string fileName, ref JObject jsonObjectParsed, ref string usermodFolderPath,
             ref string jsonFolderPath, ref int accessLevel, ref bool accessLevelAdded, ref bool replaceEntry,
             ref bool onlyDLC, ref bool includeDLC, ref bool includeMainCampaign, ref string entryName,
             ref string entryDescription, ref List<string> arcadeCalls, ref Sprite entryPortrait,
@@ -54,7 +54,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (!replaceEntry)
                 {
                     LoggingHelper.WarningLog(
-                        $"No entry name given for file in {usermodFolderPath}. Defaulting to NO_NAME.");
+                        $"No entry name given for file in '{usermodFolderPath}' ('{fileName}'). Defaulting to NO_NAME.");
                 }
             }
 
@@ -72,7 +72,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (!replaceEntry)
                 {
                     LoggingHelper.WarningLog(
-                        $"No entry description given for file in {usermodFolderPath}. Defaulting to NO_DESCRIPTION.");
+                        $"No entry description given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                        "Defaulting to NO_DESCRIPTION.");
                 }
             }
 
@@ -102,7 +103,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (!replaceEntry)
                 {
                     LoggingHelper.InfoLog(
-                        $"No Arcade Calls given for file in {usermodFolderPath}. Defaulting to empty values.");
+                        $"No Arcade Calls given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                        "Defaulting to empty values.");
                 }
             }
 
@@ -118,7 +120,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     if (!replaceEntry)
                     {
                         LoggingHelper.WarningLog(
-                            $"No entry portrait given for file in {usermodFolderPath}. No image will be shown.");
+                            $"No entry portrait given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                            "No image will be shown.");
                     }
                 }
                 else
@@ -138,7 +141,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     if (!replaceEntry)
                     {
                         LoggingHelper.WarningLog(
-                            $"No entry portrait given for file in {usermodFolderPath}. No image will be shown.");
+                            $"No entry portrait given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                            "No image will be shown.");
                     }
                 }
                 else
@@ -152,7 +156,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (!replaceEntry)
                 {
                     LoggingHelper.WarningLog(
-                        $"No entry portrait given for file in {usermodFolderPath}. No image will be shown.");
+                        $"No entry portrait given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                        "No image will be shown.");
                 }
             }
 
@@ -164,7 +169,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (string.IsNullOrEmpty(entryAudioClipLocation) && !replaceEntry)
                 {
                     LoggingHelper.InfoLog(
-                        $"No entry audio given for file in {usermodFolderPath}. No audio will be shown.");
+                        $"No entry audio given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                        "No audio will be shown.");
                 }
             }
             else if (jsonObjectParsed.TryGetValue("entry_audio_clip_name", out var entryAudioClipNameValue))
@@ -174,7 +180,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (string.IsNullOrEmpty(entryAudioClipLocation) && !replaceEntry)
                 {
                     LoggingHelper.InfoLog(
-                        $"No entry audio given for file in {usermodFolderPath}. No audio will be shown.");
+                        $"No entry audio given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                        "No audio will be shown.");
                 }
             }
             else
@@ -182,7 +189,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (!replaceEntry)
                 {
                     LoggingHelper.InfoLog(
-                        $"No entry audio given for file in {usermodFolderPath}. No audio will be shown.");
+                        $"No entry audio given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                        "No audio will be shown.");
                 }
             }
 
@@ -191,7 +199,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             // Custom Campaign
             if (jsonObjectParsed.TryGetValue("attached_custom_campaign_name", out var attachedCustomCampaignName))
             {
-                LoggingHelper.DebugLog("Found an entry that is custom campaign only.",
+                LoggingHelper.DebugLog($"Found an entry ('{fileName}') that is custom campaign only.",
                     LoggingHelper.LoggingCategory.ENTRY);
 
                 customCampaignName = attachedCustomCampaignName.Value<string>();
@@ -246,20 +254,23 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
         /// <summary>
         /// Function for adding a single entry.
         /// </summary>
+        /// <param name="fileName">Name of the entry file.</param>
         /// <param name="jObjectParsed"> JSON Data for reading. </param>
         /// <param name="newID"> If we wish to provide the ID via parameter. </param>
         /// <param name="usermodFolderPath"> Folder path to the entries directory </param>
         /// <param name="entryUnlockerInstance"> Instance of the EntryUnlockController.
         /// Needed for accessing and adding some entries. </param>
         /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
-        public static void CreateEntryFromJSON(JObject jObjectParsed, int newID = -1, string usermodFolderPath = "",
+        public static void CreateEntryFromJSON(string fileName,
+            JObject jObjectParsed, int newID = -1, string usermodFolderPath = "",
             string jsonFolderPath = "",
             EntryUnlockController entryUnlockerInstance = null)
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                LoggingHelper.ErrorLog("Provided JSON could not be parsed as an entry. Possible syntax mistake?");
+                LoggingHelper.ErrorLog($"Provided JSON ('{fileName}') could not be parsed as an entry." +
+                                       " Possible syntax mistake?");
                 return;
             }
 
@@ -335,7 +346,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             // We extract the info and save it (if the file is valid)
             // Parse Entry
-            ParseEntry(ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref accessLevel,
+            ParseEntry(fileName, ref jObjectParsed, ref usermodFolderPath, ref jsonFolderPath, ref accessLevel,
                 ref accessLevelAdded, ref replaceEntry, ref onlyDLC, ref includeDLC, ref includeMainCampaign,
                 ref entryName, ref entryDescription, ref arcadeCalls, ref entryPortrait,
                 ref entryPortraitLocation, ref entryAudioClipLocation, ref deleteReplaceEntry,
@@ -374,15 +385,16 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (string.IsNullOrEmpty(callerAudioClipLocation) && !replaceEntry)
                 {
-                    LoggingHelper.InfoLog($"No caller audio given for file in {jsonFolderPath}." +
-                                          " No audio will be heard.");
+                    LoggingHelper.InfoLog($"No caller audio given for file in '{jsonFolderPath}' ('{fileName}'). " +
+                                          "No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(jsonFolderPath + "\\" + callerAudioClipLocation) &&
                          !File.Exists(usermodFolderPath + "\\" + callerAudioClipLocation))
                 {
-                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain {callerAudioClipLocation}. " +
-                                           "Unable to add audio.");
+                    LoggingHelper.ErrorLog(
+                        $"Location '{jsonFolderPath}' does not contain '{callerAudioClipLocation}'. " +
+                        "Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -416,15 +428,16 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 if (string.IsNullOrEmpty(consequenceCallerAudioClipLocation) && !replaceEntry)
                 {
                     LoggingHelper.InfoLog(
-                        $"No caller audio given for file in {usermodFolderPath}. No audio will be heard.");
+                        $"No caller audio given for file in '{usermodFolderPath}' ('{fileName}'). " +
+                        "No audio will be heard.");
                 }
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(jsonFolderPath + "\\" + consequenceCallerAudioClipLocation) &&
                          !File.Exists(usermodFolderPath + "\\" + consequenceCallerAudioClipLocation))
                 {
                     LoggingHelper.ErrorLog(
-                        $"Location {jsonFolderPath} does not contain {consequenceCallerAudioClipLocation}." +
-                        " Unable to add audio.");
+                        $"Location '{jsonFolderPath}' does not contain '{consequenceCallerAudioClipLocation}'. " +
+                        "Unable to add audio.");
                 }
                 else // Valid location, so we load in the value.
                 {
@@ -1002,8 +1015,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     else
                     {
                         LoggingHelper.WarningLog(
-                            "Entry that was suppose to be added in custom campaign does not exist as extra info. " +
-                            "(Error Type: 1) ");
+                            "Entry that was supposed to be added in custom campaign does not exist as extra info. " +
+                            "(Error Type: 1)");
                     }
                 }
                 else

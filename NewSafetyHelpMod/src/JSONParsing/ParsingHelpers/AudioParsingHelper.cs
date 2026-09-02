@@ -34,12 +34,14 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             {
                 if (string.IsNullOrEmpty(audioLocation))
                 {
-                    LoggingHelper.WarningLog($"No valid audio file given for file in {jsonFolderPath}.");
+                    LoggingHelper.WarningLog(
+                        $"No valid audio file given for file in '{jsonFolderPath}' ('{audioLocation}').");
                 }
+
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(audioLocation))
                 {
-                    LoggingHelper.ErrorLog($"Location {jsonFolderPath} does not contain '{audioLocation}'. " +
+                    LoggingHelper.ErrorLog($"Location '{jsonFolderPath}' does not contain '{audioLocation}'. " +
                                            "Unable of adding the audio.");
                 }
                 else // Valid location, so we load in the value.
@@ -167,7 +169,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 if (!File.Exists(usermodFolderPath + "\\" + audioPath))
                 {
                     LoggingHelper.WarningLog($"Could not find provided audio file for key '{key}' at " +
-                                             $"'{jsonFolderPath}' (For Audio '{audioPath}').");
+                                             $"'{jsonFolderPath}' or '{usermodFolderPath}' (For audio '{audioPath}').");
+
                     if (nameOfTarget != null)
                     {
                         LoggingHelper.WarningLog($"For '{nameOfTarget}'.");
@@ -196,8 +199,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="nameOfTarget">(Optional) Provide the name of the target (For example for a custom caller).
         /// Used to display errors.</param>
         public static void TryAssignAudioPathWithChangedBool(JObject jObjectParsed, string key,
-            ref VariableChanged<string> target,
-            string jsonFolderPath, string usermodFolderPath, string nameOfTarget = null)
+            ref VariableChanged<string> target, string jsonFolderPath, string usermodFolderPath,
+            string nameOfTarget = null)
         {
             if (!jObjectParsed.TryGetValue(key, out var token))
             {
@@ -218,7 +221,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 if (!File.Exists(usermodFolderPath + "\\" + audioPath))
                 {
                     LoggingHelper.WarningLog($"Could not find provided audio file for key '{key}' at " +
-                                             $"'{jsonFolderPath}' (For Audio '{audioPath}').");
+                                             $"'{jsonFolderPath}' or '{usermodFolderPath}' (For audio '{audioPath}').");
                     if (nameOfTarget != null)
                     {
                         LoggingHelper.WarningLog($"For '{nameOfTarget}'.");

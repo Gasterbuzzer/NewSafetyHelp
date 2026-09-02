@@ -184,6 +184,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_compress_audio", ref compressAudio);
 
+            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
+
             if (jObjectParsed.TryGetValue("custom_campaign_attached", out var customCampaignAttachedValue))
             {
                 customCampaignName = (string)customCampaignAttachedValue;
@@ -194,11 +196,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                LoggingHelper.ErrorLog(
-                    "Provided custom caller is not attached to either custom campaign or main campaign?");
+                if (customCallerName != "NO_CUSTOM_CALLER_NAME")
+                {
+                    LoggingHelper.ErrorLog(
+                        $"Provided custom caller '{customCallerName}' is not attached to either custom campaign or " +
+                        "main campaign?");
+                }
+                else
+                {
+                    LoggingHelper.ErrorLog(
+                        "Provided custom caller is not attached to either custom campaign or main campaign?");
+                }
             }
 
-            ParsingHelper.TryAssign(jObjectParsed, "custom_caller_name", ref customCallerName);
             ParsingHelper.TryAssign(jObjectParsed, "custom_caller_transcript", ref customCallerTranscript);
 
             ImageParsingHelper.TryAssignSprite(jObjectParsed, "custom_caller_image_name", ref customCallerImage,
