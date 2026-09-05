@@ -135,7 +135,7 @@ namespace NewSafetyHelp.Audio
             yield return AudioLoadThrottler.WaitForSlot(fromHotReload, audioFileSize);
 
             // (Bool: We pass if we skip the waiting for slot.)
-            LoggingHelper.InfoLog($"Attempting to add {path} as audio type {audioType.ToString()}.");
+            LoggingHelper.InfoLog($"Attempting to add '{path}' as audio type '{audioType.ToString()}'.");
 
             Time.timeScale = 0;
 

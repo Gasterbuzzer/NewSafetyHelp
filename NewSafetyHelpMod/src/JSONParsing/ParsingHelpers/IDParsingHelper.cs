@@ -48,7 +48,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 int maxEntryIDMainDlc = GetNewEntryID(entryUnlockerInstance, 1);
 
                 LoggingHelper.DebugLog(
-                    $"Entries in Main Campaign: {maxEntryIDMainCampaign} and entries in DLC: {maxEntryIDMainDlc}.");
+                    $"Entries in Main Campaign: '{maxEntryIDMainCampaign}' and entries in DLC: '{maxEntryIDMainDlc}'.");
 
                 if (onlyDlc) // Only DLC
                 {
@@ -78,7 +78,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             newExtra.ID = newID;
 
-            LoggingHelper.InfoLog($"Defaulting to a new Monster ID {newExtra.ID} for file in {jsonFolderPath}.");
+            LoggingHelper.InfoLog($"Defaulting to a new Monster ID '{newExtra.ID}' for file in '{jsonFolderPath}'.");
             LoggingHelper.InfoLog("(This is the intended and recommended way of providing the ID.)");
         }
     }
