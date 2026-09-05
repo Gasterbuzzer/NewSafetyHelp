@@ -247,8 +247,12 @@ namespace NewSafetyHelp.CustomDesktop
                      * ARG Section
                      */
 
-                    ARGHelper.CreateInputCapture();
+                    ARGHelper.InitializeARGDesktop();
 
+                    /*
+                     * Modifications
+                     */
+                    
                     DesktopModifierSnapshot desktopModifierSnapshot = CustomCampaignGlobal.GetModifierDesktopSnapshot();
 
                     /*
@@ -678,6 +682,12 @@ namespace NewSafetyHelp.CustomDesktop
                             LinkAppHelper.CreateCustomLinkApp(linkApp);
                         }
                     }
+                    
+                    /*
+                     * ARG Setup Section
+                     */
+
+                    ARGHelper.SetupARGDesktop();
                 }
 
                 if (MainClassForMonsterEntries.ShowUpdateMessage)

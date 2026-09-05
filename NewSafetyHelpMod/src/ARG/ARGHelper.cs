@@ -2,18 +2,24 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.LoggingSystem;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace NewSafetyHelp.ARG
 {
     public static class ARGHelper
     {
-        private static readonly string ARGTestCampaignName = "TESHSH";
-        private static readonly string ARGCampaignName = "Summer Cock Sucker";
+        private static readonly byte[] ARGTestCampaignName = { 84, 69, 83, 72, 83, 72 }; // TESHSH
+
+        private static readonly byte[] ARGCampaignName =
+            { 83, 117, 109, 109, 101, 114, 32, 67, 111, 99, 107, 32, 83, 117, 99, 107, 101, 114 };
 
         /// <summary>
         /// MonoBehaviour class for capturing input for the ARG.
@@ -96,20 +102,64 @@ namespace NewSafetyHelp.ARG
         /// <summary>
         /// Creates the input capture for the ARG in the selected custom campaign.
         /// </summary>
-        public static void CreateInputCapture()
+        public static void InitializeARGDesktop()
         {
+            byte[] campaignAsciiName =
+                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
+
             // Prevent this in main campaign or not correct custom campaign.
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 return;
             }
-            else if (CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName != ARGCampaignName
-                     && CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName != ARGTestCampaignName)
+
+            if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
+                && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
             {
                 return;
             }
 
+            // Add ARG Input
             GameObject.Find("MainMenuCanvas").gameObject.AddComponent<ARGCaptureInput>();
+        }
+
+
+        /// <summary>
+        /// Creates the input capture for the ARG in the selected custom campaign.
+        /// </summary>
+        public static void SetupARGDesktop()
+        {
+            byte[] campaignAsciiName =
+                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
+
+            // Prevent this in main campaign or not correct custom campaign.
+            if (!CustomCampaignGlobal.InCustomCampaign)
+            {
+                return;
+            }
+
+            if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
+                && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
+            {
+                return;
+            }
+
+            // Add Keypad, for inputting the code.
+            GameObject rightHandSide = GameObject.Find("MainMenuCanvas/Desktop/RightHandPrograms");
+
+            GameObject argKeypad = Object.Instantiate(rightHandSide.transform.GetChild(0), rightHandSide.transform)
+                .gameObject;
+
+            argKeypad.name = "ARGKeyPad";
+            argKeypad.transform.SetAsLastSibling();
+            Object.Destroy(argKeypad.GetComponent<LinkExecutable>());
+
+            // Change Executable name.
+            argKeypad.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "ADMIN";
+
+            // Change Icon.
+            argKeypad.transform.GetComponent<Image>().sprite = GameObject
+                .Find("MainMenuCanvas/Desktop/Programs/HSH-Executable").GetComponent<Image>().sprite;
         }
     }
 }
