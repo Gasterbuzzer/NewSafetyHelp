@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using NewSafetyHelp.CustomCampaignSystem;
-using NewSafetyHelp.HelperFunctions;
-using NewSafetyHelp.LoggingSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,84 +15,6 @@ namespace NewSafetyHelp.ARG
 
         private static readonly byte[] ARGCampaignName =
             { 83, 117, 109, 109, 101, 114, 32, 67, 111, 99, 107, 32, 83, 117, 99, 107, 101, 114 };
-
-        /// <summary>
-        /// MonoBehaviour class for capturing input for the ARG.
-        /// </summary>
-        public class ARGCaptureInput : MonoBehaviour
-        {
-            private static readonly List<KeyCode> KeyPresses = new List<KeyCode>
-            {
-                KeyCode.DownArrow,
-                KeyCode.DownArrow,
-                KeyCode.UpArrow,
-                KeyCode.LeftArrow,
-                KeyCode.RightArrow
-            };
-
-            private static float lastPressTime;
-            private static int lastKeyPressedIndex;
-
-            private const float TimeOutTime = 2f;
-
-            private void Update()
-            {
-                if (lastKeyPressedIndex > 0
-                    && Time.time - lastPressTime > TimeOutTime)
-                {
-                    lastKeyPressedIndex = 0;
-                }
-
-                KeyCode expectedKey = KeyPresses[lastKeyPressedIndex];
-
-                if (Input.GetKeyDown(expectedKey))
-                {
-                    lastKeyPressedIndex++;
-                    lastPressTime = Time.time;
-
-                    if (lastKeyPressedIndex >= KeyPresses.Count)
-                    {
-                        OpenARGHTML();
-                        lastKeyPressedIndex = 0;
-                    }
-                }
-                else if (Input.anyKeyDown)
-                {
-                    lastKeyPressedIndex = 0;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Open up the HTML page in browser for the ARG:
-        /// </summary>
-        public static void OpenARGHTML()
-        {
-            LoggingHelper.InfoLog("Opening HTML file in browser.");
-
-            string htmlContents =
-                "<H1>In ■he blackest wake of an endless sea, An un■ealthy dosing of abno■mality, Only th■n will you truly see, Just what it is you can b■.</H1>";
-
-            // Path to temp file.
-            string tempFilePath = Path.Combine(
-                Path.GetTempPath(),
-                $"{EmbedHelpers.NewSafetyHelpPrefix}secrets_{Guid.NewGuid()}.html");
-
-            using (FileStream fileStream = new FileStream(tempFilePath, FileMode.Create))
-            {
-                using (StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8))
-                {
-                    streamWriter.WriteLine(htmlContents);
-                }
-            }
-
-            Process.Start(
-                new ProcessStartInfo
-                {
-                    FileName = tempFilePath,
-                    UseShellExecute = true
-                });
-        }
 
         /// <summary>
         /// Creates the input capture for the ARG in the selected custom campaign.
@@ -119,10 +36,11 @@ namespace NewSafetyHelp.ARG
                 return;
             }
 
-            // Add ARG Input
-            GameObject.Find("MainMenuCanvas").gameObject.AddComponent<ARGCaptureInput>();
-        }
+            GameObject mainMenuCanvas = GameObject.Find("MainMenuCanvas");
 
+            // Add ARG Input
+            mainMenuCanvas.gameObject.AddComponent<ARGSecretInputMono.ARGCaptureInput>();
+        }
 
         /// <summary>
         /// Creates the input capture for the ARG in the selected custom campaign.
@@ -144,14 +62,20 @@ namespace NewSafetyHelp.ARG
                 return;
             }
 
-            // Add Keypad, for inputting the code.
-            GameObject rightHandSide = GameObject.Find("MainMenuCanvas/Desktop/RightHandPrograms");
+            GameObject mainMenuCanvas = GameObject.Find("MainMenuCanvas");
+
+            /*
+             * Add Keypad, for inputting the code.
+             */
+
+            GameObject rightHandSide = mainMenuCanvas.transform.Find("Desktop/RightHandPrograms").gameObject;
 
             GameObject argKeypad = Object.Instantiate(rightHandSide.transform.GetChild(0), rightHandSide.transform)
                 .gameObject;
 
             argKeypad.name = "ARGKeyPad";
-            argKeypad.transform.SetAsLastSibling();
+            argKeypad.transform.SetAsFirstSibling();
+
             Object.Destroy(argKeypad.GetComponent<LinkExecutable>());
 
             // Change Executable name.
@@ -160,6 +84,69 @@ namespace NewSafetyHelp.ARG
             // Change Icon.
             argKeypad.transform.GetComponent<Image>().sprite = GameObject
                 .Find("MainMenuCanvas/Desktop/Programs/HSH-Executable").GetComponent<Image>().sprite;
+
+            ARGClickEvent argClickEventComponent = argKeypad.AddComponent<ARGClickEvent>();
+
+            Button doubleClickButton = argKeypad.GetComponent<Button>();
+
+            doubleClickButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
+
+            doubleClickButton.onClick.AddListener(argClickEventComponent.OpenKeyPadPopup);
+
+            /*
+             * Create Keypad Window
+             */
+
+            GameObject keypadPopup = Object
+                .Instantiate(mainMenuCanvas.transform.GetChild(4).gameObject, mainMenuCanvas.transform)
+                .gameObject;
+
+            ARGKeypadLogic.SetKeypadPopup(keypadPopup);
+
+            // Rename Program
+            keypadPopup.name = "KeypadPopup";
+
+            GameObject programTitle = keypadPopup.transform.GetChild(0).GetChild(3).gameObject;
+
+            programTitle.GetComponent<TextMeshProUGUI>().text = "ADMIN PANEL";
+
+            // Resize the Window
+
+            RectTransform keypadRectTransform = keypadPopup.GetComponent<RectTransform>();
+
+            keypadRectTransform.offsetMax = new Vector2(200, 127.645f);
+            keypadRectTransform.offsetMin = new Vector2(-200, -159.165f);
+
+            //keypadScrollViewRectTransform.offsetMax = new Vector2(196.095f, 104.965f);
+            //keypadScrollViewRectTransform.offsetMin = new Vector2(-198.515f, -133.125f);
+
+            // Remove old content
+            Object.Destroy(keypadPopup.transform.GetChild(1).gameObject);
+
+            // Exit Button
+            GameObject closeButton = keypadPopup.transform.GetChild(0).GetChild(0).gameObject;
+
+            Button[] buttonComponents = closeButton.GetComponents<Button>();
+            
+            // Destroy first unused button
+            Object.Destroy(buttonComponents[0]);
+
+            buttonComponents[1].onClick.RemoveAllListeners();
+            buttonComponents[1].onClick.AddListener(ARGKeypadLogic.CloseKeyPadPopup);
+
+            // Background of Window
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+            if (customCampaign.GameFinishedBackground == null)
+            {
+                // Replace background Image
+                keypadPopup.GetComponent<Image>().sprite =
+                    mainMenuCanvas.transform.GetChild(0).GetComponent<Image>().sprite;
+            }
+            else
+            {
+                keypadPopup.GetComponent<Image>().sprite = customCampaign.GameFinishedBackground;
+            }
         }
     }
 }
