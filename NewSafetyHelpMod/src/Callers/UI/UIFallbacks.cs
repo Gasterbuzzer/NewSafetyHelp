@@ -1,5 +1,7 @@
-﻿using NewSafetyHelp.LoggingSystem;
+﻿using System;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.Callers.UI
 {
@@ -48,7 +50,7 @@ namespace NewSafetyHelp.Callers.UI
             {
                 if (__instance.randomCallerPics.Length <= 0)
                 {
-                    LoggingHelper.WarningLog("No image available for caller!");
+                    LoggingHelper.DebugWarningLog("No image available for caller!");
                     __result = null;
                     return false;
                 }

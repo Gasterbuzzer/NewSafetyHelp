@@ -192,7 +192,7 @@ namespace NewSafetyHelp.LoggingSystem
                     }
                     else
                     {
-                        MelonLogger.Msg($"DEBUG WARNING: {loggingMessage}");
+                        MelonLogger.Warning($"DEBUG WARNING: {loggingMessage}");
                     }
 
                     break;
@@ -243,6 +243,20 @@ namespace NewSafetyHelp.LoggingSystem
             if (CheckLoggingCategory(loggingCategory, checkDebugLog: true))
             {
                 Log(loggingMessage, LoggingLevel.DEBUG, consoleColor);
+            }
+        }
+        
+        /// <summary>
+        /// Logs a debug messages to the console. Only enabled if debug is enabled.
+        /// </summary>
+        /// <param name="loggingMessage">Message to log.</param>
+        /// <param name="loggingCategory">If it belongs to a logging category, which one it is.</param>
+        public static void DebugWarningLog(string loggingMessage,
+            LoggingCategory loggingCategory = LoggingCategory.NONE)
+        {
+            if (CheckLoggingCategory(loggingCategory, checkDebugLog: true))
+            {
+                Log(loggingMessage, LoggingLevel.DEBUG_WARNING);
             }
         }
 
