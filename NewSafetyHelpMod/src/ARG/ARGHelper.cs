@@ -110,6 +110,11 @@ namespace NewSafetyHelp.ARG
 
             programTitle.GetComponent<TextMeshProUGUI>().text = "ADMIN PANEL";
 
+            GameObject programLogo = keypadPopup.transform.GetChild(0).GetChild(2).gameObject;
+
+            programLogo.GetComponent<Image>().sprite = GameObject.Find("MainMenuCanvas/Desktop/Programs/HSH-Executable")
+                .GetComponent<Image>().sprite;
+
             // Resize the Window
 
             RectTransform keypadRectTransform = keypadPopup.GetComponent<RectTransform>();
@@ -117,35 +122,42 @@ namespace NewSafetyHelp.ARG
             keypadRectTransform.offsetMax = new Vector2(200, 127.645f);
             keypadRectTransform.offsetMin = new Vector2(-200, -159.165f);
 
-            //keypadScrollViewRectTransform.offsetMax = new Vector2(196.095f, 104.965f);
-            //keypadScrollViewRectTransform.offsetMin = new Vector2(-198.515f, -133.125f);
-
             // Remove old content
-            Object.Destroy(keypadPopup.transform.GetChild(1).gameObject);
+            Object.Destroy(keypadPopup.transform.GetChild(1).GetChild(1).gameObject);
+            Object.Destroy(keypadPopup.transform.GetChild(1).GetChild(0).gameObject);
 
             // Exit Button
             GameObject closeButton = keypadPopup.transform.GetChild(0).GetChild(0).gameObject;
 
             Button[] buttonComponents = closeButton.GetComponents<Button>();
-            
+
             // Destroy first unused button
             Object.Destroy(buttonComponents[0]);
 
             buttonComponents[1].onClick.RemoveAllListeners();
             buttonComponents[1].onClick.AddListener(ARGKeypadLogic.CloseKeyPadPopup);
 
+            GameObject keypadScrollView = keypadPopup.transform.GetChild(1).gameObject;
+
+            RectTransform keypadScrollViewRectTransform = keypadScrollView.GetComponent<RectTransform>();
+
+            keypadScrollViewRectTransform.offsetMax = new Vector2(194.095f, 104.965f);
+            keypadScrollViewRectTransform.offsetMin = new Vector2(-194.515f, -136.125f);
+
             // Background of Window
             CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
+            keypadScrollView.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 0.2f);
+            
             if (customCampaign.GameFinishedBackground == null)
             {
                 // Replace background Image
-                keypadPopup.GetComponent<Image>().sprite =
+                keypadScrollView.GetComponent<Image>().sprite =
                     mainMenuCanvas.transform.GetChild(0).GetComponent<Image>().sprite;
             }
             else
             {
-                keypadPopup.GetComponent<Image>().sprite = customCampaign.GameFinishedBackground;
+                keypadScrollView.GetComponent<Image>().sprite = customCampaign.GameFinishedBackground;
             }
         }
     }
