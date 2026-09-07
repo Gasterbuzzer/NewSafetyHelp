@@ -4,8 +4,10 @@ using System.Reflection;
 using System.Text;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -19,9 +21,6 @@ namespace NewSafetyHelp.ARG
             { 83, 117, 109, 109, 101, 114, 32, 67, 111, 99, 107, 32, 83, 117, 99, 107, 101, 114 };
 
         private static readonly FieldInfo MyImage = typeof(AdhereToPalette).GetField("myImage",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-
-        private static readonly FieldInfo MyRenderer = typeof(AdhereToPalette).GetField("myRenderer",
             BindingFlags.NonPublic | BindingFlags.Instance);
 
         /// <summary>
@@ -187,8 +186,6 @@ namespace NewSafetyHelp.ARG
 
             submitButtonRectTransform.pivot = new Vector2(0.5f, 2.8f);
 
-            submitButton.AddComponent<Button>().onClick.AddListener(ARGKeypadLogic.CloseKeyPadPopup);
-
             GameObject submitButtonText = submitButton.transform.GetChild(0).gameObject;
 
             submitButtonText.GetComponent<TextMeshProUGUI>().text = "Submit";
@@ -232,6 +229,16 @@ namespace NewSafetyHelp.ARG
                 TMP_InputField inputField = newInputField.AddComponent<TMP_InputField>();
                 inputField.characterLimit = 1;
 
+                int currentIndex = i;
+
+                inputField.onValueChanged.AddListener(_ =>
+                {
+                    if (inputFields.Count >= 4)
+                    {
+                        EventSystem.current.SetSelectedGameObject(inputFields[(currentIndex + 1) % 4]);
+                    }
+                });
+
                 // Text Area to contain the text
                 GameObject textArea = new GameObject("TextAreaBox", typeof(RectTransform));
                 textArea.transform.SetParent(newInputField.transform, false);
@@ -274,6 +281,22 @@ namespace NewSafetyHelp.ARG
                 // Add to the list
                 inputFields.Add(newInputField);
             }
+
+            // Connect Input Fields to Submit button
+            submitButton.AddComponent<Button>().onClick.AddListener(() =>
+            {
+                if (inputFields.Count >= 4)
+                {
+                    string inputCode =
+                        $"{inputFields[0].GetComponent<TMP_InputField>().text}" +
+                        $"{inputFields[1].GetComponent<TMP_InputField>().text}" +
+                        $"{inputFields[2].GetComponent<TMP_InputField>().text}" +
+                        $"{inputFields[3].GetComponent<TMP_InputField>().text}";
+
+                    LoggingHelper.DebugLog(
+                        $"Submitted Code: '{inputCode}'.");
+                }
+            });
         }
     }
 }
