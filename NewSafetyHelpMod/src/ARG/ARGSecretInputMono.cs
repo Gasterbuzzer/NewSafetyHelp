@@ -32,6 +32,11 @@ namespace NewSafetyHelp.ARG
 
             private void Update()
             {
+                if (ARGKeypadLogic.KeyPadIsOpen)
+                {
+                    return;
+                }
+
                 if (lastKeyPressedIndex > 0
                     && Time.time - lastPressTime > TimeOutTime)
                 {

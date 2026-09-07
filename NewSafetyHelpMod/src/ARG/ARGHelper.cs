@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
@@ -15,6 +17,12 @@ namespace NewSafetyHelp.ARG
 
         private static readonly byte[] ARGCampaignName =
             { 83, 117, 109, 109, 101, 114, 32, 67, 111, 99, 107, 32, 83, 117, 99, 107, 101, 114 };
+
+        private static readonly FieldInfo MyImage = typeof(AdhereToPalette).GetField("myImage",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+
+        private static readonly FieldInfo MyRenderer = typeof(AdhereToPalette).GetField("myRenderer",
+            BindingFlags.NonPublic | BindingFlags.Instance);
 
         /// <summary>
         /// Creates the input capture for the ARG in the selected custom campaign.
@@ -137,6 +145,7 @@ namespace NewSafetyHelp.ARG
             buttonComponents[1].onClick.RemoveAllListeners();
             buttonComponents[1].onClick.AddListener(ARGKeypadLogic.CloseKeyPadPopup);
 
+            // Update View
             GameObject keypadScrollView = keypadPopup.transform.GetChild(1).gameObject;
 
             RectTransform keypadScrollViewRectTransform = keypadScrollView.GetComponent<RectTransform>();
@@ -148,7 +157,7 @@ namespace NewSafetyHelp.ARG
             CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
             keypadScrollView.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 0.2f);
-            
+
             if (customCampaign.GameFinishedBackground == null)
             {
                 // Replace background Image
@@ -158,6 +167,112 @@ namespace NewSafetyHelp.ARG
             else
             {
                 keypadScrollView.GetComponent<Image>().sprite = customCampaign.GameFinishedBackground;
+            }
+
+            // Create UI Key Input
+            GameObject minimizeButton = keypadPopup.transform.GetChild(0).GetChild(1).gameObject;
+
+            GameObject submitButton = Object.Instantiate(minimizeButton, keypadScrollView.transform);
+
+            submitButton.name = "SubmitButton";
+
+            RectTransform submitButtonRectTransform = submitButton.GetComponent<RectTransform>();
+
+            submitButtonRectTransform.anchoredPosition = new Vector2(0, 0);
+            submitButtonRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            submitButtonRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+
+            submitButtonRectTransform.offsetMin = new Vector2(-50, -20);
+            submitButtonRectTransform.offsetMax = new Vector2(50, 20);
+
+            submitButtonRectTransform.pivot = new Vector2(0.5f, 2.8f);
+
+            submitButton.AddComponent<Button>().onClick.AddListener(ARGKeypadLogic.CloseKeyPadPopup);
+
+            GameObject submitButtonText = submitButton.transform.GetChild(0).gameObject;
+
+            submitButtonText.GetComponent<TextMeshProUGUI>().text = "Submit";
+            submitButtonText.GetComponent<TextMeshProUGUI>().fontSizeMax = 30;
+
+            RectTransform submitButtonTextRectTransform = submitButtonText.GetComponent<RectTransform>();
+
+            submitButtonTextRectTransform.offsetMin = new Vector2(0, 0);
+            submitButtonTextRectTransform.offsetMax = new Vector2(0, 0);
+
+            submitButton.SetActive(true);
+
+            // Create UI Title
+
+            GameObject inputPasscodeLabel = Object.Instantiate(submitButtonText, keypadScrollView.transform);
+
+            inputPasscodeLabel.name = "InputPasscodeLabel";
+
+            inputPasscodeLabel.GetComponent<TextMeshProUGUI>().text = "INPUT PASSCODE";
+
+            inputPasscodeLabel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100);
+
+            inputPasscodeLabel.AddComponent<CanvasGroup>().blocksRaycasts = false;
+
+            // Create Input Fields
+            List<GameObject> inputFields = new List<GameObject>();
+
+            for (int i = 0; i < 4; i++)
+            {
+                // Create base of the input field
+                GameObject newInputField = new GameObject("InputField" + i, typeof(RectTransform));
+                newInputField.transform.SetParent(keypadScrollView.transform, false);
+
+                RectTransform inputRect = newInputField.GetComponent<RectTransform>();
+                inputRect.sizeDelta = new Vector2(50, 80);
+                inputRect.anchoredPosition = new Vector2(-130 + (i * 86), 0);
+
+                Image newInputFieldImage = newInputField.AddComponent<Image>();
+                newInputFieldImage.color = new Color(0.22745f, 0.27450f, 0.21960f, 1f);
+
+                TMP_InputField inputField = newInputField.AddComponent<TMP_InputField>();
+                inputField.characterLimit = 1;
+
+                // Text Area to contain the text
+                GameObject textArea = new GameObject("TextAreaBox", typeof(RectTransform));
+                textArea.transform.SetParent(newInputField.transform, false);
+
+                RectTransform textAreaRectTransform = textArea.GetComponent<RectTransform>();
+                textAreaRectTransform.anchorMin = Vector2.zero;
+                textAreaRectTransform.anchorMax = Vector2.one;
+                textAreaRectTransform.offsetMin = new Vector2(10, 6);
+                textAreaRectTransform.offsetMax = new Vector2(-10, -6);
+
+                // Actual Text
+                GameObject inputFieldText = new GameObject("InputFieldText", typeof(RectTransform));
+                inputFieldText.transform.SetParent(textArea.transform, false);
+
+                RectTransform textRectTransform = inputFieldText.GetComponent<RectTransform>();
+                textRectTransform.anchorMin = Vector2.zero;
+                textRectTransform.anchorMax = Vector2.one;
+                textRectTransform.offsetMin = Vector2.zero;
+                textRectTransform.offsetMax = Vector2.zero;
+
+                TextMeshProUGUI inputTextComponent = inputFieldText.AddComponent<TextMeshProUGUI>();
+                inputTextComponent.fontSize = 24;
+                inputTextComponent.color = Color.white;
+                inputTextComponent.font = inputPasscodeLabel.GetComponent<TextMeshProUGUI>().font;
+                inputTextComponent.alignment = TextAlignmentOptions.Center;
+
+                // Connect GameObjects to input field
+                inputField.textViewport = textAreaRectTransform;
+                inputField.textComponent = inputTextComponent;
+                inputField.text = "0";
+
+                //Adhere to color palette
+                AdhereToPalette adhereToPaletteComponent = newInputField.AddComponent<AdhereToPalette>();
+
+                MyImage.SetValue(adhereToPaletteComponent, newInputFieldImage);
+                adhereToPaletteComponent.colorSwatchInt = 3;
+
+                adhereToPaletteComponent.ChangeColors();
+
+                // Add to the list
+                inputFields.Add(newInputField);
             }
         }
     }

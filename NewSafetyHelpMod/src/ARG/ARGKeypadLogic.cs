@@ -1,5 +1,4 @@
-﻿using NewSafetyHelp.LoggingSystem;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace NewSafetyHelp.ARG
 {
@@ -7,6 +6,8 @@ namespace NewSafetyHelp.ARG
     {
         // GameObject References
         private static GameObject keypadPopup;
+
+        public static bool KeyPadIsOpen;
 
         /// <summary>
         /// Opens the keypad popup prompt.
@@ -16,6 +17,7 @@ namespace NewSafetyHelp.ARG
             if (keypadPopup != null)
             {
                 keypadPopup.SetActive(true);
+                KeyPadIsOpen = true;
             }
         }
 
@@ -27,6 +29,7 @@ namespace NewSafetyHelp.ARG
             if (keypadPopup != null)
             {
                 keypadPopup.SetActive(false);
+                KeyPadIsOpen = false;
             }
         }
 
