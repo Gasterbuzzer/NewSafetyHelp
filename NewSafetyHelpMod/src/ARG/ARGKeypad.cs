@@ -17,7 +17,7 @@ namespace NewSafetyHelp.ARG
         private static readonly FieldInfo MyImage = typeof(AdhereToPalette).GetField("myImage",
             BindingFlags.NonPublic | BindingFlags.Instance);
 
-        private static readonly Vector4 Key = new Vector4(12, 9, 49, 63);
+        private static readonly Vector4 Key = new Vector4(12, -9, 49, 63);
 
         public static void CreateKeypad()
         {
@@ -280,16 +280,15 @@ namespace NewSafetyHelp.ARG
                         $"{inputKey[3]}";
 
                     LoggingHelper.DebugLog($"Submitted Code: '{inputCode}'.");
-
+                    
                     // Key
-                    if ((inputKeyVector + new Vector4(8, 6, 42, 54)).Equals(Key))
+                    if ((inputKeyVector + new Vector4(8, -12, 42, 54)).Equals(Key))
                     {
                         LoggingHelper.DebugLog($"Detected digit code: '{inputCode}'.");
                     }
-
-                    if (false)
+                    else if (inputKeyVector.Equals(new Vector4(1, 9, 8, 7)))
                     {
-                        LoggingHelper.DebugLog($"Detected digit code: '{inputCode}'.");
+                        ARGHelper.CreateErrorMessage("Har Har Har Har", mainMenuCanvas.transform);
                     }
                 }
             });

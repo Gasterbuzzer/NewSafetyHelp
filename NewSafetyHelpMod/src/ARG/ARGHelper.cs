@@ -1,7 +1,10 @@
 ﻿using System.Linq;
 using System.Text;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.LoggingSystem;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NewSafetyHelp.ARG
 {
@@ -59,6 +62,34 @@ namespace NewSafetyHelp.ARG
             }
 
             ARGKeypad.CreateKeypad();
+        }
+
+        /// <summary>
+        /// Creates an error popup with the provided error message.
+        /// </summary>
+        /// <param name="errorMessage">Message to display.</param>
+        /// <param name="mainMenuCanvas">Canvas to display it at.</param>
+        /// <param name="errorTile">Title to show in the error popup.</param>
+        public static void CreateErrorMessage(string errorMessage, Transform mainMenuCanvas,
+            string errorTile = "ERROR: INVALID PASSWORD")
+        {
+            if (errorMessage == "")
+            {
+                return;
+            }
+            
+            GameObject errorGameObject = Object.Instantiate(GlobalVariables.entryCanvasScript.errorPrefab, mainMenuCanvas);
+            
+            GameObject errorLogo = errorGameObject.transform.GetChild(0).GetChild(2).gameObject;
+            errorLogo.GetComponent<Image>().sprite = GameObject.Find("MainMenuCanvas/Desktop/Programs/HSH-Executable")
+                .GetComponent<Image>().sprite;
+            errorLogo.SetActive(true);
+            
+            GameObject errorTitle = errorGameObject.transform.GetChild(0).GetChild(3).gameObject;
+            errorTitle.GetComponent<TextMeshProUGUI>().text = errorTile;
+            errorTitle.SetActive(true);
+            
+            errorGameObject.GetComponent<GenericErrorPopupBehavior>().myErrorText.text = errorMessage;
         }
     }
 }
