@@ -70,6 +70,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 0
             };
 
+            VariableChanged<bool> addToRightSide = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             // New Accuracy Settings
             bool ignoreAccuracyChecks = false;
             List<GeneralAccuracyType> unlockAccuracy = null;
@@ -91,6 +96,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "text_file_desktop_position",
                 ref gameObjectOrder);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "text_file_add_to_right_side", ref addToRightSide);
 
             ParsingHelper.TryAssign(jObjectParsed, "text_file_contents", ref textFileContents);
 
@@ -116,6 +123,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 OrderPriority = orderPriority,
                 GameObjectOrder = gameObjectOrder,
+
+                AddToRightSide = addToRightSide,
 
                 UnlockAccuracy = unlockAccuracy,
                 UnlockRequiredCallers = unlockRequiredCallers,

@@ -24,6 +24,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
             GameObject newCustomTextFile =
                 Object.Instantiate(desktopCreditsProgram, desktopCreditsProgram.transform.parent);
 
+            if (customTextFile.AddToRightSide.HasChanged
+                && customTextFile.AddToRightSide.Data)
+            {
+                newCustomTextFile.transform.SetParent(GameObject.Find("MainMenuCanvas/Desktop/RightHandPrograms")
+                    .transform);
+            }
+
             if (string.IsNullOrEmpty(customTextFile.FileNameOnDesktop))
             {
                 LoggingHelper.ErrorLog("No desktop name provided for the custom text file to be created!");

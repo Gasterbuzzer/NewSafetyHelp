@@ -27,6 +27,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomTextFiles
             Data = 0
         };
 
+        public VariableChanged<bool> AddToRightSide = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         // New Accuracy Settings
         [CanBeNull] public List<GeneralAccuracyType> UnlockAccuracy = null;
 
