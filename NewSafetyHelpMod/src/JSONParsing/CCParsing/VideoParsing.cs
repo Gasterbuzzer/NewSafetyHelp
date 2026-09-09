@@ -73,6 +73,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 0
             };
 
+            VariableChanged<bool> addToRightSide = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             // New Accuracy Settings
             List<GeneralAccuracyType> unlockAccuracy = null;
             bool ignoreAccuracyChecks = true;
@@ -90,6 +95,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "video_order_priority", ref orderPriority);
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "video_desktop_position", ref gameObjectOrder);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "video_add_to_right_side", ref addToRightSide);
 
             VideoParsingHelper.TryAssignVideoPath(jObjectParsed, "video_file_name", ref videoFilePath,
                 jsonFolderPath, usermodFolderPath);
@@ -118,6 +125,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 OrderPriority = orderPriority,
                 GameObjectOrder = gameObjectOrder,
+
+                AddToRightSide = addToRightSide,
 
                 IgnoreAccuracyChecks = ignoreAccuracyChecks,
 

@@ -27,6 +27,11 @@ namespace NewSafetyHelp.CustomVideos
             Data = 0
         };
 
+        public VariableChanged<bool> AddToRightSide = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         // Uses a reference to check if a Game Object belongs to the custom video.
         public GameObject ReferenceToCreatedVideo = null;
 

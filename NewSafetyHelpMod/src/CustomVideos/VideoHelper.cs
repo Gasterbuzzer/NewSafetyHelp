@@ -24,6 +24,13 @@ namespace NewSafetyHelp.CustomVideos
 
             GameObject newCustomVideo = Object.Instantiate(trailerFileOriginal, trailerFileOriginal.transform.parent);
 
+            if (customVideo.AddToRightSide.HasChanged
+                && customVideo.AddToRightSide.Data)
+            {
+                newCustomVideo.transform.SetParent(GameObject.Find("MainMenuCanvas/Desktop/RightHandPrograms")
+                    .transform);
+            }
+
             if (string.IsNullOrEmpty(customVideo.DesktopName))
             {
                 LoggingHelper.ErrorLog("No filename provided for video to be created!");
