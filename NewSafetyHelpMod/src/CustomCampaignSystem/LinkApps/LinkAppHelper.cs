@@ -66,6 +66,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.LinkApps
             GameObject newCustomLinkApp =
                 Object.Instantiate(desktopCreditsProgram, desktopCreditsProgram.transform.parent);
 
+            if (customLinkApp.AddToRightSide.HasChanged
+                && customLinkApp.AddToRightSide.Data)
+            {
+                newCustomLinkApp.transform.SetParent(GameObject.Find("MainMenuCanvas/Desktop/RightHandPrograms")
+                    .transform);
+            }
+
             if (!customLinkApp.DesktopName.HasChanged)
             {
                 LoggingHelper.WarningLog("No desktop name provided for the custom link app, using default name.");

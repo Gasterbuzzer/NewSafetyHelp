@@ -27,6 +27,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.LinkApps
             Data = 0
         };
 
+        public VariableChanged<bool> AddToRightSide = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         // On click URL.
         // This opens up this website on the browser when the app is opened.
         // Please make sure to double-check that this is set correctly!

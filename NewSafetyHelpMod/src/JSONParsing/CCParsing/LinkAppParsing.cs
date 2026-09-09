@@ -71,6 +71,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 0
             };
 
+            VariableChanged<bool> addToRightSide = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             VariableChanged<string> desktopName = new VariableChanged<string>
             {
                 Data = "No Name Provided"
@@ -107,6 +112,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "link_app_desktop_position", ref gameObjectOrder);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "link_app_add_to_right_side", ref addToRightSide);
+
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "link_app_desktop_name", ref desktopName);
 
             ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "link_app_desktop_icon", ref desktopIcon,
@@ -137,6 +144,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 LinkAppPriority = linkAppPriority,
                 GameObjectOrder = gameObjectOrder,
+
+                AddToRightSide = addToRightSide,
 
                 DesktopName = desktopName,
                 DesktopIcon = desktopIcon,
