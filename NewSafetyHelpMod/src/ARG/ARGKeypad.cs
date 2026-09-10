@@ -29,8 +29,8 @@ namespace NewSafetyHelp.ARG
 
             GameObject rightHandSide = mainMenuCanvas.transform.Find("Desktop/RightHandPrograms").gameObject;
 
-            GameObject argKeypad = Object.Instantiate(rightHandSide.transform.GetChild(0), rightHandSide.transform)
-                .gameObject;
+            GameObject argKeypad = Object.Instantiate(rightHandSide.transform.Find("Discord-Executable"),
+                rightHandSide.transform).gameObject;
 
             argKeypad.name = "ARGKeyPad";
             argKeypad.transform.SetAsFirstSibling();
@@ -51,6 +51,8 @@ namespace NewSafetyHelp.ARG
             doubleClickButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
 
             doubleClickButton.onClick.AddListener(argClickEventComponent.OpenKeyPadPopup);
+
+            argKeypad.SetActive(true);
 
             /*
              * Create Keypad Window
@@ -181,6 +183,8 @@ namespace NewSafetyHelp.ARG
                 TMP_InputField inputField = newInputField.AddComponent<TMP_InputField>();
                 inputField.characterLimit = 1;
 
+                newInputField.AddComponent<Shadow>();
+
                 int currentIndex = i;
 
                 inputField.onValueChanged.AddListener(_ =>
@@ -280,7 +284,7 @@ namespace NewSafetyHelp.ARG
                         $"{inputKey[3]}";
 
                     LoggingHelper.DebugLog($"Submitted Code: '{inputCode}'.");
-                    
+
                     // Key
                     if ((inputKeyVector + new Vector4(8, -12, 42, 54)).Equals(Key))
                     {

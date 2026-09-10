@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
 using NewSafetyHelp.CustomCampaignSystem;
-using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
