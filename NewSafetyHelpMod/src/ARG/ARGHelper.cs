@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.ImportFiles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,18 +77,18 @@ namespace NewSafetyHelp.ARG
             {
                 return;
             }
-            
-            GameObject errorGameObject = Object.Instantiate(GlobalVariables.entryCanvasScript.errorPrefab, mainMenuCanvas);
-            
+
+            GameObject errorGameObject =
+                Object.Instantiate(GlobalVariables.entryCanvasScript.errorPrefab, mainMenuCanvas);
+
             GameObject errorLogo = errorGameObject.transform.GetChild(0).GetChild(2).gameObject;
-            errorLogo.GetComponent<Image>().sprite = GameObject.Find("MainMenuCanvas/Desktop/Programs/HSH-Executable")
-                .GetComponent<Image>().sprite;
+            errorLogo.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
             errorLogo.SetActive(true);
-            
+
             GameObject errorTitle = errorGameObject.transform.GetChild(0).GetChild(3).gameObject;
             errorTitle.GetComponent<TextMeshProUGUI>().text = errorTile;
             errorTitle.SetActive(true);
-            
+
             errorGameObject.GetComponent<GenericErrorPopupBehavior>().myErrorText.text = errorMessage;
         }
     }

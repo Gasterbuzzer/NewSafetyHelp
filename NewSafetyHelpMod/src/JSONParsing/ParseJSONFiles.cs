@@ -44,7 +44,7 @@ namespace NewSafetyHelp.JSONParsing
             Time.timeScale = 0.0f;
 
             // Before load all JSON files, we first load all embedded audio.
-            EmbeddedTimerData.Initialize();
+            EmbedLoader.Initialize();
 
             ModUnpacker.CheckForNotInstalledUserMods();
 

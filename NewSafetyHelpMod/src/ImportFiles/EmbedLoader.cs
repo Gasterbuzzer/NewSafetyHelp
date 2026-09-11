@@ -1,11 +1,11 @@
 ﻿using JetBrains.Annotations;
-using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.Audio;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.Audio
+namespace NewSafetyHelp.ImportFiles
 {
-    public static class EmbeddedTimerData
+    public static class EmbedLoader
     {
         [CanBeNull] public static RichAudioClip ClockFivePercent;
         [CanBeNull] public static RichAudioClip ClockHalfTime;
@@ -13,6 +13,8 @@ namespace NewSafetyHelp.Audio
 
         [CanBeNull] public static Sprite ClockBase;
         [CanBeNull] public static Sprite ClockHand;
+
+        [CanBeNull] public static Sprite AdminIcon;
 
         public static void Initialize()
         {
@@ -71,6 +73,8 @@ namespace NewSafetyHelp.Audio
 
             ClockBase = ImageImport.LoadEmbeddedImage("clock_base.png");
             ClockHand = ImageImport.LoadEmbeddedImage("clock_hand.png");
+
+            AdminIcon = ImageImport.LoadEmbeddedImage("admin_icon.png");
 
             LoggingHelper.DebugLog("Finished the starting of the embed loading coroutines.");
         }

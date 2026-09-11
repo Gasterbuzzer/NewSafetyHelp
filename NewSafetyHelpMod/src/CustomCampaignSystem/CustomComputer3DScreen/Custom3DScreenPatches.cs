@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using NewSafetyHelp.Audio;
+using NewSafetyHelp.ImportFiles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -297,7 +298,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen
                             }
                             else
                             {
-                                backgroundImage.GetComponent<Image>().sprite = EmbeddedTimerData.ClockBase;
+                                backgroundImage.GetComponent<Image>().sprite = EmbedLoader.ClockBase;
                             }
 
                             backgroundImage.GetComponent<RectTransform>().localPosition = new Vector3(-350, 180, 50);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
@@ -41,8 +42,7 @@ namespace NewSafetyHelp.ARG
             argKeypad.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "ADMIN";
 
             // Change Icon.
-            argKeypad.transform.GetComponent<Image>().sprite = GameObject
-                .Find("MainMenuCanvas/Desktop/Programs/HSH-Executable").GetComponent<Image>().sprite;
+            argKeypad.transform.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
 
             ARGClickEvent argClickEventComponent = argKeypad.AddComponent<ARGClickEvent>();
 
@@ -73,8 +73,7 @@ namespace NewSafetyHelp.ARG
 
             GameObject programLogo = keypadPopup.transform.GetChild(0).GetChild(2).gameObject;
 
-            programLogo.GetComponent<Image>().sprite = GameObject.Find("MainMenuCanvas/Desktop/Programs/HSH-Executable")
-                .GetComponent<Image>().sprite;
+            programLogo.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
 
             // Resize the Window
 

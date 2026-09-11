@@ -5,6 +5,7 @@ using MelonLoader;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
@@ -26,12 +27,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
         private static Image clockFill;
         private static TextMeshProUGUI analogClockHoverText;
 
-        private static RichAudioClip clockStart = EmbeddedTimerData.ClockStart;
-        private static RichAudioClip clockHalfTime = EmbeddedTimerData.ClockHalfTime;
-        private static RichAudioClip clockFivePercent = EmbeddedTimerData.ClockFivePercent;
+        private static RichAudioClip clockStart = EmbedLoader.ClockStart;
+        private static RichAudioClip clockHalfTime = EmbedLoader.ClockHalfTime;
+        private static RichAudioClip clockFivePercent = EmbedLoader.ClockFivePercent;
 
-        private static Sprite clockBaseSprite = EmbeddedTimerData.ClockBase;
-        private static Sprite clockHandSprite = EmbeddedTimerData.ClockHand;
+        private static Sprite clockBaseSprite = EmbedLoader.ClockBase;
+        private static Sprite clockHandSprite = EmbedLoader.ClockHand;
 
         private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
             BindingFlags.Static | BindingFlags.NonPublic);
@@ -56,7 +57,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 }
                 else
                 {
-                    clockStart = EmbeddedTimerData.ClockStart;
+                    clockStart = EmbedLoader.ClockStart;
                 }
 
                 (bool foundModifier, VariableChanged<RichAudioClip> value) timedCallerHalfSound =
@@ -69,7 +70,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 }
                 else
                 {
-                    clockHalfTime = EmbeddedTimerData.ClockHalfTime;
+                    clockHalfTime = EmbedLoader.ClockHalfTime;
                 }
 
                 (bool foundModifier, VariableChanged<RichAudioClip> value) timedCallerCriticalSound =
@@ -82,7 +83,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 }
                 else
                 {
-                    clockFivePercent = EmbeddedTimerData.ClockHalfTime;
+                    clockFivePercent = EmbedLoader.ClockHalfTime;
                 }
 
                 (bool foundModifier, VariableChanged<bool> value) useClockInsteadOfTimer =
@@ -355,7 +356,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             }
             else
             {
-                clockBaseSprite = EmbeddedTimerData.ClockBase;
+                clockBaseSprite = EmbedLoader.ClockBase;
             }
 
             (bool foundModifier, VariableChanged<Sprite> value) clockHandModifier =
@@ -368,7 +369,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
             }
             else
             {
-                clockHandSprite = EmbeddedTimerData.ClockHand;
+                clockHandSprite = EmbedLoader.ClockHand;
             }
 
             /*
