@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using NewSafetyHelp.CustomDesktop.Utils;
+using UnityEngine;
 using UnityEngine.Video;
 
 namespace NewSafetyHelp.ARG.ARGGUI
@@ -38,6 +39,7 @@ namespace NewSafetyHelp.ARG.ARGGUI
         private static void StopFullScreenVideo()
         {
             fullscreenVideoPlayer.SetActive(false);
+            CustomCampaignSceneSwitcher.BackToMainGame();
         }
     }
 }
