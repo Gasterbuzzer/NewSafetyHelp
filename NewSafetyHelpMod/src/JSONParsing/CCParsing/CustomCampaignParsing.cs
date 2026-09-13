@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NewSafetyHelp.ARG;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
@@ -385,6 +386,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              */
 
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_name", ref customCampaignName);
+
+            ARGHelper.GetARGFilesAtParsing(customCampaignName, usermodFolderPath);
+
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_desktop_name", ref customCampaignDesktopName);
             ParsingHelper.TryAssign(jObjectParsed, "desktop_username_text", ref desktopUsernameText);
             ParsingHelper.TryAssign(jObjectParsed, "start_year", ref desktopDateStartYear);

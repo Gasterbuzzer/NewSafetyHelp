@@ -1,7 +1,10 @@
 ﻿using System.Linq;
 using System.Text;
+using NewSafetyHelp.ARG.ARGGUI;
+using NewSafetyHelp.ARG.ARGLogic;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.JSONParsing.CCParsing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +17,24 @@ namespace NewSafetyHelp.ARG
 
         private static readonly byte[] ARGCampaignName =
             { 83, 117, 109, 109, 101, 114, 32, 67, 111, 99, 107, 32, 83, 117, 99, 107, 101, 114 };
+
+        /// <summary>
+        /// Gets the files for the ARG if the loaded campaign is the correct one.
+        /// </summary>
+        /// <param name="customCampaignName">Custom campaign being loaded.</param>
+        /// <param name="usermodFolder">Folder where the usermod is located at.</param>
+        public static void GetARGFilesAtParsing(string customCampaignName, string usermodFolder)
+        {
+            byte[] campaignAsciiName = Encoding.ASCII.GetBytes(customCampaignName);
+
+            if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
+                && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
+            {
+                return;
+            }
+
+            ARGParsing.GetAllARGFiles(usermodFolder);
+        }
 
         /// <summary>
         /// Creates the input capture for the ARG in the selected custom campaign.
@@ -62,6 +83,8 @@ namespace NewSafetyHelp.ARG
             }
 
             ARGKeypad.CreateKeypad();
+
+            ARGDesktopVideo.CreateFullScreenVideoPlayer();
         }
 
         /// <summary>

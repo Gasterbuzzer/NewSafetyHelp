@@ -131,11 +131,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ARG\ARGGUI\ARGDesktopVideo.cs" />
     <Compile Include="src\ARG\ARGHelper.cs" />
-    <Compile Include="src\ARG\ARGClickEvent.cs" />
-    <Compile Include="src\ARG\ARGKeypad.cs" />
-    <Compile Include="src\ARG\ARGKeypadLogic.cs" />
-    <Compile Include="src\ARG\ARGSecretInputMono.cs" />
+    <Compile Include="src\ARG\ARGLoadedFiles.cs" />
+    <Compile Include="src\ARG\ARGLogic\ARGClickEvent.cs" />
+    <Compile Include="src\ARG\ARGLogic\ARGKeypadLogic.cs" />
+    <Compile Include="src\ARG\ARGLogic\ARGSecretInputMono.cs" />
+    <Compile Include="src\ARG\ARGGUI\ARGKeypad.cs" />
     <Compile Include="src\Audio\AudioCache.cs" />
     <Compile Include="src\Audio\AudioImport.cs" />
     <Compile Include="src\Audio\AudioLoadThrottler.cs" />
@@ -234,6 +236,7 @@
     <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
     <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />
     <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\ARGParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\Computer3DScreenParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />

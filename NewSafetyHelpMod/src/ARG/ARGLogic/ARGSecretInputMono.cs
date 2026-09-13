@@ -7,7 +7,7 @@ using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
-namespace NewSafetyHelp.ARG
+namespace NewSafetyHelp.ARG.ARGLogic
 {
     public static class ARGSecretInputMono
     {

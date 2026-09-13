@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.ARG.ARGLogic;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
@@ -11,7 +12,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace NewSafetyHelp.ARG
+namespace NewSafetyHelp.ARG.ARGGUI
 {
     public static class ARGKeypad
     {
@@ -287,7 +288,9 @@ namespace NewSafetyHelp.ARG
                     // Key
                     if ((inputKeyVector + new Vector4(8, -12, 42, 54)).Equals(Key))
                     {
-                        LoggingHelper.DebugLog($"Detected digit code: '{inputCode}'.");
+                        LoggingHelper.DebugLog($"Detected correct digit code: '{inputCode}'.");
+
+                        ARGDesktopVideo.PlayFullScreenVideo();
                     }
                     else if (inputKeyVector.Equals(new Vector4(1, 9, 8, 7)))
                     {
