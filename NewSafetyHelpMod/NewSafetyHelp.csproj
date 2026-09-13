@@ -161,6 +161,7 @@
     <Compile Include="src\Callers\UI\MainCanvasPatches.cs" />
     <Compile Include="src\Callers\UI\NextCaller.cs" />
     <Compile Include="src\Callers\UI\UIFallbacks.cs" />
+    <Compile Include="src\CustomCampaignSystem\Arcade\ArcadeFixes.cs" />
     <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreen.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreenHelper.cs" />

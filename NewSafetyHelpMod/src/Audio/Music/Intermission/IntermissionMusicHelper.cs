@@ -59,8 +59,12 @@ namespace NewSafetyHelp.Audio.Music.Intermission
 
             shouldPlayIntermissionMusic = true;
             alreadyStoppingIntermissionMusic = false;
-            playIntermission =
-                MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));
+
+            if (audioClip != null 
+                && audioClip.MusicClip != null)
+            {
+                playIntermission = MelonCoroutines.Start(PlayIntermissionMusicLoop(myMusicSourceCast, audioClip, customCampaign));
+            }
         }
 
         /// <summary>
@@ -293,11 +297,7 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                     $"Custom Intermission Music Available: {customCampaign.CustomIntermissionMusic.Count}." +
                     $" Valid: '{validCustomMusic.Count}'.");
 
-                if (validCustomMusic.Count <= 0)
-                {
-                    return null;
-                }
-                else
+                if (!(validCustomMusic.Count <= 0))
                 {
                     shouldPlayIntermission = true;
                     int randomIndex = Random.Range(0, validCustomMusic.Count);
