@@ -85,8 +85,8 @@ namespace NewSafetyHelp.Callers.UI
                                 || currentCustomCampaign.CampaignDays > currentCustomCampaign.CampaignDayStrings.Count)
                             {
                                 LoggingHelper.WarningLog(
-                                    "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                    " Using default values.");
+                                    "Amount of day strings does not correspond with the max amount of days for the custom campaign. " +
+                                    "Using default values.");
                                 dayString = DefaultDayNames[(GlobalVariables.currentDay - 1) % DefaultDayNames.Count];
                             }
                             else
@@ -119,8 +119,8 @@ namespace NewSafetyHelp.Callers.UI
                                 && string.IsNullOrEmpty(dayString))
                             {
                                 LoggingHelper.WarningLog(
-                                    "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                    " Using default values.");
+                                    "Amount of day strings does not correspond with the max amount of days for the custom campaign. " +
+                                    "Using default values.");
                                 dayString = DefaultDayNames[(GlobalVariables.currentDay - 1) % DefaultDayNames.Count];
                             }
                             else
@@ -131,8 +131,8 @@ namespace NewSafetyHelp.Callers.UI
                                     if (currentCustomCampaign.CampaignDays > daysStrings.value.Count)
                                     {
                                         LoggingHelper.WarningLog(
-                                            "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                            " Using modulated values.");
+                                            "Amount of day strings does not correspond with the max amount of days for the custom campaign. " +
+                                            "Using modulated values.");
                                     }
 
                                     // We simply pick what best fits.
@@ -146,8 +146,8 @@ namespace NewSafetyHelp.Callers.UI
                                     if (daysStrings.value.Count != unlockDays.value.Count)
                                     {
                                         LoggingHelper.WarningLog(
-                                            "Amount of day strings does not correspond with the max amount of days for the custom campaign." +
-                                            " Using modulated values.");
+                                            "Amount of day strings does not correspond with the max amount of days for the custom campaign. " +
+                                            "Using modulated values.");
                                         dayString = daysStrings.value[
                                             (GlobalVariables.currentDay - 1) % daysStrings.value.Count];
                                     }
@@ -177,8 +177,8 @@ namespace NewSafetyHelp.Callers.UI
                     }
                     else
                     {
-                        LoggingHelper.WarningLog("Was unable of finding the current campaign." +
-                                                 " Defaulting to default values.");
+                        LoggingHelper.WarningLog("Was unable of finding the current campaign. " +
+                                                 "Defaulting to default values.");
 
                         __result = DefaultDayNames[GlobalVariables.currentDay - 1];
                     }
@@ -420,7 +420,6 @@ namespace NewSafetyHelp.Callers.UI
                     }
 
                     // Change Animation
-
                     (bool foundModifier, VariableChanged<List<Sprite>> value) clockInLogoAnimation =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.ClockInLogoAnimation,
                             vCs => vCs.HasChanged);
@@ -712,6 +711,11 @@ namespace NewSafetyHelp.Callers.UI
                     yield return new WaitForSeconds(1f);
 
                     GlobalVariables.fade.FadeOut();
+
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        GlobalVariables.callerControllerScript.currentCustomCaller.callerName = "Not Dave, fake";
+                    }
                 }
 
                 // Custom Enables
@@ -887,7 +891,7 @@ namespace NewSafetyHelp.Callers.UI
                     customCampaign.SavedDayScores[GlobalVariables.currentDay] = dayScore;
 
 
-                    LoggingHelper.DebugLog($"Saving day score of day '{GlobalVariables.currentDay}'." +
+                    LoggingHelper.DebugLog($"Saving day score of day '{GlobalVariables.currentDay}'. " +
                                            $"With the score of '{customCampaign.SavedDayScores[GlobalVariables.currentDay]}'.");
                 }
 

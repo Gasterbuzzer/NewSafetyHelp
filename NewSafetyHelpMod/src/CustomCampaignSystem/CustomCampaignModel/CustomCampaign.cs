@@ -3,6 +3,7 @@ using System.Linq;
 using MelonLoader;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.ArcadeCallerModule;
 using NewSafetyHelp.CustomCampaignSystem.CustomComputer3DScreen;
 using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
@@ -46,6 +47,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         // Amount of calls per day until the warning is allowed to appear.
         public List<int> WarningCallThresholdCallerAmounts = new List<int>();
+        
+        // Arcade Callers (That appear at fixed intervals)
+        public List<ArcadeCaller> FixedArcadeCallers = new List<ArcadeCaller>();
 
         /*
          * Entries
@@ -369,6 +373,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public void SortLinkApps()
         {
             LinkApps = LinkApps.OrderByDescending(linkApp => linkApp.LinkAppPriority).ToList();
+        }
+
+        /// <summary>
+        /// Sorts the arcade callers to their combo requirement.
+        /// </summary>
+        public void SortArcadeCallers()
+        {
+            FixedArcadeCallers = FixedArcadeCallers.OrderByDescending(arcadeCaller => arcadeCaller.ArcadeCallersRequired)
+                .ToList();
         }
     }
 }

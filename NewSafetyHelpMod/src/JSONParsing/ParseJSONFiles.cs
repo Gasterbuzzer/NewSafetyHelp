@@ -30,6 +30,7 @@ namespace NewSafetyHelp.JSONParsing
             Cutscene,
             Computer3DScreen,
             LinkApp,
+            ArcadeCaller,
             Invalid
         }
 
@@ -93,6 +94,11 @@ namespace NewSafetyHelp.JSONParsing
                 if (customCampaign.LinkApps.Count > 0)
                 {
                     customCampaign.SortLinkApps();
+                }
+                
+                if (customCampaign.FixedArcadeCallers.Count > 0)
+                {
+                    customCampaign.SortArcadeCallers();
                 }
             }
 
@@ -196,18 +202,25 @@ namespace NewSafetyHelp.JSONParsing
                             CutsceneParsing.CreateCutscene(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
-                        case JSONParseTypes.Computer3DScreen
-                            : // The provided JSON is a 3D Computer Screen (for custom campaigns).
+                        case JSONParseTypes.Computer3DScreen:
+                            // The provided JSON is a 3D Computer Screen (for custom campaigns).
                             LoggingHelper.InfoLog(
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as a 3D Computer Screen.");
                             Computer3DScreenParsing.Create3DComputerScreen(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
-                        case JSONParseTypes.LinkApp
-                            : // The provided JSON is a Link App (for custom campaigns).
+                        case JSONParseTypes.LinkApp:
+                            // The provided JSON is a Link App (for custom campaigns).
                             LoggingHelper.InfoLog(
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as a link app.");
                             LinkAppParsing.CreateLinkApp(jObjectParse, modFolderPath, jsonFolderPath);
+                            break;
+                        
+                        case JSONParseTypes.ArcadeCaller:
+                            // The provided JSON is an arcade caller (for custom campaigns).
+                            LoggingHelper.InfoLog(
+                                $"Provided JSON file at '{jsonPathFile}' has been interpreted as an arcade caller.");
+                            ArcadeCallerParsing.CreateArcadeCaller(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
 
                         case JSONParseTypes.Invalid: // The provided JSON is invalid / unknown of.
@@ -375,6 +388,15 @@ namespace NewSafetyHelp.JSONParsing
                 return JSONParseTypes.LinkApp;
             }
 
+            // Arcade Caller was provided
+            if (ParsingHelper.ContainsKeys(new List<string>
+                {
+                    "arcade_caller_custom_campaign_name"
+                }, json))
+            {
+                return JSONParseTypes.ArcadeCaller;
+            }
+            
             // Unknown JSON type or failed parsing the file.
             return JSONParseTypes.Invalid;
         }

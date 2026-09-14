@@ -243,6 +243,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref GlobalParsingVariables.PendingCustomCampaignLinkApps,
                 ref customCampaign.LinkApps, customCampaignName, "link app");
 
+            // Check if any arcade callers that have to be added to a custom campaign.
+            PendingParsingHelper.AddPendingElementsToCampaign(
+                ref GlobalParsingVariables.PendingCustomCampaignArcadeCaller,
+                ref customCampaign.FixedArcadeCallers, customCampaignName, "arcade caller");
+
             // We finished adding all missing values and now add the campaign as available.
             CustomCampaignGlobal.CustomCampaignsAvailable.Add(customCampaign);
         }

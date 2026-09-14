@@ -161,6 +161,7 @@
     <Compile Include="src\Callers\UI\MainCanvasPatches.cs" />
     <Compile Include="src\Callers\UI\NextCaller.cs" />
     <Compile Include="src\Callers\UI\UIFallbacks.cs" />
+    <Compile Include="src\CustomCampaignSystem\ArcadeCallerModule\ArcadeCaller.cs" />
     <Compile Include="src\CustomCampaignSystem\Arcade\ArcadeFixes.cs" />
     <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreen.cs" />
@@ -237,6 +238,7 @@
     <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
     <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />
     <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
+    <Compile Include="src\JSONParsing\CCParsing\ArcadeCallerParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\ARGParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\Computer3DScreenParsing.cs" />
     <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />

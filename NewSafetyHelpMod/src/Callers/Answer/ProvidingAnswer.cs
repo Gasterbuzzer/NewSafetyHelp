@@ -182,7 +182,6 @@ namespace NewSafetyHelp.Callers.Answer
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "SubmitAnswer", typeof(MonsterProfile))]
         public static class SubmitAnswerPatch
         {
-            // Some reflection.
             private static readonly FieldInfo OnCallConcluded = typeof(CallerController).GetField("OnCallConcluded",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
@@ -227,7 +226,7 @@ namespace NewSafetyHelp.Callers.Answer
                     LoggingHelper.ReflectionError(nameof(OnCallConcluded));
                     return true;
                 }
-                else // _onCallConcluded != null
+                else // OnCallConcluded != null
                 {
                     // We use null, since it's static.
                     Delegate del = (Delegate)OnCallConcluded.GetValue(null);
@@ -276,6 +275,19 @@ namespace NewSafetyHelp.Callers.Answer
 
                 if (__instance.arcadeMode)
                 {
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        // Dynamic Caller.
+                        if (__instance.currentCustomCaller.callerMonster == null)
+                        {
+                            LoggingHelper.DebugLog("Dynamic Arcade Caller. No submitting. " +
+                                                   "Not counted to arcade combo.");
+
+                            GlobalVariables.mainCanvasScript.NoCallerWindow();
+                            return false;
+                        }
+                    }
+
                     ++__instance.currentArcadeCallTotal;
 
                     if (__instance.callTimer > __instance.callTimerMinimum)
@@ -301,6 +313,7 @@ namespace NewSafetyHelp.Callers.Answer
                         }
 
                         __instance.playerScore += __instance.pointsPerCall * num;
+
                         if (__instance.currentArcadeCombo <= __instance.highestArcadeCombo)
                         {
                             return false;
@@ -348,12 +361,13 @@ namespace NewSafetyHelp.Callers.Answer
                         }
                     }
                 }
+
                 // OLD: __instance.triggerGameOver
                 else if ((bool)TriggerGameOver.GetValue(__instance))
                 {
                     GlobalVariables.mainCanvasScript.PlayGameOverCutscene();
                 }
-                else // Not Arcade Mode
+                else // Does not happen in Arcade Mode
                 {
                     if (CheckCallerAnswer == null)
                     {
@@ -372,7 +386,7 @@ namespace NewSafetyHelp.Callers.Answer
                     LoggingHelper.DebugLog(() =>
                         "Increase tier? " +
                         $"(For: {__instance.callers[__instance.currentCallerID].callerProfile.callerName}) " +
-                        $"{__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}");
+                        $"'{__instance.callers[__instance.currentCallerID].callerProfile.increaseTier}'.");
 
                     if (__instance.callers[__instance.currentCallerID].callerProfile.increaseTier)
                     {
