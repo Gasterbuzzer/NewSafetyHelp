@@ -82,7 +82,7 @@ namespace NewSafetyHelp.Audio.Music
                             chosenMusicIndex); // __instance.previousHoldMusicIndex = index1;
                     }
                 }
-                else // Custom Campaign Music. Ignores the day
+                else // Custom Campaign Music. Ignores the custom day logic
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
@@ -264,7 +264,8 @@ namespace NewSafetyHelp.Audio.Music
                         }
                         else
                         {
-                            LoggingHelper.WarningLog("Music clip is empty! Possibly failed loading?");
+                            LoggingHelper.WarningLog(
+                                "There is no music available or music clip is empty! Possibly failed loading?");
                         }
                     }
                     else if (!customCampaign.RemoveDefaultMusic)
@@ -304,11 +305,12 @@ namespace NewSafetyHelp.Audio.Music
 
                 AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(__instance);
 
-                myMusicSourceCast.pitch = 1f; // __instance.myMusicSource.pitch = 1f;
+                myMusicSourceCast.pitch = 1f; // OLD: __instance.myMusicSource.pitch = 1f;
 
-                myMusicSourceCast.clip = myMusicClip.clip; // __instance.myMusicSource.clip = myMusicClip.clip;
+                myMusicSourceCast.clip = myMusicClip.clip; // OLD: __instance.myMusicSource.clip = myMusicClip.clip;
 
-                myMusicSourceCast.volume = myMusicClip.volume; // __instance.myMusicSource.volume = myMusicClip.volume;
+                myMusicSourceCast.volume =
+                    myMusicClip.volume; // OLD: __instance.myMusicSource.volume = myMusicClip.volume;
 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
                 {
@@ -326,7 +328,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (activeCaller != null && activeCaller.DownedNetworkCaller)
                     {
-                        myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
+                        myMusicSourceCast.pitch = 0.8f; // OLD: __instance.myMusicSource.pitch = 0.8f;
                     }
 
                     CustomMusic customMusic = CustomCampaignGlobal.GetCustomMusicFromActiveCampaign(myMusicClip);
@@ -359,11 +361,11 @@ namespace NewSafetyHelp.Audio.Music
                     {
                         if (downedNetworkCall == GlobalVariables.callerControllerScript.currentCallerID)
                         {
-                            myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
+                            myMusicSourceCast.pitch = 0.8f; // OLD: __instance.myMusicSource.pitch = 0.8f;
                         }
                     }
 
-                    // __instance.myMusicSource.time = !(myMusicClip == __instance.onHoldMusicClips[1]) ? 0.0f : 19.6f;
+                    // OLD: __instance.myMusicSource.time = !(myMusicClip == __instance.onHoldMusicClips[1]) ? 0.0f : 19.6f;
                     if (myMusicClip != __instance.onHoldMusicClips[1])
                     {
                         myMusicSourceCast.time = 0.0f;
@@ -377,7 +379,7 @@ namespace NewSafetyHelp.Audio.Music
                 // Store a reference to the clip for later checking or restoring.
                 currentMusicClip = myMusicClip;
 
-                myMusicSourceCast.Play(); // __instance.myMusicSource.Play();
+                myMusicSourceCast.Play(); // OLD: __instance.myMusicSource.Play();
 
                 return false; // Do not call original function.
             }

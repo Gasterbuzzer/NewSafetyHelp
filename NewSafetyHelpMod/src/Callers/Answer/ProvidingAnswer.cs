@@ -68,8 +68,8 @@ namespace NewSafetyHelp.Callers.Answer
                     if (!found) // We do not replace, so we default back to the current caller.
                     {
                         monsterToCheck = __instance.callers[__instance.currentCallerID].callerProfile.callerMonster;
-                        LoggingHelper.InfoLog("The caller monster was:" +
-                                              $" {__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}.");
+                        LoggingHelper.InfoLog("The caller monster was: " +
+                                              $"'{__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}'.");
                         LoggingHelper.DebugLog("The previous caller was not replaced by any custom caller.");
                     }
 
@@ -141,7 +141,7 @@ namespace NewSafetyHelp.Callers.Answer
                         LoggingHelper.DebugLog("The current caller is a dynamic caller. " +
                                                "No replacement effects will happen. " +
                                                "The caller will also be marked as correct.");
-                        
+
                         __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
                     }
                     // In Custom Campaign
@@ -155,8 +155,10 @@ namespace NewSafetyHelp.Callers.Answer
                             __instance.callers[__instance.currentCallerID].answeredCorrectly = false;
                             return false;
                         }
-                        
-                        CustomCCaller currentCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+
+                        CustomCCaller currentCaller =
+                            CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables
+                                .callerControllerScript.currentCallerID);
 
                         if (currentCaller != null
                             && currentCaller.IsTimedCaller)
@@ -449,7 +451,6 @@ namespace NewSafetyHelp.Callers.Answer
                         }
                     }
 
-
                     // (VERY IMPORTANT: AFTER THIS FUNCTION THE NEXT CALLER GETS CALLED. IF WE WISH TO PREVENT THAT
                     // WE NEED TO END THE DAY HERE OR SKIP THE FUNCTION)
                     // Checks if we need to end the day, in case the next caller gets skipped.
@@ -493,7 +494,7 @@ namespace NewSafetyHelp.Callers.Answer
                         }
 
                         // A dynamic caller. We can play intermission music.
-                        // For non-dynamic callers, we play the music differently.
+                        // For non-dynamic callers, we play the music differently. (It gets called there)
                         if (monsterID == null)
                         {
                             if (customCampaign.CustomIntermissionMusic.Count >= 0)
@@ -545,7 +546,7 @@ namespace NewSafetyHelp.Callers.Answer
             private static IEnumerator SubmitRoutine(SubmitWindowBehavior __instance)
             {
                 bool permissionError = false;
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
                     TimerCallerHelper.StopTimedCallerTimer();
@@ -591,8 +592,10 @@ namespace NewSafetyHelp.Callers.Answer
                     submitWindowBehavior.gameObject.SetActive(false);
                 }
 
-                if (CustomCampaignGlobal.InCustomCampaign 
-                    && !permissionError)
+                // Disabled in arcade mode. (For now)
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && !permissionError
+                    && !GlobalVariables.arcadeMode)
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
