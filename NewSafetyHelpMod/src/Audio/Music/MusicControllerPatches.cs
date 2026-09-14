@@ -17,14 +17,14 @@ namespace NewSafetyHelp.Audio.Music
     {
         // Used for figuring out, what is playing, instead of guessing or searching.
         private static RichAudioClip currentMusicClip;
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartRandomMusic")]
         public static class StartRandomMusicPatch
         {
-            private static readonly FieldInfo PreviousHoldMusicIndex = 
+            private static readonly FieldInfo PreviousHoldMusicIndex =
                 typeof(MusicController).GetField("previousHoldMusicIndex",
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             /// <summary>
             /// Patches the play random music to not play day 7 music in custom campaigns.
             /// </summary>
@@ -47,9 +47,7 @@ namespace NewSafetyHelp.Audio.Music
 
                 if (PreviousHoldMusicIndex == null)
                 {
-                    LoggingHelper.ErrorLog("PreviousHoldMusicIndex is null." +
-                                           " Unable of replacing MusicController StartNewRandomMusic." +
-                                           " Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(PreviousHoldMusicIndex));
                     return true;
                 }
 
@@ -149,16 +147,17 @@ namespace NewSafetyHelp.Audio.Music
                             playCustomMusic = true;
                         }
 
-                        LoggingHelper.DebugLog($"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)PreviousHoldMusicIndex.GetValue(__instance)}." +
-                                               $" (From custom music? {playCustomMusic})" +
-                                               $" (Amount of clips: {amountOfClips})" +
-                                               $" (Total clips: {customCampaign.CustomMusic.Count})" +
-                                               $" (Remove default music? {customCampaign.RemoveDefaultMusic})" +
-                                               $" (Current day: {GlobalVariables.currentDay})");
-                        
+                        LoggingHelper.DebugLog(() =>
+                            $"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)PreviousHoldMusicIndex.GetValue(__instance)}. " +
+                            $"(From custom music? {playCustomMusic}) " +
+                            $"(Amount of clips: {amountOfClips}) " +
+                            $"(Total clips: {customCampaign.CustomMusic.Count}) " +
+                            $"(Remove default music? {customCampaign.RemoveDefaultMusic}) " +
+                            $"(Current day: {GlobalVariables.currentDay}).");
+
                         if (playCustomMusic)
                         {
-                            LoggingHelper.DebugLog($"Amount of custom music: {customMusicAmount}.");
+                            LoggingHelper.DebugLog($"Amount of custom music available: '{customMusicAmount}'.");
                         }
 
                         PreviousHoldMusicIndex.SetValue(__instance, chosenMusicIndex);
@@ -257,7 +256,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (playCustomMusic)
                     {
-                        if (customMusicList.Count > 0 
+                        if (customMusicList.Count > 0
                             && chosenMusicIndex < customMusicList.Count
                             && customMusicList[chosenMusicIndex].MusicClip != null)
                         {
@@ -272,7 +271,8 @@ namespace NewSafetyHelp.Audio.Music
                     {
                         if (GlobalVariables.musicControllerScript.onHoldMusicClips.Length >= chosenMusicIndex)
                         {
-                            __instance.StartMusic(GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
+                            __instance.StartMusic(
+                                GlobalVariables.musicControllerScript.onHoldMusicClips[chosenMusicIndex]);
                         }
                     }
                 }
@@ -280,10 +280,13 @@ namespace NewSafetyHelp.Audio.Music
                 return false; // Skip function with false.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MusicController), "StartMusic", typeof(RichAudioClip))]
         public static class StartMusicPatch
         {
+            private static readonly FieldInfo MyMusicSource =
+                typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
+
             /// <summary>
             /// Patches the play music to take into consideration the downed caller.
             /// </summary>
@@ -293,28 +296,18 @@ namespace NewSafetyHelp.Audio.Music
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MusicController __instance, ref RichAudioClip myMusicClip)
             {
-                FieldInfo myMusicSource = typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                if (myMusicSource == null)
+                if (MyMusicSource == null)
                 {
-                    LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic." +
-                                           " Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(MyMusicSource));
                     return true;
                 }
-                
-                AudioSource myMusicSourceCast = (AudioSource) myMusicSource.GetValue(__instance);
 
-                if (myMusicSourceCast == null)
-                {
-                    LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic." +
-                                           " Calling original function.");
-                    return true;
-                }
+                AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(__instance);
 
                 myMusicSourceCast.pitch = 1f; // __instance.myMusicSource.pitch = 1f;
-                
+
                 myMusicSourceCast.clip = myMusicClip.clip; // __instance.myMusicSource.clip = myMusicClip.clip;
-                
+
                 myMusicSourceCast.volume = myMusicClip.volume; // __instance.myMusicSource.volume = myMusicClip.volume;
 
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign
@@ -323,12 +316,13 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (customCampaign == null)
                     {
-                        LoggingHelper.ErrorLog("Custom Campaign is null. Unable of changing StartMusic." +
-                                               " Calling original.");
+                        LoggingHelper.CampaignNullError();
                         return true;
                     }
 
-                    CustomCCaller activeCaller = CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript.currentCallerID);
+                    CustomCCaller activeCaller =
+                        CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript
+                            .currentCallerID);
 
                     if (activeCaller != null && activeCaller.DownedNetworkCaller)
                     {
@@ -337,7 +331,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     CustomMusic customMusic = CustomCampaignGlobal.GetCustomMusicFromActiveCampaign(myMusicClip);
 
-                    if (customMusic != null 
+                    if (customMusic != null
                         && !customMusic.IsIntermissionMusic
                         && customMusic.StartRange != null
                         && customMusic.StartRange.Count > 0)
@@ -346,7 +340,7 @@ namespace NewSafetyHelp.Audio.Music
 
                         if (chosenStart != null)
                         {
-                            myMusicSourceCast.time = (float) chosenStart;
+                            myMusicSourceCast.time = (float)chosenStart;
                             LoggingHelper.DebugLog($"Chosen starting music offset of: '{chosenStart}'.");
                         }
                         else
@@ -358,8 +352,6 @@ namespace NewSafetyHelp.Audio.Music
                     {
                         myMusicSourceCast.time = 0.0f;
                     }
-                    
-                    
                 }
                 else // Main Campaign
                 {
@@ -370,7 +362,7 @@ namespace NewSafetyHelp.Audio.Music
                             myMusicSourceCast.pitch = 0.8f; // __instance.myMusicSource.pitch = 0.8f;
                         }
                     }
-                    
+
                     // __instance.myMusicSource.time = !(myMusicClip == __instance.onHoldMusicClips[1]) ? 0.0f : 19.6f;
                     if (myMusicClip != __instance.onHoldMusicClips[1])
                     {
@@ -384,16 +376,19 @@ namespace NewSafetyHelp.Audio.Music
 
                 // Store a reference to the clip for later checking or restoring.
                 currentMusicClip = myMusicClip;
-                
+
                 myMusicSourceCast.Play(); // __instance.myMusicSource.Play();
-                
+
                 return false; // Do not call original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MusicController), "TurnDownHoldMusicWhileHazardProfileSampleIsPlayingRoutine")]
         public static class TurnDownHoldMusicWhileHazardProfileSampleIsPlayingRoutinePatch
         {
+            private static readonly FieldInfo MyMusicSource =
+                typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
+
             /// <summary>
             /// Patches the function to not crash if the provided music clip is not from the base game.
             /// </summary>
@@ -403,26 +398,16 @@ namespace NewSafetyHelp.Audio.Music
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MusicController __instance, ref IEnumerator __result)
             {
-                FieldInfo myMusicSource = typeof(MusicController).GetField("myMusicSource", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                if (myMusicSource == null)
+                if (MyMusicSource == null)
                 {
-                    LoggingHelper.ErrorLog("'myMusicSource' was not found. Unable of changing StartMusic." +
-                                           " Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(MyMusicSource));
                     return true;
                 }
-                
-                AudioSource myMusicSourceCast = (AudioSource) myMusicSource.GetValue(__instance);
 
-                if (myMusicSourceCast == null)
-                {
-                    LoggingHelper.ErrorLog("'myMusicSource' could not be cast. Unable of changing StartMusic." +
-                                           " Calling original function.");
-                    return true;
-                }
-                
+                AudioSource myMusicSourceCast = (AudioSource)MyMusicSource.GetValue(__instance);
+
                 __result = TurnDownMusicIfEntryIsPlaying(myMusicSourceCast);
-                
+
                 return false; // Do not call original function.
             }
 
@@ -431,7 +416,7 @@ namespace NewSafetyHelp.Audio.Music
                 if (myMusicSourceCast.isPlaying)
                 {
                     myMusicSourceCast.volume = 0.02f;
-                    
+
                     while (GlobalVariables.UISoundControllerScript.myMonsterSampleAudioSource.isPlaying)
                     {
                         yield return new WaitForSeconds(0.1f);
@@ -439,7 +424,7 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (currentMusicClip != null)
                     {
-                        myMusicSourceCast.volume = currentMusicClip.volume; 
+                        myMusicSourceCast.volume = currentMusicClip.volume;
                     }
                 }
             }

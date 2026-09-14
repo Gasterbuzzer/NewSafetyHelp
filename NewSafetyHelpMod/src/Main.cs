@@ -44,7 +44,7 @@ namespace NewSafetyHelp
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             LoggingHelper.DebugLog(() =>
-                $"Scene {sceneName} with build index {buildIndex} has been loaded!");
+                $"Scene '{sceneName}' with build index '{buildIndex}' has been loaded!");
 
             MelonPreferences.Save(); // Save on scene change.
         }
