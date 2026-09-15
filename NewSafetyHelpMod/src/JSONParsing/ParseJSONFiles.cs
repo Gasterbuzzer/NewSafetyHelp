@@ -95,7 +95,7 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     customCampaign.SortLinkApps();
                 }
-                
+
                 if (customCampaign.FixedArcadeCallers.Count > 0)
                 {
                     customCampaign.SortArcadeCallers();
@@ -215,7 +215,7 @@ namespace NewSafetyHelp.JSONParsing
                                 $"Provided JSON file at '{jsonPathFile}' has been interpreted as a link app.");
                             LinkAppParsing.CreateLinkApp(jObjectParse, modFolderPath, jsonFolderPath);
                             break;
-                        
+
                         case JSONParseTypes.ArcadeCaller:
                             // The provided JSON is an arcade caller (for custom campaigns).
                             LoggingHelper.InfoLog(
@@ -391,12 +391,18 @@ namespace NewSafetyHelp.JSONParsing
             // Arcade Caller was provided
             if (ParsingHelper.ContainsKeys(new List<string>
                 {
-                    "arcade_caller_custom_campaign_name"
+                    "arcade_caller_custom_campaign_name",
+                    "arcade_caller_name",
+                    "arcade_caller_transcript",
+                    "arcade_caller_image_name",
+                    "arcade_caller_callers_required",
+                    "arcade_caller_audio_clip_name",
+                    "arcade_caller_animated_portrait_name"
                 }, json))
             {
                 return JSONParseTypes.ArcadeCaller;
             }
-            
+
             // Unknown JSON type or failed parsing the file.
             return JSONParseTypes.Invalid;
         }
