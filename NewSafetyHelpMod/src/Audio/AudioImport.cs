@@ -189,7 +189,8 @@ namespace NewSafetyHelp.Audio
 
             LoggingHelper.DebugLog(() =>
                     "CACHE: Current allocated memory (audio finished loading in): " +
-                    $"Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
+                    $"Allocated: '{Profiler.GetTotalAllocatedMemoryLong()}'; " +
+                    $"Reserved: {Profiler.GetTotalReservedMemoryLong()}' " +
                     $"(File size '{audioFileSize}').",
                 LoggingHelper.LoggingCategory.MEMORY);
 
@@ -229,13 +230,16 @@ namespace NewSafetyHelp.Audio
         /// Creates a new rich audio clip from a provided audio clip. Used for creating a monster.
         /// </summary>
         /// <param name="newAudioClip"> AudioClip to insert into the RichAudioClip. </param>
+        /// <param name="audioClipName">Clip name or path to the clip.</param>
         /// <param name="volume"> Volume of the clip. </param>
-        public static RichAudioClip CreateRichAudioClip(AudioClip newAudioClip, float volume = 0.5f)
+        public static RichAudioClip CreateRichAudioClip(AudioClip newAudioClip, string audioClipName,
+            float volume = 0.5f)
         {
             RichAudioClip newRichAudioClip = ScriptableObject.CreateInstance<RichAudioClip>();
 
             newRichAudioClip.clip = newAudioClip;
             newRichAudioClip.volume = volume;
+            newRichAudioClip.name = audioClipName;
 
             return newRichAudioClip;
         }

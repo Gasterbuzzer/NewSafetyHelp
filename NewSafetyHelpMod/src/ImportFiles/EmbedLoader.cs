@@ -28,7 +28,7 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        ClockFivePercent = AudioImport.CreateRichAudioClip(audioClip);
+                        ClockFivePercent = AudioImport.CreateRichAudioClip(audioClip, "clock_10_percent.wav");
                     }
                     else
                     {
@@ -43,7 +43,7 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        ClockHalfTime = AudioImport.CreateRichAudioClip(audioClip);
+                        ClockHalfTime = AudioImport.CreateRichAudioClip(audioClip, "clock_half_time.wav");
                     }
                     else
                     {
@@ -58,7 +58,7 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        ClockStart = AudioImport.CreateRichAudioClip(audioClip);
+                        ClockStart = AudioImport.CreateRichAudioClip(audioClip, "clock_start.wav");
                     }
                     else
                     {

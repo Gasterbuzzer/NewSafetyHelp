@@ -148,12 +148,12 @@ namespace NewSafetyHelp.Audio.Music
                         }
 
                         LoggingHelper.DebugLog(() =>
-                            $"Chose to play the music track: {chosenMusicIndex} with the previous being {(int)PreviousHoldMusicIndex.GetValue(__instance)}. " +
-                            $"(From custom music? {playCustomMusic}) " +
-                            $"(Amount of clips: {amountOfClips}) " +
-                            $"(Total clips: {customCampaign.CustomMusic.Count}) " +
-                            $"(Remove default music? {customCampaign.RemoveDefaultMusic}) " +
-                            $"(Current day: {GlobalVariables.currentDay}).");
+                            $"Chose to play the music track: '{chosenMusicIndex}' with the previous being '{(int)PreviousHoldMusicIndex.GetValue(__instance)}'. " +
+                            $"(From custom music? '{playCustomMusic}') " +
+                            $"(Amount of clips: '{amountOfClips}') " +
+                            $"(Total clips: '{customCampaign.CustomMusic.Count}') " +
+                            $"(Remove default music? '{customCampaign.RemoveDefaultMusic}') " +
+                            $"(Current day: '{GlobalVariables.currentDay}').");
 
                         if (playCustomMusic)
                         {

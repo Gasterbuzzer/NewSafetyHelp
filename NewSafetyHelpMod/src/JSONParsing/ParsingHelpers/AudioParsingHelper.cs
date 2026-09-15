@@ -19,8 +19,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="jsonFolderPath">Folder path to the JSON.</param>
         /// <param name="compressAudio">If to compress the audio.</param>
         /// <param name="key">Key for the audio. (Key is merely decorative, will not be used, just checked here)</param>
+        // ReSharper disable once RedundantAssignment
         public static void UpdateAudioAtLocation(JObject jObjectParsed, string audioLocation,
-            // ReSharper disable once RedundantAssignment
             Action<RichAudioClip> setAudioClip, string jsonFolderPath, bool compressAudio,
             string key = "audio_clip_location")
         {
@@ -52,7 +52,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                                 if (myReturnValue != null)
                                 {
                                     // Add the audio
-                                    setAudioClip(AudioImport.CreateRichAudioClip(myReturnValue));
+                                    setAudioClip(AudioImport.CreateRichAudioClip(myReturnValue, audioLocation));
                                 }
                                 else
                                 {
@@ -75,8 +75,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="jsonFolderPath">Folder path to the JSON.</param>
         /// <param name="compressAudio">If to compress the audio.</param>
         /// <param name="key">Key for the audio. (Key is merely decorative, will not be used, just checked here)</param>
+        // ReSharper disable once RedundantAssignment
         public static void UpdateAudioAtLocation(JObject jObjectParsed, VariableChanged<string> audioLocation,
-            // ReSharper disable once RedundantAssignment
             Action<RichAudioClip> setAudioClip, string jsonFolderPath, bool compressAudio,
             string key = "audio_clip_location")
         {
@@ -119,12 +119,12 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
             {
                 MelonCoroutines.Start(AudioImport.UpdateAudioClip
                     (
-                        (myReturnValue) =>
+                        myReturnValue =>
                         {
                             if (myReturnValue != null)
                             {
                                 // Add the audio
-                                setAudioClip(AudioImport.CreateRichAudioClip(myReturnValue));
+                                setAudioClip(AudioImport.CreateRichAudioClip(myReturnValue, audioLocation));
                             }
                             else
                             {

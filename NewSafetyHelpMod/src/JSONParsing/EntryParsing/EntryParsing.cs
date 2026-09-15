@@ -306,7 +306,6 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             Sprite callerPortrait = null;
 
             // Consequence Caller Audio
-            string consequenceCallerAudioClipLocation;
             string consequenceCallerName = "NO_CALLER_NAME";
             string consequenceCallerTranscript = "NO_TRANSCRIPT";
             string consequenceCallerImageLocation = "";
@@ -411,7 +410,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         {
                             // Add the audio
                             // ReSharper disable once AccessToModifiedClosure
-                            newExtra.CallerClip = AudioImport.CreateRichAudioClip(clip.clip);
+                            newExtra.CallerClip = AudioImport.CreateRichAudioClip(clip.clip, audioLocation);
                         },
                         jsonFolderPath,
                         compressAudio);
@@ -421,9 +420,9 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             // Consequence Caller Audio Path (Later gets added with coroutine)
             if (jObjectParsed.TryGetValue("consequence_caller_audio_clip_name",
-                    out var consequenceCallerAudioClipNameValue))
+                    out JToken consequenceCallerAudioClipNameValue))
             {
-                consequenceCallerAudioClipLocation = (string)consequenceCallerAudioClipNameValue;
+                string consequenceCallerAudioClipLocation = (string)consequenceCallerAudioClipNameValue;
 
                 if (string.IsNullOrEmpty(consequenceCallerAudioClipLocation) && !replaceEntry)
                 {
@@ -454,7 +453,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         {
                             // Add the audio
                             // ReSharper disable once AccessToModifiedClosure
-                            newExtra.ConsequenceCallerClip = AudioImport.CreateRichAudioClip(clip.clip);
+                            newExtra.ConsequenceCallerClip = AudioImport.CreateRichAudioClip(clip.clip, audioLocation);
                         },
                         jsonFolderPath,
                         compressAudio);
@@ -507,12 +506,14 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                         {
                             if (foundMonster != null)
                             {
-                                foundMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
+                                foundMonster.monsterAudioClip =
+                                    AudioImport.CreateRichAudioClip(clip.clip, audioLocation);
                             }
 
                             if (foundMonsterXMAS != null)
                             {
-                                foundMonsterXMAS.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip);
+                                foundMonsterXMAS.monsterAudioClip =
+                                    AudioImport.CreateRichAudioClip(clip.clip, audioLocation);
                             }
                         },
                         jsonFolderPath,
@@ -541,7 +542,10 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     }
 
                     AudioParsingHelper.UpdateAudioAtLocationNoKey(audioLocation,
-                        clip => { newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip); },
+                        clip =>
+                        {
+                            newMonster.monsterAudioClip = AudioImport.CreateRichAudioClip(clip.clip, audioLocation);
+                        },
                         jsonFolderPath, compressAudio);
                 }
             }
