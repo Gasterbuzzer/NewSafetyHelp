@@ -124,13 +124,13 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                         return true;
                     }
 
-                    LoggingHelper.DebugLog(
-                        $"Called with saved color theme: '{GlobalVariables.saveManagerScript.savedColorTheme}' " +
-                        $"and custom campaign activeTheme: '{customCampaign.ActiveTheme}'.",
+                    LoggingHelper.DebugLog(() =>
+                            $"Called with saved color theme: '{GlobalVariables.saveManagerScript.savedColorTheme}' " +
+                            $"and custom campaign activeTheme: '{customCampaign.ActiveTheme}'.",
                         LoggingHelper.LoggingCategory.THEME);
-                    
+
                     bool removeDefaultThemes = false;
-                    
+
                     if (customCampaign.RemoveDefaultThemes.HasChanged)
                     {
                         removeDefaultThemes = customCampaign.RemoveDefaultThemes.Data;
@@ -140,17 +140,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                     if (!string.IsNullOrEmpty(customCampaign.DefaultTheme)
                         && !customCampaign.DefaultThemeAppliedOnce)
                     {
-                        int themeID = CustomCampaignGlobal.GetThemeIDFromName(customCampaign.DefaultTheme, removeDefaultThemes);
+                        int themeID =
+                            CustomCampaignGlobal.GetThemeIDFromName(customCampaign.DefaultTheme, removeDefaultThemes);
 
                         if (themeID > 0)
                         {
                             LoggingHelper.DebugLog($"Setting first time default theme to: '{themeID}'.");
-                            
+
                             customCampaign.DefaultThemeAppliedOnce = true;
                             customCampaign.ActiveTheme = themeID;
                         }
                     }
-                    
+
                     if (!removeDefaultThemes && customCampaign.ActiveTheme <= 3)
                     {
                         NormalPaletteUpdate(__instance);
@@ -161,7 +162,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
 
                         if (conditionalTheme != -1) // We have a conditional theme that we need to apply.
                         {
-                            CustomTheme theme = CustomCampaignGlobal.GetThemeFromID(conditionalTheme, removeDefaultThemes);
+                            CustomTheme theme =
+                                CustomCampaignGlobal.GetThemeFromID(conditionalTheme, removeDefaultThemes);
 
                             if (theme != null
                                 && theme.CustomThemePalette != null
@@ -178,14 +180,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                         else // We don't have a conditional theme to apply.
                         {
                             bool isCustomTheme = false;
-                            CustomTheme theme = CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme, removeDefaultThemes);
+                            CustomTheme theme =
+                                CustomCampaignGlobal.GetActiveTheme(ref isCustomTheme, removeDefaultThemes);
 
-                            LoggingHelper.DebugLog($"Is the theme custom? '{isCustomTheme}'. " +
-                                                   $"Was theme valid? '{theme != null}'. ");
+                            LoggingHelper.DebugLog(() =>
+                                    $"Is the theme custom? '{isCustomTheme}'. " +
+                                    $"Was theme valid? '{theme != null}'.",
+                                LoggingHelper.LoggingCategory.THEME);
 
-                            LoggingHelper.DebugLog(
-                                $"How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
-                                $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.");
+                            LoggingHelper.DebugLog(() =>
+                                    $"How many general themes? '{customCampaign.CustomThemesGeneral.Count}'. " +
+                                    $"How many conditional themes? '{customCampaign.CustomThemesDays.Count}'.",
+                                LoggingHelper.LoggingCategory.THEME);
 
                             if (isCustomTheme
                                 && theme != null
@@ -273,7 +279,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Themes
                     return false;
                 }
 
-                LoggingHelper.DebugLog($"Color Palette change called with ID: {__instance.colorDropdown.value}",
+                LoggingHelper.DebugLog(() =>
+                        $"Color Palette change called with ID: {__instance.colorDropdown.value}",
                     LoggingHelper.LoggingCategory.THEME);
 
                 GlobalVariables.colorPaletteController.UpdateColorTheme();
