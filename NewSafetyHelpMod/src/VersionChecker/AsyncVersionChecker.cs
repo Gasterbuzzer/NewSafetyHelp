@@ -29,10 +29,11 @@ namespace NewSafetyHelp.VersionChecker
         /// <returns>If the newer version is newer.</returns>
         private static bool IsOutDatedVersion(Version currentVersion, Version newVersion)
         {
-            LoggingHelper.DebugLog($"Checking for outdated version with current version '{currentVersion}' and the new version '{newVersion}'. " +
-                                   $"(Equal?: {currentVersion == newVersion}) " +
-                                   $"(Newer available? {currentVersion < newVersion}) " +
-                                   $"(Current version newer?: {currentVersion > newVersion})");
+            LoggingHelper.DebugLog(() =>
+                $"Checking for outdated version with current version '{currentVersion}' and the new version '{newVersion}'. " +
+                $"(Equal?: '{currentVersion == newVersion}') " +
+                $"(Newer available? '{currentVersion < newVersion}') " +
+                $"(Current version newer?: '{currentVersion > newVersion}')");
 
             return currentVersion < newVersion;
         }

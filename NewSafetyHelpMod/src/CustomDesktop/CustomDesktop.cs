@@ -173,8 +173,11 @@ namespace NewSafetyHelp.CustomDesktop
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnMemoryLogToggle,
                         "Enable Memory Usage Logs", GlobalPreferences.ShowMemoryLog.Value);
 
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnLinkApp,
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnLinkAppLogToggle,
                         "Enable Link App Logs", GlobalPreferences.ShowLinkAppLog.Value);
+
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnLinkAppLogToggle,
+                        "Enable Arcade Logs", GlobalPreferences.ShowArcadeLog.Value);
 
                     InGameSettingHelper.CreateButton(developerSettings, (e) =>
                     {
@@ -252,7 +255,7 @@ namespace NewSafetyHelp.CustomDesktop
                     /*
                      * Modifications
                      */
-                    
+
                     DesktopModifierSnapshot desktopModifierSnapshot = CustomCampaignGlobal.GetModifierDesktopSnapshot();
 
                     /*
@@ -682,7 +685,7 @@ namespace NewSafetyHelp.CustomDesktop
                             LinkAppHelper.CreateCustomLinkApp(linkApp);
                         }
                     }
-                    
+
                     /*
                      * ARG Setup Section
                      */

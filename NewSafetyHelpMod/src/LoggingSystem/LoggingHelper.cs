@@ -18,7 +18,8 @@ namespace NewSafetyHelp.LoggingSystem
             ENTRY,
             CUTSCENE,
             MEMORY,
-            LINK_APP
+            LINK_APP,
+            ARCADE
         }
 
         private enum LoggingLevel
@@ -126,6 +127,14 @@ namespace NewSafetyHelp.LoggingSystem
 
                     case LoggingCategory.LINK_APP:
                         if (!GlobalPreferences.ShowLinkAppLog.Value)
+                        {
+                            return false;
+                        }
+
+                        break;
+                    
+                    case LoggingCategory.ARCADE:
+                        if (!GlobalPreferences.ShowArcadeLog.Value)
                         {
                             return false;
                         }

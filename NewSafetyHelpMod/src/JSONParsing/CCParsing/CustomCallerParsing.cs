@@ -17,17 +17,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
         /// <summary>
         /// Creates a custom caller from a provided JSON file.
         /// </summary>
-        /// <param name="jObjectParsed"></param>
-        /// <param name="usermodFolderPath"></param>
-        /// <param name="jsonFolderPath"> Contains the folder path from the JSON file.</param>
+        /// <param name="jObjectParsed">JSON Object containing keys and values.</param>
+        /// <param name="usermodFolderPath">Path to the suermod.</param>
+        /// <param name="jsonFolderPath">Contains the folder path from the JSON file.</param>
         public static void CreateCustomCaller(JObject jObjectParsed, string usermodFolderPath = "",
             string jsonFolderPath = "")
         {
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a custom caller." +
-                                       " Possible syntax mistake?");
+                LoggingHelper.ErrorLog("Provided JSON could not be parsed as a custom caller. " +
+                                       "Possible syntax mistake?");
                 return;
             }
 
@@ -103,7 +103,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
                 else
                 {
-                    LoggingHelper.DebugLog("Found entry before the custom campaign was found / does not exist.");
+                    LoggingHelper.DebugLog($"Found a custom caller '{customCCaller.CallerName}' " +
+                                           "before the custom campaign was found / does not exist.");
 
                     GlobalParsingVariables.PendingCustomCampaignCustomCallers.Add(customCCaller);
                 }
@@ -286,7 +287,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 LoggingHelper.WarningLog($"No order was provided for custom caller at '{jsonFolderPath}'. " +
                                          "This could accidentally replace a caller! Set to replace last caller! " +
-                                         $"{((customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME") ? $"(Caller Name: {customCallerName})" : "")}");
+                                         $"{(customCallerName != null && customCallerName != "NO_CUSTOM_CALLER_NAME" ? $"(Caller Name: {customCallerName})" : "")}");
                 orderInCampaign = mainCampaignCallAmount + customCallerMainGame.Count;
             }
 

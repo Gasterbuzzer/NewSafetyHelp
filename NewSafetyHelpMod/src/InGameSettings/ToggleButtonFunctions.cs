@@ -91,9 +91,16 @@ namespace NewSafetyHelp.InGameSettings
             return toggleValue;
         }
 
-        public static bool OnLinkApp(bool toggleValue)
+        public static bool OnLinkAppLogToggle(bool toggleValue)
         {
             GlobalPreferences.ShowLinkAppLog.Value = toggleValue;
+
+            return toggleValue;
+        }
+
+        public static bool OnArcadeLogToggle(bool toggleValue)
+        {
+            GlobalPreferences.ShowArcadeLog.Value = toggleValue;
 
             return toggleValue;
         }

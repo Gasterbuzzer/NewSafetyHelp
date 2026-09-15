@@ -78,8 +78,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
 
             newExtra.ID = newID;
 
-            LoggingHelper.InfoLog($"Defaulting to a new Monster ID '{newExtra.ID}' for file in '{jsonFolderPath}'.");
-            LoggingHelper.InfoLog("(This is the intended and recommended way of providing the ID.)");
+            LoggingHelper.DebugLog($"Defaulting to a new Monster ID '{newExtra.ID}' for file in '{jsonFolderPath}'. " +
+                                   "(This is the intended and recommended way of providing the ID.)");
         }
     }
 }

@@ -104,7 +104,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 {
                     LoggingHelper.InfoLog(
                         $"No Arcade Calls given for file in '{usermodFolderPath}' ('{fileName}'). " +
-                        "Defaulting to empty values.");
+                        "Defaulting to empty values.", LoggingHelper.LoggingCategory.ARCADE);
                 }
             }
 
@@ -269,8 +269,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             if (jObjectParsed is null || jObjectParsed.Type != JTokenType.Object ||
                 string.IsNullOrEmpty(usermodFolderPath)) // Invalid JSON.
             {
-                LoggingHelper.ErrorLog($"Provided JSON ('{fileName}') could not be parsed as an entry." +
-                                       " Possible syntax mistake?");
+                LoggingHelper.ErrorLog($"Provided JSON ('{fileName}') could not be parsed as an entry. " +
+                                       "Possible syntax mistake?");
                 return;
             }
 
@@ -1010,17 +1010,16 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 if (customCampaign != null)
                 {
-                    LoggingHelper.DebugLog("Adding found custom campaign entry to the custom campaign.");
-
                     if (extraEntryInfo != null)
                     {
+                        LoggingHelper.DebugLog($"Adding found custom campaign entry ('{extraEntryInfo.Name}') to the custom campaign.");
                         customCampaign.EntriesOnlyInCampaign.Add(extraEntryInfo);
                     }
                     else
                     {
                         LoggingHelper.WarningLog(
                             "Entry that was supposed to be added in custom campaign does not exist as extra info. " +
-                            "(Error Type: 1)");
+                            "(Error Type: 1).");
                     }
                 }
                 else
@@ -1036,7 +1035,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                     {
                         LoggingHelper.WarningLog(
                             "Entry that was suppose to be added in custom campaign does not exist as extra info. " +
-                            "(Error Type: 2) ");
+                            "(Error Type: 2).");
                     }
                 }
             }
@@ -1109,7 +1108,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
                 default: // In case we somehow have an unknown value, we also default to first level.
                     MelonLogger.Warning(
-                        "WARNING: Provided access level is invalid (0-5). Defaulting to 0th access level.");
+                        "WARNING: Provided access level is invalid (0-5). Defaulting to '0th' access level.");
                     EntryManager.EntryManager.AddEntryToTheProfile(newMonster,
                         ref entryUnlockerInstance.firstTierUnlocks.monsterProfiles, "firstTierUnlocks");
 

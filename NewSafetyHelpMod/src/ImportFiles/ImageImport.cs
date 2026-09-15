@@ -88,7 +88,7 @@ namespace NewSafetyHelp.ImportFiles
                 return null;
             }
 
-            LoggingHelper.InfoLog($"Attempting to load embedded image '{imageName}'.");
+            LoggingHelper.DebugLog($"Attempting to load embedded image '{imageName}'.");
 
             // Get Assembly with the embedded resource.
             Assembly currentAssembly = Assembly.GetExecutingAssembly();

@@ -88,10 +88,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                         __instance.gameObject.SetActive(false);
 
                         LoggingHelper.DebugLog(() =>
-                            $"Day to unlock ({__instance.unlockDay}) has not been reached. " +
+                            $"Day to unlock ('{__instance.unlockDay}') has not been reached. " +
                             $"Disabling this GameObject ('{__instance.gameObject.name}'). " +
                             "(Main and Custom Campaign). " +
-                            $"Current day: {GlobalVariables.currentDay}.\n");
+                            $"Current day: '{GlobalVariables.currentDay}'.\n");
                     }
                     else // Unlock Day has been reached.
                     {
@@ -142,8 +142,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                             EmailListingBehavior emailComponent =
                                 __instance.gameObject.GetComponent<EmailListingBehavior>();
 
-                            LoggingHelper.DebugLog("Checking if GameObject is email. " +
-                                                   $"Is email null? '{emailComponent == null}'",
+                            LoggingHelper.DebugLog(() =>
+                                    "Checking if GameObject is email. " +
+                                    $"Is email null? '{emailComponent == null}'",
                                 LoggingHelper.LoggingCategory.EMAIL);
 
                             // Only emails have a threshold.
@@ -170,8 +171,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                     }
                                     else // Checks failed.
                                     {
-                                        LoggingHelper.DebugLog("One of the checks failed," +
-                                                               " deactivating email.",
+                                        LoggingHelper.DebugLog("One of the checks failed, " +
+                                                               "deactivating email.",
                                             LoggingHelper.LoggingCategory.EMAIL);
                                         __instance.gameObject.SetActive(false);
                                         return false;
@@ -224,8 +225,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                                         }
                                         else
                                         {
-                                            LoggingHelper.DebugLog("One of the checks failed," +
-                                                                   " deactivating video.",
+                                            LoggingHelper.DebugLog("One of the checks failed, " +
+                                                                   "deactivating video.",
                                                 LoggingHelper.LoggingCategory.VIDEO);
                                             __instance.gameObject.SetActive(false);
                                             return false;
@@ -255,12 +256,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Desktop
                         else // If any of the above criteria wasn't met.
                         {
                             LoggingHelper.DebugLog(() =>
-                                "Didn't beat the game to unlock this or not in winter DLC." +
-                                $" Disabling the GameObject '{__instance.gameObject.name}'." +
-                                $" BeatGameUnlock: '{__instance.beatGameUnlock}'." +
-                                $" SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'." +
-                                $" SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'." +
-                                $" XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
+                                "Didn't beat the game to unlock this or not in winter DLC. " +
+                                $"Disabling the GameObject '{__instance.gameObject.name}'. " +
+                                $"BeatGameUnlock: '{__instance.beatGameUnlock}'. " +
+                                $"SaveManagerScript: '{(bool)GlobalVariables.saveManagerScript}'. " +
+                                $"SaveManagerScript Game Finished: '{GlobalVariables.saveManagerScript.savedGameFinished >= 1}'. " +
+                                $"XmasUnlock: '{__instance.xmasUnlock && GlobalVariables.isXmasDLC}'.\n");
 
                             __instance.gameObject.SetActive(false);
                         }

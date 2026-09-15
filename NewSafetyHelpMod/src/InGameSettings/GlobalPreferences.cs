@@ -31,6 +31,7 @@ namespace NewSafetyHelp.InGameSettings
         public static MelonPreferences_Entry<bool> ShowCutsceneLog; // If to show the logs for cutscenes info.
         public static MelonPreferences_Entry<bool> ShowMemoryLog; // If to show the logs for memory usage info.
         public static MelonPreferences_Entry<bool> ShowLinkAppLog; // If to show the logs for link apps.
+        public static MelonPreferences_Entry<bool> ShowArcadeLog; // If to show the logs for arcade related info.
 
         public static void InitializeMelonPreferences()
         {
@@ -59,6 +60,7 @@ namespace NewSafetyHelp.InGameSettings
             ShowCutsceneLog = mainModSettings.CreateEntry("ShowCutsceneLog", false);
             ShowMemoryLog = mainModSettings.CreateEntry("ShowMemoryLog", false);
             ShowLinkAppLog = mainModSettings.CreateEntry("ShowLinkAppLog", false);
+            ShowArcadeLog = mainModSettings.CreateEntry("ShowArcadeLog", false);
         }
     }
 }
