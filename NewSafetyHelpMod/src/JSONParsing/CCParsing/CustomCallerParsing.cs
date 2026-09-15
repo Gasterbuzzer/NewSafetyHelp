@@ -109,7 +109,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-            LoggingHelper.DebugLog("Finished adding this custom caller.");
+            LoggingHelper.DebugLog($"Finished adding the custom caller '{customCCaller.CallerName}'.");
         }
 
         private static CustomCCaller ParseCustomCaller(ref JObject jObjectParsed, ref string usermodFolderPath,

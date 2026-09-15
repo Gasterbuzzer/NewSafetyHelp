@@ -37,7 +37,6 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                     LoggingHelper.WarningLog(
                         $"No valid audio file given for file in '{jsonFolderPath}' ('{audioLocation}').");
                 }
-
                 // Check if location is valid now, since we are storing it now.
                 else if (!File.Exists(audioLocation))
                 {
@@ -48,7 +47,7 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                 {
                     MelonCoroutines.Start(AudioImport.UpdateAudioClip
                         (
-                            (myReturnValue) =>
+                            myReturnValue =>
                             {
                                 if (myReturnValue != null)
                                 {
@@ -97,9 +96,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
         /// <param name="setAudioClip">Function to set the rich audio clip by the function caller.</param>
         /// <param name="jsonFolderPath">Folder path to the JSON.</param>
         /// <param name="compressAudio">If to compress the audio.</param>
-        public static void UpdateAudioAtLocationNoKey(string audioLocation,
-            // ReSharper disable once RedundantAssignment
-            Action<RichAudioClip> setAudioClip, string jsonFolderPath, bool compressAudio)
+        public static void UpdateAudioAtLocationNoKey(string audioLocation, Action<RichAudioClip> setAudioClip,
+            string jsonFolderPath, bool compressAudio)
         {
             if (setAudioClip == null)
             {

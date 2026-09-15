@@ -129,9 +129,9 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                 // We only check if the caller has any entry to begin with. We will need to handle arcade mode later or scrap that idea.
                 // And only if not in a custom campaign.
-                if (!CustomCampaignGlobal.InCustomCampaign 
-                    && profile != null 
-                    && profile.callerMonster != null 
+                if (!CustomCampaignGlobal.InCustomCampaign
+                    && profile != null
+                    && profile.callerMonster != null
                     && !__instance.arcadeMode)
                 {
                     foreach (EntryMetadata item in GlobalParsingVariables.EntriesMetadata)
@@ -188,13 +188,13 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                     if (profile != null && profile.callerMonster != null)
                     {
                         LoggingHelper.DebugLog("Monster Name: " +
-                                               $"{profile.callerMonster.monsterName} with ID: " +
-                                               $"{profile.callerMonster.monsterID}.");
+                                               $"'{profile.callerMonster.monsterName}' with ID: " +
+                                               $"'{profile.callerMonster.monsterID}'.");
                     }
                     else if (!CustomCampaignGlobal.InCustomCampaign)
                     {
-                        LoggingHelper.InfoLog("This caller does not have a monster entry. " +
-                                              "The caller audio will not be replaced.");
+                        LoggingHelper.DebugLog("This caller is a dynamic caller. " +
+                                               "The caller will not be replaced.");
                     }
 
                     if (profile != null && profile.callerClip != null && profile.callerClip.clip != null)
@@ -203,10 +203,11 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                     }
                 }
 
-                LoggingHelper.InfoLog("Caller Audio File Name:" +
-                                      $" {callerAudioSource.name} with " +
-                                      $"{callerAudioSource.clip.name} and " +
-                                      $"{callerAudioSource.clip.length}.");
+                LoggingHelper.DebugLog(() =>
+                    "Caller Audio Info: " +
+                    $"Audio Source: '{callerAudioSource.name}' with " +
+                    $"Clip Name: '{callerAudioSource.clip.name}' and " +
+                    $"Clip Length: '{callerAudioSource.clip.length}'s.");
 
                 if (profile != null && profile.callerClip != null)
                 {
@@ -285,7 +286,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                             if (item.AllowCallAgainOverRestart)
                             {
                                 LoggingHelper.DebugLog(
-                                    $"Entry {item.Name} is allowed to be called again even if called once in the past.");
+                                    $"Entry '{item.Name}' is allowed to be called again even if called once in the past.");
 
                                 entryAlreadyCalledBeforeEntry.Value =
                                     false; // Reset the entry. If not allowed to store the value.
@@ -293,8 +294,8 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
 
                             if (entryAlreadyCalledBeforeEntry.Value)
                             {
-                                LoggingHelper.DebugLog($"Entry {item.Name} was already called once," +
-                                                       $" so it will not be available for calling.");
+                                LoggingHelper.DebugLog($"Entry '{item.Name}' was already called once, " +
+                                                       "this entries caller won't call again.");
                             }
 
                             if (Random.Range(0.0f, 1.0f) <= item.CallerReplaceChance)
@@ -314,15 +315,15 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                                                 entries.Add(item);
                                                 replaceTrue = true;
 
-                                                LoggingHelper.InfoLog($"Saved Entry '{item.Name}'" +
-                                                                      " to not be called in the future.");
+                                                LoggingHelper.InfoLog($"Saved Entry '{item.Name}' " +
+                                                                      "to not be called in the future.");
 
                                                 entryAlreadyCalledBeforeEntry.Value = true;
                                             }
                                             else
                                             {
-                                                LoggingHelper.InfoLog($"Entry '{item.Name}'" +
-                                                                      " is not allowed to be called in DLC Mode.");
+                                                LoggingHelper.InfoLog($"Entry '{item.Name}' " +
+                                                                      "is not allowed to be called in DLC Mode.");
                                             }
                                         }
                                         else // Main Game
@@ -330,8 +331,8 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                                             entries.Add(item);
                                             replaceTrue = true;
 
-                                            LoggingHelper.InfoLog($"Saved Entry '{item.Name}'" +
-                                                                  " to not be called in the future.");
+                                            LoggingHelper.InfoLog($"Saved Entry '{item.Name}' " +
+                                                                  "to not be called in the future.");
 
                                             entryAlreadyCalledBeforeEntry.Value = true;
                                         }
@@ -371,26 +372,26 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                     if (profile != null && !__instance.arcadeMode &&
                         profile.consequenceCallerProfile != null)
                     {
-                        LoggingHelper.InfoLog("Current caller is a consequence Caller.");
+                        LoggingHelper.DebugLog("Current caller is a consequence Caller.");
                         Caller callers = GetConsequenceCaller(profile, ref __instance.callers);
 
                         if (callers != null) // Caller is valid.
                         {
-                            LoggingHelper.InfoLog($"Consequence Caller name: {callers.callerProfile.name}");
+                            LoggingHelper.DebugLog($"Consequence Caller name: '{callers.callerProfile.name}'.");
 
                             // If the consequence caller has been replaced once.
                             if (GlobalParsingVariables.EntriesMetadata.Exists(item =>
                                     item.ReferenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile.name))
                             {
-                                LoggingHelper.InfoLog("Consequence Caller to be replaced found!");
+                                LoggingHelper.DebugLog("Consequence Caller to be replaced found!");
                                 EntryMetadata foundMetadata = GlobalParsingVariables.EntriesMetadata.Find(item =>
                                     item.ReferenceProfileNameInternal ==
                                     callers.callerProfile.consequenceCallerProfile.name);
 
                                 if (foundMetadata == null)
                                 {
-                                    LoggingHelper.ErrorLog("Did not find replacement caller.");
+                                    LoggingHelper.ErrorLog("Did not find a replacement caller.");
                                     return true;
                                 }
 
@@ -401,7 +402,7 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                                 profile.callerClip = foundMetadata.ConsequenceCallerClip;
 
                                 LoggingHelper.InfoLog("Replaced the current caller transcript with: " +
-                                                      $"{profile.callTranscription}.");
+                                                      $"'{profile.callTranscription}'.");
                             }
                         }
                         else
@@ -441,9 +442,9 @@ namespace NewSafetyHelp.Callers.CallerCreationAndUpdate
                             if (profile != null && profile.callerMonster != null)
                             {
                                 LoggingHelper.InfoLog(
-                                    $"Replaced the current caller ({profile.callerMonster.monsterName} " +
-                                    $"with ID: {profile.callerMonster.monsterID}) with a custom caller:" +
-                                    $" {selected.Name} with ID: {selected.ID}.");
+                                    $"Replaced the current caller ('{profile.callerMonster.monsterName}' " +
+                                    $"with ID: '{profile.callerMonster.monsterID}') with a custom caller: " +
+                                    $"'{selected.Name}' with ID: '{selected.ID}'.");
                             }
 
                             // We store a reference to the caller for finding later if the consequence caller calls.

@@ -6,6 +6,7 @@ using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerHelpers;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.Arcade;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.EntryManager.EntryData;
@@ -68,8 +69,9 @@ namespace NewSafetyHelp.Callers.Answer
                     if (!found) // We do not replace, so we default back to the current caller.
                     {
                         monsterToCheck = __instance.callers[__instance.currentCallerID].callerProfile.callerMonster;
-                        LoggingHelper.InfoLog("The caller monster was: " +
-                                              $"'{__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}'.");
+                        LoggingHelper.InfoLog(() =>
+                            "The caller monster was: " +
+                            $"'{__instance.callers[__instance.currentCallerID].callerProfile.callerMonster.monsterName}'.");
                         LoggingHelper.DebugLog("The previous caller was not replaced by any custom caller.");
                     }
 
@@ -280,6 +282,22 @@ namespace NewSafetyHelp.Callers.Answer
                         // Dynamic Caller.
                         if (__instance.currentCustomCaller.callerMonster == null)
                         {
+                            bool replacedArcadeCaller = false;
+
+                            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                            if (customCampaign.TemporaryCopyFixedArcadeCallers.Count > 0)
+                            {
+                                replacedArcadeCaller = ArcadeHelper.ReplaceArcadeCaller(__instance, customCampaign);
+                            }
+
+                            LoggingHelper.DebugLog($"Replaced Arcade Caller? '{replacedArcadeCaller}'.");
+
+                            if (!replacedArcadeCaller)
+                            {
+                                __instance.CreateCustomCaller();
+                            }
+
                             LoggingHelper.DebugLog("Dynamic Arcade Caller. No submitting. " +
                                                    "Not counted to arcade combo.");
 
@@ -297,7 +315,22 @@ namespace NewSafetyHelp.Callers.Answer
 
                     if (monsterID == __instance.currentCustomCaller.callerMonster)
                     {
-                        __instance.CreateCustomCaller();
+                        bool replacedArcadeCaller = false;
+
+                        if (CustomCampaignGlobal.InCustomCampaign)
+                        {
+                            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                            if (customCampaign.TemporaryCopyFixedArcadeCallers.Count > 0)
+                            {
+                                replacedArcadeCaller = ArcadeHelper.ReplaceArcadeCaller(__instance, customCampaign);
+                            }
+                        }
+
+                        if (!replacedArcadeCaller)
+                        {
+                            __instance.CreateCustomCaller();
+                        }
 
                         // OLD: this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));
                         __instance.StartCoroutine(newCallRoutineTenValue);

@@ -47,9 +47,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
         // Amount of calls per day until the warning is allowed to appear.
         public List<int> WarningCallThresholdCallerAmounts = new List<int>();
-        
+
         // Arcade Callers (That appear at fixed intervals)
         public List<ArcadeCaller> FixedArcadeCallers = new List<ArcadeCaller>();
+
+        // Temporary List of all arcade callers to avoid duplicates.
+        public List<ArcadeCaller> TemporaryCopyFixedArcadeCallers = new List<ArcadeCaller>();
 
         /*
          * Entries
@@ -291,11 +294,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         {
             Data = true
         };
-        
+
         /*
          * Campaign Load Settings
          */
-        
+
         public VariableChanged<bool> FadeInCustomCampaign = new VariableChanged<bool>
         {
             Data = false
@@ -380,7 +383,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         /// </summary>
         public void SortArcadeCallers()
         {
-            FixedArcadeCallers = FixedArcadeCallers.OrderByDescending(arcadeCaller => arcadeCaller.ArcadeCallersRequired)
+            FixedArcadeCallers = FixedArcadeCallers
+                .OrderByDescending(arcadeCaller => arcadeCaller.ArcadeCallersRequired)
                 .ToList();
         }
     }

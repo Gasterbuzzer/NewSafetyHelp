@@ -4,6 +4,8 @@ using System.Reflection;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.Arcade;
+using NewSafetyHelp.CustomCampaignSystem.ArcadeCallerModule;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
@@ -15,9 +17,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
-
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
 
 namespace NewSafetyHelp.Callers.UI
 {
@@ -35,10 +34,9 @@ namespace NewSafetyHelp.Callers.UI
             /// <summary>
             /// Patches the main canvas day string function to use custom day strings.
             /// </summary>
-            /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param> 
-            // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MainCanvasBehavior __instance, ref string __result)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref string __result)
             {
                 if (!GlobalVariables.isXmasDLC && !CustomCampaignGlobal.InCustomCampaign)
                 {
@@ -212,6 +210,7 @@ namespace NewSafetyHelp.Callers.UI
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine of function to be called after wards </param>
+            // ReSharper disable once UnusedMember.Local
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
@@ -704,6 +703,9 @@ namespace NewSafetyHelp.Callers.UI
                     // Skip
                 }
 
+                /*
+                 * Arcade Mode Section
+                 */
                 if (GlobalVariables.arcadeMode)
                 {
                     mainCanvasBehavior.callTimer.SetActive(true);
@@ -714,7 +716,45 @@ namespace NewSafetyHelp.Callers.UI
 
                     if (CustomCampaignGlobal.InCustomCampaign)
                     {
-                        GlobalVariables.callerControllerScript.currentCustomCaller.callerName = "Not Dave, fake";
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign.FixedArcadeCallers.Count > 0)
+                        {
+                            customCampaign.TemporaryCopyFixedArcadeCallers =
+                                new List<ArcadeCaller>(customCampaign.FixedArcadeCallers);
+
+                            ArcadeCaller chosenArcadeCaller = ArcadeHelper.GetValidArcadeCaller(customCampaign,
+                                0);
+
+                            if (chosenArcadeCaller != null)
+                            {
+                                GlobalVariables.callerControllerScript.currentCustomCaller.callerMonster = null;
+                                GlobalVariables.callerControllerScript.currentCustomCaller.consequenceCallerProfile =
+                                    null;
+                                GlobalVariables.callerControllerScript.currentCustomCaller.increaseTier = false;
+
+                                GlobalVariables.callerControllerScript.currentCustomCaller.callerName =
+                                    chosenArcadeCaller.CallerName;
+
+                                GlobalVariables.callerControllerScript.currentCustomCaller.callTranscription =
+                                    chosenArcadeCaller.CallTranscript;
+
+                                if (chosenArcadeCaller.CallerImage.HasChanged)
+                                {
+                                    GlobalVariables.callerControllerScript.currentCustomCaller.callerPortrait =
+                                        chosenArcadeCaller.CallerImage.Data;
+                                }
+
+                                if (chosenArcadeCaller.IsCallerClipLoaded)
+                                {
+                                    GlobalVariables.callerControllerScript.currentCustomCaller.callerClip =
+                                        chosenArcadeCaller.CallerClip;
+                                }
+
+                                LoggingHelper.DebugLog("Replaced first arcade caller with custom " +
+                                                       $"fixed arcade caller '{chosenArcadeCaller.CallerName}'.");
+                            }
+                        }
                     }
                 }
 
@@ -796,6 +836,7 @@ namespace NewSafetyHelp.Callers.UI
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Coroutine to be called after wards. </param>
+            // ReSharper disable once UnusedMember.Local
             // ReSharper disable once RedundantAssignment
             private static bool Prefix(MainCanvasBehavior __instance, ref IEnumerator __result)
             {
@@ -978,10 +1019,9 @@ namespace NewSafetyHelp.Callers.UI
             /// <summary>
             /// Patches the network down patch to also check for custom callers.
             /// </summary>
-            /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> If to down the network. </param>
-            // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MainCanvasBehavior __instance, ref bool __result)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix(ref bool __result)
             {
                 if (GlobalVariables.arcadeMode)
                 {
@@ -1038,9 +1078,8 @@ namespace NewSafetyHelp.Callers.UI
             /// <summary>
             /// Patches the load caller answers to gracefully accept null values.
             /// </summary>
-            /// <param name="__instance"> Caller of function. </param>
-            // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MainCanvasBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix()
             {
                 if (GlobalVariables.saveManagerScript.savedCallerCorrectAnswers.Length !=
                     GlobalVariables.callerControllerScript.callers.Length)
@@ -1067,9 +1106,8 @@ namespace NewSafetyHelp.Callers.UI
             /// <summary>
             /// Patches the function to stop intermission music if still playing.
             /// </summary>
-            /// <param name="__instance"> Caller of function. </param>
-            // ReSharper disable once RedundantAssignment
-            private static bool Prefix(MainCanvasBehavior __instance)
+            // ReSharper disable once UnusedMember.Local
+            private static bool Prefix()
             {
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
