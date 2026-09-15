@@ -422,7 +422,7 @@ namespace NewSafetyHelp.Callers
 
                     __result = mainCampaignResult;
                 }
-                else // Custom Campaign
+                else if (!GlobalVariables.arcadeMode) // Custom Campaign
                 {
                     CustomCCaller customCCallerFound =
                         CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
