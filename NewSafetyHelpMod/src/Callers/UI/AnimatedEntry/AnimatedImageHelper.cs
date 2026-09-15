@@ -26,14 +26,14 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
 
             // Add updated texture
             Object.DestroyImmediate(portraitAnimated.GetComponent<Image>());
-            
+
             RawImage rawImageComponent = portraitAnimated.AddComponent<RawImage>();
 
             if (disableVideoClicking)
             {
                 rawImageComponent.raycastTarget = false;
             }
-            
+
             if (deleteChildren)
             {
                 foreach (Transform child in portraitAnimated.transform)
@@ -51,7 +51,7 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
             {
                 portraitAnimated.transform.SetAsFirstSibling();
             }
-            
+
             // Add video player.
             VideoPlayer videoPlayerComponent = portraitAnimated.AddComponent<VideoPlayer>();
 
@@ -61,30 +61,30 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
             videoPlayerComponent.renderMode = VideoRenderMode.RenderTexture;
             videoPlayerComponent.aspectRatio = VideoAspectRatio.FitInside;
             videoPlayerComponent.audioOutputMode = VideoAudioOutputMode.None;
-            
+
             AspectRatioFitter aspectFitter = portraitAnimated.AddComponent<AspectRatioFitter>();
             aspectFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-            
+
             // Make render texture be the RawImage texture.
 
-            videoPlayerComponent.prepareCompleted += 
+            videoPlayerComponent.prepareCompleted +=
                 videoPlayer =>
-            {   
-                RenderTexture renderTexture = new RenderTexture((int) videoPlayer.width, (int) videoPlayer.height, 0);
-                renderTexture.Create();
-                
-                videoPlayer.targetTexture = renderTexture;
-                rawImageComponent.texture = renderTexture;
-                
-                float ratio = (float)videoPlayer.width / videoPlayer.height;
-                aspectFitter.aspectRatio = ratio;
-            };
-            
+                {
+                    RenderTexture renderTexture = new RenderTexture((int)videoPlayer.width, (int)videoPlayer.height, 0);
+                    renderTexture.Create();
+
+                    videoPlayer.targetTexture = renderTexture;
+                    rawImageComponent.texture = renderTexture;
+
+                    float ratio = (float)videoPlayer.width / videoPlayer.height;
+                    aspectFitter.aspectRatio = ratio;
+                };
+
             portraitAnimated.SetActive(false);
 
             return portraitAnimated;
         }
-        
+
         /// <summary>
         /// Sets the URL to play in given animated portrait that contains a video player.
         /// </summary>
@@ -93,21 +93,21 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
         public static void SetVideoUrl(string url, GameObject animatedPortrait)
         {
             VideoPlayer videoPlayerComponent = animatedPortrait.GetComponent<VideoPlayer>();
-            
+
             videoPlayerComponent.Stop();
-            
-            if(videoPlayerComponent.targetTexture != null)
+
+            if (videoPlayerComponent.targetTexture != null)
             {
                 videoPlayerComponent.targetTexture.Release();
                 Object.Destroy(videoPlayerComponent.targetTexture);
             }
-            
+
             videoPlayerComponent.url = url;
-            
+
             // Activate the portrait
             animatedPortrait.SetActive(true);
         }
-        
+
         /// <summary>
         /// Disables the video player from looping.
         /// </summary>
@@ -118,7 +118,7 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
 
             videoPlayerComponent.isLooping = false;
         }
-        
+
         /// <summary>
         /// Sets the video play to loop.
         /// </summary>

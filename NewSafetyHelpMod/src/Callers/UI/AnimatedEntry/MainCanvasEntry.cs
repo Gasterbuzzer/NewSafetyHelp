@@ -212,19 +212,20 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "Start")]
         public static class StartPatch
         {
+            private static readonly FieldInfo ShakeAnimationString = typeof(MainCanvasBehavior).GetField(
+                "shakeAnimationString",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
             /// <summary>
-            /// Patches the start function 
+            /// Patches the start function to handle custom logic.
             /// </summary>
-            /// <param name="__instance"> CALLER of function. </param>
+            /// <param name="__instance"> Instance of MainCanvasBehavior. </param>
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MainCanvasBehavior __instance)
             {
-                FieldInfo shakeAnimationString = typeof(MainCanvasBehavior).GetField("shakeAnimationString",
-                    BindingFlags.NonPublic | BindingFlags.Instance);
-
-                if (shakeAnimationString == null)
+                if (ShakeAnimationString == null)
                 {
-                    LoggingHelper.ErrorLog("'shakeAnimationString' not found. Calling original function.");
+                    LoggingHelper.ReflectionError(nameof(ShakeAnimationString));
                     return true;
                 }
 
@@ -267,7 +268,7 @@ namespace NewSafetyHelp.Callers.UI.AnimatedEntry
                 }
 
                 // OLD: __instance.shakeAnimationString = "xmasShake";
-                shakeAnimationString.SetValue(__instance, "xmasShake");
+                ShakeAnimationString.SetValue(__instance, "xmasShake");
 
                 return false; // Skip function with false.
             }

@@ -296,6 +296,7 @@ namespace NewSafetyHelp.Callers.Answer
                             if (!replacedArcadeCaller)
                             {
                                 __instance.CreateCustomCaller();
+                                ArcadeHelper.DisableCurrentArcadeCaller();
                             }
 
                             LoggingHelper.DebugLog("Dynamic Arcade Caller. No submitting. " +
@@ -330,6 +331,7 @@ namespace NewSafetyHelp.Callers.Answer
                         if (!replacedArcadeCaller)
                         {
                             __instance.CreateCustomCaller();
+                            ArcadeHelper.DisableCurrentArcadeCaller();
                         }
 
                         // OLD: this.StartCoroutine(this.NewCallRoutine(maxTime: 10f));

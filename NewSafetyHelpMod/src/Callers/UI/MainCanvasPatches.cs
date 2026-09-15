@@ -751,8 +751,14 @@ namespace NewSafetyHelp.Callers.UI
                                         chosenArcadeCaller.CallerClip;
                                 }
 
+                                ArcadeHelper.SetCurrentArcadeCaller(chosenArcadeCaller);
+
                                 LoggingHelper.DebugLog("Replaced first arcade caller with custom " +
                                                        $"fixed arcade caller '{chosenArcadeCaller.CallerName}'.");
+                            }
+                            else
+                            {
+                                ArcadeHelper.DisableCurrentArcadeCaller();
                             }
                         }
                     }

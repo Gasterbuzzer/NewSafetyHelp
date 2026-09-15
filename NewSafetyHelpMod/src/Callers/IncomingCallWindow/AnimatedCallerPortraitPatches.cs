@@ -3,6 +3,7 @@ using System.Reflection;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.Callers.UI.AnimatedEntry;
 using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.Arcade;
 using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
 using NewSafetyHelp.LoggingSystem;
 
@@ -71,6 +72,36 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                         }
                     }
                     else
+                    {
+                        MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CALLER);
+
+                        MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.CALLER);
+                    }
+                }
+
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && GlobalVariables.arcadeMode)
+                {
+                    if (ArcadeHelper.DoesCurrentArcadeCallerHaveAnAnimatedPortrait())
+                    {
+                        string arcadeCallerAnimatedPortraitURL = ArcadeHelper.GetCurrentArcadeCallerAnimatedURL();
+                        bool arcadeCallerShouldLoop = ArcadeHelper.GetCurrentArcadeCallerShouldLoopAnimatedPortrait();
+
+                        if (string.IsNullOrEmpty(arcadeCallerAnimatedPortraitURL))
+                        {
+                            MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CALLER);
+
+                            MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.CALLER);
+                        }
+                        else
+                        {
+                            MainCanvasEntry.SetVideoUrl(arcadeCallerAnimatedPortraitURL,
+                                MainCanvasEntry.PortraitType.CALLER);
+
+                            MainCanvasEntry.SetVideoLoop(arcadeCallerShouldLoop, MainCanvasEntry.PortraitType.CALLER);
+                        }
+                    }
+                    else // Normal arcade caller (random) or a fixed caller without an animated portrait.
                     {
                         MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CALLER);
 
@@ -162,6 +193,37 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
 
                         MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.CORNER_CALLER);
                     }
+                    
+                    if (CustomCampaignGlobal.InCustomCampaign
+                        && GlobalVariables.arcadeMode)
+                    {
+                        if (ArcadeHelper.DoesCurrentArcadeCallerHaveAnAnimatedPortrait())
+                        {
+                            string arcadeCallerAnimatedPortraitURL = ArcadeHelper.GetCurrentArcadeCallerAnimatedURL();
+                            bool arcadeCallerShouldLoop = ArcadeHelper.GetCurrentArcadeCallerShouldLoopAnimatedPortrait();
+
+                            if (string.IsNullOrEmpty(arcadeCallerAnimatedPortraitURL))
+                            {
+                                MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CORNER_CALLER);
+
+                                MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.CORNER_CALLER);
+                            }
+                            else
+                            {
+                                MainCanvasEntry.SetVideoUrl(arcadeCallerAnimatedPortraitURL,
+                                    MainCanvasEntry.PortraitType.CORNER_CALLER);
+
+                                MainCanvasEntry.SetVideoLoop(arcadeCallerShouldLoop,
+                                    MainCanvasEntry.PortraitType.CORNER_CALLER);
+                            }
+                        }
+                        else // Normal arcade caller (random) or a fixed caller without an animated portrait.
+                        {
+                            MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.CORNER_CALLER);
+
+                            MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.CORNER_CALLER);
+                        }
+                    }
 
                     // For timed caller:
                     if (currentCaller != null
@@ -206,6 +268,37 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                         }
                     }
                     else
+                    {
+                        MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.LARGE_CALLER);
+
+                        MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.LARGE_CALLER);
+                    }
+                }
+                
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && GlobalVariables.arcadeMode)
+                {
+                    if (ArcadeHelper.DoesCurrentArcadeCallerHaveAnAnimatedPortrait())
+                    {
+                        string arcadeCallerAnimatedPortraitURL = ArcadeHelper.GetCurrentArcadeCallerAnimatedURL();
+                        bool arcadeCallerShouldLoop = ArcadeHelper.GetCurrentArcadeCallerShouldLoopAnimatedPortrait();
+
+                        if (string.IsNullOrEmpty(arcadeCallerAnimatedPortraitURL))
+                        {
+                            MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.LARGE_CALLER);
+
+                            MainCanvasEntry.SetVideoLoop(true, MainCanvasEntry.PortraitType.LARGE_CALLER);
+                        }
+                        else
+                        {
+                            MainCanvasEntry.SetVideoUrl(arcadeCallerAnimatedPortraitURL,
+                                MainCanvasEntry.PortraitType.LARGE_CALLER);
+
+                            MainCanvasEntry.SetVideoLoop(arcadeCallerShouldLoop,
+                                MainCanvasEntry.PortraitType.LARGE_CALLER);
+                        }
+                    }
+                    else // Normal arcade caller (random) or a fixed caller without an animated portrait.
                     {
                         MainCanvasEntry.RestorePortrait(MainCanvasEntry.PortraitType.LARGE_CALLER);
 

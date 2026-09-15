@@ -8,6 +8,79 @@ namespace NewSafetyHelp.CustomCampaignSystem.Arcade
 {
     public static class ArcadeHelper
     {
+        /*
+         * Variable that keeps track of the current arcade caller. Is used for checking for animated portraits.
+         */
+        private static ArcadeCaller currentArcadeCaller;
+
+        /// <summary>
+        /// Sets the current arcade caller to the provided arcade caller.
+        /// Use this only at initialization!
+        /// </summary>
+        /// <param name="newArcadeCaller">The newly created arcade caller.</param>
+        public static void SetCurrentArcadeCaller(ArcadeCaller newArcadeCaller)
+        {
+            if (newArcadeCaller != null)
+            {
+                currentArcadeCaller = newArcadeCaller;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the current fixed arcade caller has an animated portrait to display.
+        /// </summary>
+        /// <returns>TRUE: Has an animated portrait. FALSE: Has no animated portrait.</returns>
+        public static bool DoesCurrentArcadeCallerHaveAnAnimatedPortrait()
+        {
+            if (currentArcadeCaller != null
+                && currentArcadeCaller.CallerHasAnimatedPortrait)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// If the current fixed arcade caller has an animated portrait, this return the URL of that arcade caller.
+        /// </summary>
+        /// <returns>NULL: Invalid arcade caller; Else: URL of animated portrait to display.</returns>
+        public static string GetCurrentArcadeCallerAnimatedURL()
+        {
+            if (currentArcadeCaller != null
+                && currentArcadeCaller.CallerHasAnimatedPortrait)
+            {
+                return currentArcadeCaller.CallerAnimatedPortraitURL;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// If the current fixed arcade caller has an animated portrait,
+        /// this return if the animated portrait should loop or not.
+        /// </summary>
+        /// <returns>NULL: Invalid arcade caller; Else: (Bool) Should the animated portrait loop?</returns>
+        public static bool GetCurrentArcadeCallerShouldLoopAnimatedPortrait()
+        {
+            if (currentArcadeCaller != null
+                && currentArcadeCaller.CallerHasAnimatedPortrait
+                && currentArcadeCaller.CallerAnimatedPortraitShouldLoop.HasChanged)
+            {
+                return currentArcadeCaller.CallerAnimatedPortraitShouldLoop.Data;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Call this if the current arcade caller is not a custom fixed arcade caller.
+        /// </summary>
+        public static void DisableCurrentArcadeCaller()
+        {
+            currentArcadeCaller = null;
+        }
+
         /// <summary>
         /// Gets the valid arcade caller to render.
         /// </summary>
@@ -92,6 +165,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.Arcade
                     $"Caller Unlock Required: '{chosenArcadeCaller.ArcadeCallersRequired}'; " +
                     $"Temp List Count After: '{customCampaign.TemporaryCopyFixedArcadeCallers.Count}'; " +
                     ").");
+
+                currentArcadeCaller = chosenArcadeCaller;
 
                 return true;
             }
