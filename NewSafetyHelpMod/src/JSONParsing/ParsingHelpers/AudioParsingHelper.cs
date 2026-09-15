@@ -56,7 +56,8 @@ namespace NewSafetyHelp.JSONParsing.ParsingHelpers
                                 }
                                 else
                                 {
-                                    LoggingHelper.ErrorLog($"Failed to load audio clip '{audioLocation}'.");
+                                    LoggingHelper.ErrorLog($"Failed to load audio clip '{audioLocation}' " +
+                                                           $"('{jsonFolderPath}').");
                                 }
                             },
                             audioLocation, compressAudio)
