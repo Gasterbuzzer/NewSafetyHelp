@@ -322,6 +322,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         {
             Data = true
         };
+        
+        // (1 element => Always this wait time;
+        // 2 elements => Between those two times;
+        // 3+ => Pick any of the ones two chose from)
+        public List<float> ArcadeWaitBetweenCallers = new List<float>();
+        public bool EnableArcadeCustomWaitBetweenCallers = false;
 
         /*
          * Helper functions for custom campaigns.

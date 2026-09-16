@@ -954,17 +954,13 @@ namespace NewSafetyHelp.Callers
             /// The original function waits a bit before calling a new caller.
             /// It is patched to not error out after going back to the desktop.
             /// </summary>
-            /// <param name="__instance"> Caller of function. </param>
             /// <param name="__result"> Result of the function. </param>
             /// <param name="minTime"> Minimum time to wait. </param>
             /// <param name="maxTime"> Maximum time to wait. </param>
             /// 
-            // ReSharper disable once RedundantAssignment
+            // ReSharper disable twice RedundantAssignment
             // ReSharper disable once UnusedMember.Local
-            // ReSharper disable once UnusedParameter.Local
-            private static bool Prefix(CallerController __instance,
-                // ReSharper disable once RedundantAssignment
-                ref IEnumerator __result, ref float minTime, ref float maxTime)
+            private static bool Prefix(ref IEnumerator __result, ref float minTime, ref float maxTime)
             {
                 __result = NewCallRoutine(minTime, maxTime);
 
@@ -993,6 +989,18 @@ namespace NewSafetyHelp.Callers
                         if (waitTimeBetweenCallersCustomCampaign != null)
                         {
                             waitTimeBetweenCallers = waitTimeBetweenCallersCustomCampaign.Value;
+                        }
+                    }
+
+                    if (GlobalVariables.arcadeMode 
+                        && customCampaign.EnableArcadeCustomWaitBetweenCallers)
+                    {
+                        float? waitTimeBetweenCallersArcade = RandomFromList.GetRandomFromList(
+                            customCampaign.ArcadeWaitBetweenCallers);
+
+                        if (waitTimeBetweenCallersArcade != null)
+                        {
+                            waitTimeBetweenCallers = waitTimeBetweenCallersArcade.Value;
                         }
                     }
 

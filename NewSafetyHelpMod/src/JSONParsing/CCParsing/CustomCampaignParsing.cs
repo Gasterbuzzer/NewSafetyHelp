@@ -390,6 +390,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = true
             };
 
+            List<float> arcadeWaitBetweenCallers = new List<float>();
+            bool enableArcadeCustomWaitBetweenCallers = false;
+
             /*
              * Parsing the JSON File
              */
@@ -568,6 +571,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 "arcade_remove_all_valid_fixed_callers_when_choosing",
                 ref arcadeRemoveAllValidFixedCallersWhenChoosing);
 
+            ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "arcade_waiting_time",
+                ref arcadeWaitBetweenCallers);
+            if (arcadeWaitBetweenCallers != null && arcadeWaitBetweenCallers.Count > 0)
+            {
+                enableArcadeCustomWaitBetweenCallers = true;
+            }
+
             return new CustomCampaign
             {
                 CampaignName = customCampaignName,
@@ -640,7 +650,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 WaitBetweenCallers = waitBetweenCallers,
                 EnableCustomWaitBetweenCallers = enableCustomWaitBetweenCallers,
 
-                ArcadeRemoveAllValidFixedCallersWhenChoosing = arcadeRemoveAllValidFixedCallersWhenChoosing
+                ArcadeRemoveAllValidFixedCallersWhenChoosing = arcadeRemoveAllValidFixedCallersWhenChoosing,
+                ArcadeWaitBetweenCallers = arcadeWaitBetweenCallers,
+                EnableArcadeCustomWaitBetweenCallers = enableArcadeCustomWaitBetweenCallers
             };
         }
     }
