@@ -377,13 +377,17 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = true
             };
 
-            /*
-             * Campaign Load Settings
-             */
-
+            // Campaign Load Settings
             VariableChanged<bool> fadeInCustomCampaign = new VariableChanged<bool>
             {
                 Data = false
+            };
+
+            // Arcade Related Things
+
+            VariableChanged<bool> arcadeRemoveAllValidFixedCallersWhenChoosing = new VariableChanged<bool>
+            {
+                Data = true
             };
 
             /*
@@ -556,9 +560,13 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref skip3DComputerScreenForCustomCampaign);
 
             // Campaign Load Settings
-
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "custom_campaign_fade_to_black",
                 ref fadeInCustomCampaign);
+
+            // Arcade Related Things
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed,
+                "arcade_remove_all_valid_fixed_callers_when_choosing",
+                ref arcadeRemoveAllValidFixedCallersWhenChoosing);
 
             return new CustomCampaign
             {
@@ -630,7 +638,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 FadeInCustomCampaign = fadeInCustomCampaign,
 
                 WaitBetweenCallers = waitBetweenCallers,
-                EnableCustomWaitBetweenCallers = enableCustomWaitBetweenCallers
+                EnableCustomWaitBetweenCallers = enableCustomWaitBetweenCallers,
+
+                ArcadeRemoveAllValidFixedCallersWhenChoosing = arcadeRemoveAllValidFixedCallersWhenChoosing
             };
         }
     }

@@ -311,6 +311,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         public List<LinkApp> LinkApps = new List<LinkApp>();
 
         /*
+         * Arcade Related Things
+         */
+
+        // In arcade mode, when there are multiple fixed callers, it will choose one and remove it from the list.
+        // But that does mean the next caller will be the next valid caller. 
+        // To avoid this and be able to have random callers, we have the option to remove all valid at once.
+        // This is enabled by default.
+        public VariableChanged<bool> ArcadeRemoveAllValidFixedCallersWhenChoosing = new VariableChanged<bool>
+        {
+            Data = true
+        };
+
+        /*
          * Helper functions for custom campaigns.
          */
 

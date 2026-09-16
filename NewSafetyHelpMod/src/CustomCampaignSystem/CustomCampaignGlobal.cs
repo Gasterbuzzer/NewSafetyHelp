@@ -909,13 +909,13 @@ namespace NewSafetyHelp.CustomCampaignSystem
             }
 
             LoggingHelper.DebugLog(() =>
-                $"Now adding all {customCampaign.EntriesOnlyInCampaign.Count} entries to the custom campaign.");
+                $"Now adding all '{customCampaign.EntriesOnlyInCampaign.Count}' entries to the custom campaign.");
 
             // Add all entries.
             foreach (EntryMetadata entryInCustomCampaign in customCampaign.EntriesOnlyInCampaign)
             {
                 LoggingHelper.DebugLog(() =>
-                    $"Adding entry {entryInCustomCampaign.Name} to custom campaign.");
+                    $"Adding entry '{entryInCustomCampaign.Name}' to custom campaign.");
 
                 EntryManager.EntryManager.AddEntryToTheProfile(entryInCustomCampaign.ReferenceCopyEntry,
                     ref monsterProfileList.monsterProfiles, "allEntries");
@@ -939,7 +939,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
             }
 
             LoggingHelper.DebugLog(() =>
-                $"Now replacing all {customCampaign.EntryReplaceOnlyInCampaign.Count} entries to the custom campaign.");
+                $"Now replacing all '{customCampaign.EntryReplaceOnlyInCampaign.Count}' entries to the custom campaign.");
 
             if (monsterProfileList.monsterProfiles.Length <= 0)
             {
@@ -993,7 +993,7 @@ namespace NewSafetyHelp.CustomCampaignSystem
                         monsterProfileList.monsterProfiles[i] = entryFound.ReferenceCopyEntry;
 
                         LoggingHelper.DebugLog(() =>
-                            $"Replacing entry {entryFound.Name} with custom entry in custom campaign.");
+                            $"Replacing entry '{entryFound.Name}' with custom entry in custom campaign.");
                     }
                 }
             }

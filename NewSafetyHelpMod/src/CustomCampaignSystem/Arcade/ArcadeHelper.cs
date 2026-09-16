@@ -114,7 +114,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Arcade
 
             ArcadeCaller validArcadeCaller = validArcadeCallers[randomValidArcadeCaller];
 
-            customCampaign.TemporaryCopyFixedArcadeCallers.Remove(validArcadeCaller);
+            if (customCampaign.ArcadeRemoveAllValidFixedCallersWhenChoosing.Data)
+            {
+                foreach (ArcadeCaller arcadeCaller in validArcadeCallers)
+                {
+                    customCampaign.TemporaryCopyFixedArcadeCallers.Remove(arcadeCaller);
+                }
+            }
+            else
+            {
+                customCampaign.TemporaryCopyFixedArcadeCallers.Remove(validArcadeCaller);
+            }
 
             return validArcadeCaller;
         }
@@ -164,7 +174,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Arcade
                     $"(Total Callers Today: '{__instance.currentArcadeCallTotal}'; " +
                     $"Caller Unlock Required: '{chosenArcadeCaller.ArcadeCallersRequired}'; " +
                     $"Temp List Count After: '{customCampaign.TemporaryCopyFixedArcadeCallers.Count}'; " +
-                    ").");
+                    ").", LoggingHelper.LoggingCategory.ARCADE);
 
                 currentArcadeCaller = chosenArcadeCaller;
 
