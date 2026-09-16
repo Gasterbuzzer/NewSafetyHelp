@@ -68,7 +68,7 @@ if errorlevel 1 (
      
      REM Run the game if set to true.
      if "%run_game%" == "true" (
-         REM --- Starting Game ---
+         REM Starting Game
          start "" "%root_destination_folder%\Home Safety Hotline.exe"
      ) else (
         echo Not starting game.
