@@ -15,6 +15,12 @@ namespace NewSafetyHelp.Audio.Music.Arcade
 
         private static int previousMusicIndex;
 
+        /// <summary>
+        /// Start the process of playing all the arcade music in the custom campaign arcade mode.
+        /// </summary>
+        /// <param name="customCampaign">Custom Campaign that is active.</param>
+        /// <param name="customArcadeMusicList">List of all the custom arcade music.</param>
+        /// <returns>Coroutine to run.</returns>
         public static IEnumerator PlayPassthroughMusicArcade(CustomCampaign customCampaign,
             List<CustomMusic> customArcadeMusicList)
         {
@@ -40,7 +46,7 @@ namespace NewSafetyHelp.Audio.Music.Arcade
                     && customArcadeMusicList[chosenMusicIndex].MusicClip != null)
                 {
                     previousMusicIndex = chosenMusicIndex;
-                    PLayArcadeMusic(customArcadeMusicList[chosenMusicIndex].MusicClip.clip);
+                    PlayArcadeMusic(customArcadeMusicList[chosenMusicIndex].MusicClip.clip);
                 }
 
                 while (arcadeMusicPlayerAudioSource.isPlaying)
@@ -50,6 +56,9 @@ namespace NewSafetyHelp.Audio.Music.Arcade
             }
         }
 
+        /// <summary>
+        /// Creates the arcade music player that will play the custom arcade music.
+        /// </summary>
         private static void CreateArcadeMusicPlayer()
         {
             if (arcadeMusicPlayer != null)
@@ -81,7 +90,11 @@ namespace NewSafetyHelp.Audio.Music.Arcade
             }
         }
 
-        private static void PLayArcadeMusic(AudioClip musicToBePlayed)
+        /// <summary>
+        /// Plays the arcade music on the arcade music audio source.
+        /// </summary>
+        /// <param name="musicToBePlayed">AudioClip containing the music to be played.</param>
+        private static void PlayArcadeMusic(AudioClip musicToBePlayed)
         {
             if (arcadeMusicPlayerAudioSource == null)
             {

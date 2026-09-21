@@ -131,18 +131,29 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                     audioClip = PickIntermissionMusic(ref shouldPlayIntermission, customCampaign);
 
                     // No valid music found. We stop.
-                    if (!shouldPlayIntermission)
+                    if (!shouldPlayIntermission || audioClip == null)
                     {
                         yield break;
                     }
                 }
 
-                // Set some values to prevent a problem.
-                myMusicSourceCast.volume = audioClip.MusicClip.volume;
-                myMusicSourceCast.loop = false;
+                float startAfterSeconds = 0f;
+                float musicStopAfterSeconds = 0f;
 
-                float startAfterSeconds = MusicStartRange(audioClip);
-                float musicStopAfterSeconds = MusicEndRange(audioClip);
+                if (audioClip.MusicClip == null)
+                {
+                    LoggingHelper.WarningLog("Provided intermission music clip is null/empty! " +
+                                             "Possibly failed to load while parsing.");
+                }
+                else
+                {
+                    // Set some values to prevent a problem.
+                    myMusicSourceCast.volume = audioClip.MusicClip.volume;
+                    myMusicSourceCast.loop = false;
+
+                    startAfterSeconds = MusicStartRange(audioClip);
+                    musicStopAfterSeconds = MusicEndRange(audioClip);
+                }
 
                 LoggingHelper.DebugLog($"Intermission music playing with start of: '{startAfterSeconds}' with " +
                                        $"end range of '{musicStopAfterSeconds}'.");
@@ -154,7 +165,16 @@ namespace NewSafetyHelp.Audio.Music.Intermission
                     yield break;
                 }
 
-                GlobalVariables.musicControllerScript.StartMusic(audioClip.MusicClip);
+                if (audioClip.MusicClip != null
+                    && audioClip.MusicClip.clip != null)
+                {
+                    GlobalVariables.musicControllerScript.StartMusic(audioClip.MusicClip);
+                }
+                else
+                {
+                    LoggingHelper.WarningLog("Provided intermission music clip is null/empty! " +
+                                             "Possibly failed to load while parsing.");
+                }
 
                 myMusicSourceCast.time = startAfterSeconds;
                 myMusicSourceCast.pitch = 1.0f;
