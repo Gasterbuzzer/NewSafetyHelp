@@ -176,23 +176,23 @@ namespace NewSafetyHelp.CustomDesktop
                     InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnLinkAppLogToggle,
                         "Enable Link App Logs", GlobalPreferences.ShowLinkAppLog.Value);
 
-                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnLinkAppLogToggle,
+                    InGameSettingHelper.CreateNewToggle(developerSettings, ToggleButtonFunctions.OnArcadeLogToggle,
                         "Enable Arcade Logs", GlobalPreferences.ShowArcadeLog.Value);
 
-                    InGameSettingHelper.CreateButton(developerSettings, (e) =>
+                    InGameSettingHelper.CreateButton(developerSettings, buttonGameObject =>
                     {
                         LoggingHelper.InfoLog("Hot reloading all JSON files. " +
                                               "Please note, this is in beta and may break some features. ",
                             consoleColor: ConsoleColor.Green);
-                        ReloadJSONParsing.ReloadAllJSONFiles(e);
+                        ReloadJSONParsing.ReloadAllJSONFiles(buttonGameObject);
 
-                        return e;
+                        return buttonGameObject;
                     }, "Reload all JSON files", "Reload all JSON files");
 
-                    InGameSettingHelper.CreateButton(developerSettings, o =>
+                    InGameSettingHelper.CreateButton(developerSettings, buttonGameObject =>
                         {
                             DebugHelper.CopyLatestLogs();
-                            return o;
+                            return buttonGameObject;
                         },
                         "Copy Log File", "Copies the log file for debug purposes");
                 }
