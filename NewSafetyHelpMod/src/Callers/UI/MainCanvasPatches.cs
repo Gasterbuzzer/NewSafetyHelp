@@ -15,7 +15,6 @@ using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -710,12 +709,6 @@ namespace NewSafetyHelp.Callers.UI
                  */
                 if (GlobalVariables.arcadeMode)
                 {
-                    mainCanvasBehavior.callTimer.SetActive(true);
-
-                    yield return new WaitForSeconds(1f);
-
-                    GlobalVariables.fade.FadeOut();
-
                     if (CustomCampaignGlobal.InCustomCampaign)
                     {
                         CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -723,8 +716,6 @@ namespace NewSafetyHelp.Callers.UI
                         if (customCampaign.ArcadeMusicPlayThrough.Data
                             && customCampaign.ArcadeMusic.Count > 0)
                         {
-
-
                             mainCanvasBehavior.StartCoroutine(
                                 ArcadeMusicHelper.PlayPassthroughMusicArcade(customCampaign,
                                     customCampaign.ArcadeMusic));
@@ -774,6 +765,12 @@ namespace NewSafetyHelp.Callers.UI
                             }
                         }
                     }
+
+                    mainCanvasBehavior.callTimer.SetActive(true);
+
+                    yield return new WaitForSeconds(1f);
+
+                    GlobalVariables.fade.FadeOut();
                 }
 
                 // Custom Enables
@@ -788,7 +785,17 @@ namespace NewSafetyHelp.Callers.UI
                     }
                 }
 
-                GlobalVariables.callerControllerScript.StartCallRoutine();
+                // Prevent the start call routine if there is already a caller active.
+                if (GlobalVariables.callerControllerScript.callTimerRoutine == null)
+                {
+                    GlobalVariables.callerControllerScript.StartCallRoutine();
+                }
+                else
+                {
+                    LoggingHelper.DebugLog("Prevented double call, there is a caller already active.");
+                    GlobalVariables.callerControllerScript.StopAllRoutines();
+                }
+
                 GlobalVariables.introIsPlaying = false;
             }
 

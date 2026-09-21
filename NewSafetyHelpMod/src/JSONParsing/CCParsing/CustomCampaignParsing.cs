@@ -401,6 +401,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             {
                 Data = true
             };
+            
+            VariableChanged<bool> arcadeStartTimerOnHold = new VariableChanged<bool>
+            {
+                Data = false
+            };
 
             /*
              * Parsing the JSON File
@@ -589,6 +594,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_do_not_interrupt_song_when_caller_changes",
                 ref arcadeMusicPlayThrough);
+            
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_start_timer_on_hold",
+                ref arcadeStartTimerOnHold);
 
             return new CustomCampaign
             {
@@ -665,7 +673,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ArcadeRemoveAllValidFixedCallersWhenChoosing = arcadeRemoveAllValidFixedCallersWhenChoosing,
                 ArcadeWaitBetweenCallers = arcadeWaitBetweenCallers,
                 EnableArcadeCustomWaitBetweenCallers = enableArcadeCustomWaitBetweenCallers,
-                ArcadeMusicPlayThrough = arcadeMusicPlayThrough
+                ArcadeMusicPlayThrough = arcadeMusicPlayThrough,
+                ArcadeStartTimerOnHold = arcadeStartTimerOnHold
             };
         }
     }

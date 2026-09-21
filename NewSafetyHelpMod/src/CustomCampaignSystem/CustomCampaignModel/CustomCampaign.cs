@@ -338,6 +338,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         // List of custom music to play in custom campaign.
         public List<CustomMusic> ArcadeMusic = new List<CustomMusic>();
 
+        public VariableChanged<bool> ArcadeStartTimerOnHold = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Helper functions for custom campaigns.
          */

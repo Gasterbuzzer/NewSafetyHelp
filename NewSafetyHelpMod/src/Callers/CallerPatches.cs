@@ -217,6 +217,7 @@ namespace NewSafetyHelp.Callers
                     {
                         CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
+                        newProfile.name = customCallerCC.CallerName;
                         newProfile.callerName = customCallerCC.CallerName;
                         newProfile.callTranscription = customCallerCC.CallTranscript;
 
@@ -674,8 +675,8 @@ namespace NewSafetyHelp.Callers
                         }
 
                         LoggingHelper.DebugLog("Warning caller check for callers today required: " +
-                                               $"{callersTodayRequiredWarning}. " +
-                                               $"Current amount of callers: {__instance.callersToday}.");
+                                               $"'{callersTodayRequiredWarning}'. " +
+                                               $"Current amount of callers: '{__instance.callersToday}'.");
 
                         if (__instance.callersToday ==
                             callersTodayRequiredWarning) // Now the warning call should appear.
@@ -719,7 +720,7 @@ namespace NewSafetyHelp.Callers
                             if (warningCCallerToday != null)
                             {
                                 LoggingHelper.DebugLog("Warning caller found to replace! " +
-                                                       $"{warningCCallerToday.CallerName}.");
+                                                       $"'{warningCCallerToday.CallerName}'.");
 
                                 CallerProfile newProfile = ScriptableObject.CreateInstance<CallerProfile>();
 
@@ -844,7 +845,7 @@ namespace NewSafetyHelp.Callers
                             .callerProfile.consequenceCallerProfile))
                     {
                         LoggingHelper.DebugLog("Caller is dynamic caller. " +
-                                               $"Marking as correct. (Last Caller? {__instance.IsLastCallOfDay()}) " +
+                                               $"Marking as correct. (Last Caller? '{__instance.IsLastCallOfDay()}') " +
                                                "Next caller!");
 
                         // This will skip the caller if the current caller is a consequence caller,
@@ -1012,7 +1013,15 @@ namespace NewSafetyHelp.Callers
                 if (GlobalVariables.mainCanvasScript != null
                     && GlobalVariables.mainCanvasScript.callWindow != null)
                 {
-                    GlobalVariables.mainCanvasScript.callWindow.SetActive(true);
+                    if (GlobalVariables.arcadeMode 
+                        && GlobalVariables.callerControllerScript.callTimerRoutine != null)
+                    {
+                        LoggingHelper.DebugLog("Prevented double call, there is a caller already active.");
+                    }
+                    else
+                    {
+                        GlobalVariables.mainCanvasScript.callWindow.SetActive(true);
+                    }
                 }
             }
         }

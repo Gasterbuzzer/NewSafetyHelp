@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 using NewSafetyHelp.Callers.CallerModel;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
@@ -86,21 +87,35 @@ namespace NewSafetyHelp.CustomCampaignSystem.TimedCaller
                 // If we start the timer of the timed caller.
                 if (CustomCampaignGlobal.InCustomCampaign)
                 {
-                    CustomCCaller currentCaller =
-                        CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables.callerControllerScript
-                            .currentCallerID);
-
-                    CallerProfile currentCallerProfile = GlobalVariables.callerControllerScript.currentCallerProfile;
-
-                    bool isWarningOrGameOverCaller =
-                        currentCallerProfile == GlobalVariables.callerControllerScript.warningCall
-                        || currentCallerProfile == GlobalVariables.callerControllerScript.gameOverCall;
-
-                    if (currentCaller != null
-                        && currentCaller.IsTimedCaller
-                        && !isWarningOrGameOverCaller)
+                    if (!GlobalVariables.arcadeMode)
                     {
-                        TimerCallerHelper.StartTimedCallerTimer(currentCaller.TimedCallerDuration);
+                        CustomCCaller currentCaller =
+                            CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(GlobalVariables
+                                .callerControllerScript
+                                .currentCallerID);
+
+                        CallerProfile currentCallerProfile =
+                            GlobalVariables.callerControllerScript.currentCallerProfile;
+
+                        bool isWarningOrGameOverCaller =
+                            currentCallerProfile == GlobalVariables.callerControllerScript.warningCall
+                            || currentCallerProfile == GlobalVariables.callerControllerScript.gameOverCall;
+
+                        if (currentCaller != null
+                            && currentCaller.IsTimedCaller
+                            && !isWarningOrGameOverCaller)
+                        {
+                            TimerCallerHelper.StartTimedCallerTimer(currentCaller.TimedCallerDuration);
+                        }
+                    }
+                    else
+                    {
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign.ArcadeStartTimerOnHold.Data)
+                        {
+                            GlobalVariables.callerControllerScript.StartCallTimerRoutine();
+                        }
                     }
                 }
 

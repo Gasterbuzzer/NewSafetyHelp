@@ -1,7 +1,6 @@
 ﻿using System.Collections;
-using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
-using NewSafetyHelp.CustomCampaignSystem.TimedCaller;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -12,7 +11,6 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
         [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "TypeText", typeof(CallerProfile), typeof(bool))]
         public static class TypeTextPatch
         {
-
             /// <summary>
             /// Patches the type text function to not cut off letters at the end.
             /// </summary>
@@ -27,7 +25,7 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                 ref CallerProfile profile, ref bool skip)
             {
                 __result = TypeTextCoroutine(__instance, profile, skip);
-                
+
                 return false; // Skip function with false.
             }
 
@@ -41,11 +39,11 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     LoggingHelper.WarningLog("Profile is null. Possibly missing something?");
                     yield break;
                 }
-                
+
                 int characterCount = __instance.myTranscription.textInfo.characterCount;
                 int counter = 0;
                 float waitTime = 0;
-                
+
                 if (profile.callerClip != null && profile.callerClip.clip != null) // If we have a valid clip.
                 {
                     waitTime = profile.callerClip.clip.length / characterCount;
@@ -53,14 +51,14 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                 else // No caller clip so we skip.
                 {
                     skip = true;
-                } 
-                
+                }
+
                 if (skip)
                 {
                     counter = characterCount + 1;
                     __instance.myTranscription.maxVisibleCharacters = counter;
                 }
-                
+
                 while (counter < characterCount + 1)
                 {
                     __instance.myTranscription.maxVisibleCharacters = counter;
@@ -72,7 +70,7 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     {
                         counter += 2;
                     }
-                    
+
                     if (waitTime > 0.005)
                     {
                         yield return new WaitForSecondsRealtime(waitTime);
@@ -83,15 +81,32 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                     }
                 }
 
-                __instance.myTranscription.maxVisibleCharacters = int.MaxValue; // Ensures no missing characters.
-                
+                // Ensures no missing characters.
+                __instance.myTranscription.maxVisibleCharacters = int.MaxValue;
+
                 if (profile.callerMonster != null)
                 {
                     __instance.holdButton.SetActive(true);
-                    
+
                     if (GlobalVariables.arcadeMode)
                     {
-                        GlobalVariables.callerControllerScript.StartCallTimerRoutine();
+                        if (!CustomCampaignGlobal.InCustomCampaign)
+                        {
+                            GlobalVariables.callerControllerScript.StartCallTimerRoutine();
+                        }
+                        else
+                        {
+                            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                            if (!customCampaign.ArcadeStartTimerOnHold.Data)
+                            {
+                                GlobalVariables.callerControllerScript.StartCallTimerRoutine();
+                            }
+                            else
+                            {
+                                LoggingHelper.DebugLog("Custom Campaign only starts timer on hold. Skipping timer start.");
+                            }
+                        }
                     }
                 }
                 else
