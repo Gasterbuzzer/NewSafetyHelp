@@ -218,6 +218,14 @@ namespace NewSafetyHelp.Audio.Music
                 }
             }
 
+            if (playArcadeMusic)
+            {
+                LoggingHelper.DebugLog(() =>
+                    $"Chose to play the music track: '{chosenMusicIndex}' with the previous being '{previousMusicIndex}'. " +
+                    $"(Amount of arcade clips: '{customArcadeMusicAmount}') " +
+                    $"(Current day: '{GlobalVariables.currentDay}').", LoggingHelper.LoggingCategory.ARCADE);
+            }
+
             return chosenMusicIndex;
         }
 
@@ -240,7 +248,7 @@ namespace NewSafetyHelp.Audio.Music
                 && playArcadeMusic)
             {
                 if (customArcadeMusicList.Count > 0
-                    && chosenMusicIndex < customMusicList.Count
+                    && chosenMusicIndex < customArcadeMusicList.Count
                     && customArcadeMusicList[chosenMusicIndex].MusicClip != null)
                 {
                     __instance.StartMusic(customArcadeMusicList[chosenMusicIndex].MusicClip);
