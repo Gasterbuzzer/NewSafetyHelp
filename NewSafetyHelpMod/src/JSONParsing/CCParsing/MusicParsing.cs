@@ -45,6 +45,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 {
                     customCampaign.CustomIntermissionMusic.Add(customMusic);
                 }
+                else if (customMusic.IsArcadeMusic)
+                {
+                    customCampaign.ArcadeMusic.Add(customMusic);
+                }
                 else
                 {
                     customCampaign.CustomMusic.Add(customMusic);
@@ -52,7 +56,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             }
             else
             {
-                LoggingHelper.DebugLog("Found Music File before the custom campaign was found / does not exist.");
+                LoggingHelper.DebugLog("Found music file " +
+                                       $"'{jsonFolderPath}' before the custom campaign was found / does not exist.");
 
                 GlobalParsingVariables.PendingCustomCampaignMusic.Add(customMusic);
             }
@@ -69,6 +74,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             bool onlyPlayOnUnlockDay = false;
 
             bool isIntermissionMusic = false;
+            bool isArcadeMusic = false;
 
             List<float> startRange = new List<float>();
             List<float> endRange = new List<float>();
@@ -86,6 +92,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             ParsingHelper.TryAssign(jObjectParsed, "is_intermission_music", ref isIntermissionMusic);
 
+            ParsingHelper.TryAssign(jObjectParsed, "is_arcade_music", ref isArcadeMusic);
+
             ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "start_range", ref startRange);
 
             ParsingHelper.TryAssignListOrSingleElement(jObjectParsed, "end_range", ref endRange);
@@ -102,6 +110,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 OnlyPlayOnUnlockDay = onlyPlayOnUnlockDay,
 
                 IsIntermissionMusic = isIntermissionMusic,
+                IsArcadeMusic = isArcadeMusic,
 
                 StartRange = startRange,
                 EndRange = endRange

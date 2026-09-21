@@ -19,6 +19,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 {
     public class CustomCampaign
     {
+        // Basic Values
         public string CampaignName = "NO_CAMPAIGN_NAME_PROVIDED";
 
         public int CampaignDays = 7;
@@ -322,12 +323,20 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         {
             Data = true
         };
-        
+
         // (1 element => Always this wait time;
         // 2 elements => Between those two times;
         // 3+ => Pick any of the ones two chose from)
         public List<float> ArcadeWaitBetweenCallers = new List<float>();
         public bool EnableArcadeCustomWaitBetweenCallers = false;
+
+        public VariableChanged<bool> ArcadeMusicPlayThrough = new VariableChanged<bool>
+        {
+            Data = true
+        };
+
+        // List of custom music to play in custom campaign.
+        public List<CustomMusic> ArcadeMusic = new List<CustomMusic>();
 
         /*
          * Helper functions for custom campaigns.

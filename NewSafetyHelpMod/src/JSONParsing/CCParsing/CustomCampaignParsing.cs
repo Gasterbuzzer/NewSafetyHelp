@@ -50,7 +50,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     if (customCallerCC.CustomCampaignName == customCampaignName)
                     {
                         LoggingHelper.DebugLog(
-                            $"DEBUG: Adding missing custom caller {customCallerCC.CallerName} to the custom campaign: {customCampaignName}.");
+                            $"DEBUG: Adding missing custom caller '{customCallerCC.CallerName}' to the custom campaign: '{customCampaignName}'.");
 
                         if (customCallerCC.IsGameOverCaller)
                         {
@@ -103,11 +103,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     if (missingMusic.CustomCampaignName == customCampaignName)
                     {
                         LoggingHelper.DebugLog(() =>
-                            $"DEBUG: Adding missing music to the custom campaign: {customCampaignName}.");
+                            $"DEBUG: Adding missing music to the custom campaign: '{customCampaignName}'.");
 
                         if (missingMusic.IsIntermissionMusic)
                         {
                             customCampaign.CustomIntermissionMusic.Add(missingMusic);
+                        }
+                        else if (missingMusic.IsArcadeMusic)
+                        {
+                            customCampaign.ArcadeMusic.Add(missingMusic);
                         }
                         else
                         {
@@ -168,7 +172,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     if (missingModifier.CustomCampaignName == customCampaignName)
                     {
                         LoggingHelper.DebugLog(() =>
-                            $"DEBUG: Adding missing modifier to the custom campaign: {customCampaignName}.");
+                            $"DEBUG: Adding missing modifier to the custom campaign: '{customCampaignName}'.");
 
                         if (missingModifier.UnlockDays == null)
                         {
@@ -209,7 +213,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                     if (missingTheme.CustomCampaignName == customCampaignName)
                     {
                         LoggingHelper.DebugLog(() =>
-                            $"DEBUG: Adding missing theme to the custom campaign: {customCampaignName}.");
+                            $"DEBUG: Adding missing theme to the custom campaign: '{customCampaignName}'.");
 
                         if (missingTheme.UnlockDays == null)
                         {
@@ -392,6 +396,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             List<float> arcadeWaitBetweenCallers = new List<float>();
             bool enableArcadeCustomWaitBetweenCallers = false;
+
+            VariableChanged<bool> arcadeMusicPlayThrough = new VariableChanged<bool>
+            {
+                Data = true
+            };
 
             /*
              * Parsing the JSON File
@@ -578,6 +587,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 enableArcadeCustomWaitBetweenCallers = true;
             }
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "arcade_do_not_interrupt_song_when_caller_changes",
+                ref arcadeMusicPlayThrough);
+
             return new CustomCampaign
             {
                 CampaignName = customCampaignName,
@@ -652,7 +664,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 ArcadeRemoveAllValidFixedCallersWhenChoosing = arcadeRemoveAllValidFixedCallersWhenChoosing,
                 ArcadeWaitBetweenCallers = arcadeWaitBetweenCallers,
-                EnableArcadeCustomWaitBetweenCallers = enableArcadeCustomWaitBetweenCallers
+                EnableArcadeCustomWaitBetweenCallers = enableArcadeCustomWaitBetweenCallers,
+                ArcadeMusicPlayThrough = arcadeMusicPlayThrough
             };
         }
     }

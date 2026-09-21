@@ -288,7 +288,7 @@ namespace NewSafetyHelp.LoggingSystem
         }
 
         /// <summary>
-        /// Logs a test messages to the console. Only enabled if debug is enabled and should not be used for final release.
+        /// Logs a ChoseMusicIndexFairly messages to the console. Only enabled if debug is enabled and should not be used for final release.
         /// </summary>
         /// <param name="loggingMessage">Message to log.</param>
         /// <param name="loggingCategory">If it belongs to a logging category, which one it is.</param>
