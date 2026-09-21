@@ -100,15 +100,19 @@ namespace NewSafetyHelp.Audio.Music
 
                     if (GlobalVariables.arcadeMode)
                     {
-                        LoggingHelper.DebugLog("Choosing music for arcade mode.", LoggingHelper.LoggingCategory.ARCADE);
+                        if (!customCampaign.ArcadeMusicPlayThrough.Data)
+                        {
+                            LoggingHelper.DebugLog("Choosing arcade music for arcade mode.",
+                                LoggingHelper.LoggingCategory.ARCADE);
 
-                        customArcadeMusicList =
-                            customCampaign.ArcadeMusic.Where(MusicHelper.IsValidCustomMusic).ToList();
+                            customArcadeMusicList =
+                                customCampaign.ArcadeMusic.Where(MusicHelper.IsValidCustomMusic).ToList();
 
-                        int previousMusicIndex = (int)PreviousHoldMusicIndex.GetValue(__instance);
+                            int previousMusicIndex = (int)PreviousHoldMusicIndex.GetValue(__instance);
 
-                        chosenMusicIndex = MusicHelper.ChoseArcadeMusic(customCampaign.ArcadeMusic.Count,
-                            previousMusicIndex, ref playArcadeMusic);
+                            chosenMusicIndex = MusicHelper.ChoseArcadeMusic(customCampaign.ArcadeMusic.Count,
+                                previousMusicIndex, ref playArcadeMusic);
+                        }
                     }
                     else
                     {
@@ -160,7 +164,8 @@ namespace NewSafetyHelp.Audio.Music
                     }
 
                     MusicHelper.PlayMusicInCustomCampaign(__instance, ref customMusicList, ref customArcadeMusicList,
-                        chosenMusicIndex, playCustomMusic, playArcadeMusic, customCampaign.RemoveDefaultMusic);
+                        chosenMusicIndex, playCustomMusic, playArcadeMusic, customCampaign.RemoveDefaultMusic,
+                        customCampaign.ArcadeMusicPlayThrough.Data);
                 }
 
                 return false; // Skip function with false.

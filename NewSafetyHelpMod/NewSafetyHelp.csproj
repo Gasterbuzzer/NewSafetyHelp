@@ -144,6 +144,7 @@
     <Compile Include="src\Audio\AudioLoadThrottler.cs" />
     <Compile Include="src\Audio\AudioPatches\PlaySoundPatches.cs" />
     <Compile Include="src\Audio\AudioPatches\UISoundPatch.cs" />
+    <Compile Include="src\Audio\Music\Arcade\ArcadeMusicHelper.cs" />
     <Compile Include="src\Audio\Music\Data\CustomMusic.cs" />
     <Compile Include="src\Audio\Music\Intermission\IntermissionMusicHelper.cs" />
     <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />

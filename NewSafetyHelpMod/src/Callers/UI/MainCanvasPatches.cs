@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.Audio.Music.Arcade;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
@@ -14,6 +15,7 @@ using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -717,6 +719,16 @@ namespace NewSafetyHelp.Callers.UI
                     if (CustomCampaignGlobal.InCustomCampaign)
                     {
                         CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign.ArcadeMusicPlayThrough.Data
+                            && customCampaign.ArcadeMusic.Count > 0)
+                        {
+
+
+                            mainCanvasBehavior.StartCoroutine(
+                                ArcadeMusicHelper.PlayPassthroughMusicArcade(customCampaign,
+                                    customCampaign.ArcadeMusic));
+                        }
 
                         if (customCampaign.FixedArcadeCallers.Count > 0)
                         {

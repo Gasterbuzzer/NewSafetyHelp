@@ -221,7 +221,7 @@ namespace NewSafetyHelp.Audio.Music
             if (playArcadeMusic)
             {
                 LoggingHelper.DebugLog(() =>
-                    $"Chose to play the music track: '{chosenMusicIndex}' with the previous being '{previousMusicIndex}'. " +
+                    $"Chose to play the arcade music track: '{chosenMusicIndex}' with the previous being '{previousMusicIndex}'. " +
                     $"(Amount of arcade clips: '{customArcadeMusicAmount}') " +
                     $"(Current day: '{GlobalVariables.currentDay}').", LoggingHelper.LoggingCategory.ARCADE);
             }
@@ -240,12 +240,14 @@ namespace NewSafetyHelp.Audio.Music
         /// <param name="playArcadeMusic">If to play arcade music from the custom campaign list-</param>
         /// <param name="removeDefaultMusic">If we remove the base game music.
         /// Ergo only play custom campaign music if this is enabled.</param>
+        /// <param name="playThroughMusic">If the arcade music is play through, meaning it won't be stopped.</param>
         public static void PlayMusicInCustomCampaign(MusicController __instance, ref List<CustomMusic> customMusicList,
             ref List<CustomMusic> customArcadeMusicList, int chosenMusicIndex, bool playCustomMusic,
-            bool playArcadeMusic, bool removeDefaultMusic)
+            bool playArcadeMusic, bool removeDefaultMusic, bool playThroughMusic)
         {
             if (GlobalVariables.arcadeMode
-                && playArcadeMusic)
+                && playArcadeMusic
+                && !playThroughMusic)
             {
                 if (customArcadeMusicList.Count > 0
                     && chosenMusicIndex < customArcadeMusicList.Count
