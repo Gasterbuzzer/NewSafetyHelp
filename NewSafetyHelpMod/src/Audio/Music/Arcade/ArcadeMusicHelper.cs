@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using NewSafetyHelp.Audio.Music.Data;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
@@ -14,7 +13,7 @@ namespace NewSafetyHelp.Audio.Music.Arcade
         private static GameObject arcadeMusicPlayer;
         private static AudioSource arcadeMusicPlayerAudioSource;
 
-        private static int previousMusicIndex = 0;
+        private static int previousMusicIndex;
 
         public static IEnumerator PlayPassthroughMusicArcade(CustomCampaign customCampaign,
             List<CustomMusic> customArcadeMusicList)
@@ -40,6 +39,7 @@ namespace NewSafetyHelp.Audio.Music.Arcade
                     && chosenMusicIndex < customArcadeMusicList.Count
                     && customArcadeMusicList[chosenMusicIndex].MusicClip != null)
                 {
+                    previousMusicIndex = chosenMusicIndex;
                     PLayArcadeMusic(customArcadeMusicList[chosenMusicIndex].MusicClip.clip);
                 }
 
