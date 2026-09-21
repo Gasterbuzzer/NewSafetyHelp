@@ -483,7 +483,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             
             MelonPreferences.Save();
 
-            LoggingHelper.InfoLog($"Finished saving (Options) for the custom campaign {currentCampaign.CampaignName}.");
+            LoggingHelper.InfoLog($"Finished saving (Options) for the custom campaign '{currentCampaign.CampaignName}'.");
         }
 
         /// <summary>

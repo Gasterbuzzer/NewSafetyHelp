@@ -33,6 +33,9 @@ namespace NewSafetyHelp.InGameSettings
         public static MelonPreferences_Entry<bool> ShowLinkAppLog; // If to show the logs for link apps.
         public static MelonPreferences_Entry<bool> ShowArcadeLog; // If to show the logs for arcade related info.
 
+        // ARG Settings
+        public static MelonPreferences_Entry<bool> DisableDave; // If to show Dave messages in the custom campaign.
+
         public static void InitializeMelonPreferences()
         {
             // Entries are created when needed.
@@ -61,6 +64,9 @@ namespace NewSafetyHelp.InGameSettings
             ShowMemoryLog = mainModSettings.CreateEntry("ShowMemoryLog", false);
             ShowLinkAppLog = mainModSettings.CreateEntry("ShowLinkAppLog", false);
             ShowArcadeLog = mainModSettings.CreateEntry("ShowArcadeLog", false);
+
+            // ARG Settings
+            DisableDave = mainModSettings.CreateEntry("DisableDave", false);
         }
     }
 }

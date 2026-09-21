@@ -41,14 +41,14 @@ namespace NewSafetyHelp.ARG
         /// </summary>
         public static void InitializeARGDesktop()
         {
-            byte[] campaignAsciiName =
-                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
-
             // Prevent this in main campaign or not correct custom campaign.
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 return;
             }
+
+            byte[] campaignAsciiName =
+                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
 
             if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
                 && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
@@ -67,14 +67,14 @@ namespace NewSafetyHelp.ARG
         /// </summary>
         public static void SetupARGDesktop()
         {
-            byte[] campaignAsciiName =
-                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
-
             // Prevent this in main campaign or not correct custom campaign.
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
                 return;
             }
+
+            byte[] campaignAsciiName =
+                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
 
             if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
                 && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
@@ -113,6 +113,29 @@ namespace NewSafetyHelp.ARG
             errorTitle.SetActive(true);
 
             errorGameObject.GetComponent<GenericErrorPopupBehavior>().myErrorText.text = errorMessage;
+        }
+
+        /// <summary>
+        /// For the ARG, it creates custom settings options.
+        /// </summary>
+        public static void ARGSettingsSetup()
+        {
+            // Prevent this in main campaign or not correct custom campaign.
+            if (!CustomCampaignGlobal.InCustomCampaign)
+            {
+                return;
+            }
+
+            byte[] campaignAsciiName =
+                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
+
+            if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
+                && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
+            {
+                return;
+            }
+
+            ARGSettings.CreateCustomInGameSettings();
         }
     }
 }

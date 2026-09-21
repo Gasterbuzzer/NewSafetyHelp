@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignSystem.ArcadeCallerModule;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.InGameSettings;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
@@ -98,6 +99,12 @@ namespace NewSafetyHelp.CustomCampaignSystem.Arcade
 
             foreach (ArcadeCaller arcadeCaller in customCampaign.TemporaryCopyFixedArcadeCallers)
             {
+                if (GlobalPreferences.DisableDave.Value
+                    && arcadeCaller.CallerName.ToLower().Contains("dave"))
+                {
+                    continue;
+                }
+
                 if (arcadeCaller.ArcadeCallersRequired <= arcadeTotalCallers)
                 {
                     validArcadeCallers.Add(arcadeCaller);

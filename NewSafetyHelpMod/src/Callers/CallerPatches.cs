@@ -39,7 +39,7 @@ namespace NewSafetyHelp.Callers
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(CallerController __instance)
             {
-                LoggingHelper.DebugLog("Called Start from the class CallerController.");
+                LoggingHelper.DebugLog("Called 'Start' from the class 'CallerController'.");
 
                 // Original Code
                 GlobalVariables.callerControllerScript = __instance;
@@ -94,7 +94,7 @@ namespace NewSafetyHelp.Callers
                     {
                         if (customCaller.Key < 0 || customCaller.Value == null) // Sanity check
                         {
-                            LoggingHelper.ErrorLog($"Custom caller {customCaller.Key} is invalid!");
+                            LoggingHelper.ErrorLog($"Custom caller '{customCaller.Key}' is invalid!");
                             continue;
                         }
 
@@ -132,7 +132,7 @@ namespace NewSafetyHelp.Callers
                             {
                                 LoggingHelper.WarningLog(
                                     $"Provided entry (monster) name '{customCaller.Value.EntryNameAttached}' " +
-                                    $"for custom caller {customCaller.Key} was not found! " +
+                                    $"for custom caller '{customCaller.Key}' was not found! " +
                                     "Thus will not have any entry (monster).");
                                 callerProfile.callerMonster = null;
                             }
@@ -150,7 +150,7 @@ namespace NewSafetyHelp.Callers
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided entry (monster) ID for custom caller {customCaller.Key} was not found! " +
+                                    $"Provided entry (monster) ID for custom caller '{customCaller.Key}' was not found! " +
                                     "Thus will not have any entry (monster).");
                                 callerProfile.callerMonster = null;
                             }
@@ -272,7 +272,7 @@ namespace NewSafetyHelp.Callers
                             {
                                 LoggingHelper.WarningLog(
                                     $"Provided entry (monster) name '{customCallerCC.EntryNameAttached}' " +
-                                    $"for custom caller {customCallerCC.CallerName} was not found! " +
+                                    $"for custom caller '{customCallerCC.CallerName}' was not found! " +
                                     "Thus will not have any entry (monster).");
                                 newProfile.callerMonster = null;
                             }
@@ -290,7 +290,7 @@ namespace NewSafetyHelp.Callers
                             if (foundMonster == null)
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Provided entry (monster) ID for custom caller {customCallerCC.CallerName} was not found! " +
+                                    $"Provided entry (monster) ID for custom caller '{customCallerCC.CallerName}' was not found! " +
                                     "Thus will not have any entry (monster).");
                                 newProfile.callerMonster = null;
                             }
@@ -315,17 +315,17 @@ namespace NewSafetyHelp.Callers
                         {
                             LoggingHelper.ErrorLog(
                                 "Provided order is not valid! (Might be missing a caller(s) in between callers!) " +
-                                $"(Info: Provided Order: {customCallerCC.OrderInCampaign}; " +
-                                $"CampaignSize: {currentCustomCampaign.CustomCallersInCampaign.Count})");
+                                $"(Info: Provided Order: '{customCallerCC.OrderInCampaign}'; " +
+                                $"CampaignSize: '{currentCustomCampaign.CustomCallersInCampaign.Count}')");
                         }
                         else
                         {
                             if (__instance.callers[customCallerCC.OrderInCampaign] !=
                                 null) // Adding to non-empty caller.
                             {
-                                LoggingHelper.ErrorLog($"Provided caller {newProfile.callerName} " +
+                                LoggingHelper.ErrorLog($"Provided caller '{newProfile.callerName}' " +
                                                        "has replaced a previous caller at " +
-                                                       $"position {customCallerCC.OrderInCampaign}! " +
+                                                       $"position '{customCallerCC.OrderInCampaign}'! " +
                                                        "Reducing array size by 1 to compensate. Things might break!");
 
                                 Array.Resize(ref __instance.callers, __instance.callers.Length - 1);
@@ -430,7 +430,7 @@ namespace NewSafetyHelp.Callers
                     if (customCCallerFound == null)
                     {
                         LoggingHelper.ErrorLog("Was unable of finding the current caller. " +
-                                               $"Calling original. For ID: {__instance.currentCallerID}");
+                                               $"Calling original. For ID: '{__instance.currentCallerID}'.");
 
                         foreach (CustomCCaller customCallerE in CustomCampaignGlobal.GetActiveCustomCampaign()
                                      .CustomCallersInCampaign)
@@ -992,7 +992,7 @@ namespace NewSafetyHelp.Callers
                         }
                     }
 
-                    if (GlobalVariables.arcadeMode 
+                    if (GlobalVariables.arcadeMode
                         && customCampaign.EnableArcadeCustomWaitBetweenCallers)
                     {
                         float? waitTimeBetweenCallersArcade = RandomFromList.GetRandomFromList(

@@ -30,13 +30,13 @@ namespace NewSafetyHelp.CustomDesktop
         public static class StartPatch
         {
             /// <summary>
-            /// Hooks into the Main Menu Canvas Start function to add our own logic after wards.
+            /// Hooks into the 'Main Menu Canvas' 'Start' function to add our own logic after wards.
             /// </summary>
             /// <param name="__instance"> Caller of function. </param>
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(MainMenuCanvasBehavior __instance)
             {
-                LoggingHelper.DebugLog("Start of Main Menu Canvas Behavior.");
+                LoggingHelper.DebugLog("Start of 'Main Menu Canvas Behavior' script.");
 
                 if (!GlobalVariables.isXmasDLC)
                 {
@@ -127,6 +127,8 @@ namespace NewSafetyHelp.CustomDesktop
                     InGameSettingHelper.CreateNewToggle(InGameSettingHelper.GetVideoOptionsSection(),
                         ToggleButtonFunctions.OnVsyncToggle,
                         "Enable VSYNC", GlobalPreferences.Vsync.Value);
+
+                    ARGHelper.ARGSettingsSetup();
 
                     GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings",
                         "Mod settings to show more information and also allow skipping the initial load scene.");
