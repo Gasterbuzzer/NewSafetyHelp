@@ -52,8 +52,10 @@ namespace NewSafetyHelp.Audio.Music
                 // Variables used to decide the next music.
                 int chosenMusicIndex = 0;
                 bool playCustomMusic = false;
+                bool playArcadeMusic = false;
 
                 List<CustomMusic> customMusicList = new List<CustomMusic>();
+                List<CustomMusic> customArcadeMusicList = new List<CustomMusic>();
 
                 // Main/Base game
                 if (!CustomCampaignGlobal.InCustomCampaign)
@@ -99,6 +101,14 @@ namespace NewSafetyHelp.Audio.Music
                     if (GlobalVariables.arcadeMode)
                     {
                         LoggingHelper.DebugLog("Choosing music for arcade mode.", LoggingHelper.LoggingCategory.ARCADE);
+
+                        customArcadeMusicList =
+                            customCampaign.ArcadeMusic.Where(MusicHelper.IsValidCustomMusic).ToList();
+
+                        int previousMusicIndex = (int)PreviousHoldMusicIndex.GetValue(__instance);
+
+                        chosenMusicIndex = MusicHelper.ChoseArcadeMusic(customCampaign.ArcadeMusic.Count,
+                            previousMusicIndex, ref playArcadeMusic);
                     }
                     else
                     {
@@ -149,8 +159,8 @@ namespace NewSafetyHelp.Audio.Music
                         return true;
                     }
 
-                    MusicHelper.PlayMusicInCustomCampaign(__instance, ref customMusicList, chosenMusicIndex,
-                        playCustomMusic, customCampaign.RemoveDefaultMusic);
+                    MusicHelper.PlayMusicInCustomCampaign(__instance, ref customMusicList, ref customArcadeMusicList,
+                        chosenMusicIndex, playCustomMusic, playArcadeMusic, customCampaign.RemoveDefaultMusic);
                 }
 
                 return false; // Skip function with false.

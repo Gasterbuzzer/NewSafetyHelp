@@ -195,17 +195,60 @@ namespace NewSafetyHelp.Audio.Music
         }
 
         /// <summary>
+        /// Chooses a music clip for the arcade mode.
+        /// </summary>
+        /// <param name="customArcadeMusicAmount">Amount of arcade custom music in the custom campaign.</param>
+        /// <param name="previousMusicIndex">The index of the previously played music clip.</param>
+        /// <param name="playArcadeMusic">(Reference) If to play the arcade music.</param>
+        /// <returns>(int) Index of the music to be played.</returns>
+        public static int ChoseArcadeMusic(int customArcadeMusicAmount, int previousMusicIndex,
+            ref bool playArcadeMusic)
+        {
+            int chosenMusicIndex = 0;
+
+            if (customArcadeMusicAmount >= 0)
+            {
+                playArcadeMusic = true;
+
+                for (int musicChoosingAttempt = 0;
+                     chosenMusicIndex == previousMusicIndex && musicChoosingAttempt < 3;
+                     ++musicChoosingAttempt)
+                {
+                    chosenMusicIndex = Random.Range(0, customArcadeMusicAmount);
+                }
+            }
+
+            return chosenMusicIndex;
+        }
+
+        /// <summary>
         /// Plays music in the custom campaign.
         /// </summary>
         /// <param name="__instance">Instance of the music controller class.</param>
         /// <param name="customMusicList">List of all custom music available to be played.</param>
+        /// <param name="customArcadeMusicList">List of all custom arcade music available to be played.</param>
         /// <param name="chosenMusicIndex">Index of the chosen music.</param>
         /// <param name="playCustomMusic">If to play music from the custom campaign list or from the base game.</param>
+        /// <param name="playArcadeMusic">If to play arcade music from the custom campaign list-</param>
         /// <param name="removeDefaultMusic">If we remove the base game music.
         /// Ergo only play custom campaign music if this is enabled.</param>
         public static void PlayMusicInCustomCampaign(MusicController __instance, ref List<CustomMusic> customMusicList,
-            int chosenMusicIndex, bool playCustomMusic, bool removeDefaultMusic)
+            ref List<CustomMusic> customArcadeMusicList, int chosenMusicIndex, bool playCustomMusic,
+            bool playArcadeMusic, bool removeDefaultMusic)
         {
+            if (GlobalVariables.arcadeMode
+                && playArcadeMusic)
+            {
+                if (customArcadeMusicList.Count > 0
+                    && chosenMusicIndex < customMusicList.Count
+                    && customArcadeMusicList[chosenMusicIndex].MusicClip != null)
+                {
+                    __instance.StartMusic(customArcadeMusicList[chosenMusicIndex].MusicClip);
+                }
+
+                return;
+            }
+
             if (playCustomMusic)
             {
                 if (customMusicList.Count > 0
