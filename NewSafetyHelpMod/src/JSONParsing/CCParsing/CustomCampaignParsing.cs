@@ -70,7 +70,6 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 }
             }
 
-
             // Check if any entries have to be added to this campaign.
             PendingParsingHelper.AddPendingElementsToCampaign(ref GlobalParsingVariables.PendingCustomCampaignEntries,
                 ref customCampaign.EntriesOnlyInCampaign, customCampaignName, "entries");

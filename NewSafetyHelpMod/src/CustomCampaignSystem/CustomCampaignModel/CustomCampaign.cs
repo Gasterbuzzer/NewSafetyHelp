@@ -9,10 +9,12 @@ using NewSafetyHelp.CustomCampaignSystem.CustomTextFiles;
 using NewSafetyHelp.CustomCampaignSystem.CutsceneLogic;
 using NewSafetyHelp.CustomCampaignSystem.LinkApps;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem.Phobia;
 using NewSafetyHelp.CustomCampaignSystem.Themes;
 using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.Emails;
 using NewSafetyHelp.EntryManager.EntryData;
+using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
 
 namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
@@ -344,8 +346,60 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
         };
 
         /*
+         * Phobias
+         */
+
+        public List<CustomPhobia> CustomPhobias = new List<CustomPhobia>();
+
+        private MelonPreferences_Category customPhobiaCategory;
+
+        /*
          * Helper functions for custom campaigns.
          */
+
+        /// <summary>
+        /// Registers every custom phobia declared by entries.
+        /// </summary>
+        public void RegisterAllCustomPhobias()
+        {
+            customPhobiaCategory =
+                MelonPreferences.CreateCategory($"{CampaignName}_{CampaignDesktopName}_{CampaignDays}_Phobias");
+
+            foreach (EntryMetadata entry in EntriesOnlyInCampaign)
+            {
+                if (entry.CustomPhobias.HasChanged)
+                {
+                    foreach (string phobiaString in entry.CustomPhobias.Data)
+                    {
+                        bool alreadyExists = false;
+
+                        foreach (CustomPhobia customPhobia in CustomPhobias)
+                        {
+                            if (customPhobia.PhobiaName.ToLower() == phobiaString.ToLower())
+                            {
+                                alreadyExists = true;
+                            }
+                        }
+
+                        if (!alreadyExists)
+                        {
+                            CustomPhobia customPhobia = new CustomPhobia
+                            {
+                                PhobiaName = phobiaString
+                            };
+
+                            CustomPhobias.Add(customPhobia);
+
+                            customPhobia.PreferenceReference =
+                                customPhobiaCategory.CreateEntry($"{CampaignName}_Phobia_{customPhobia.PhobiaName}",
+                                    false);
+
+                            LoggingHelper.DebugLog($"Registered new custom phobia '{customPhobia.PhobiaName}'.");
+                        }
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Sorts the custom callers to the correct order.

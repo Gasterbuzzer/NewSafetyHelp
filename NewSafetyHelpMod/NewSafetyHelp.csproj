@@ -201,6 +201,8 @@
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\DesktopModifierSnapshot.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\ModifierSource.cs" />
     <Compile Include="src\CustomCampaignSystem\Modifier\Data\VariableChanged.cs" />
+    <Compile Include="src\CustomCampaignSystem\Phobia\CustomPhobia.cs" />
+    <Compile Include="src\CustomCampaignSystem\Phobia\PhobiaPatches.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignOptionSaving.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignSaving.cs" />
     <Compile Include="src\CustomCampaignSystem\Saving\OptionUpdatePatches.cs" />

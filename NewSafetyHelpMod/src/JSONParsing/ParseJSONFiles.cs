@@ -100,6 +100,9 @@ namespace NewSafetyHelp.JSONParsing
                 {
                     customCampaign.SortArcadeCallers();
                 }
+
+                // Register Custom Phobias
+                customCampaign.RegisterAllCustomPhobias();
             }
 
             // If no audio is loading, we can reset the game back. If not, we let the audios do so.

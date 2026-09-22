@@ -128,8 +128,13 @@ namespace NewSafetyHelp.CustomDesktop
                         ToggleButtonFunctions.OnVsyncToggle,
                         "Enable VSYNC", GlobalPreferences.Vsync.Value);
 
+                    // ARG
                     ARGHelper.ARGSettingsSetup();
 
+                    // Phobia
+                    InGameSettingHelper.CreatePhobiasTogglesSection();
+
+                    // Custom Debug Settings
                     GameObject developerSettings = InGameSettingHelper.CreateNewSettingsSection("Debug Settings",
                         "Mod settings to show more information and also allow skipping the initial load scene.");
 

@@ -26,7 +26,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ref string entryPortraitLocation, ref string entryAudioClipLocation, ref bool deleteReplaceEntry,
             ref bool inCustomCampaign, ref string customCampaignName,
             ref string videoUrlPortrait, ref bool isVideoPortrait, ref VariableChanged<bool> videoPortraitShouldLoop,
-            ref bool compressAudio)
+            ref bool compressAudio, ref VariableChanged<List<string>> customPhobias)
         {
             /*
              * Entry Information
@@ -215,6 +215,10 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
 
             ParsingHelper.TryAssignWithChangedBool(jsonObjectParsed, "portrait_video_should_loop",
                 ref videoPortraitShouldLoop);
+
+            // Custom Phobias
+            ParsingHelper.TryAssignListOrSingleElementVariableChanged(jsonObjectParsed, "custom_phobias",
+                ref customPhobias);
         }
 
         private static void ParsePhobias(ref JObject jsonObjectParsed, ref bool spiderPhobia,
@@ -324,6 +328,11 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 Data = true
             };
 
+            VariableChanged<List<string>> customPhobias = new VariableChanged<List<string>>
+            {
+                Data = new List<string>()
+            };
+
             // Phobias
             bool spiderPhobia = false;
             bool spiderPhobiaIncluded = false;
@@ -350,7 +359,7 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref entryName, ref entryDescription, ref arcadeCalls, ref entryPortrait,
                 ref entryPortraitLocation, ref entryAudioClipLocation, ref deleteReplaceEntry,
                 ref inCustomCampaign, ref customCampaignName, ref videoUrlPortrait, ref isVideoPortrait,
-                ref videoPortraitShouldLoop, ref compressAudio);
+                ref videoPortraitShouldLoop, ref compressAudio, ref customPhobias);
 
             // Parse Phobias
             ParsePhobias(ref jObjectParsed, ref spiderPhobia, ref spiderPhobiaIncluded,
@@ -375,10 +384,10 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 ref accessLevel, ref onlyDLC,
                 ref includeDLC, ref includeMainCampaign, ref consequenceCallerName, ref consequenceCallerTranscript,
                 ref consequenceCallerPortrait, ref deleteReplaceEntry, ref inCustomCampaign, ref customCampaignName,
-                ref videoUrlPortrait, ref isVideoPortrait, ref videoPortraitShouldLoop);
+                ref videoUrlPortrait, ref isVideoPortrait, ref videoPortraitShouldLoop, ref customPhobias);
 
             // Caller Audio Path (Later gets added with coroutine)
-            if (jObjectParsed.TryGetValue("caller_audio_clip_name", out var callerAudioClipNameValue))
+            if (jObjectParsed.TryGetValue("caller_audio_clip_name", out JToken callerAudioClipNameValue))
             {
                 string callerAudioClipLocation = (string)callerAudioClipNameValue;
 
@@ -563,7 +572,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             ref bool includeDLC, ref bool includeMainCampaign, ref string consequenceCallerName,
             ref string consequenceCallerTranscript, ref Sprite consequenceCallerPortrait,
             ref bool deleteReplaceEntry, ref bool inCustomCampaign, ref string customCampaignName,
-            ref string videoUrlPortrait, ref bool isVideoPortrait, ref VariableChanged<bool> videoPortraitShouldLoop)
+            ref string videoUrlPortrait, ref bool isVideoPortrait, ref VariableChanged<bool> videoPortraitShouldLoop,
+            ref VariableChanged<List<string>> customPhobias)
         {
             newExtra = new EntryMetadata(entryName, newID)
             {
@@ -601,6 +611,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
             newExtra.VideoUrlPortrait = videoUrlPortrait;
             newExtra.IsVideoPortrait = isVideoPortrait;
             newExtra.VideoPortraitShouldLoop = videoPortraitShouldLoop;
+
+            newExtra.CustomPhobias = customPhobias;
 
             if (deleteReplaceEntry)
             {
@@ -1012,7 +1024,8 @@ namespace NewSafetyHelp.JSONParsing.EntryParsing
                 {
                     if (extraEntryInfo != null)
                     {
-                        LoggingHelper.DebugLog($"Adding found custom campaign entry ('{extraEntryInfo.Name}') to the custom campaign.");
+                        LoggingHelper.DebugLog(
+                            $"Adding found custom campaign entry ('{extraEntryInfo.Name}') to the custom campaign.");
                         customCampaign.EntriesOnlyInCampaign.Add(extraEntryInfo);
                     }
                     else

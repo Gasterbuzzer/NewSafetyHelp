@@ -1,4 +1,8 @@
 ﻿using System;
+using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Phobia;
+using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -197,6 +201,38 @@ namespace NewSafetyHelp.InGameSettings
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Creates all the custom phobias in the settings menu.
+        /// </summary>
+        public static void CreatePhobiasTogglesSection()
+        {
+            if (CustomCampaignGlobal.InCustomCampaign)
+            {
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                if (customCampaign == null)
+                {
+                    LoggingHelper.CampaignNullError();
+                    return;
+                }
+
+                foreach (CustomPhobia customPhobia in customCampaign.CustomPhobias)
+                {
+                    CreateNewToggle(GetPhobiasTogglesSection(),
+                        toggleValue =>
+                        {
+                            customPhobia.PreferenceReference.Value = toggleValue;
+
+                            LoggingHelper.DebugLog(
+                                $"Toggled the phobia '{customPhobia.PhobiaName}' to: '{toggleValue}'.");
+
+                            return toggleValue;
+                        },
+                        customPhobia.PhobiaName, customPhobia.PreferenceReference.Value);
+                }
+            }
         }
     }
 }

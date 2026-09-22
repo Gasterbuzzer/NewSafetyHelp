@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
+using NewSafetyHelp.CustomCampaignSystem.Phobia;
 
 namespace NewSafetyHelp.EntryManager.EntryData
 {
@@ -59,6 +61,11 @@ namespace NewSafetyHelp.EntryManager.EntryData
         public VariableChanged<bool> VideoPortraitShouldLoop = new VariableChanged<bool>
         {
             Data = true
+        };
+
+        public VariableChanged<List<string>> CustomPhobias = new VariableChanged<List<string>>
+        {
+            Data = new List<string>()
         };
 
         // Constructor
