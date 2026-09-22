@@ -135,6 +135,7 @@
     <Compile Include="src\ARG\ARGHelper.cs" />
     <Compile Include="src\ARG\ARGLoadedFiles.cs" />
     <Compile Include="src\ARG\ARGLogic\ARGClickEvent.cs" />
+    <Compile Include="src\ARG\ARGLogic\ARGKeypadInput.cs" />
     <Compile Include="src\ARG\ARGLogic\ARGKeypadLogic.cs" />
     <Compile Include="src\ARG\ARGLogic\ARGSecretInputMono.cs" />
     <Compile Include="src\ARG\ARGGUI\ARGKeypad.cs" />

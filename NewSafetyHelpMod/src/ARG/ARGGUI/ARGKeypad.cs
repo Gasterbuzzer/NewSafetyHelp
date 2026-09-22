@@ -8,7 +8,6 @@ using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -21,6 +20,11 @@ namespace NewSafetyHelp.ARG.ARGGUI
 
         private static readonly Vector4 Key = new Vector4(12, -9, 49, 63);
 
+        private static List<GameObject> inputFields = new List<GameObject>();
+
+        /// <summary>
+        /// Creates the ARG Keypad.
+        /// </summary>
         public static void CreateKeypad()
         {
             GameObject mainMenuCanvas = GameObject.Find("MainMenuCanvas");
@@ -82,6 +86,9 @@ namespace NewSafetyHelp.ARG.ARGGUI
 
             keypadRectTransform.offsetMax = new Vector2(200, 127.645f);
             keypadRectTransform.offsetMin = new Vector2(-200, -159.165f);
+
+            // Add Keypad Input Logic
+            keypadPopup.AddComponent<ARGKeypadInput.ARGCaptureKeypadInput>();
 
             // Remove old content
             Object.Destroy(keypadPopup.transform.GetChild(1).GetChild(1).gameObject);
@@ -165,7 +172,7 @@ namespace NewSafetyHelp.ARG.ARGGUI
             inputPasscodeLabel.AddComponent<CanvasGroup>().blocksRaycasts = false;
 
             // Create Input Fields
-            List<GameObject> inputFields = new List<GameObject>();
+            inputFields = new List<GameObject>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -182,18 +189,10 @@ namespace NewSafetyHelp.ARG.ARGGUI
 
                 TMP_InputField inputField = newInputField.AddComponent<TMP_InputField>();
                 inputField.characterLimit = 1;
+                inputField.transition = Selectable.Transition.None;
+                inputField.interactable = false;
 
                 newInputField.AddComponent<Shadow>();
-
-                int currentIndex = i;
-
-                inputField.onValueChanged.AddListener(_ =>
-                {
-                    if (inputFields.Count >= 4)
-                    {
-                        EventSystem.current.SetSelectedGameObject(inputFields[(currentIndex + 1) % 4]);
-                    }
-                });
 
                 // Text Area to contain the text
                 GameObject textArea = new GameObject("TextAreaBox", typeof(RectTransform));
@@ -224,7 +223,7 @@ namespace NewSafetyHelp.ARG.ARGGUI
                 // Connect GameObjects to input field
                 inputField.textViewport = textAreaRectTransform;
                 inputField.textComponent = inputTextComponent;
-                inputField.text = "0";
+                inputField.text = "-";
 
                 //Adhere to color palette
                 AdhereToPalette adhereToPaletteComponent = newInputField.AddComponent<AdhereToPalette>();
@@ -298,6 +297,84 @@ namespace NewSafetyHelp.ARG.ARGGUI
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// Removes the last digit of the fields.
+        /// </summary>
+        public static void RemoveLastDigit()
+        {
+            if (inputFields.Count >= 4)
+            {
+                List<TMP_InputField> inputKey = new List<TMP_InputField>
+                {
+                    inputFields[0].GetComponent<TMP_InputField>(),
+                    inputFields[1].GetComponent<TMP_InputField>(),
+                    inputFields[2].GetComponent<TMP_InputField>(),
+                    inputFields[3].GetComponent<TMP_InputField>()
+                };
+
+                int wantedIndex = -1;
+                for (int i = 0; i < inputKey.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(inputKey[i].text)
+                        && !inputKey[i].text.Equals("-"))
+                    {
+                        wantedIndex = i;
+                    }
+                }
+
+                if (wantedIndex <= -1)
+                {
+                    return;
+                }
+
+                if (wantedIndex >= 3)
+                {
+                    wantedIndex = 3;
+                }
+
+                inputKey[wantedIndex].text = "-";
+
+                LoggingHelper.DebugLog($"Removed digit at position '{wantedIndex}'.");
+            }
+        }
+
+        /// <summary>
+        /// Adds a digit to the input.
+        /// </summary>
+        public static void AddDigit(int digit)
+        {
+            if (inputFields.Count >= 4)
+            {
+                List<TMP_InputField> inputKey = new List<TMP_InputField>
+                {
+                    inputFields[0].GetComponent<TMP_InputField>(),
+                    inputFields[1].GetComponent<TMP_InputField>(),
+                    inputFields[2].GetComponent<TMP_InputField>(),
+                    inputFields[3].GetComponent<TMP_InputField>()
+                };
+
+                int wantedIndex = -1;
+                for (int i = 0; i < inputKey.Count; i++)
+                {
+                    if (string.IsNullOrEmpty(inputKey[i].text)
+                        || inputKey[i].text.Equals("-"))
+                    {
+                        wantedIndex = i;
+                        break;
+                    }
+                }
+
+                if (wantedIndex <= -1)
+                {
+                    return;
+                }
+
+                inputKey[wantedIndex].text = $"{digit}";
+
+                LoggingHelper.DebugLog($"Added digit '{digit}' at position '{wantedIndex}'.");
+            }
         }
     }
 }
