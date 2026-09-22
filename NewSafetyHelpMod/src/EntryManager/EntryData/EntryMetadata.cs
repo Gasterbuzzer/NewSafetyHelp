@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignSystem.Abstract;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
-using NewSafetyHelp.CustomCampaignSystem.Phobia;
 
 namespace NewSafetyHelp.EntryManager.EntryData
 {
