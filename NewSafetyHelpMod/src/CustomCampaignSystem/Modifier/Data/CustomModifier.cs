@@ -218,7 +218,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         };
 
         public bool FinalCutsceneCompressAudio = true;
-        
+
         public VariableChanged<RichAudioClip> FinalCutsceneAudio = new VariableChanged<RichAudioClip>
         {
             Data = null
@@ -269,7 +269,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = "TIMES UP!\nCALL DISCONNECTED"
         };
-        
+
         public bool TimedCallerCompressAudio = true;
 
         public VariableChanged<RichAudioClip> TimedCallerStartSound = new VariableChanged<RichAudioClip>
@@ -375,7 +375,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = null
         };
-        
+
         public bool ClockInAudiosCompressed = true;
 
         public VariableChanged<RichAudioClip> ClockDayStartedAudio = new VariableChanged<RichAudioClip>
@@ -427,37 +427,45 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
         {
             Data = 1.42f
         };
-        
+
         public VariableChanged<string> SubmitWindowTitle = new VariableChanged<string>
         {
             Data = null
         };
-        
+
         public VariableChanged<string> SubmitWindowText = new VariableChanged<string>
         {
             Data = null
         };
-        
+
         public VariableChanged<Sprite> SubmitWindowIcon = new VariableChanged<Sprite>
         {
             Data = null
         };
-        
+
         public VariableChanged<List<Sprite>> ClockInAnimation = new VariableChanged<List<Sprite>>
         {
             Data = new List<Sprite>()
         };
-        
+
         public VariableChanged<float> ClockInAnimationDuration = new VariableChanged<float>
         {
             Data = 2.25f
         };
-        
+
         public VariableChanged<float> ClockInAnimationScale = new VariableChanged<float>
         {
             Data = 1f
         };
 
+        /*
+         * Entry
+         */
+
+        public VariableChanged<Sprite> EntryPlaceholderImage = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
 
         /*
          * Cheats / Settings Section

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -81,6 +82,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Phobia
                 if (outcome)
                 {
                     __result = __instance.phobiaReplacementSprite;
+
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        (bool foundModifier, VariableChanged<Sprite> value) entryPlaceholderImage =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.EntryPlaceholderImage,
+                                vCs => vCs.HasChanged);
+
+                        if (entryPlaceholderImage.foundModifier
+                            && entryPlaceholderImage.value.HasChanged)
+                        {
+                            __result = entryPlaceholderImage.value.Data;
+                        }
+                    }
                 }
                 else
                 {
@@ -112,6 +126,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Phobia
                 if (outcome)
                 {
                     __result = __instance.phobiaReplacementSprite;
+
+                    if (CustomCampaignGlobal.InCustomCampaign)
+                    {
+                        (bool foundModifier, VariableChanged<Sprite> value) entryPlaceholderImage =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.EntryPlaceholderImage,
+                                vCs => vCs.HasChanged);
+
+                        if (entryPlaceholderImage.foundModifier
+                            && entryPlaceholderImage.value.HasChanged)
+                        {
+                            __result = entryPlaceholderImage.value.Data;
+                        }
+                    }
                 }
                 else
                 {

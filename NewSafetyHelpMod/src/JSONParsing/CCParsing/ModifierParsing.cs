@@ -582,6 +582,15 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             };
 
             /*
+             * Entry
+             */
+
+            VariableChanged<Sprite> entryPlaceholderImage = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
+            /*
              * Cheats / Settings Section
              */
 
@@ -1037,6 +1046,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ref clockInAnimationScale);
 
             /*
+             * Entry
+             */
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "entry_placeholder_image_name",
+                ref entryPlaceholderImage, jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            /*
              * Cheats / Settings
              */
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "show_accuracy_display",
@@ -1185,6 +1200,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ClockDayStartedAudioPath = clockDayStartedAudioPath,
                 InGameLogoFadeInAudio = inGameLogoFadeInAudio,
                 InGameLogoFadeInAudioPath = inGameLogoFadeInAudioPath,
+
+                EntryPlaceholderImage = entryPlaceholderImage,
 
                 ShowDefaultUIAccuracyText = showDefaultUIAccuracyText,
                 DisableDesktopLoading = disableDesktopLoading,
