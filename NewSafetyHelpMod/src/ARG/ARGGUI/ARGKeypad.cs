@@ -8,8 +8,10 @@ using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.ARG.ARGGUI
 {
@@ -21,6 +23,8 @@ namespace NewSafetyHelp.ARG.ARGGUI
         private static readonly Vector4 Key = new Vector4(12, -9, 49, 63);
 
         private static List<GameObject> inputFields = new List<GameObject>();
+
+        private static AudioSource keypadAudioSource;
 
         /// <summary>
         /// Creates the ARG Keypad.
@@ -79,6 +83,27 @@ namespace NewSafetyHelp.ARG.ARGGUI
             GameObject programLogo = keypadPopup.transform.GetChild(0).GetChild(2).gameObject;
 
             programLogo.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
+
+            // Add Sound Source
+            keypadAudioSource = keypadPopup.AddComponent<AudioSource>();
+            keypadAudioSource.playOnAwake = false;
+            keypadAudioSource.volume = 0.5f;
+            
+            GameObject optionsPopup =
+                GameObject.Find("MainMenuCanvas").transform.Find("OptionsPopup").gameObject;
+
+            AudioMixer audioMixer = optionsPopup.GetComponent<OptionsMenuBehavior>().masterMixer;
+
+            AudioMixerGroup[] audioMixerGroups = audioMixer.FindMatchingGroups("SFX");
+
+            if (audioMixerGroups.Length > 0)
+            {
+                keypadAudioSource.outputAudioMixerGroup = audioMixerGroups[0];
+            }
+            else
+            {
+                LoggingHelper.ErrorLog("Could not add keypad sounds to SFX group.");
+            }
 
             // Resize the Window
 
@@ -336,6 +361,8 @@ namespace NewSafetyHelp.ARG.ARGGUI
 
                 inputKey[wantedIndex].text = "-";
 
+                PlayKeyboardSound();
+
                 LoggingHelper.DebugLog($"Removed digit at position '{wantedIndex}'.");
             }
         }
@@ -373,8 +400,19 @@ namespace NewSafetyHelp.ARG.ARGGUI
 
                 inputKey[wantedIndex].text = $"{digit}";
 
+                PlayKeyboardSound();
+
                 LoggingHelper.DebugLog($"Added digit '{digit}' at position '{wantedIndex}'.");
             }
+        }
+
+        /// <summary>
+        /// Plays a random keyboard sound.
+        /// </summary>
+        private static void PlayKeyboardSound()
+        {
+            keypadAudioSource.PlayOneShot(EmbedLoader.KeyboardSounds[Random.Range(0, EmbedLoader.KeyboardSounds.Count)]
+                .clip);
         }
     }
 }

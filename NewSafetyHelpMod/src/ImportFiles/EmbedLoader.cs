@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
@@ -11,11 +12,7 @@ namespace NewSafetyHelp.ImportFiles
         [CanBeNull] public static RichAudioClip ClockHalfTime;
         [CanBeNull] public static RichAudioClip ClockStart;
 
-        [CanBeNull] public static RichAudioClip KeyboardSound01;
-        [CanBeNull] public static RichAudioClip KeyboardSound02;
-        [CanBeNull] public static RichAudioClip KeyboardSound03;
-        [CanBeNull] public static RichAudioClip KeyboardSound04;
-        [CanBeNull] public static RichAudioClip KeyboardSound05;
+        public static readonly List<RichAudioClip> KeyboardSounds = new List<RichAudioClip>();
 
         [CanBeNull] public static Sprite ClockBase;
         [CanBeNull] public static Sprite ClockHand;
@@ -83,11 +80,11 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        KeyboardSound01 = AudioImport.CreateRichAudioClip(audioClip, "keyboard01.mp3");
+                        KeyboardSounds.Add(AudioImport.CreateRichAudioClip(audioClip, "keyboard01.mp3"));
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound01)}' audio clip.");
+                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard01.mp3' audio clip.");
                     }
                 },
                 "keyboard01.mp3", true);
@@ -98,11 +95,11 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        KeyboardSound02 = AudioImport.CreateRichAudioClip(audioClip, "keyboard02.mp3");
+                        KeyboardSounds.Add(AudioImport.CreateRichAudioClip(audioClip, "keyboard02.mp3"));
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound02)}' audio clip.");
+                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard02.mp3' audio clip.");
                     }
                 },
                 "keyboard02.mp3", true);
@@ -113,11 +110,11 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        KeyboardSound03 = AudioImport.CreateRichAudioClip(audioClip, "keyboard03.mp3");
+                        KeyboardSounds.Add(AudioImport.CreateRichAudioClip(audioClip, "keyboard03.mp3"));
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound03)}' audio clip.");
+                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard03.mp3' audio clip.");
                     }
                 },
                 "keyboard03.mp3", true);
@@ -128,11 +125,11 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        KeyboardSound04 = AudioImport.CreateRichAudioClip(audioClip, "keyboard04.mp3");
+                        KeyboardSounds.Add(AudioImport.CreateRichAudioClip(audioClip, "keyboard04.mp3"));
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound04)}' audio clip.");
+                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard04.mp3' audio clip.");
                     }
                 },
                 "keyboard04.mp3", true);
@@ -143,11 +140,11 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        KeyboardSound05 = AudioImport.CreateRichAudioClip(audioClip, "keyboard05.mp3");
+                        KeyboardSounds.Add(AudioImport.CreateRichAudioClip(audioClip, "keyboard05.mp3"));
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound05)}' audio clip.");
+                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard05.mp3' audio clip.");
                     }
                 },
                 "keyboard05.mp3", true);
