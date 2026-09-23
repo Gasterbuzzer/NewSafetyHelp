@@ -31,14 +31,14 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        ClockFivePercent = AudioImport.CreateRichAudioClip(audioClip, "clock_10_percent.wav");
+                        ClockFivePercent = AudioImport.CreateRichAudioClip(audioClip, "clock_10_percent.mp3");
                     }
                     else
                     {
                         LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(ClockFivePercent)}' audio clip.");
                     }
                 },
-                "clock_10_percent.wav", true);
+                "clock_10_percent.mp3", true);
 
             AudioImport.LoadEmbeddedAudio(
                 audioClip =>
@@ -46,14 +46,14 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        ClockHalfTime = AudioImport.CreateRichAudioClip(audioClip, "clock_half_time.wav");
+                        ClockHalfTime = AudioImport.CreateRichAudioClip(audioClip, "clock_half_time.mp3");
                     }
                     else
                     {
                         LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(ClockHalfTime)}' audio clip.");
                     }
                 },
-                "clock_half_time.wav", true);
+                "clock_half_time.mp3", true);
 
             AudioImport.LoadEmbeddedAudio(
                 audioClip =>
@@ -61,14 +61,14 @@ namespace NewSafetyHelp.ImportFiles
                     if (audioClip != null)
                     {
                         // Add the audio
-                        ClockStart = AudioImport.CreateRichAudioClip(audioClip, "clock_start.wav");
+                        ClockStart = AudioImport.CreateRichAudioClip(audioClip, "clock_start.mp3");
                     }
                     else
                     {
                         LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(ClockStart)}' audio clip.");
                     }
                 },
-                "clock_start.wav", true);
+                "clock_start.mp3", true);
 
             /*
              * Keyboard Audio
