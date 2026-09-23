@@ -585,9 +585,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
              * Entry
              */
 
-            VariableChanged<Sprite> entryPlaceholderImage = new VariableChanged<Sprite>
+            VariableChanged<List<Sprite>> entryPlaceholderImage = new VariableChanged<List<Sprite>>
             {
-                Data = null
+                Data = new List<Sprite>()
             };
 
             /*
@@ -1048,8 +1048,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             /*
              * Entry
              */
-            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "entry_placeholder_image_name",
-                ref entryPlaceholderImage, jsonFolderPath, usermodFolderPath, customCampaignName);
+            ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed,
+                "entry_placeholder_image_name",
+                ref entryPlaceholderImage, jsonFolderPath, usermodFolderPath);
 
             /*
              * Cheats / Settings

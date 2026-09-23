@@ -5,6 +5,7 @@ using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.EntryManager.EntryData;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace NewSafetyHelp.CustomCampaignSystem.Phobia
 {
@@ -85,14 +86,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Phobia
 
                     if (CustomCampaignGlobal.InCustomCampaign)
                     {
-                        (bool foundModifier, VariableChanged<Sprite> value) entryPlaceholderImage =
+                        (bool foundModifier, VariableChanged<List<Sprite>> value) entryPlaceholderImage =
                             CustomCampaignGlobal.GetActiveModifierValue(c => c.EntryPlaceholderImage,
                                 vCs => vCs.HasChanged);
 
                         if (entryPlaceholderImage.foundModifier
                             && entryPlaceholderImage.value.HasChanged)
                         {
-                            __result = entryPlaceholderImage.value.Data;
+                            __result = entryPlaceholderImage.value.Data[
+                                Random.Range(0, entryPlaceholderImage.value.Data.Count)];
                         }
                     }
                 }
@@ -129,14 +131,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Phobia
 
                     if (CustomCampaignGlobal.InCustomCampaign)
                     {
-                        (bool foundModifier, VariableChanged<Sprite> value) entryPlaceholderImage =
+                        (bool foundModifier, VariableChanged<List<Sprite>> value) entryPlaceholderImage =
                             CustomCampaignGlobal.GetActiveModifierValue(c => c.EntryPlaceholderImage,
                                 vCs => vCs.HasChanged);
 
                         if (entryPlaceholderImage.foundModifier
                             && entryPlaceholderImage.value.HasChanged)
                         {
-                            __result = entryPlaceholderImage.value.Data;
+                            __result = entryPlaceholderImage.value.Data[
+                                Random.Range(0, entryPlaceholderImage.value.Data.Count)];
                         }
                     }
                 }

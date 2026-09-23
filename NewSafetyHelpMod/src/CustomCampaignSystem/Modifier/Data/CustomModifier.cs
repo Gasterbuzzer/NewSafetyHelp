@@ -462,9 +462,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
          * Entry
          */
 
-        public VariableChanged<Sprite> EntryPlaceholderImage = new VariableChanged<Sprite>
+        public VariableChanged<List<Sprite>> EntryPlaceholderImage = new VariableChanged<List<Sprite>>
         {
-            Data = null
+            Data = new List<Sprite>()
         };
 
         /*
