@@ -458,6 +458,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = 1f
         };
 
+        public VariableChanged<bool> EnableDayStartHint = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
+        public VariableChanged<string> HintForTheDay = new VariableChanged<string>
+        {
+            Data = null
+        };
+
         /*
          * Entry
          */

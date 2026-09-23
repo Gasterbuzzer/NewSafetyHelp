@@ -379,6 +379,10 @@ namespace NewSafetyHelp.ARG.ARGGUI
                     {
                         ARGHelper.CreateErrorMessage("Beginning ritual.", mainMenuCanvas.transform);
                     }
+                    else
+                    {
+                        ARGHelper.CreateErrorMessage("Invalid Password. Please try again.", mainMenuCanvas.transform);
+                    }
                 }
             });
         }

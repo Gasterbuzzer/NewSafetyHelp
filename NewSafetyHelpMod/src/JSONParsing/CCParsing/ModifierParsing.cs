@@ -581,6 +581,16 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 1f
             };
 
+            VariableChanged<bool> enableDayStartHint = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
+            VariableChanged<string> hintForTheDay = new VariableChanged<string>
+            {
+                Data = null
+            };
+
             /*
              * Entry
              */
@@ -1045,6 +1055,12 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "in_game_clock_in_animation_scale",
                 ref clockInAnimationScale);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "enable_hint_for_day",
+                ref enableDayStartHint);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_for_day",
+                ref hintForTheDay);
+
             /*
              * Entry
              */
@@ -1201,6 +1217,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ClockDayStartedAudioPath = clockDayStartedAudioPath,
                 InGameLogoFadeInAudio = inGameLogoFadeInAudio,
                 InGameLogoFadeInAudioPath = inGameLogoFadeInAudioPath,
+
+                EnableDayStartHint = enableDayStartHint,
+                HintForTheDay = hintForTheDay,
 
                 EntryPlaceholderImage = entryPlaceholderImage,
 

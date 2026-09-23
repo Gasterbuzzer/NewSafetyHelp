@@ -206,6 +206,10 @@ namespace NewSafetyHelp.Callers.UI
                 "WriteDayString",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
+            private static readonly FieldInfo StartingSize = typeof(TextSizer).GetField(
+                "startingSize",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static);
+
             /// <summary>
             /// Patches start software routine to work better with custom campaigns.
             /// </summary>
@@ -475,6 +479,85 @@ namespace NewSafetyHelp.Callers.UI
                         RectTransform clockInAnimationRectTransform = clockInAnimationGO.GetComponent<RectTransform>();
 
                         clockInAnimationRectTransform.sizeDelta *= clockInAnimationScale.value.Data;
+                    }
+
+                    // Hint System
+
+                    (bool foundModifier, VariableChanged<bool> value) enableDayStartHint =
+                        CustomCampaignGlobal.GetActiveModifierValue(c => c.EnableDayStartHint,
+                            vCs => vCs.HasChanged);
+
+                    if (enableDayStartHint.foundModifier
+                        && enableDayStartHint.value.Data)
+                    {
+                        GameObject softwareIntroGameObject =
+                            GameObject.Find("MainCanvas/Panel").transform.Find("SoftwareIntroPanel").gameObject;
+
+                        GameObject clockInPanel = softwareIntroGameObject.transform.GetChild(0).gameObject;
+
+                        // ClockInElements/ClockInButton
+                        GameObject clockInButton = clockInPanel.transform.GetChild(0).GetChild(2).gameObject;
+
+                        clockInPanel.transform.position = new Vector3(0.01f, 0.5f, 0);
+
+                        // Now we create the hint space.
+                        GameObject hintGameObject = Object.Instantiate(clockInButton,
+                            softwareIntroGameObject.transform);
+
+                        hintGameObject.name = "HintSystemUIParent";
+
+                        Object.Destroy(hintGameObject.GetComponent<Button>());
+
+                        Object.Destroy(hintGameObject.GetComponent<SwapCursorHoverDisplayer>());
+
+                        hintGameObject.transform.position = new Vector3(0.01f, -3.5f, 0);
+
+                        RectTransform hintRectTransform = hintGameObject.GetComponent<RectTransform>();
+
+                        hintRectTransform.offsetMax = new Vector2(170.9825f, -150.3632f);
+                        hintRectTransform.offsetMin = new Vector2(-170.9875f, -243.1632f);
+
+                        GameObject hintText = hintGameObject.transform.GetChild(0).gameObject;
+
+                        RectTransform hintTextRectTransform = hintText.GetComponent<RectTransform>();
+
+                        hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 250f);
+                        hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 250f);
+
+                        hintTextRectTransform.localPosition = new Vector3(45, 0, 0);
+
+                        TextSizer hintTextSizer = hintText.GetComponent<TextSizer>();
+
+                        StartingSize.SetValue(hintTextSizer, 20);
+                        hintText.GetComponent<TextMeshProUGUI>().fontSize = 20;
+
+                        (bool foundModifier, VariableChanged<string> value) hintForTheDay =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.HintForTheDay,
+                                vCs => vCs.HasChanged);
+
+                        if (hintForTheDay.foundModifier
+                            && hintForTheDay.value.HasChanged)
+                        {
+                            hintText.GetComponent<TextMeshProUGUI>().text = hintForTheDay.value.Data;
+                        }
+                        else
+                        {
+                            hintText.GetComponent<TextMeshProUGUI>().text = HintHelper.GetRandomHint();
+                        }
+
+                        // Create image
+                        GameObject hintImage = new GameObject("HintImage");
+                        hintImage.transform.SetParent(hintGameObject.transform);
+
+                        RectTransform hintImageRectTransform = hintImage.AddComponent<RectTransform>();
+
+                        hintImageRectTransform.localPosition = new Vector3(-125, 0, 0);
+                        hintImageRectTransform.sizeDelta = new Vector2(1, 1);
+
+                        hintImage.AddComponent<CanvasRenderer>();
+                        Image hintImageComponent = hintImage.AddComponent<Image>();
+                        hintImageComponent.sprite = GameObject.Find("MainCanvas/Panel").transform.GetChild(12)
+                            .GetChild(0).GetComponent<Image>().sprite;
                     }
                 }
 
