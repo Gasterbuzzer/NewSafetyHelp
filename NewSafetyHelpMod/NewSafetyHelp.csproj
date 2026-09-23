@@ -1,312 +1,313 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9E2A6C17-9BEE-4DB1-A42F-F7C09A8601D6}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NewSafetyHelp</RootNamespace>
-    <AssemblyName>NewSafetyHelp</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\MelonLoader\net35\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="com.rlabrecque.steamworks.net">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
-    </Reference>
-    <Reference Include="MelonLoader">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\MelonLoader\net35\MelonLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\MelonLoader\net35\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Unity.Postprocessing.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestAudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestTextureModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestWWWModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.VideoModule">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="src\ARG\ARGGUI\ARGDesktopVideo.cs" />
-    <Compile Include="src\ARG\ARGHelper.cs" />
-    <Compile Include="src\ARG\ARGLoadedFiles.cs" />
-    <Compile Include="src\ARG\ARGLogic\ARGClickEvent.cs" />
-    <Compile Include="src\ARG\ARGLogic\ARGKeypadInput.cs" />
-    <Compile Include="src\ARG\ARGLogic\ARGKeypadLogic.cs" />
-    <Compile Include="src\ARG\ARGLogic\ARGSecretInputMono.cs" />
-    <Compile Include="src\ARG\ARGGUI\ARGKeypad.cs" />
-    <Compile Include="src\ARG\ARGLogic\ARGSettings.cs" />
-    <Compile Include="src\Audio\AudioCache.cs" />
-    <Compile Include="src\Audio\AudioImport.cs" />
-    <Compile Include="src\Audio\AudioLoadThrottler.cs" />
-    <Compile Include="src\Audio\AudioPatches\PlaySoundPatches.cs" />
-    <Compile Include="src\Audio\AudioPatches\UISoundPatch.cs" />
-    <Compile Include="src\Audio\Music\Arcade\ArcadeMusicHelper.cs" />
-    <Compile Include="src\Audio\Music\Data\CustomMusic.cs" />
-    <Compile Include="src\Audio\Music\Intermission\IntermissionMusicHelper.cs" />
-    <Compile Include="src\Audio\Music\MusicControllerPatches.cs" />
-    <Compile Include="src\Audio\Music\MusicHelper.cs" />
-    <Compile Include="src\Callers\Answer\ProvidingAnswer.cs" />
-    <Compile Include="src\Callers\CallerCreationAndUpdate\CreateAndUpdateCallerPatches.cs" />
-    <Compile Include="src\Callers\CallerHelpers\CallerSkipping.cs" />
-    <Compile Include="src\Callers\CallerModel\CustomCCaller.cs" />
-    <Compile Include="src\Callers\CallerPatches.cs" />
-    <Compile Include="src\Callers\IncomingCallWindow\AnimatedCallerPortraitPatches.cs" />
-    <Compile Include="src\Callers\IncomingCallWindow\CloseButtonPatches.cs" />
-    <Compile Include="src\Callers\IncomingCallWindow\CallWindowStartPatches.cs" />
-    <Compile Include="src\Callers\IncomingCallWindow\TypeTextPatches.cs" />
-    <Compile Include="src\Callers\UI\AnimatedEntry\AnimatedImageHelper.cs" />
-    <Compile Include="src\Callers\UI\AnimatedEntry\EntryCanvasStandaloneEntry.cs" />
-    <Compile Include="src\Callers\UI\AnimatedEntry\MainCanvasEntry.cs" />
-    <Compile Include="src\Callers\UI\MainCanvasPatches.cs" />
-    <Compile Include="src\Callers\UI\NextCaller.cs" />
-    <Compile Include="src\Callers\UI\UIFallbacks.cs" />
-    <Compile Include="src\CustomCampaignSystem\ArcadeCallerModule\ArcadeCaller.cs" />
-    <Compile Include="src\CustomCampaignSystem\Arcade\ArcadeFixes.cs" />
-    <Compile Include="src\CustomCampaignSystem\Arcade\ArcadeHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreen.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreenHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Custom3DScreenPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomRingtone\RingtoneHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFile.cs" />
-    <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFileHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\CutsceneLogic\CustomCutscene.cs" />
-    <Compile Include="src\CustomCampaignSystem\Desktop\DesktopBackgroundPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Desktop\OnDayUnlockPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Abstract\CustomCampaignElement.cs" />
-    <Compile Include="src\CustomCampaignSystem\Fade\FadeScreenPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCallerHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCutsceneHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyEmailHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyLinkAppHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyTextFileHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyVideoHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\CallerAccuracyType.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\GeneralAccuracyType.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs" />
-    <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs" />
-    <Compile Include="src\CustomCampaignSystem\InGamePatches\SelectPreviousEntryPatch.cs" />
-    <Compile Include="src\CustomCampaignSystem\LinkApps\LinkApp.cs" />
-    <Compile Include="src\CustomCampaignSystem\LinkApps\LinkAppHelper.cs" />
-    <Compile Include="src\CustomCampaignSystem\Modifier\Data\DesktopModifierSnapshot.cs" />
-    <Compile Include="src\CustomCampaignSystem\Modifier\Data\ModifierSource.cs" />
-    <Compile Include="src\CustomCampaignSystem\Modifier\Data\VariableChanged.cs" />
-    <Compile Include="src\CustomCampaignSystem\Phobia\CustomPhobia.cs" />
-    <Compile Include="src\CustomCampaignSystem\Phobia\PhobiaPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignOptionSaving.cs" />
-    <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignSaving.cs" />
-    <Compile Include="src\CustomCampaignSystem\Saving\OptionUpdatePatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Saving\SavingSettingPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Saving\SpecialOptionUpdatePatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Themes\ThemePatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\Themes\CustomTheme.cs" />
-    <Compile Include="src\CustomCampaignSystem\Saving\SavingManagerPatchesCC.cs" />
-    <Compile Include="src\CustomCampaignSystem\Modifier\Data\CustomModifier.cs" />
-    <Compile Include="src\CustomCampaignSystem\TimedCaller\TimedCallerPatches.cs" />
-    <Compile Include="src\CustomCampaignSystem\TimedCaller\TimerCallerHelper.cs" />
-    <Compile Include="src\CustomDesktop\CustomDesktop.cs" />
-    <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs" />
-    <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs" />
-    <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs" />
-    <Compile Include="src\CustomDesktop\Utils\CustomCampaignProgramHelper.cs" />
-    <Compile Include="src\CustomDesktop\Utils\CustomCampaignSceneSwitcher.cs" />
-    <Compile Include="src\CustomDesktop\Utils\DateUtil.cs" />
-    <Compile Include="src\CustomDesktop\Utils\EmailHelper.cs" />
-    <Compile Include="src\CustomDesktop\Utils\ThemeProgramHelper.cs" />
-    <Compile Include="src\CustomThemes\ColorHelper.cs" />
-    <Compile Include="src\CustomVideos\CustomVideo.cs" />
-    <Compile Include="src\CustomVideos\VideoHelper.cs" />
-    <Compile Include="src\CustomVideos\VideoPatches.cs" />
-    <Compile Include="src\Emails\CustomEmail.cs" />
-    <Compile Include="src\EndingPatches\GameEndCutscene.cs" />
-    <Compile Include="src\EndingPatches\GameOverPatches.cs" />
-    <Compile Include="src\EntryManager\EntryData\EntryMetadata.cs" />
-    <Compile Include="src\EntryManager\EntryListing\EntryListingPatches.cs" />
-    <Compile Include="src\EntryManager\EntryManager.cs" />
-    <Compile Include="src\EntryManager\EntryUnlocker\EntryUnlockerPatcher.cs" />
-    <Compile Include="src\ErrorDebugging\UnityLogHook.cs" />
-    <Compile Include="src\HelperFunctions\DebugHelper.cs" />
-    <Compile Include="src\HelperFunctions\EmbedHelpers.cs" />
-    <Compile Include="src\HelperFunctions\URLVerification.cs" />
-    <Compile Include="src\ImportFiles\EmbedLoader.cs" />
-    <Compile Include="src\ImportFiles\FileImporter.cs" />
-    <Compile Include="src\ImportFiles\ImageCache.cs" />
-    <Compile Include="src\ImportFiles\ImageImport.cs" />
-    <Compile Include="src\InGameSettings\GlobalPreferences.cs" />
-    <Compile Include="src\InGameSettings\InGameSettingHelper.cs" />
-    <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\ArcadeCallerParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\ARGParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\Computer3DScreenParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\CutsceneParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\LinkAppParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\RingtoneParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\TextProgramParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs" />
-    <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs" />
-    <Compile Include="src\JSONParsing\EntryParsing\MainCampaignCallerParsing.cs" />
-    <Compile Include="src\JSONParsing\EntryParsing\EntryParsing.cs" />
-    <Compile Include="src\JSONParsing\GlobalParsingVariables.cs" />
-    <Compile Include="src\JSONParsing\ParseJSONFiles.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\AccuracyParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\ArtbookParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\CallerRequirementParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\ColorParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\IDParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\ImageParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\PendingParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\URLParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ParsingHelpers\VideoParsingHelper.cs" />
-    <Compile Include="src\JSONParsing\ReloadJSONParsing.cs" />
-    <Compile Include="src\JSONParsing\ThunderStoreUserModUnpacker\ModUnpacker.cs" />
-    <Compile Include="src\LoggingSystem\LoggingHelper.cs" />
-    <Compile Include="src\Main.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\MainGameBugFixes\CloseErrorPopupFix.cs" />
-    <Compile Include="src\MainGameBugFixes\EmailLoadingBugFix.cs" />
-    <Compile Include="src\MainGameBugFixes\EntryLoadingBuxFix.cs" />
-    <Compile Include="src\MainGameBugFixes\EntryViewNotUpdating.cs" />
-    <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs" />
-    <Compile Include="src\MainGameBugFixes\UISoundBugFix.cs" />
-    <Compile Include="src\VersionChecker\AsyncVersionChecker.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="config.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="build_after.bat" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Audio\EmbeddedAudio\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\ImportFiles\EmbeddedImages\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="src\Audio\EmbeddedAudio\*.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="src\ImportFiles\EmbeddedImages\*.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)\build_after.bat</PostBuildEvent>
-  </PropertyGroup>
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{9E2A6C17-9BEE-4DB1-A42F-F7C09A8601D6}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>NewSafetyHelp</RootNamespace>
+        <AssemblyName>NewSafetyHelp</AssemblyName>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <Deterministic>true</Deterministic>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <PlatformTarget>x86</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <PlatformTarget>x86</PlatformTarget>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\MelonLoader\net35\0Harmony.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="com.rlabrecque.steamworks.net">
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
+        </Reference>
+        <Reference Include="MelonLoader">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\MelonLoader\net35\MelonLoader.dll</HintPath>
+        </Reference>
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\MelonLoader\net35\Newtonsoft.Json.dll</HintPath>
+        </Reference>
+        <Reference Include="System"/>
+        <Reference Include="System.Core"/>
+        <Reference Include="System.Drawing"/>
+        <Reference Include="System.IO.Compression.FileSystem"/>
+        <Reference Include="System.Xml.Linq"/>
+        <Reference Include="System.Data.DataSetExtensions"/>
+        <Reference Include="Microsoft.CSharp"/>
+        <Reference Include="System.Data"/>
+        <Reference Include="System.Net.Http"/>
+        <Reference Include="System.Xml"/>
+        <Reference Include="Unity.Postprocessing.Runtime">
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Unity.Postprocessing.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UIElementsModule">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestAudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestTextureModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestWWWModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.VideoModule">
+            <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Home Safety Hotline\Home Safety Hotline_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="src\ARG\ARGGUI\ARGDesktopVideo.cs"/>
+        <Compile Include="src\ARG\ARGHelper.cs"/>
+        <Compile Include="src\ARG\ARGLoadedFiles.cs"/>
+        <Compile Include="src\ARG\ARGLogic\ARGClickEvent.cs"/>
+        <Compile Include="src\ARG\ARGLogic\ARGKeypadInput.cs"/>
+        <Compile Include="src\ARG\ARGLogic\ARGKeypadLogic.cs"/>
+        <Compile Include="src\ARG\ARGLogic\ARGSecretInputMono.cs"/>
+        <Compile Include="src\ARG\ARGGUI\ARGKeypad.cs"/>
+        <Compile Include="src\ARG\ARGLogic\ARGSettings.cs"/>
+        <Compile Include="src\Audio\AudioCache.cs"/>
+        <Compile Include="src\Audio\AudioImport.cs"/>
+        <Compile Include="src\Audio\AudioLoadThrottler.cs"/>
+        <Compile Include="src\Audio\AudioPatches\PlaySoundPatches.cs"/>
+        <Compile Include="src\Audio\AudioPatches\UISoundPatch.cs"/>
+        <Compile Include="src\Audio\Music\Arcade\ArcadeMusicHelper.cs"/>
+        <Compile Include="src\Audio\Music\Data\CustomMusic.cs"/>
+        <Compile Include="src\Audio\Music\Intermission\IntermissionMusicHelper.cs"/>
+        <Compile Include="src\Audio\Music\MusicControllerPatches.cs"/>
+        <Compile Include="src\Audio\Music\MusicHelper.cs"/>
+        <Compile Include="src\Callers\Answer\ProvidingAnswer.cs"/>
+        <Compile Include="src\Callers\CallerCreationAndUpdate\CreateAndUpdateCallerPatches.cs"/>
+        <Compile Include="src\Callers\CallerHelpers\CallerSkipping.cs"/>
+        <Compile Include="src\Callers\CallerModel\CustomCCaller.cs"/>
+        <Compile Include="src\Callers\CallerPatches.cs"/>
+        <Compile Include="src\Callers\IncomingCallWindow\AnimatedCallerPortraitPatches.cs"/>
+        <Compile Include="src\Callers\IncomingCallWindow\CloseButtonPatches.cs"/>
+        <Compile Include="src\Callers\IncomingCallWindow\CallWindowStartPatches.cs"/>
+        <Compile Include="src\Callers\IncomingCallWindow\TypeTextPatches.cs"/>
+        <Compile Include="src\Callers\UI\AnimatedEntry\AnimatedImageHelper.cs"/>
+        <Compile Include="src\Callers\UI\AnimatedEntry\EntryCanvasStandaloneEntry.cs"/>
+        <Compile Include="src\Callers\UI\AnimatedEntry\MainCanvasEntry.cs"/>
+        <Compile Include="src\Callers\UI\MainCanvasPatches.cs"/>
+        <Compile Include="src\Callers\UI\NextCaller.cs"/>
+        <Compile Include="src\Callers\UI\UIFallbacks.cs"/>
+        <Compile Include="src\CustomCampaignSystem\ArcadeCallerModule\ArcadeCaller.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Arcade\ArcadeFixes.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Arcade\ArcadeHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\ArtbookPatches\ArtbookRefreshPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreen.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Computer3DScreenHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomComputer3DScreen\Custom3DScreenPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomCampaignModel\CustomCampaign.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomCampaignGlobal.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomRingtone\CustomRingtone.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomRingtone\RingtoneHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFile.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CustomTextFiles\CustomTextFileHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\CutsceneLogic\CustomCutscene.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Desktop\DesktopBackgroundPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Desktop\OnDayUnlockPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Abstract\CustomCampaignElement.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Fade\FadeScreenPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCallerHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyCutsceneHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyEmailHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyLinkAppHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyTextFileHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyHelpers\AccuracyVideoHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\CallerAccuracyType.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyModel\GeneralAccuracyType.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs"/>
+        <Compile Include="src\CustomCampaignSystem\InGamePatches\SelectPreviousEntryPatch.cs"/>
+        <Compile Include="src\CustomCampaignSystem\LinkApps\LinkApp.cs"/>
+        <Compile Include="src\CustomCampaignSystem\LinkApps\LinkAppHelper.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Modifier\Data\DesktopModifierSnapshot.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Modifier\Data\ModifierSource.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Modifier\Data\VariableChanged.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Phobia\CustomPhobia.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Phobia\PhobiaPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignOptionSaving.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Saving\CustomCampaignSaving.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Saving\OptionUpdatePatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Saving\SavingSettingPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Saving\SpecialOptionUpdatePatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Themes\ThemePatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Themes\CustomTheme.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Saving\SavingManagerPatchesCC.cs"/>
+        <Compile Include="src\CustomCampaignSystem\Modifier\Data\CustomModifier.cs"/>
+        <Compile Include="src\CustomCampaignSystem\TimedCaller\TimedCallerPatches.cs"/>
+        <Compile Include="src\CustomCampaignSystem\TimedCaller\TimerCallerHelper.cs"/>
+        <Compile Include="src\CustomDesktop\CustomDesktop.cs"/>
+        <Compile Include="src\CustomDesktop\CustomDesktopHelper.cs"/>
+        <Compile Include="src\CustomDesktop\CustomDoubleClickButton\DoubleClickButton.cs"/>
+        <Compile Include="src\CustomDesktop\Programs\ScorecardPatches.cs"/>
+        <Compile Include="src\CustomDesktop\Utils\CustomCampaignProgramHelper.cs"/>
+        <Compile Include="src\CustomDesktop\Utils\CustomCampaignSceneSwitcher.cs"/>
+        <Compile Include="src\CustomDesktop\Utils\DateUtil.cs"/>
+        <Compile Include="src\CustomDesktop\Utils\EmailHelper.cs"/>
+        <Compile Include="src\CustomDesktop\Utils\ThemeProgramHelper.cs"/>
+        <Compile Include="src\CustomThemes\ColorHelper.cs"/>
+        <Compile Include="src\CustomVideos\CustomVideo.cs"/>
+        <Compile Include="src\CustomVideos\VideoHelper.cs"/>
+        <Compile Include="src\CustomVideos\VideoPatches.cs"/>
+        <Compile Include="src\Emails\CustomEmail.cs"/>
+        <Compile Include="src\EndingPatches\GameEndCutscene.cs"/>
+        <Compile Include="src\EndingPatches\GameOverPatches.cs"/>
+        <Compile Include="src\EntryManager\EntryData\EntryMetadata.cs"/>
+        <Compile Include="src\EntryManager\EntryListing\EntryListingPatches.cs"/>
+        <Compile Include="src\EntryManager\EntryManager.cs"/>
+        <Compile Include="src\EntryManager\EntryUnlocker\EntryUnlockerPatcher.cs"/>
+        <Compile Include="src\ErrorDebugging\UnityLogHook.cs"/>
+        <Compile Include="src\HelperFunctions\DebugHelper.cs"/>
+        <Compile Include="src\HelperFunctions\EmbedHelpers.cs"/>
+        <Compile Include="src\HelperFunctions\URLVerification.cs"/>
+        <Compile Include="src\ImportFiles\EmbedLoader.cs"/>
+        <Compile Include="src\ImportFiles\FileImporter.cs"/>
+        <Compile Include="src\ImportFiles\ImageCache.cs"/>
+        <Compile Include="src\ImportFiles\ImageImport.cs"/>
+        <Compile Include="src\InGameSettings\GlobalPreferences.cs"/>
+        <Compile Include="src\InGameSettings\InGameSettingHelper.cs"/>
+        <Compile Include="src\InGameSettings\ToggleButtonFunctions.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\ArcadeCallerParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\ARGParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\Computer3DScreenParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\CustomCallerParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\CustomCampaignParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\CutsceneParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\EmailParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\LinkAppParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\MusicParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\ModifierParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\RingtoneParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\TextProgramParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\ThemeParsing.cs"/>
+        <Compile Include="src\JSONParsing\CCParsing\VideoParsing.cs"/>
+        <Compile Include="src\JSONParsing\EntryParsing\MainCampaignCallerParsing.cs"/>
+        <Compile Include="src\JSONParsing\EntryParsing\EntryParsing.cs"/>
+        <Compile Include="src\JSONParsing\GlobalParsingVariables.cs"/>
+        <Compile Include="src\JSONParsing\ParseJSONFiles.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\AccuracyParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\ArtbookParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\AudioParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\CallerRequirementParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\ColorParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\IDParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\ImageParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\PendingParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\URLParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ParsingHelpers\VideoParsingHelper.cs"/>
+        <Compile Include="src\JSONParsing\ReloadJSONParsing.cs"/>
+        <Compile Include="src\JSONParsing\ThunderStoreUserModUnpacker\ModUnpacker.cs"/>
+        <Compile Include="src\LoggingSystem\LoggingHelper.cs"/>
+        <Compile Include="src\Main.cs"/>
+        <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="src\MainGameBugFixes\CloseErrorPopupFix.cs"/>
+        <Compile Include="src\MainGameBugFixes\EmailLoadingBugFix.cs"/>
+        <Compile Include="src\MainGameBugFixes\EntryLoadingBuxFix.cs"/>
+        <Compile Include="src\MainGameBugFixes\EntryViewNotUpdating.cs"/>
+        <Compile Include="src\MainGameBugFixes\ScreenResolutionBugFix.cs"/>
+        <Compile Include="src\MainGameBugFixes\UISoundBugFix.cs"/>
+        <Compile Include="src\VersionChecker\AsyncVersionChecker.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="config.txt"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="build_after.bat"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="src\Audio\EmbeddedAudio\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="src\ImportFiles\EmbeddedImages\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="src\Audio\EmbeddedAudio\*.wav"/>
+        <EmbeddedResource Include="src\Audio\EmbeddedAudio\*.mp3"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="src\ImportFiles\EmbeddedImages\*.png"/>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+    <PropertyGroup>
+        <PostBuildEvent>call $(ProjectDir)\build_after.bat</PostBuildEvent>
+    </PropertyGroup>
 </Project>

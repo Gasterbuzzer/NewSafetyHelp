@@ -11,6 +11,12 @@ namespace NewSafetyHelp.ImportFiles
         [CanBeNull] public static RichAudioClip ClockHalfTime;
         [CanBeNull] public static RichAudioClip ClockStart;
 
+        [CanBeNull] public static RichAudioClip KeyboardSound01;
+        [CanBeNull] public static RichAudioClip KeyboardSound02;
+        [CanBeNull] public static RichAudioClip KeyboardSound03;
+        [CanBeNull] public static RichAudioClip KeyboardSound04;
+        [CanBeNull] public static RichAudioClip KeyboardSound05;
+
         [CanBeNull] public static Sprite ClockBase;
         [CanBeNull] public static Sprite ClockHand;
 
@@ -66,6 +72,85 @@ namespace NewSafetyHelp.ImportFiles
                     }
                 },
                 "clock_start.wav", true);
+
+            /*
+             * Keyboard Audio
+             */
+
+            AudioImport.LoadEmbeddedAudio(
+                audioClip =>
+                {
+                    if (audioClip != null)
+                    {
+                        // Add the audio
+                        KeyboardSound01 = AudioImport.CreateRichAudioClip(audioClip, "keyboard01.mp3");
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound01)}' audio clip.");
+                    }
+                },
+                "keyboard01.mp3", true);
+
+            AudioImport.LoadEmbeddedAudio(
+                audioClip =>
+                {
+                    if (audioClip != null)
+                    {
+                        // Add the audio
+                        KeyboardSound02 = AudioImport.CreateRichAudioClip(audioClip, "keyboard02.mp3");
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound02)}' audio clip.");
+                    }
+                },
+                "keyboard02.mp3", true);
+
+            AudioImport.LoadEmbeddedAudio(
+                audioClip =>
+                {
+                    if (audioClip != null)
+                    {
+                        // Add the audio
+                        KeyboardSound03 = AudioImport.CreateRichAudioClip(audioClip, "keyboard03.mp3");
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound03)}' audio clip.");
+                    }
+                },
+                "keyboard03.mp3", true);
+
+            AudioImport.LoadEmbeddedAudio(
+                audioClip =>
+                {
+                    if (audioClip != null)
+                    {
+                        // Add the audio
+                        KeyboardSound04 = AudioImport.CreateRichAudioClip(audioClip, "keyboard04.mp3");
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound04)}' audio clip.");
+                    }
+                },
+                "keyboard04.mp3", true);
+
+            AudioImport.LoadEmbeddedAudio(
+                audioClip =>
+                {
+                    if (audioClip != null)
+                    {
+                        // Add the audio
+                        KeyboardSound05 = AudioImport.CreateRichAudioClip(audioClip, "keyboard05.mp3");
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(KeyboardSound05)}' audio clip.");
+                    }
+                },
+                "keyboard05.mp3", true);
 
             /*
              * Images
