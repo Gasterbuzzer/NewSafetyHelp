@@ -390,9 +390,18 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
                             CustomPhobias.Add(customPhobia);
 
-                            customPhobia.PreferenceReference =
-                                customPhobiaCategory.CreateEntry($"{CampaignName}_Phobia_{customPhobia.PhobiaName}",
-                                    false);
+                            string phobiaEntryString = $"{CampaignName}_Phobia_{customPhobia.PhobiaName}";
+
+                            if (customPhobiaCategory.GetEntry<bool>(phobiaEntryString) == null)
+                            {
+                                customPhobia.PreferenceReference =
+                                    customPhobiaCategory.CreateEntry(phobiaEntryString, false);
+                            }
+                            else
+                            {
+                                customPhobia.PreferenceReference =
+                                    customPhobiaCategory.GetEntry<bool>(phobiaEntryString);
+                            }
 
                             LoggingHelper.DebugLog($"Registered new custom phobia '{customPhobia.PhobiaName}'.");
                         }
