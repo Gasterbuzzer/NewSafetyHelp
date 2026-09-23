@@ -88,7 +88,7 @@ namespace NewSafetyHelp.ARG.ARGGUI
             keypadAudioSource = keypadPopup.AddComponent<AudioSource>();
             keypadAudioSource.playOnAwake = false;
             keypadAudioSource.volume = 0.5f;
-            
+
             GameObject optionsPopup =
                 GameObject.Find("MainMenuCanvas").transform.Find("OptionsPopup").gameObject;
 
@@ -314,11 +314,70 @@ namespace NewSafetyHelp.ARG.ARGGUI
                     {
                         LoggingHelper.DebugLog($"Detected correct digit code: '{inputCode}'.");
 
+                        // TO DO: Implement logic to avoid this triggering twice.
+
                         ARGDesktopVideo.PlayFullScreenVideo();
                     }
-                    else if (inputKeyVector.Equals(new Vector4(1, 9, 8, 7)))
+                    else if (inputKeyVector.Equals(new Vector4(1, 9, 8, 7)) ||
+                             inputKeyVector.Equals(new Vector4(1, 9, 8, 3)))
                     {
-                        ARGHelper.CreateErrorMessage("Har Har Har Har", mainMenuCanvas.transform);
+                        ARGHelper.CreateErrorMessage("Bite victim information package collected.",
+                            mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(1, 1, 1, 1)))
+                    {
+                        ARGHelper.CreateErrorMessage("Briefcase protection team dispatched!", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(3, 3, 1, 3)))
+                    {
+                        ARGHelper.CreateErrorMessage("If you're the adventurous sort, " +
+                                                     "pay a visit to Toni’s and get some pizza!",
+                            mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(1, 2, 3, 4)))
+                    {
+                        ARGHelper.CreateErrorMessage("Poor password detected, please reset.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(2, 0, 3, 6)))
+                    {
+                        ARGHelper.CreateErrorMessage("The year the universe will end.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(8, 8, 8, 8)))
+                    {
+                        ARGHelper.CreateErrorMessage("Skull throne replenished.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(1, 2, 1, 1)))
+                    {
+                        ARGHelper.CreateErrorMessage("Running visitor detection software.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(4, 2, 5, 5)))
+                    {
+                        ARGHelper.CreateErrorMessage("Inscribing data.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(6, 9, 6, 9)))
+                    {
+                        ARGHelper.CreateErrorMessage("Nice.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(0, 6, 2, 8)))
+                    {
+                        ARGHelper.CreateErrorMessage("HAPPY BIRTHDAY!!!!!", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(0, 6, 0, 5)))
+                    {
+                        ARGHelper.CreateErrorMessage("Initiating rebirth protocol.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(2, 3, 1, 9)))
+                    {
+                        ARGHelper.CreateErrorMessage("Quarantine squad requested.", mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(8, 0, 0, 8)))
+                    {
+                        ARGHelper.CreateErrorMessage("You aren't as funny as you think you are.",
+                            mainMenuCanvas.transform);
+                    }
+                    else if (inputKeyVector.Equals(new Vector4(1, 9, 9, 9)))
+                    {
+                        ARGHelper.CreateErrorMessage("Beginning ritual.", mainMenuCanvas.transform);
                     }
                 }
             });
