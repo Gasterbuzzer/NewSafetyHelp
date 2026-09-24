@@ -87,7 +87,7 @@ namespace NewSafetyHelp.ARG.ARGGUI
             // Add Sound Source
             keypadAudioSource = keypadPopup.AddComponent<AudioSource>();
             keypadAudioSource.playOnAwake = false;
-            keypadAudioSource.volume = 0.5f;
+            keypadAudioSource.volume = 0.2f;
 
             GameObject optionsPopup =
                 GameObject.Find("MainMenuCanvas").transform.Find("OptionsPopup").gameObject;
