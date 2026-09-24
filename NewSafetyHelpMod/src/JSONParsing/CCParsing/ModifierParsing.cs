@@ -586,9 +586,19 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = false
             };
 
-            VariableChanged<string> hintForTheDay = new VariableChanged<string>
+            VariableChanged<List<string>> hintForTheDay = new VariableChanged<List<string>>
             {
-                Data = null
+                Data = new List<string>()
+            };
+
+            VariableChanged<List<Sprite>> imageHintForTheDay = new VariableChanged<List<Sprite>>
+            {
+                Data = new List<Sprite>()
+            };
+
+            VariableChanged<float> scaleImageHint = new VariableChanged<float>
+            {
+                Data = 1
             };
 
             /*
@@ -1058,8 +1068,14 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "enable_hint_for_day",
                 ref enableDayStartHint);
 
-            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_for_day",
+            ParsingHelper.TryAssignListOrSingleElementVariableChanged(jObjectParsed, "hint_for_day",
                 ref hintForTheDay);
+
+            ImageParsingHelper.TryAssignSpriteListOrSingleSpriteVariableChanged(jObjectParsed, "hint_image_for_day",
+                ref imageHintForTheDay, jsonFolderPath, usermodFolderPath);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_image_scale",
+                ref scaleImageHint);
 
             /*
              * Entry
@@ -1220,6 +1236,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
                 EnableDayStartHint = enableDayStartHint,
                 HintForTheDay = hintForTheDay,
+                ImageHintForTheDay = imageHintForTheDay,
+                ScaleImageHint = scaleImageHint,
 
                 EntryPlaceholderImage = entryPlaceholderImage,
 

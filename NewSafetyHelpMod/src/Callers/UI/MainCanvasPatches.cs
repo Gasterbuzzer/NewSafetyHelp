@@ -502,7 +502,7 @@ namespace NewSafetyHelp.Callers.UI
 
                         // Now we create the hint space.
                         GameObject hintGameObject = Object.Instantiate(clockInButton,
-                            softwareIntroGameObject.transform);
+                            clockInPanel.transform);
 
                         hintGameObject.name = "HintSystemUIParent";
 
@@ -510,12 +510,12 @@ namespace NewSafetyHelp.Callers.UI
 
                         Object.Destroy(hintGameObject.GetComponent<SwapCursorHoverDisplayer>());
 
-                        hintGameObject.transform.position = new Vector3(0.01f, -3.5f, 0);
+                        hintGameObject.transform.localPosition = new Vector3(-0.0025f, -250f, 0);
 
                         RectTransform hintRectTransform = hintGameObject.GetComponent<RectTransform>();
 
-                        hintRectTransform.offsetMax = new Vector2(170.9825f, -150.3632f);
-                        hintRectTransform.offsetMin = new Vector2(-170.9875f, -243.1632f);
+                        hintRectTransform.offsetMax = new Vector2(170.9825f, -200f);
+                        hintRectTransform.offsetMin = new Vector2(-170.9875f, -304f);
 
                         GameObject hintText = hintGameObject.transform.GetChild(0).gameObject;
 
@@ -531,14 +531,15 @@ namespace NewSafetyHelp.Callers.UI
                         StartingSize.SetValue(hintTextSizer, 20);
                         hintText.GetComponent<TextMeshProUGUI>().fontSize = 20;
 
-                        (bool foundModifier, VariableChanged<string> value) hintForTheDay =
+                        (bool foundModifier, VariableChanged<List<string>> value) hintForTheDay =
                             CustomCampaignGlobal.GetActiveModifierValue(c => c.HintForTheDay,
                                 vCs => vCs.HasChanged);
 
                         if (hintForTheDay.foundModifier
                             && hintForTheDay.value.HasChanged)
                         {
-                            hintText.GetComponent<TextMeshProUGUI>().text = hintForTheDay.value.Data;
+                            hintText.GetComponent<TextMeshProUGUI>().text =
+                                hintForTheDay.value.Data[Random.Range(0, hintForTheDay.value.Data.Count)];
                         }
                         else
                         {
@@ -551,13 +552,42 @@ namespace NewSafetyHelp.Callers.UI
 
                         RectTransform hintImageRectTransform = hintImage.AddComponent<RectTransform>();
 
-                        hintImageRectTransform.localPosition = new Vector3(-125, 0, 0);
-                        hintImageRectTransform.sizeDelta = new Vector2(1, 1);
+                        hintImageRectTransform.localPosition = new Vector3(-120, 0, 0);
+
+                        (bool foundModifier, VariableChanged<float> value) scaleImageHint =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.ScaleImageHint,
+                                vCs => vCs.HasChanged);
+
+                        if (scaleImageHint.foundModifier
+                            && scaleImageHint.value.HasChanged)
+                        {
+                            hintImageRectTransform.sizeDelta = new Vector2(scaleImageHint.value.Data,
+                                scaleImageHint.value.Data);
+                        }
+                        else
+                        {
+                            hintImageRectTransform.sizeDelta = new Vector2(1, 1);
+                        }
 
                         hintImage.AddComponent<CanvasRenderer>();
                         Image hintImageComponent = hintImage.AddComponent<Image>();
-                        hintImageComponent.sprite = GameObject.Find("MainCanvas/Panel").transform.GetChild(12)
-                            .GetChild(0).GetComponent<Image>().sprite;
+
+                        (bool foundModifier, VariableChanged<List<Sprite>> value) imageHintForTheDay =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.ImageHintForTheDay,
+                                vCs => vCs.HasChanged);
+
+                        if (imageHintForTheDay.foundModifier
+                            && imageHintForTheDay.value.HasChanged)
+                        {
+                            hintImageComponent.sprite =
+                                imageHintForTheDay.value.Data[Random.Range(0, imageHintForTheDay.value.Data.Count)];
+                        }
+                        else
+                        {
+                            // Fallback image
+                            hintImageComponent.sprite = GameObject.Find("MainCanvas/Panel").transform.GetChild(12)
+                                .GetChild(0).GetComponent<Image>().sprite;
+                        }
                     }
                 }
 

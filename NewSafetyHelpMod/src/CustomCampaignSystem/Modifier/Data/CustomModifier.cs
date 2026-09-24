@@ -463,9 +463,19 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = false
         };
 
-        public VariableChanged<string> HintForTheDay = new VariableChanged<string>
+        public VariableChanged<List<string>> HintForTheDay = new VariableChanged<List<string>>
         {
-            Data = null
+            Data = new List<string>()
+        };
+
+        public VariableChanged<List<Sprite>> ImageHintForTheDay = new VariableChanged<List<Sprite>>
+        {
+            Data = new List<Sprite>()
+        };
+
+        public VariableChanged<float> ScaleImageHint = new VariableChanged<float>
+        {
+            Data = 1
         };
 
         /*
