@@ -131,10 +131,13 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="src\ARG\ARGGUI\ARGAchievements.cs" />
         <Compile Include="src\ARG\ARGGUI\ARGDesktopVideo.cs"/>
         <Compile Include="src\ARG\ARGHelper.cs"/>
         <Compile Include="src\ARG\ARGLoadedFiles.cs"/>
-        <Compile Include="src\ARG\ARGLogic\ARGClickEvent.cs"/>
+        <Compile Include="src\ARG\ARGLogic\ARGAchievementClickEvent.cs" />
+        <Compile Include="src\ARG\ARGLogic\ARGAchievementLogic.cs" />
+        <Compile Include="src\ARG\ARGLogic\ARGKeyPadClickEvent.cs" />
         <Compile Include="src\ARG\ARGLogic\ARGKeypadInput.cs"/>
         <Compile Include="src\ARG\ARGLogic\ARGKeypadLogic.cs"/>
         <Compile Include="src\ARG\ARGLogic\ARGSecretInputMono.cs"/>

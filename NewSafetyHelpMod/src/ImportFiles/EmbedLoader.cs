@@ -19,6 +19,8 @@ namespace NewSafetyHelp.ImportFiles
 
         [CanBeNull] public static Sprite AdminIcon;
 
+        [CanBeNull] public static RichAudioClip AchievementSound;
+
         public static void Initialize()
         {
             /*
@@ -84,7 +86,7 @@ namespace NewSafetyHelp.ImportFiles
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard01.mp3' audio clip.");
+                        LoggingHelper.ErrorLog("Failed to load embedded 'keyboard01.mp3' audio clip.");
                     }
                 },
                 "keyboard01.mp3", true);
@@ -99,7 +101,7 @@ namespace NewSafetyHelp.ImportFiles
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard02.mp3' audio clip.");
+                        LoggingHelper.ErrorLog("Failed to load embedded 'keyboard02.mp3' audio clip.");
                     }
                 },
                 "keyboard02.mp3", true);
@@ -114,7 +116,7 @@ namespace NewSafetyHelp.ImportFiles
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard03.mp3' audio clip.");
+                        LoggingHelper.ErrorLog("Failed to load embedded 'keyboard03.mp3' audio clip.");
                     }
                 },
                 "keyboard03.mp3", true);
@@ -129,7 +131,7 @@ namespace NewSafetyHelp.ImportFiles
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard04.mp3' audio clip.");
+                        LoggingHelper.ErrorLog("Failed to load embedded 'keyboard04.mp3' audio clip.");
                     }
                 },
                 "keyboard04.mp3", true);
@@ -144,10 +146,25 @@ namespace NewSafetyHelp.ImportFiles
                     }
                     else
                     {
-                        LoggingHelper.ErrorLog($"Failed to load embedded 'keyboard05.mp3' audio clip.");
+                        LoggingHelper.ErrorLog("Failed to load embedded 'keyboard05.mp3' audio clip.");
                     }
                 },
                 "keyboard05.mp3", true);
+
+            AudioImport.LoadEmbeddedAudio(
+                audioClip =>
+                {
+                    if (audioClip != null)
+                    {
+                        // Add the audio
+                        AchievementSound = AudioImport.CreateRichAudioClip(audioClip, "achievement.mp3");
+                    }
+                    else
+                    {
+                        LoggingHelper.ErrorLog($"Failed to load embedded '{nameof(AchievementSound)}' audio clip.");
+                    }
+                },
+                "achievement.mp3", true);
 
             /*
              * Images

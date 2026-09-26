@@ -53,13 +53,14 @@ namespace NewSafetyHelp.ARG.ARGGUI
             // Change Icon.
             argKeypad.transform.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
 
-            ARGClickEvent argClickEventComponent = argKeypad.AddComponent<ARGClickEvent>();
+            ARGAchievementClickEvent argAchievementClickEventComponent =
+                argKeypad.AddComponent<ARGAchievementClickEvent>();
 
             Button doubleClickButton = argKeypad.GetComponent<Button>();
 
             doubleClickButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
 
-            doubleClickButton.onClick.AddListener(argClickEventComponent.OpenKeyPadPopup);
+            doubleClickButton.onClick.AddListener(argAchievementClickEventComponent.OpenAchievementPopup);
 
             argKeypad.SetActive(true);
 

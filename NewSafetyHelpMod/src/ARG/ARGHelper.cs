@@ -85,6 +85,7 @@ namespace NewSafetyHelp.ARG
             ARGKeypad.CreateKeypad();
 
             ARGDesktopVideo.CreateFullScreenVideoPlayer();
+            ARGAchievements.CreateAchievementsIcon();
         }
 
         /// <summary>

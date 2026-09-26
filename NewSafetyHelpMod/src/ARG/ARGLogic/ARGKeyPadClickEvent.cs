@@ -2,7 +2,7 @@
 
 namespace NewSafetyHelp.ARG.ARGLogic
 {
-    public class ARGClickEvent : MonoBehaviour
+    public class ARGKeyPadClickEvent : MonoBehaviour
     {
         private float lastClickTime;
         private const float DoubleClickThreshold = 0.3f;
