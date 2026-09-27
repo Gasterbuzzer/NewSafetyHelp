@@ -90,24 +90,21 @@ namespace NewSafetyHelp.ARG.ARGGUI
             // Add achievement parts
 
             // Remove text in content
-            Object.Destroy(scrollView.transform.GetComponent<ScrollRect>());
-            Object.Destroy(scrollView.transform.GetComponent<Image>());
+            GameObject contentBox = scrollView.transform.GetChild(0).GetChild(0).gameObject;
 
-            Object.Destroy(scrollView.transform.GetChild(0).gameObject);
-            Object.Destroy(scrollView.transform.GetChild(1).gameObject);
+            Object.Destroy(contentBox.transform.GetChild(0).gameObject);
 
             // Create example box?
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 9; i++)
             {
                 GameObject achievementBox = new GameObject($"achievementBox{i}", typeof(RectTransform));
-                achievementBox.transform.SetParent(scrollView.transform, false);
+                achievementBox.transform.SetParent(contentBox.transform, false);
 
                 RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
 
                 achievementBoxRectTransform.anchoredPosition = new Vector2(0, i * 100);
 
-                CanvasRenderer achievementBoxCanvasRenderer = achievementBox.AddComponent<CanvasRenderer>();
-
+                achievementBox.AddComponent<CanvasRenderer>();
                 achievementBox.AddComponent<CanvasGroup>().blocksRaycasts = false;
 
                 TextMeshProUGUI achievementBoxImage = achievementBox.AddComponent<TextMeshProUGUI>();
