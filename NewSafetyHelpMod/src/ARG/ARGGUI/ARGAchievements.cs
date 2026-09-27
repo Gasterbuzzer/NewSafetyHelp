@@ -43,7 +43,7 @@ namespace NewSafetyHelp.ARG.ARGGUI
             achievementProgram.SetActive(true);
 
             /*
-             * Create Keypad Window
+             * Create Achievement Window
              */
 
             GameObject achievementPopup = Object
@@ -86,6 +86,35 @@ namespace NewSafetyHelp.ARG.ARGGUI
 
             scrollViewRectTransform.offsetMax = new Vector2(190, 104.965f);
             scrollViewRectTransform.offsetMin = new Vector2(-190.515f, -133.125f);
+
+            // Add achievement parts
+
+            // Remove text in content
+            Object.Destroy(scrollView.transform.GetComponent<ScrollRect>());
+            Object.Destroy(scrollView.transform.GetComponent<Image>());
+
+            Object.Destroy(scrollView.transform.GetChild(0).gameObject);
+            Object.Destroy(scrollView.transform.GetChild(1).gameObject);
+
+            // Create example box?
+            for (int i = 0; i < 2; i++)
+            {
+                GameObject achievementBox = new GameObject($"achievementBox{i}", typeof(RectTransform));
+                achievementBox.transform.SetParent(scrollView.transform, false);
+
+                RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
+
+                achievementBoxRectTransform.anchoredPosition = new Vector2(0, i * 100);
+
+                CanvasRenderer achievementBoxCanvasRenderer = achievementBox.AddComponent<CanvasRenderer>();
+
+                achievementBox.AddComponent<CanvasGroup>().blocksRaycasts = false;
+
+                TextMeshProUGUI achievementBoxImage = achievementBox.AddComponent<TextMeshProUGUI>();
+                achievementBoxImage.fontSize = 36;
+                achievementBoxImage.color = Color.black;
+                achievementBoxImage.text = $"achievementBox{i}";
+            }
         }
     }
 }
