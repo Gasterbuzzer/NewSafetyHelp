@@ -94,23 +94,49 @@ namespace NewSafetyHelp.ARG.ARGGUI
 
             Object.Destroy(contentBox.transform.GetChild(0).gameObject);
 
+            VerticalLayoutGroup contentBoxVerticalLayoutGroup = contentBox.GetComponent<VerticalLayoutGroup>();
+            contentBoxVerticalLayoutGroup.spacing = 100;
+
             // Create example box?
             for (int i = 0; i < 9; i++)
             {
                 GameObject achievementBox = new GameObject($"achievementBox{i}", typeof(RectTransform));
                 achievementBox.transform.SetParent(contentBox.transform, false);
 
-                RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
-
-                achievementBoxRectTransform.anchoredPosition = new Vector2(0, i * 100);
-
                 achievementBox.AddComponent<CanvasRenderer>();
                 achievementBox.AddComponent<CanvasGroup>().blocksRaycasts = false;
 
-                TextMeshProUGUI achievementBoxImage = achievementBox.AddComponent<TextMeshProUGUI>();
-                achievementBoxImage.fontSize = 36;
-                achievementBoxImage.color = Color.black;
-                achievementBoxImage.text = $"achievementBox{i}";
+                RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
+                achievementBoxRectTransform.sizeDelta = new Vector2(600, 600);
+
+                // Images
+                GameObject backgroundImage = new GameObject("backgroundImage", typeof(RectTransform));
+                backgroundImage.transform.SetParent(achievementBox.transform, false);
+
+                RectTransform backgroundImageRectTransform = backgroundImage.GetComponent<RectTransform>();
+                backgroundImageRectTransform.anchorMin = new Vector2(0, 0);
+                backgroundImageRectTransform.anchorMax = new Vector2(1, 1);
+
+                Image achievementBoxImage = backgroundImage.AddComponent<Image>();
+                achievementBoxImage.color = new Color32(125, 125, 255, 255);
+                achievementBoxImage.sprite = null;
+
+                // Text
+                GameObject textPart = new GameObject("textPart", typeof(RectTransform));
+                textPart.transform.SetParent(achievementBox.transform, false);
+
+                RectTransform textPartRectTransform = textPart.GetComponent<RectTransform>();
+                textPartRectTransform.anchorMin = new Vector2(0, 0);
+                textPartRectTransform.anchorMax = new Vector2(1, 1);
+                textPartRectTransform.offsetMin = new Vector2(0, 0);
+                textPartRectTransform.offsetMax = new Vector2(0, 0);
+
+                TextMeshProUGUI textPartTextMeshProUGUI = textPart.AddComponent<TextMeshProUGUI>();
+                textPartTextMeshProUGUI.fontSize = 36;
+                textPartTextMeshProUGUI.color = Color.black;
+                textPartTextMeshProUGUI.text = $"achievementBox{i}";
+
+                textPart.transform.SetAsLastSibling();
             }
         }
     }
