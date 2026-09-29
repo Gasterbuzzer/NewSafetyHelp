@@ -107,7 +107,11 @@ namespace NewSafetyHelp.ARG.ARGGUI
                 achievementBox.AddComponent<CanvasGroup>().blocksRaycasts = false;
 
                 RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
-                achievementBoxRectTransform.sizeDelta = new Vector2(600, 600);
+                achievementBoxRectTransform.sizeDelta = new Vector2(300, 10);
+
+                LayoutElement layoutElement = achievementBox.AddComponent<LayoutElement>();
+                layoutElement.preferredWidth = 300;
+                layoutElement.preferredHeight = 10;
 
                 // Images
                 GameObject backgroundImage = new GameObject("backgroundImage", typeof(RectTransform));

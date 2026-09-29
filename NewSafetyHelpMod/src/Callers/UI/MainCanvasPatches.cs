@@ -518,6 +518,7 @@ namespace NewSafetyHelp.Callers.UI
                         hintRectTransform.offsetMin = new Vector2(-170.9875f, -304f);
 
                         GameObject hintText = hintGameObject.transform.GetChild(0).gameObject;
+                        hintText.name = "HintTextContent";
 
                         RectTransform hintTextRectTransform = hintText.GetComponent<RectTransform>();
 
@@ -544,6 +545,26 @@ namespace NewSafetyHelp.Callers.UI
                         else
                         {
                             hintText.GetComponent<TextMeshProUGUI>().text = HintHelper.GetRandomHint();
+                        }
+
+                        (bool foundModifier, VariableChanged<List<string>> value) hintTitle =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.HintTitle,
+                                vCs => vCs.HasChanged);
+
+                        if (hintTitle.foundModifier
+                            && hintTitle.value.HasChanged)
+                        {
+                            GameObject hintTitleGameObject = Object.Instantiate(hintText, hintText.transform.parent);
+
+                            hintTitleGameObject.name = "HintTitle";
+
+                            hintTitleGameObject.transform.localPosition = new Vector3(-45, 35, 0);
+
+                            hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontWeight = FontWeight.Bold;
+                            hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Bold;
+
+                            hintTitleGameObject.GetComponent<TextMeshProUGUI>().text =
+                                hintTitle.value.Data[Random.Range(0, hintTitle.value.Data.Count)];
                         }
 
                         // Create image

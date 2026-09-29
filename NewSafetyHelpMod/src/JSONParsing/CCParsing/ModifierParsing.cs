@@ -601,6 +601,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 1
             };
 
+            VariableChanged<List<string>> hintTitle = new VariableChanged<List<string>>
+            {
+                Data = new List<string>()
+            };
+
             /*
              * Entry
              */
@@ -1077,6 +1082,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_image_scale",
                 ref scaleImageHint);
 
+            ParsingHelper.TryAssignListOrSingleElementVariableChanged(jObjectParsed, "hint_title",
+                ref hintTitle);
+
             /*
              * Entry
              */
@@ -1238,6 +1246,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 HintForTheDay = hintForTheDay,
                 ImageHintForTheDay = imageHintForTheDay,
                 ScaleImageHint = scaleImageHint,
+                HintTitle = hintTitle,
 
                 EntryPlaceholderImage = entryPlaceholderImage,
 

@@ -478,6 +478,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = 1
         };
 
+        public VariableChanged<List<string>> HintTitle = new VariableChanged<List<string>>
+        {
+            Data = new List<string>()
+        };
+
         /*
          * Entry
          */
