@@ -40,6 +40,7 @@ namespace NewSafetyHelp.ARG.Achievements
              * Initialize all achievements.
              */
 
+            // Days
             TheStart = new CustomAchievement("The Start", "Complete Monday.", ARGAchievementCategory);
 
             TheReturn = new CustomAchievement("The Return", "Complete Tuesday.",
@@ -54,12 +55,14 @@ namespace NewSafetyHelp.ARG.Achievements
             TheClimax = new CustomAchievement("The Climax", "Complete Friday.",
                 ARGAchievementCategory);
 
+            // Endings
             TheEndOfEverything = new CustomAchievement("The End Of Everything",
                 "Get the bad ending for Summer Support.", ARGAchievementCategory);
 
             TheDeathOfDave = new CustomAchievement("The Death Of Dave",
                 "Get the good ending for Summer Support.", ARGAchievementCategory);
 
+            // Performance in the Game
             TheGoldStandard = new CustomAchievement("The Gold Standard",
                 "Earn a gold star of safety.", ARGAchievementCategory);
 
@@ -69,6 +72,7 @@ namespace NewSafetyHelp.ARG.Achievements
             TheBestOfTheBest = new CustomAchievement("The Best Of The Best",
                 "Complete Summer Support with flawless accuracy.", ARGAchievementCategory);
 
+            // Arcade Calls
             Critter101 = new CustomAchievement("Critter 101", "Complete X calls in Call Training",
                 ARGAchievementCategory);
 
@@ -81,12 +85,14 @@ namespace NewSafetyHelp.ARG.Achievements
             DrSafety = new CustomAchievement("Dr. Safety", "Complete X calls in Call Training.",
                 ARGAchievementCategory);
 
+            // 
             EmployeeOfTheMonth = new CustomAchievement("Employee Of The Month",
                 "Unlock every standard achievement.", ARGAchievementCategory);
 
             Archivist = new CustomAchievement("Archivist", "Read every email.",
                 ARGAchievementCategory);
 
+            // In game events
             FMinus = new CustomAchievement("F-", "Upset Detective Horus.",
                 ARGAchievementCategory);
 
@@ -96,6 +102,7 @@ namespace NewSafetyHelp.ARG.Achievements
             GoodRiddance = new CustomAchievement("Good Riddance", "Get David Baldina killed.",
                 ARGAchievementCategory);
 
+            // ARG
             TWFuIG9uIHRoZSBTY3JlZW4 = new CustomAchievement("TWFuIG9uIHRoZSBTY3JlZW4",
                 "SGVhciB0aGUgY2FsbCBvZiBhIGdvZA==",
                 ARGAchievementCategory, true);
@@ -103,6 +110,7 @@ namespace NewSafetyHelp.ARG.Achievements
             ArcanaMachinae = new CustomAchievement("Arcana Machinae",
                 "Gain entry to the ADMIN console.", ARGAchievementCategory, true);
 
+            // All achievements
             EmployeeOfTheCentury = new CustomAchievement("Employee Of The Century",
                 "Unlock every achievement.", ARGAchievementCategory);
         }

@@ -1,4 +1,6 @@
-﻿using NewSafetyHelp.LoggingSystem;
+﻿using NewSafetyHelp.CustomCampaignSystem;
+using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
+using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.ARG.Achievements
 {
@@ -21,7 +23,7 @@ namespace NewSafetyHelp.ARG.Achievements
                     }
 
                     break;
-                
+
                 case 3:
                     if (!ARGAchievementSave.TheReturn.AchievementPreference.Value)
                     {
@@ -30,7 +32,7 @@ namespace NewSafetyHelp.ARG.Achievements
                     }
 
                     break;
-                
+
                 case 4:
                     if (!ARGAchievementSave.TheRespite.AchievementPreference.Value)
                     {
@@ -39,18 +41,28 @@ namespace NewSafetyHelp.ARG.Achievements
                     }
 
                     break;
-                
+
                 case 5:
                     if (!ARGAchievementSave.TheChorus.AchievementPreference.Value)
                     {
                         ARGAchievementSave.TheChorus.AchievementPreference.Value = true;
                         UnlockAchievement(ARGAchievementSave.TheChorus);
                     }
-                    
-                    if (!ARGAchievementSave.TheClimax.AchievementPreference.Value)
+                    else if (!ARGAchievementSave.TheClimax.AchievementPreference.Value)
                     {
-                        //ARGAchievementSave.TheChorus.AchievementPreference.Value = true;
-                        UnlockAchievement(ARGAchievementSave.TheClimax);
+                        CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                        if (customCampaign == null)
+                        {
+                            LoggingHelper.CampaignNullError();
+                            return;
+                        }
+
+                        if (customCampaign.SavedGameFinished == 1)
+                        {
+                            //ARGAchievementSave.TheChorus.AchievementPreference.Value = true;
+                            UnlockAchievement(ARGAchievementSave.TheClimax);
+                        }
                     }
 
                     break;
