@@ -48,7 +48,8 @@ namespace NewSafetyHelp.ARG.Achievements
         /// <param name="ARGAchievementCategory">Category to add the achievement to.</param>
         private void InitializeAchievementPreference(MelonPreferences_Category ARGAchievementCategory)
         {
-            string nameToCheck = AchievementName.Trim().Replace(" ", "").Replace(".", "").ToLower();
+            string nameToCheck = AchievementName.Trim().Replace(" ", "").Replace(".", "").Replace(",", "")
+                .Replace("=", "").Replace("[", "").Replace("]", "").Replace("#", "").ToLower();
 
             if (ARGAchievementCategory.GetEntry<bool>(nameToCheck) == null)
             {

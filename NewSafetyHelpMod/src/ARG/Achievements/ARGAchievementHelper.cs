@@ -1,4 +1,6 @@
-﻿using NewSafetyHelp.CustomCampaignSystem;
+﻿using MelonLoader;
+using NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup;
+using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
 
@@ -9,6 +11,8 @@ namespace NewSafetyHelp.ARG.Achievements
         private static void UnlockAchievement(CustomAchievement achievement)
         {
             LoggingHelper.TestLog(achievement.AchievementName);
+
+            MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopup());
         }
 
         public static void UnlockDayAchievement()

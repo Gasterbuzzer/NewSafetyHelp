@@ -2,6 +2,7 @@
 using System.Text;
 using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.ARG.Achievements.GUI;
+using NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup;
 using NewSafetyHelp.ARG.ARGGUI;
 using NewSafetyHelp.ARG.ARGLogic;
 using NewSafetyHelp.ARG.Keypad.GUI;
@@ -91,6 +92,7 @@ namespace NewSafetyHelp.ARG
 
             ARGDesktopVideo.CreateFullScreenVideoPlayer();
             ARGAchievements.CreateAchievementsIcon();
+            AchievementPopupGUI.CreateDesktopAchievementPopup();
 
             // Trigger day achievements here.
             ARGAchievementHelper.UnlockDayAchievement();

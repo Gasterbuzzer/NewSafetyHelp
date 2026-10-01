@@ -45,30 +45,30 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
              * Create Achievement Window
              */
 
-            GameObject achievementPopup = Object
+            GameObject achievementWindow = Object
                 .Instantiate(mainMenuCanvas.transform.GetChild(4).gameObject, mainMenuCanvas.transform).gameObject;
 
-            ARGAchievementLogic.SetAchievementPopup(achievementPopup);
+            ARGAchievementLogic.SetAchievementPopup(achievementWindow);
 
             // Rename Program
-            achievementPopup.name = "AchievementPopup";
+            achievementWindow.name = "AchievementWindow";
 
-            GameObject programTitle = achievementPopup.transform.GetChild(0).GetChild(3).gameObject;
+            GameObject programTitle = achievementWindow.transform.GetChild(0).GetChild(3).gameObject;
 
-            programTitle.GetComponent<TextMeshProUGUI>().text = "ACHIEVEMENT POPUP";
+            programTitle.GetComponent<TextMeshProUGUI>().text = "ACHIEVEMENT WINDOW";
 
-            GameObject programLogo = achievementPopup.transform.GetChild(0).GetChild(2).gameObject;
+            GameObject programLogo = achievementWindow.transform.GetChild(0).GetChild(2).gameObject;
 
             programLogo.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
 
             // Resize the Window
-            RectTransform keypadRectTransform = achievementPopup.GetComponent<RectTransform>();
+            RectTransform keypadRectTransform = achievementWindow.GetComponent<RectTransform>();
 
             keypadRectTransform.offsetMax = new Vector2(200, 127.645f);
             keypadRectTransform.offsetMin = new Vector2(-200, -159.165f);
 
             // Exit Button
-            GameObject closeButton = achievementPopup.transform.GetChild(0).GetChild(0).gameObject;
+            GameObject closeButton = achievementWindow.transform.GetChild(0).GetChild(0).gameObject;
 
             Button[] buttonComponents = closeButton.GetComponents<Button>();
 
@@ -79,7 +79,7 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             buttonComponents[1].onClick.AddListener(ARGAchievementLogic.CloseAchievementPopup);
 
             // Resize the Window
-            GameObject scrollView = achievementPopup.transform.GetChild(1).gameObject;
+            GameObject scrollView = achievementWindow.transform.GetChild(1).gameObject;
 
             RectTransform scrollViewRectTransform = scrollView.GetComponent<RectTransform>();
 
