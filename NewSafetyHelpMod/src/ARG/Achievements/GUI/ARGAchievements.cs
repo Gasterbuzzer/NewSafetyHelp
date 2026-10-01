@@ -1,11 +1,9 @@
-﻿using NewSafetyHelp.ARG.Achievements;
-using NewSafetyHelp.ARG.ARGLogic;
-using NewSafetyHelp.ImportFiles;
+﻿using NewSafetyHelp.ImportFiles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace NewSafetyHelp.ARG.ARGGUI
+namespace NewSafetyHelp.ARG.Achievements.GUI
 {
     public static class ARGAchievements
     {

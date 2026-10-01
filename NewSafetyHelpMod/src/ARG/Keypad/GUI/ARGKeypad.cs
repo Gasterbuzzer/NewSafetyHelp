@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using NewSafetyHelp.ARG.ARGLogic;
-using NewSafetyHelp.ARG.Keypad;
+using NewSafetyHelp.ARG.ARGGUI;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
@@ -14,7 +13,7 @@ using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace NewSafetyHelp.ARG.ARGGUI
+namespace NewSafetyHelp.ARG.Keypad.GUI
 {
     public static class ARGKeypad
     {

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using NewSafetyHelp.ARG.Keypad;
+using NewSafetyHelp.ARG.Keypad.GUI;
 using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;

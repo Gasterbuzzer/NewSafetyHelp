@@ -134,21 +134,21 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="src\ARG\Achievements\ARGAchievementClickEvent.cs" />
         <Compile Include="src\ARG\Achievements\ARGAchievementHelper.cs" />
-        <Compile Include="src\ARG\Achievements\ARGAchievementLogic.cs" />
         <Compile Include="src\ARG\Achievements\ARGAchievementSave.cs" />
         <Compile Include="src\ARG\Achievements\CustomAchievement.cs" />
-        <Compile Include="src\ARG\ARGGUI\ARGAchievements.cs" />
+        <Compile Include="src\ARG\Achievements\GUI\ARGAchievementClickEvent.cs" />
+        <Compile Include="src\ARG\Achievements\GUI\ARGAchievementLogic.cs" />
+        <Compile Include="src\ARG\Achievements\GUI\ARGAchievements.cs" />
         <Compile Include="src\ARG\ARGGUI\ARGDesktopVideo.cs" />
         <Compile Include="src\ARG\ARGHelper.cs" />
         <Compile Include="src\ARG\ARGLoadedFiles.cs" />
         <Compile Include="src\ARG\ARGLogic\ARGSecretInputMono.cs" />
-        <Compile Include="src\ARG\ARGGUI\ARGKeypad.cs" />
         <Compile Include="src\ARG\ARGLogic\ARGSettings.cs" />
-        <Compile Include="src\ARG\Keypad\ARGKeyPadClickEvent.cs" />
-        <Compile Include="src\ARG\Keypad\ARGKeypadInput.cs" />
-        <Compile Include="src\ARG\Keypad\ARGKeypadLogic.cs" />
+        <Compile Include="src\ARG\Keypad\GUI\ARGKeypad.cs" />
+        <Compile Include="src\ARG\Keypad\GUI\ARGKeyPadClickEvent.cs" />
+        <Compile Include="src\ARG\Keypad\GUI\ARGKeypadInput.cs" />
+        <Compile Include="src\ARG\Keypad\GUI\ARGKeypadLogic.cs" />
         <Compile Include="src\Audio\AudioCache.cs" />
         <Compile Include="src\Audio\AudioImport.cs" />
         <Compile Include="src\Audio\AudioLoadThrottler.cs" />

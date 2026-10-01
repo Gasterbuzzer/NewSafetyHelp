@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace NewSafetyHelp.ARG.Keypad
+namespace NewSafetyHelp.ARG.Keypad.GUI
 {
     public static class ARGKeypadLogic
     {
