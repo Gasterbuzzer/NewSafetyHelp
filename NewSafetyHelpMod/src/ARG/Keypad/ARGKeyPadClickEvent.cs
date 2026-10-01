@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using NewSafetyHelp.ARG.ARGLogic;
+using UnityEngine;
 
-namespace NewSafetyHelp.ARG.ARGLogic
+namespace NewSafetyHelp.ARG.Keypad
 {
     public class ARGKeyPadClickEvent : MonoBehaviour
     {

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
+using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.ARG.ARGGUI;
 using NewSafetyHelp.ARG.ARGLogic;
 using NewSafetyHelp.CustomCampaignSystem;
@@ -32,6 +33,8 @@ namespace NewSafetyHelp.ARG
             {
                 return;
             }
+
+            ARGAchievementSave.InitializeARGAchievements();
 
             ARGParsing.GetAllARGFiles(usermodFolder);
         }
@@ -86,6 +89,9 @@ namespace NewSafetyHelp.ARG
 
             ARGDesktopVideo.CreateFullScreenVideoPlayer();
             ARGAchievements.CreateAchievementsIcon();
+
+            // Trigger day achievements here.
+            ARGAchievementHelper.UnlockDayAchievement();
         }
 
         /// <summary>

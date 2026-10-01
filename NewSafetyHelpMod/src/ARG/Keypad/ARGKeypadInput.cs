@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using NewSafetyHelp.ARG.ARGGUI;
+using NewSafetyHelp.ARG.ARGLogic;
 using UnityEngine;
 
-namespace NewSafetyHelp.ARG.ARGLogic
+namespace NewSafetyHelp.ARG.Keypad
 {
     public static class ARGKeypadInput
     {

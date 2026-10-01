@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 
-namespace NewSafetyHelp.ARG.ARGLogic
+namespace NewSafetyHelp.ARG.Achievements
 {
     public static class ARGAchievementLogic
     {
         // GameObject References
         private static GameObject achievementPopup;
-
-        public static bool AchievementIsOpen;
 
         /// <summary>
         /// Opens the achievement popup prompt.
@@ -17,7 +15,6 @@ namespace NewSafetyHelp.ARG.ARGLogic
             if (achievementPopup != null)
             {
                 achievementPopup.SetActive(true);
-                AchievementIsOpen = true;
             }
         }
 
@@ -29,7 +26,6 @@ namespace NewSafetyHelp.ARG.ARGLogic
             if (achievementPopup != null)
             {
                 achievementPopup.SetActive(false);
-                AchievementIsOpen = false;
             }
         }
 
@@ -37,7 +33,7 @@ namespace NewSafetyHelp.ARG.ARGLogic
         /// Sets the achievement popup correctly.
         /// </summary>
         /// <param name="achievementGameObject"></param>
-        public static void SetKeypadPopup(GameObject achievementGameObject)
+        public static void SetAchievementPopup(GameObject achievementGameObject)
         {
             achievementPopup = achievementGameObject;
         }

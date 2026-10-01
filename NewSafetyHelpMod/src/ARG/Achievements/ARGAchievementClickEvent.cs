@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace NewSafetyHelp.ARG.ARGLogic
+namespace NewSafetyHelp.ARG.Achievements
 {
     public class ARGAchievementClickEvent : MonoBehaviour
     {

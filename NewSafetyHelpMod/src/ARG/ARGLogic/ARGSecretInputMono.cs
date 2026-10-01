@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using NewSafetyHelp.ARG.Keypad;
 using NewSafetyHelp.HelperFunctions;
 using NewSafetyHelp.LoggingSystem;
 using UnityEngine;

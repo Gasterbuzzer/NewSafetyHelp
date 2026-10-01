@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.ARG.ARGLogic;
+using NewSafetyHelp.ARG.Keypad;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.ImportFiles;
@@ -53,14 +54,14 @@ namespace NewSafetyHelp.ARG.ARGGUI
             // Change Icon.
             argKeypad.transform.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
 
-            ARGAchievementClickEvent argAchievementClickEventComponent =
-                argKeypad.AddComponent<ARGAchievementClickEvent>();
+            ARGKeyPadClickEvent argAchievementClickEventComponent =
+                argKeypad.AddComponent<ARGKeyPadClickEvent>();
 
             Button doubleClickButton = argKeypad.GetComponent<Button>();
 
             doubleClickButton.onClick.RemoveAllListeners(); // Remove all previous on click events.
 
-            doubleClickButton.onClick.AddListener(argAchievementClickEventComponent.OpenAchievementPopup);
+            doubleClickButton.onClick.AddListener(argAchievementClickEventComponent.OpenKeyPadPopup);
 
             argKeypad.SetActive(true);
 

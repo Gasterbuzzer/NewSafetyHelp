@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.ARG.ARGLogic;
+﻿using NewSafetyHelp.ARG.Achievements;
+using NewSafetyHelp.ARG.ARGLogic;
 using NewSafetyHelp.ImportFiles;
 using TMPro;
 using UnityEngine;
@@ -49,7 +50,7 @@ namespace NewSafetyHelp.ARG.ARGGUI
             GameObject achievementPopup = Object
                 .Instantiate(mainMenuCanvas.transform.GetChild(4).gameObject, mainMenuCanvas.transform).gameObject;
 
-            ARGAchievementLogic.SetKeypadPopup(achievementPopup);
+            ARGAchievementLogic.SetAchievementPopup(achievementPopup);
 
             // Rename Program
             achievementPopup.name = "AchievementPopup";
