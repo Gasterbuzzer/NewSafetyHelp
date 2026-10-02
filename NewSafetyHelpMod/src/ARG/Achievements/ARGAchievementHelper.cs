@@ -12,7 +12,7 @@ namespace NewSafetyHelp.ARG.Achievements
         {
             LoggingHelper.TestLog(customAchievement.AchievementName);
 
-            MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopup(customAchievement));
+            MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopupDesktop(customAchievement));
         }
 
         public static void UnlockDayAchievement()

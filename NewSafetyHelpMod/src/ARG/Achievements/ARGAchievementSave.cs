@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 
 namespace NewSafetyHelp.ARG.Achievements
@@ -41,78 +42,81 @@ namespace NewSafetyHelp.ARG.Achievements
              */
 
             // Days
-            TheStart = new CustomAchievement("The Start", "Complete Monday.", ARGAchievementCategory);
-
-            TheReturn = new CustomAchievement("The Return", "Complete Tuesday.",
+            TheStart = new CustomAchievement("The Start", "Complete Monday.", null,
                 ARGAchievementCategory);
 
-            TheRespite = new CustomAchievement("The Respite", "Complete Wednesday.",
+            TheReturn = new CustomAchievement("The Return", "Complete Tuesday.", null,
                 ARGAchievementCategory);
 
-            TheChorus = new CustomAchievement("The Chorus", "Complete Thursday.",
+            TheRespite = new CustomAchievement("The Respite", "Complete Wednesday.", null,
                 ARGAchievementCategory);
 
-            TheClimax = new CustomAchievement("The Climax", "Complete Friday.",
+            TheChorus = new CustomAchievement("The Chorus", "Complete Thursday.", null,
+                ARGAchievementCategory);
+
+            TheClimax = new CustomAchievement("The Climax", "Complete Friday.", EmbedLoader.AdminIcon,
                 ARGAchievementCategory);
 
             // Endings
             TheEndOfEverything = new CustomAchievement("The End Of Everything",
-                "Get the bad ending for Summer Support.", ARGAchievementCategory);
+                "Get the bad ending for Summer Support.", null, ARGAchievementCategory);
 
             TheDeathOfDave = new CustomAchievement("The Death Of Dave",
-                "Get the good ending for Summer Support.", ARGAchievementCategory);
+                "Get the good ending for Summer Support.", null, ARGAchievementCategory);
 
             // Performance in the Game
             TheGoldStandard = new CustomAchievement("The Gold Standard",
-                "Earn a gold star of safety.", ARGAchievementCategory);
+                "Earn a gold star of safety.", null, ARGAchievementCategory);
 
             TheWorstOfTheWorst = new CustomAchievement("The Worst Of The Worst", "Die.",
-                ARGAchievementCategory);
+                null, ARGAchievementCategory);
 
             TheBestOfTheBest = new CustomAchievement("The Best Of The Best",
-                "Complete Summer Support with flawless accuracy.", ARGAchievementCategory);
+                "Complete Summer Support with flawless accuracy.", null,
+                ARGAchievementCategory);
 
             // Arcade Calls
             Critter101 = new CustomAchievement("Critter 101", "Complete X calls in Call Training",
-                ARGAchievementCategory);
+                null, ARGAchievementCategory);
 
             ClockedIn = new CustomAchievement("Clocked In", "Complete X calls in Call Training.",
-                ARGAchievementCategory);
+                null, ARGAchievementCategory);
 
             SafetyScholar = new CustomAchievement("Safety Scholar",
-                "Complete X calls in Call Training.", ARGAchievementCategory);
+                "Complete X calls in Call Training.", null, ARGAchievementCategory);
 
             DrSafety = new CustomAchievement("Dr. Safety", "Complete X calls in Call Training.",
-                ARGAchievementCategory);
+                null, ARGAchievementCategory);
 
-            // 
+            // Completionist
             EmployeeOfTheMonth = new CustomAchievement("Employee Of The Month",
-                "Unlock every standard achievement.", ARGAchievementCategory);
+                "Unlock every standard achievement.", null, ARGAchievementCategory);
 
-            Archivist = new CustomAchievement("Archivist", "Read every email.",
+            Archivist = new CustomAchievement("Archivist", "Read every email.", null,
                 ARGAchievementCategory);
 
             // In game events
-            FMinus = new CustomAchievement("F-", "Upset Detective Horus.",
+            FMinus = new CustomAchievement("F-", "Upset Detective Horus.", null,
                 ARGAchievementCategory);
 
-            GoAway = new CustomAchievement("Go Away", "Hang up on Supervisor Dave.",
+            GoAway = new CustomAchievement("Go Away", "Hang up on Supervisor Dave.", null,
                 ARGAchievementCategory);
 
             GoodRiddance = new CustomAchievement("Good Riddance", "Get David Baldina killed.",
-                ARGAchievementCategory);
+                null, ARGAchievementCategory);
 
             // ARG
             TWFuIG9uIHRoZSBTY3JlZW4 = new CustomAchievement("TWFuIG9uIHRoZSBTY3JlZW4",
-                "SGVhciB0aGUgY2FsbCBvZiBhIGdvZA==",
+                "SGVhciB0aGUgY2FsbCBvZiBhIGdvZA==", null,
                 ARGAchievementCategory, true);
 
             ArcanaMachinae = new CustomAchievement("Arcana Machinae",
-                "Gain entry to the ADMIN console.", ARGAchievementCategory, true);
+                "Gain entry to the ADMIN console.", null,
+                ARGAchievementCategory, true);
 
             // All achievements
             EmployeeOfTheCentury = new CustomAchievement("Employee Of The Century",
-                "Unlock every achievement.", ARGAchievementCategory);
+                "Unlock every achievement.", null, ARGAchievementCategory);
         }
     }
 }

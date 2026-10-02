@@ -1,4 +1,6 @@
-﻿using MelonLoader;
+﻿using JetBrains.Annotations;
+using MelonLoader;
+using UnityEngine;
 
 namespace NewSafetyHelp.ARG.Achievements
 {
@@ -6,7 +8,9 @@ namespace NewSafetyHelp.ARG.Achievements
     {
         public readonly string AchievementName;
 
-        private readonly string AchievementDescription;
+        public readonly string AchievementDescription;
+
+        [CanBeNull] public readonly Sprite AchievementIcon;
 
         private readonly bool AchievementHidden;
 
@@ -17,12 +21,15 @@ namespace NewSafetyHelp.ARG.Achievements
         /// </summary>
         /// <param name="achievementName">Name of the achievement.</param>
         /// <param name="achievementDescription">Description of the achievement.</param>
+        /// <param name="achievementIcon">Icon of the achievement.</param>
         /// <param name="achievementHidden">If the achievement is a hidden achievement.</param>
-        public CustomAchievement(string achievementName, string achievementDescription, bool achievementHidden)
+        public CustomAchievement(string achievementName, string achievementDescription, Sprite achievementIcon,
+            bool achievementHidden)
         {
             AchievementName = achievementName;
             AchievementDescription = achievementDescription;
             AchievementHidden = achievementHidden;
+            AchievementIcon = achievementIcon;
         }
 
         /// <summary>
@@ -30,14 +37,16 @@ namespace NewSafetyHelp.ARG.Achievements
         /// </summary>
         /// <param name="achievementName">Name of the achievement.</param>
         /// <param name="achievementDescription">Description of the achievement.</param>
+        /// <param name="achievementIcon">Icon of the achievement.</param>
         /// <param name="ARGAchievementCategory">Category to add the achievement to.</param>
         /// <param name="achievementHidden">If the achievement is a hidden achievement.</param>
-        public CustomAchievement(string achievementName, string achievementDescription,
+        public CustomAchievement(string achievementName, string achievementDescription, Sprite achievementIcon,
             MelonPreferences_Category ARGAchievementCategory, bool achievementHidden = false)
         {
             AchievementName = achievementName;
             AchievementDescription = achievementDescription;
             AchievementHidden = achievementHidden;
+            AchievementIcon = achievementIcon;
 
             InitializeAchievementPreference(ARGAchievementCategory);
         }

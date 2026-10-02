@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using NewSafetyHelp.ImportFiles;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
@@ -9,11 +11,33 @@ namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
     {
         private static bool isShowingPopup;
 
+        // Parent Popup
         private static GameObject achievementPopup;
-        private static AudioSource achievementPopupAudioSource;
+        private static RectTransform achievementPopupRectTransform;
 
         private static readonly Vector3 TopPosition = new Vector3(285, -260, 0);
         private static readonly Vector3 BottomPosition = new Vector3(285, -345, 0);
+
+        // Audio
+        private static AudioSource achievementPopupAudioSource;
+
+        // Icon
+        private static GameObject achievementIcon;
+        private static Image achievementIconImage;
+
+        // Title
+        private static RectTransform achievementTitleRectTransform;
+        private static TextMeshProUGUI achievementTitleText;
+
+        private static readonly Vector2 TitleTopPosition = new Vector2(115, 26);
+        private static readonly Vector2 TitleRightTopPosition = new Vector2(145, 26);
+
+        // Description
+        private static RectTransform achievementDescriptionRectTransform;
+        private static TextMeshProUGUI achievementDescriptionText;
+
+        private static readonly Vector2 DescriptionNormalPosition = new Vector2(115, 12);
+        private static readonly Vector2 DescriptionRightPosition = new Vector2(145, 12);
 
         /// <summary>
         /// Creates the desktop achievement popup on the desktop.
@@ -30,11 +54,21 @@ namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
 
             Object.Destroy(achievementPopup.GetComponent<DisableInputBlockerOnDisable>());
 
+            // Create Text before we delete the children.
+            GameObject achievementTitle = Object
+                .Instantiate(achievementPopup.transform.GetChild(0).GetChild(3), achievementPopup.transform).gameObject;
+            achievementTitle.name = "AchievementTitle";
+
+            GameObject achievementDescription = Object
+                .Instantiate(achievementPopup.transform.GetChild(0).GetChild(3), achievementPopup.transform).gameObject;
+            achievementDescription.name = "achievementDescription";
+
+            // Destroy old content
             Object.Destroy(achievementPopup.transform.GetChild(0).gameObject);
             Object.Destroy(achievementPopup.transform.GetChild(1).gameObject);
 
             // Adjust position and size
-            RectTransform achievementPopupRectTransform = achievementPopup.GetComponent<RectTransform>();
+            achievementPopupRectTransform = achievementPopup.GetComponent<RectTransform>();
 
             achievementPopupRectTransform.offsetMax = new Vector3(230, 0, 0);
             achievementPopupRectTransform.offsetMin = new Vector3(0, -80, 0);
@@ -44,14 +78,58 @@ namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
             // Add sound effect
             achievementPopupAudioSource = achievementPopup.AddComponent<AudioSource>();
             achievementPopupAudioSource.volume = 0.1f;
+            achievementPopupAudioSource.playOnAwake = false;
 
             if (EmbedLoader.AchievementSound != null)
             {
                 achievementPopupAudioSource.clip = EmbedLoader.AchievementSound.clip;
             }
+
+            // Title
+            achievementTitleText = achievementTitle.GetComponent<TextMeshProUGUI>();
+
+            achievementTitleText.text = "Achievement Title";
+            achievementTitleText.fontStyle = FontStyles.Bold;
+            achievementTitleText.color = new Color(0, 0, 0);
+            achievementTitleText.fontSize = 15;
+            achievementTitleText.alignment = TextAlignmentOptions.Center;
+
+            achievementTitleRectTransform = achievementTitle.GetComponent<RectTransform>();
+
+            achievementTitleRectTransform.localPosition = Vector3.zero;
+            achievementTitleRectTransform.anchoredPosition = TitleTopPosition;
+
+            // Achievement Icon
+            achievementIcon = new GameObject("AchievementIcon");
+            achievementIcon.transform.SetParent(achievementPopup.transform, false);
+
+            RectTransform achievementIconRectTransform = achievementIcon.AddComponent<RectTransform>();
+            achievementIconRectTransform.anchoredPosition = new Vector2(-70, 0);
+            achievementIconRectTransform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+            achievementIcon.AddComponent<CanvasRenderer>();
+            achievementIconImage = achievementIcon.AddComponent<Image>();
+            achievementIconImage.sprite = EmbedLoader.AdminIcon;
+
+            achievementIcon.SetActive(false);
+
+            // Achievement Description
+            achievementDescriptionText = achievementDescription.GetComponent<TextMeshProUGUI>();
+
+            achievementDescriptionText.text = "Lorem Cat Ipsum";
+            achievementDescriptionText.fontStyle = FontStyles.Bold;
+            achievementDescriptionText.color = new Color(0, 0, 0);
+            achievementDescriptionText.alignment = TextAlignmentOptions.Center;
+
+            achievementDescriptionRectTransform = achievementDescription.GetComponent<RectTransform>();
+            achievementDescriptionRectTransform.localPosition = Vector3.zero;
+            achievementDescriptionRectTransform.anchoredPosition = DescriptionNormalPosition;
+            achievementDescriptionRectTransform.anchorMax = new Vector2(0, 0.5f);
+
+            achievementDescriptionRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 200);
         }
 
-        public static IEnumerator TriggerAchievementPopup(CustomAchievement customAchievement)
+        public static IEnumerator TriggerAchievementPopupDesktop(CustomAchievement customAchievement)
         {
             while (isShowingPopup)
             {
@@ -60,11 +138,24 @@ namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
 
             if (achievementPopup != null)
             {
-                RectTransform achievementPopupRectTransform = achievementPopup.GetComponent<RectTransform>();
-
                 achievementPopupRectTransform.localPosition = BottomPosition;
 
-                yield return new WaitForSeconds(2);
+                // Setup popup
+                achievementTitleText.text = customAchievement.AchievementName;
+                achievementDescriptionText.text = customAchievement.AchievementDescription;
+
+                if (customAchievement.AchievementIcon != null)
+                {
+                    achievementIcon.SetActive(true);
+                    achievementIconImage.sprite = customAchievement.AchievementIcon;
+
+                    achievementTitleRectTransform.anchoredPosition = TitleRightTopPosition;
+
+                    achievementDescriptionRectTransform.anchoredPosition = DescriptionRightPosition;
+                    achievementDescriptionRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150);
+                }
+
+                yield return new WaitForSeconds(1);
 
                 isShowingPopup = true;
                 achievementPopup.SetActive(true);
