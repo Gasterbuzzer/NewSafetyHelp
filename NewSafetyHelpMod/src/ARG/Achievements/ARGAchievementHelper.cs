@@ -8,11 +8,11 @@ namespace NewSafetyHelp.ARG.Achievements
 {
     public static class ARGAchievementHelper
     {
-        private static void UnlockAchievement(CustomAchievement achievement)
+        private static void UnlockAchievement(CustomAchievement customAchievement)
         {
-            LoggingHelper.TestLog(achievement.AchievementName);
+            LoggingHelper.TestLog(customAchievement.AchievementName);
 
-            MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopup());
+            MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopup(customAchievement));
         }
 
         public static void UnlockDayAchievement()
