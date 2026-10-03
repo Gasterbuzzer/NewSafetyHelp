@@ -52,7 +52,8 @@ namespace NewSafetyHelp.ARG.Achievements
                         ARGAchievementSave.TheChorus.AchievementPreference.Value = true;
                         UnlockAchievement(ARGAchievementSave.TheChorus);
                     }
-                    else if (!ARGAchievementSave.TheClimax.AchievementPreference.Value)
+
+                    if (!ARGAchievementSave.TheClimax.AchievementPreference.Value)
                     {
                         CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
@@ -64,7 +65,7 @@ namespace NewSafetyHelp.ARG.Achievements
 
                         if (customCampaign.SavedGameFinished == 1)
                         {
-                            //ARGAchievementSave.TheChorus.AchievementPreference.Value = true;
+                            ARGAchievementSave.TheChorus.AchievementPreference.Value = true;
                             UnlockAchievement(ARGAchievementSave.TheClimax);
                         }
                     }

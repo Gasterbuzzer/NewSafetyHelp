@@ -136,6 +136,8 @@ namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
                 yield return new WaitForEndOfFrame();
             }
 
+            isShowingPopup = true;
+
             if (achievementPopup != null)
             {
                 achievementPopupRectTransform.localPosition = BottomPosition;
@@ -157,7 +159,6 @@ namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
 
                 yield return new WaitForSeconds(1);
 
-                isShowingPopup = true;
                 achievementPopup.SetActive(true);
 
                 // Play sound
@@ -204,9 +205,10 @@ namespace NewSafetyHelp.ARG.Achievements.GUI.AchievementPopup
 
                 achievementPopupRectTransform.localPosition = BottomPosition;
 
-                isShowingPopup = false;
                 achievementPopup.SetActive(false);
             }
+
+            isShowingPopup = false;
         }
     }
 }
