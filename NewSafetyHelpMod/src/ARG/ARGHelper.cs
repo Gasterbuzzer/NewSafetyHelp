@@ -22,6 +22,8 @@ namespace NewSafetyHelp.ARG
         private static readonly byte[] ARGCampaignName =
             { 83, 117, 109, 109, 101, 114, 32, 67, 111, 99, 107, 32, 83, 117, 99, 107, 101, 114 };
 
+        public static bool IsInARG;
+
         /// <summary>
         /// Gets the files for the ARG if the loaded campaign is the correct one.
         /// </summary>
@@ -50,6 +52,7 @@ namespace NewSafetyHelp.ARG
             // Prevent this in main campaign or not correct custom campaign.
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
+                IsInARG = false;
                 return;
             }
 
@@ -59,6 +62,7 @@ namespace NewSafetyHelp.ARG
             if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
                 && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
             {
+                IsInARG = false;
                 return;
             }
 
@@ -66,6 +70,8 @@ namespace NewSafetyHelp.ARG
 
             // Add ARG Input
             mainMenuCanvas.gameObject.AddComponent<ARGSecretInputMono.ARGCaptureInput>();
+
+            IsInARG = true;
         }
 
         /// <summary>
@@ -76,6 +82,7 @@ namespace NewSafetyHelp.ARG
             // Prevent this in main campaign or not correct custom campaign.
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
+                IsInARG = false;
                 return;
             }
 
@@ -85,8 +92,11 @@ namespace NewSafetyHelp.ARG
             if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
                 && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
             {
+                IsInARG = false;
                 return;
             }
+
+            IsInARG = true;
 
             ARGKeypad.CreateKeypad();
 
@@ -134,6 +144,7 @@ namespace NewSafetyHelp.ARG
             // Prevent this in main campaign or not correct custom campaign.
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
+                IsInARG = false;
                 return;
             }
 
@@ -143,10 +154,13 @@ namespace NewSafetyHelp.ARG
             if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
                 && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
             {
+                IsInARG = false;
                 return;
             }
 
             ARGSettings.CreateCustomInGameSettings();
+
+            IsInARG = true;
         }
 
         /// <summary>
@@ -157,6 +171,7 @@ namespace NewSafetyHelp.ARG
             // Prevent this in main campaign or not correct custom campaign.
             if (!CustomCampaignGlobal.InCustomCampaign)
             {
+                IsInARG = false;
                 return;
             }
 
@@ -166,11 +181,14 @@ namespace NewSafetyHelp.ARG
             if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
                 && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
             {
+                IsInARG = false;
                 return;
             }
 
             // Add achievement popup
             AchievementPopupGUI.CreateInGameAchievementPopup();
+
+            IsInARG = true;
         }
     }
 }

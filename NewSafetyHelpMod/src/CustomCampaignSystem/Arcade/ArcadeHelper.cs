@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using NewSafetyHelp.ARG;
+using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.CustomCampaignSystem.ArcadeCallerModule;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.InGameSettings;
@@ -150,6 +152,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Arcade
             }
 
             ArcadeCaller chosenArcadeCaller = GetValidArcadeCaller(customCampaign, __instance.currentArcadeCallTotal);
+            
+            if (ARGHelper.IsInARG)
+            {
+                ARGAchievementHelper.UnlockArcadeAchievement(__instance.currentArcadeCallTotal);
+            }
 
             if (chosenArcadeCaller != null)
             {
