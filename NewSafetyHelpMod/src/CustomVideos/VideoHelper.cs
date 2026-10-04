@@ -4,6 +4,7 @@ using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NewSafetyHelp.CustomVideos
 {
@@ -41,6 +42,11 @@ namespace NewSafetyHelp.CustomVideos
             if (customVideo.GameObjectOrder.HasChanged)
             {
                 newCustomVideo.transform.SetSiblingIndex(customVideo.GameObjectOrder.Data);
+            }
+
+            if (customVideo.DesktopIcon.HasChanged)
+            {
+                newCustomVideo.GetComponent<Image>().sprite = customVideo.DesktopIcon.Data;
             }
 
             // Update desktop name

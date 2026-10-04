@@ -8,6 +8,7 @@ using NewSafetyHelp.CustomVideos;
 using NewSafetyHelp.JSONParsing.ParsingHelpers;
 using NewSafetyHelp.LoggingSystem;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace NewSafetyHelp.JSONParsing.CCParsing
 {
@@ -59,6 +60,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
 
             string videoFilePath = "";
 
+            VariableChanged<Sprite> desktopIcon = new VariableChanged<Sprite>
+            {
+                Data = null
+            };
+
             // Unlock
             int videoUnlockDay = 0;
 
@@ -90,6 +96,10 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssign(jObjectParsed, "video_desktop_name", ref videoName);
             ParsingHelper.TryAssign(jObjectParsed, "custom_campaign_attached", ref customCampaignName);
 
+            ImageParsingHelper.TryAssignSpriteChanged(jObjectParsed, "video_desktop_icon_name", ref desktopIcon,
+                jsonFolderPath, usermodFolderPath, customCampaignName);
+
+            // Unlock
             ParsingHelper.TryAssign(jObjectParsed, "video_unlock_day", ref videoUnlockDay);
 
             ParsingHelper.TryAssign(jObjectParsed, "video_order_priority", ref orderPriority);
@@ -120,6 +130,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 CustomCampaignName = customCampaignName,
 
                 VideoURL = videoFilePath,
+
+                DesktopIcon = desktopIcon,
 
                 UnlockDay = videoUnlockDay,
 

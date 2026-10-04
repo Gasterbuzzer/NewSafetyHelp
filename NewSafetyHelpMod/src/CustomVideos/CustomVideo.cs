@@ -14,6 +14,11 @@ namespace NewSafetyHelp.CustomVideos
 
         public string VideoURL = null;
 
+        public VariableChanged<Sprite> DesktopIcon = new VariableChanged<Sprite>
+        {
+            Data = null
+        };
+
         public int UnlockDay = 1;
 
         /*
