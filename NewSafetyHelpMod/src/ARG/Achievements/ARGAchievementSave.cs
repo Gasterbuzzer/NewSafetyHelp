@@ -13,22 +13,30 @@ namespace NewSafetyHelp.ARG.Achievements
         public static CustomAchievement TheRespite;
         public static CustomAchievement TheChorus;
         public static CustomAchievement TheClimax;
+
         public static CustomAchievement TheEndOfEverything;
         public static CustomAchievement TheDeathOfDave;
+
         public static CustomAchievement TheGoldStandard;
         public static CustomAchievement TheWorstOfTheWorst;
         public static CustomAchievement TheBestOfTheBest;
+
         public static CustomAchievement Critter101;
         public static CustomAchievement ClockedIn;
         public static CustomAchievement SafetyScholar;
         public static CustomAchievement DrSafety;
+
         public static CustomAchievement EmployeeOfTheMonth;
+
         public static CustomAchievement Archivist;
+
         public static CustomAchievement FMinus;
         public static CustomAchievement GoAway;
         public static CustomAchievement GoodRiddance;
+
         public static CustomAchievement TWFuIG9uIHRoZSBTY3JlZW4;
         public static CustomAchievement ArcanaMachinae;
+
         public static CustomAchievement EmployeeOfTheCentury;
 
         public static void InitializeARGAchievements()
