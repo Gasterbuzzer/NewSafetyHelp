@@ -850,8 +850,9 @@ namespace NewSafetyHelp.Callers.UI
                     {
                         CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
-                        if (customCampaign.ArcadeMusicPlayThrough.Data
-                            && customCampaign.ArcadeMusic.Count > 0)
+                        if (customCampaign.ArcadeMusic.Count > 0 
+                            && customCampaign.ArcadeMusicPlayThrough.HasChanged
+                            && customCampaign.ArcadeMusicPlayThrough.Data)
                         {
                             mainCanvasBehavior.StartCoroutine(
                                 ArcadeMusicHelper.PlayPassthroughMusicArcade(customCampaign,

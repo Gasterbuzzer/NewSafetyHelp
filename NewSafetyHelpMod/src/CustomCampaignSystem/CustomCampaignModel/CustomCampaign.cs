@@ -390,7 +390,8 @@ namespace NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel
 
                             CustomPhobias.Add(customPhobia);
 
-                            string phobiaEntryString = $"{CampaignName}_Phobia_{customPhobia.PhobiaName}";
+                            string phobiaEntryString = $"{CampaignName}_Phobia_" +
+                                                       $"{customPhobia.PhobiaName.Trim().Replace(" ", "").Replace(".", "").Replace(",", "").Replace("=", "").Replace("[", "").Replace("]", "").Replace("#", "").ToLower()}";
 
                             if (customPhobiaCategory.GetEntry<bool>(phobiaEntryString) == null)
                             {
