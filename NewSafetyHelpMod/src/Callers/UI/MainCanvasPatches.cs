@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.ARG;
 using NewSafetyHelp.Audio.Music.Arcade;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerModel;
@@ -275,6 +276,8 @@ namespace NewSafetyHelp.Callers.UI
                         LoggingHelper.CampaignNullError();
                         yield break;
                     }
+
+                    ARGHelper.InitializeInGameARG();
 
                     (bool foundModifier, VariableChanged<Sprite> value) inGameProgramIconVC =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.InGameProgramIcon,

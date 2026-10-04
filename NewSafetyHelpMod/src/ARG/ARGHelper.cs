@@ -69,7 +69,7 @@ namespace NewSafetyHelp.ARG
         }
 
         /// <summary>
-        /// Creates the input capture for the ARG in the selected custom campaign.
+        /// Creates multiple features for the ARG in the selected custom campaign.
         /// </summary>
         public static void SetupARGDesktop()
         {
@@ -147,6 +147,30 @@ namespace NewSafetyHelp.ARG
             }
 
             ARGSettings.CreateCustomInGameSettings();
+        }
+
+        /// <summary>
+        /// Creates the in game elements for the ARG in the selected custom campaign.
+        /// </summary>
+        public static void InitializeInGameARG()
+        {
+            // Prevent this in main campaign or not correct custom campaign.
+            if (!CustomCampaignGlobal.InCustomCampaign)
+            {
+                return;
+            }
+
+            byte[] campaignAsciiName =
+                Encoding.ASCII.GetBytes(CustomCampaignGlobal.GetActiveCustomCampaign().CampaignName);
+
+            if (!campaignAsciiName.SequenceEqual(ARGCampaignName)
+                && !campaignAsciiName.SequenceEqual(ARGTestCampaignName))
+            {
+                return;
+            }
+
+            // Add achievement popup
+            AchievementPopupGUI.CreateInGameAchievementPopup();
         }
     }
 }

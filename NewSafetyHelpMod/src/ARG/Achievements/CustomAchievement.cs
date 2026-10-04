@@ -60,6 +60,11 @@ namespace NewSafetyHelp.ARG.Achievements
             string nameToCheck = AchievementName.Trim().Replace(" ", "").Replace(".", "").Replace(",", "")
                 .Replace("=", "").Replace("[", "").Replace("]", "").Replace("#", "").ToLower();
 
+            if (ARGAchievementCategory == null)
+            {
+                return;
+            }
+
             if (ARGAchievementCategory.GetEntry<bool>(nameToCheck) == null)
             {
                 AchievementPreference = ARGAchievementCategory.CreateEntry(nameToCheck, false);

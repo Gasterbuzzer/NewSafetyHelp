@@ -8,11 +8,12 @@ namespace NewSafetyHelp.ARG.Achievements
 {
     public static class ARGAchievementHelper
     {
-        private static void UnlockAchievement(CustomAchievement customAchievement)
+        public static void UnlockAchievement(CustomAchievement customAchievement, float appearDelay = 1)
         {
             LoggingHelper.TestLog(customAchievement.AchievementName);
 
-            MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopupDesktop(customAchievement));
+            MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopupDesktop(customAchievement,
+                appearDelay));
         }
 
         public static void UnlockDayAchievement()
@@ -65,7 +66,7 @@ namespace NewSafetyHelp.ARG.Achievements
 
                         if (customCampaign.SavedGameFinished == 1)
                         {
-                            ARGAchievementSave.TheChorus.AchievementPreference.Value = true;
+                            ARGAchievementSave.TheClimax.AchievementPreference.Value = true;
                             UnlockAchievement(ARGAchievementSave.TheClimax);
                         }
                     }
