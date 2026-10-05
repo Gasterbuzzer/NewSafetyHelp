@@ -528,7 +528,7 @@ namespace NewSafetyHelp.Callers.UI
                         hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 260f);
                         hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 90f);
 
-                        hintTextRectTransform.localPosition = new Vector3(40, -18, 0);
+                        hintTextRectTransform.localPosition = new Vector3(40, -20, 0);
 
                         TextSizer hintTextSizer = hintText.GetComponent<TextSizer>();
 
@@ -573,10 +573,12 @@ namespace NewSafetyHelp.Callers.UI
 
                             hintTitleGameObject.name = "HintTitle";
 
-                            hintTitleGameObject.transform.localPosition = new Vector3(-15, 35, 0);
+                            hintTitleGameObject.transform.localPosition = new Vector3(-20, 35, 0);
 
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontWeight = FontWeight.Bold;
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Bold;
+                            hintTitleGameObject.GetComponent<TextMeshProUGUI>().verticalAlignment =
+                                VerticalAlignmentOptions.Middle;
 
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().text =
                                 hintTitle.value.Data[Random.Range(0, hintTitle.value.Data.Count)];
@@ -588,7 +590,7 @@ namespace NewSafetyHelp.Callers.UI
 
                         RectTransform hintImageRectTransform = hintImage.AddComponent<RectTransform>();
 
-                        hintImageRectTransform.localPosition = new Vector3(-120, 0, 0);
+                        hintImageRectTransform.localPosition = new Vector3(-130, 0, 0);
 
                         (bool foundModifier, VariableChanged<float> value) scaleImageHint =
                             CustomCampaignGlobal.GetActiveModifierValue(c => c.ScaleImageHint,
