@@ -29,6 +29,17 @@ namespace NewSafetyHelp.ARG.Achievements
         /// <summary>
         /// Unlocks the game over achievement.
         /// </summary>
+        public static void UnlockGoldStarAchievement(float dayScore)
+        {
+            if (dayScore >= 99.99f)
+            {
+                UnlockAchievement(ARGAchievementSave.TheGoldStandard);
+            }
+        }
+
+        /// <summary>
+        /// Unlocks the game over achievement.
+        /// </summary>
         public static void UnlockGameOverAchievement()
         {
             UnlockAchievement(ARGAchievementSave.TheWorstOfTheWorst);

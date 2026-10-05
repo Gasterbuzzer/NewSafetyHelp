@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using NewSafetyHelp.ARG;
+using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.Audio.Music.Arcade;
 using NewSafetyHelp.Audio.Music.Intermission;
 using NewSafetyHelp.Callers.CallerModel;
@@ -485,7 +486,6 @@ namespace NewSafetyHelp.Callers.UI
                     }
 
                     // Hint System
-
                     (bool foundModifier, VariableChanged<bool> value) enableDayStartHint =
                         CustomCampaignGlobal.GetActiveModifierValue(c => c.EnableDayStartHint,
                             vCs => vCs.HasChanged);
@@ -561,7 +561,7 @@ namespace NewSafetyHelp.Callers.UI
 
                             hintTitleGameObject.name = "HintTitle";
 
-                            hintTitleGameObject.transform.localPosition = new Vector3(-45, 35, 0);
+                            hintTitleGameObject.transform.localPosition = new Vector3(-15, 35, 0);
 
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontWeight = FontWeight.Bold;
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Bold;
@@ -850,7 +850,7 @@ namespace NewSafetyHelp.Callers.UI
                     {
                         CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
 
-                        if (customCampaign.ArcadeMusic.Count > 0 
+                        if (customCampaign.ArcadeMusic.Count > 0
                             && customCampaign.ArcadeMusicPlayThrough.HasChanged
                             && customCampaign.ArcadeMusicPlayThrough.Data)
                         {
@@ -1010,11 +1010,16 @@ namespace NewSafetyHelp.Callers.UI
                 return false; // Skip function with false.
             }
 
+            /// <summary>
+            /// Coroutine for ending the day.
+            /// </summary>
+            /// <param name="__instance">Instance of the main canvas behavior.</param>
+            /// <returns>Coroutine to be run.</returns>
             private static IEnumerator EndDayRoutineChanged(MainCanvasBehavior __instance)
             {
                 if (IsDayEnding)
                 {
-                    LoggingHelper.DebugLog("Skipping EndDayRoutine.");
+                    LoggingHelper.DebugLog("Skipping 'EndDayRoutine'.");
                     yield break;
                 }
 
@@ -1024,6 +1029,14 @@ namespace NewSafetyHelp.Callers.UI
                 mainCanvasBehavior.clockedOut = false;
 
                 IntermissionMusicHelper.StopIntermissionMusicRoutine();
+
+                // Disable Hint
+                GameObject softwareIntroGameObject =
+                    GameObject.Find("MainCanvas/Panel").transform.Find("SoftwareIntroPanel").gameObject;
+
+                GameObject clockInPanel = softwareIntroGameObject.transform.GetChild(0).gameObject;
+
+                clockInPanel.transform.Find("HintSystemUIParent").gameObject.SetActive(false);
 
                 yield return new WaitForSeconds(5f);
 
@@ -1039,6 +1052,11 @@ namespace NewSafetyHelp.Callers.UI
                 mainCanvasBehavior.clockOutElements.SetActive(true);
                 mainCanvasBehavior.clockOutButton.SetActive(true);
                 mainCanvasBehavior.clockInElements.SetActive(false);
+
+                if (ARGHelper.IsInARG)
+                {
+                    ARGAchievementHelper.UnlockGoldStarAchievement(GlobalVariables.callerControllerScript.GetScore());
+                }
 
                 IsDayEnding = false;
                 while (!mainCanvasBehavior.clockedOut)
