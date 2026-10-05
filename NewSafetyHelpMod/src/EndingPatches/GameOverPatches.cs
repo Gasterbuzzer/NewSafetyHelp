@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
+using NewSafetyHelp.ARG;
+using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
@@ -15,15 +17,16 @@ namespace NewSafetyHelp.EndingPatches
     {
         private static readonly MethodInfo AnswerDynamicCall = typeof(CallerController).GetMethod("AnswerDynamicCall",
             BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+
         private static readonly FieldInfo TriggerGameOver = typeof(CallerController).GetField("triggerGameOver",
             BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-        
+
         private static readonly MethodInfo GetRandomPicMethod = typeof(CallerController).GetMethod("PickRandomPic",
             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 
         private static readonly MethodInfo GetRandomClip = typeof(CallerController).GetMethod("PickRandomClip",
             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-        
+
         [HarmonyLib.HarmonyPatch(typeof(CallerController), "TriggerGameOver")]
         public static class TriggerGameOverPatch
         {
@@ -166,15 +169,15 @@ namespace NewSafetyHelp.EndingPatches
                 // If any custom caller was "injected", we can now call it.
 
                 // OLD: __instance.AnswerDynamicCall(__instance.gameOverCall);
-                AnswerDynamicCall.Invoke(__instance, new object[] { __instance.gameOverCall }); 
+                AnswerDynamicCall.Invoke(__instance, new object[] { __instance.gameOverCall });
 
                 // OLD: __instance.triggerGameOver = true;
-                TriggerGameOver.SetValue(__instance, true); 
+                TriggerGameOver.SetValue(__instance, true);
 
                 return false; // Skip the original function
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(MainCanvasBehavior), "GameOverCutsceneRoutine")]
         public static class GameOverCutsceneRoutinePatch
         {
@@ -216,7 +219,7 @@ namespace NewSafetyHelp.EndingPatches
                 {
                     mainCanvasBehavior.cameraAnimator.SetBool((string)ShakeAnimationString.GetValue(__instance), true);
                 }
-                
+
                 mainCanvasBehavior.StartCoroutine(GlobalVariables.UISoundControllerScript.FadeInLoopingSound(
                     GlobalVariables.UISoundControllerScript.screenShakeLoop,
                     GlobalVariables.UISoundControllerScript.myScreenShakeLoopingSource, 0.7f));
@@ -239,7 +242,7 @@ namespace NewSafetyHelp.EndingPatches
                 mainCanvasBehavior.cutsceneCanvas.SetActive(true);
 
                 // Not in custom campaign
-                if (!CustomCampaignGlobal.InCustomCampaign) 
+                if (!CustomCampaignGlobal.InCustomCampaign)
                 {
                     mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
 
@@ -264,6 +267,11 @@ namespace NewSafetyHelp.EndingPatches
                     else // If not, we show the default one.
                     {
                         mainCanvasBehavior.videoPlayer.clip = mainCanvasBehavior.gameOverClip;
+                    }
+
+                    if (ARGHelper.IsInARG)
+                    {
+                        ARGAchievementHelper.UnlockGameOverAchievement();
                     }
                 }
 
@@ -303,9 +311,9 @@ namespace NewSafetyHelp.EndingPatches
                 }
 
                 // Don't show fired achievement in custom campaign.
-                if (SteamManager.Initialized 
-                    && !GlobalVariables.isXmasDLC 
-                    && !CustomCampaignGlobal.InCustomCampaign) 
+                if (SteamManager.Initialized
+                    && !GlobalVariables.isXmasDLC
+                    && !CustomCampaignGlobal.InCustomCampaign)
                 {
                     SteamUserStats.SetAchievement("Fired");
                     SteamUserStats.StoreStats();

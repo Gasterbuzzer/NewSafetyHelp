@@ -27,6 +27,14 @@ namespace NewSafetyHelp.ARG.Achievements
         }
 
         /// <summary>
+        /// Unlocks the game over achievement.
+        /// </summary>
+        public static void UnlockGameOverAchievement()
+        {
+            UnlockAchievement(ARGAchievementSave.TheWorstOfTheWorst);
+        }
+
+        /// <summary>
         /// Checks if to unlock a given arcade achievement.
         /// </summary>
         /// <param name="amountOfArcadeCallers"></param>
