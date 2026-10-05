@@ -525,10 +525,10 @@ namespace NewSafetyHelp.Callers.UI
 
                         RectTransform hintTextRectTransform = hintText.GetComponent<RectTransform>();
 
-                        hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 250f);
+                        hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 260f);
                         hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 250f);
 
-                        hintTextRectTransform.localPosition = new Vector3(45, 0, 0);
+                        hintTextRectTransform.localPosition = new Vector3(40, -12, 0);
 
                         TextSizer hintTextSizer = hintText.GetComponent<TextSizer>();
 
