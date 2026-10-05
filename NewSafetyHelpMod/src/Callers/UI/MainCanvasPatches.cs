@@ -526,14 +526,19 @@ namespace NewSafetyHelp.Callers.UI
                         RectTransform hintTextRectTransform = hintText.GetComponent<RectTransform>();
 
                         hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 260f);
-                        hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 250f);
+                        hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 90f);
 
-                        hintTextRectTransform.localPosition = new Vector3(40, -12, 0);
+                        hintTextRectTransform.localPosition = new Vector3(40, -18, 0);
 
                         TextSizer hintTextSizer = hintText.GetComponent<TextSizer>();
 
                         StartingSize.SetValue(hintTextSizer, 20);
-                        hintText.GetComponent<TextMeshProUGUI>().fontSize = 20;
+
+                        TextMeshProUGUI hintTextComponent = hintText.GetComponent<TextMeshProUGUI>();
+
+                        hintTextComponent.fontSize = 20;
+                        hintTextComponent.overflowMode = TextOverflowModes.Ellipsis;
+                        hintTextComponent.verticalAlignment = VerticalAlignmentOptions.Top;
 
                         (bool foundModifier, VariableChanged<List<string>> value) hintForTheDay =
                             CustomCampaignGlobal.GetActiveModifierValue(c => c.HintForTheDay,
@@ -542,12 +547,19 @@ namespace NewSafetyHelp.Callers.UI
                         if (hintForTheDay.foundModifier
                             && hintForTheDay.value.HasChanged)
                         {
-                            hintText.GetComponent<TextMeshProUGUI>().text =
+                            string hintString =
                                 hintForTheDay.value.Data[Random.Range(0, hintForTheDay.value.Data.Count)];
+
+                            if (hintString.Length <= 19)
+                            {
+                                hintTextComponent.verticalAlignment = VerticalAlignmentOptions.Baseline;
+                            }
+
+                            hintTextComponent.text = hintString;
                         }
                         else
                         {
-                            hintText.GetComponent<TextMeshProUGUI>().text = HintHelper.GetRandomHint();
+                            hintTextComponent.text = HintHelper.GetRandomHint();
                         }
 
                         (bool foundModifier, VariableChanged<List<string>> value) hintTitle =
