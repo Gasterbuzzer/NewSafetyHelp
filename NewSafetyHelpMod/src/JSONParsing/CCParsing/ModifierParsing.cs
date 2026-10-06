@@ -606,6 +606,41 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = new List<string>()
             };
 
+            VariableChanged<List<float>> hintChances = new VariableChanged<List<float>>
+            {
+                Data = new List<float>()
+            };
+
+            VariableChanged<float> hintTitlePadX = new VariableChanged<float>
+            {
+                Data = 0
+            };
+
+            VariableChanged<float> hintTitlePadY = new VariableChanged<float>
+            {
+                Data = 0
+            };
+
+            VariableChanged<float> hintForDayPadX = new VariableChanged<float>
+            {
+                Data = 0
+            };
+
+            VariableChanged<float> hintForDayPadY = new VariableChanged<float>
+            {
+                Data = 0
+            };
+
+            VariableChanged<float> hintTitleFontSize = new VariableChanged<float>
+            {
+                Data = 20f
+            };
+
+            VariableChanged<float> hintForTheDayFontSize = new VariableChanged<float>
+            {
+                Data = 20f
+            };
+
             /*
              * Entry
              */
@@ -1085,6 +1120,27 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignListOrSingleElementVariableChanged(jObjectParsed, "hint_title",
                 ref hintTitle);
 
+            ParsingHelper.TryAssignListOrSingleElementVariableChanged(jObjectParsed, "hint_for_day_chances",
+                ref hintChances);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_title_padding_horizontal",
+                ref hintTitlePadX);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_title_padding_vertical",
+                ref hintTitlePadY);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_for_day_padding_horizontal",
+                ref hintForDayPadX);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_for_day_padding_vertical",
+                ref hintForDayPadY);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_title_font_size",
+                ref hintTitleFontSize);
+
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_for_day_font_size",
+                ref hintTitleFontSize);
+
             /*
              * Entry
              */
@@ -1247,6 +1303,8 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 ImageHintForTheDay = imageHintForTheDay,
                 ScaleImageHint = scaleImageHint,
                 HintTitle = hintTitle,
+                HintChances = hintChances,
+                HintForTheDayFontSize = hintForTheDayFontSize,
 
                 EntryPlaceholderImage = entryPlaceholderImage,
 

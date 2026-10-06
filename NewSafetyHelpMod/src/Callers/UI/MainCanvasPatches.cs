@@ -520,6 +520,7 @@ namespace NewSafetyHelp.Callers.UI
                         hintRectTransform.offsetMax = new Vector2(170.9825f, -200f);
                         hintRectTransform.offsetMin = new Vector2(-170.9875f, -304f);
 
+                        // Hint Text
                         GameObject hintText = hintGameObject.transform.GetChild(0).gameObject;
                         hintText.name = "HintTextContent";
 
@@ -528,7 +529,27 @@ namespace NewSafetyHelp.Callers.UI
                         hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 260f);
                         hintTextRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 90f);
 
-                        hintTextRectTransform.localPosition = new Vector3(40, -20, 0);
+                        Vector3 hintTextPosition = new Vector3(40, -20, 0);
+
+                        (bool foundModifier, VariableChanged<float> value) hintForDayPadX =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.HintForDayPadX,
+                                vCs => vCs.HasChanged);
+
+                        if (hintForDayPadX.foundModifier)
+                        {
+                            hintTextPosition += new Vector3(hintForDayPadX.value.Data, 0, 0);
+                        }
+
+                        (bool foundModifier, VariableChanged<float> value) hintForDayY =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.HintForDayPadY,
+                                vCs => vCs.HasChanged);
+
+                        if (hintForDayY.foundModifier)
+                        {
+                            hintTextPosition += new Vector3(0, hintForDayY.value.Data, 0);
+                        }
+
+                        hintTextRectTransform.localPosition = hintTextPosition;
 
                         TextSizer hintTextSizer = hintText.GetComponent<TextSizer>();
 
@@ -536,7 +557,19 @@ namespace NewSafetyHelp.Callers.UI
 
                         TextMeshProUGUI hintTextComponent = hintText.GetComponent<TextMeshProUGUI>();
 
-                        hintTextComponent.fontSize = 20;
+                        (bool foundModifier, VariableChanged<float> value) hintForTheDayFontSize =
+                            CustomCampaignGlobal.GetActiveModifierValue(c => c.HintForTheDayFontSize,
+                                vCs => vCs.HasChanged);
+
+                        if (hintForTheDayFontSize.foundModifier)
+                        {
+                            hintTextComponent.fontSize = hintForTheDayFontSize.value.Data;
+                        }
+                        else
+                        {
+                            hintTextComponent.fontSize = 20;
+                        }
+
                         hintTextComponent.overflowMode = TextOverflowModes.Ellipsis;
                         hintTextComponent.verticalAlignment = VerticalAlignmentOptions.Top;
 
@@ -547,10 +580,13 @@ namespace NewSafetyHelp.Callers.UI
                         if (hintForTheDay.foundModifier
                             && hintForTheDay.value.HasChanged)
                         {
-                            string hintString =
-                                hintForTheDay.value.Data[Random.Range(0, hintForTheDay.value.Data.Count)];
+                            (bool foundModifier, VariableChanged<List<float>> value) hintChances =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.HintChances,
+                                    vCs => vCs.HasChanged);
 
-                            if (hintString.Length <= 19)
+                            string hintString = HintHelper.GetHintFromList(hintForTheDay, hintChances);
+
+                            if (hintString.Length <= 33)
                             {
                                 hintTextComponent.verticalAlignment = VerticalAlignmentOptions.Baseline;
                             }
@@ -573,7 +609,41 @@ namespace NewSafetyHelp.Callers.UI
 
                             hintTitleGameObject.name = "HintTitle";
 
-                            hintTitleGameObject.transform.localPosition = new Vector3(-20, 35, 0);
+                            Vector3 hintTitlePosition = new Vector3(-20, 35, 0);
+
+                            (bool foundModifier, VariableChanged<float> value) hintTitlePadX =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.HintTitlePadX,
+                                    vCs => vCs.HasChanged);
+
+                            if (hintTitlePadX.foundModifier)
+                            {
+                                hintTitlePosition += new Vector3(hintTitlePadX.value.Data, 0, 0);
+                            }
+
+                            (bool foundModifier, VariableChanged<float> value) hintTitlePadY =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.HintTitlePadY,
+                                    vCs => vCs.HasChanged);
+
+                            if (hintTitlePadY.foundModifier)
+                            {
+                                hintTitlePosition += new Vector3(0, hintTitlePadY.value.Data, 0);
+                            }
+
+                            hintTitleGameObject.transform.localPosition = hintTitlePosition;
+
+                            (bool foundModifier, VariableChanged<float> value) hintTitleFontSize =
+                                CustomCampaignGlobal.GetActiveModifierValue(c => c.HintTitleFontSize,
+                                    vCs => vCs.HasChanged);
+
+                            if (hintTitleFontSize.foundModifier)
+                            {
+                                hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontSize =
+                                    hintTitleFontSize.value.Data;
+                            }
+                            else
+                            {
+                                hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontSize = 20;
+                            }
 
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontWeight = FontWeight.Bold;
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Bold;

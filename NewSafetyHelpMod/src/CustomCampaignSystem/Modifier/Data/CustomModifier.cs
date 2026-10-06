@@ -483,6 +483,41 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = new List<string>()
         };
 
+        public VariableChanged<List<float>> HintChances = new VariableChanged<List<float>>
+        {
+            Data = new List<float>()
+        };
+
+        public VariableChanged<float> HintTitlePadX = new VariableChanged<float>
+        {
+            Data = 0
+        };
+
+        public VariableChanged<float> HintTitlePadY = new VariableChanged<float>
+        {
+            Data = 0
+        };
+
+        public VariableChanged<float> HintForDayPadX = new VariableChanged<float>
+        {
+            Data = 0
+        };
+
+        public VariableChanged<float> HintForDayPadY = new VariableChanged<float>
+        {
+            Data = 0
+        };
+
+        public VariableChanged<float> HintTitleFontSize = new VariableChanged<float>
+        {
+            Data = 20f
+        };
+
+        public VariableChanged<float> HintForTheDayFontSize = new VariableChanged<float>
+        {
+            Data = 20f
+        };
+
         /*
          * Entry
          */
