@@ -74,5 +74,20 @@ namespace NewSafetyHelp.ARG.Achievements
                 AchievementPreference = ARGAchievementCategory.GetEntry<bool>(nameToCheck);
             }
         }
+
+        /// <summary>
+        /// Resets the achievement value to 0.
+        /// </summary>
+        public void DeleteAchievement()
+        {
+            if (AchievementPreference == null)
+            {
+                return;
+            }
+            else
+            {
+                AchievementPreference.Value = false;
+            }
+        }
     }
 }

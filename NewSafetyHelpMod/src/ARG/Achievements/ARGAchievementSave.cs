@@ -126,5 +126,28 @@ namespace NewSafetyHelp.ARG.Achievements
             EmployeeOfTheCentury = new CustomAchievement("Employee Of The Century",
                 "Unlock every achievement.", null, ARGAchievementCategory);
         }
+
+        /// <summary>
+        /// Resets all achievements to false.
+        /// Must be initialized for it to have any effects on the save file.
+        /// </summary>
+        public static void ResetAllAchievements()
+        {
+            // Days
+            TheStart.DeleteAchievement();
+            TheReturn.DeleteAchievement();
+            TheRespite.DeleteAchievement();
+            TheChorus.DeleteAchievement();
+            TheClimax.DeleteAchievement();
+            
+            TheGoldStandard.DeleteAchievement();
+            TheWorstOfTheWorst.DeleteAchievement();
+            
+            // Arcade
+            Critter101.DeleteAchievement();
+            ClockedIn.DeleteAchievement();
+            SafetyScholar.DeleteAchievement();
+            DrSafety.DeleteAchievement();
+        }
     }
 }

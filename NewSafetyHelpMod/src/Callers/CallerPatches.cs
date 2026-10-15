@@ -227,13 +227,15 @@ namespace NewSafetyHelp.Callers
                             if (AudioImport.CurrentLoadingAudios.Count > 0)
                             {
                                 LoggingHelper.InfoLog(
-                                    $"Custom Caller '{customCallerCC.CallerName}' is still loading its audio. " +
+                                    $"Custom Caller '{customCallerCC.CallerName}' ({customCallerCC.OrderInCampaign}) " +
+                                    "is still loading its audio. " +
                                     "Using fallback for now.");
                             }
                             else // No Loading Audio
                             {
                                 LoggingHelper.WarningLog(
-                                    $"Custom Caller '{customCallerCC.CallerName}' does not have any valid audio clip! " +
+                                    $"Custom Caller '{customCallerCC.CallerName}' ({customCallerCC.OrderInCampaign}) " +
+                                    "does not have any valid audio clip! " +
                                     "Using fallback instead of real audio.");
                             }
 
@@ -251,7 +253,7 @@ namespace NewSafetyHelp.Callers
                             {
                                 LoggingHelper.WarningLog("Custom Caller " +
                                                          $"'{(customCallerCC.CallerName != null ? $"{customCallerCC.CallerName}" : "")}' " +
-                                                         "does not have any valid image / sprite. " +
+                                                         $"({customCallerCC.OrderInCampaign}) does not have any valid image / sprite. " +
                                                          "Using fallback for now.");
                             }
 
@@ -273,7 +275,8 @@ namespace NewSafetyHelp.Callers
                             {
                                 LoggingHelper.WarningLog(
                                     $"Provided entry (monster) name '{customCallerCC.EntryNameAttached}' " +
-                                    $"for custom caller '{customCallerCC.CallerName}' was not found! " +
+                                    $"for custom caller '{customCallerCC.CallerName}' ({customCallerCC.OrderInCampaign}) " +
+                                    "was not found! " +
                                     "Thus will not have any entry (monster).");
                                 newProfile.callerMonster = null;
                             }
@@ -1013,7 +1016,7 @@ namespace NewSafetyHelp.Callers
                 if (GlobalVariables.mainCanvasScript != null
                     && GlobalVariables.mainCanvasScript.callWindow != null)
                 {
-                    if (GlobalVariables.arcadeMode 
+                    if (GlobalVariables.arcadeMode
                         && GlobalVariables.callerControllerScript.callTimerRoutine != null)
                     {
                         LoggingHelper.DebugLog("Prevented double call, there is a caller already active.");
