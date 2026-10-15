@@ -206,6 +206,7 @@
         <Compile Include="src\CustomCampaignSystem\Helper\AccuracyTextPatches.cs" />
         <Compile Include="src\CustomCampaignSystem\Helper\CallerRequirementHelper\CallerRequirement.cs" />
         <Compile Include="src\CustomCampaignSystem\Helper\RandomFromList.cs" />
+        <Compile Include="src\CustomCampaignSystem\Hint\HintStartScript.cs" />
         <Compile Include="src\CustomCampaignSystem\InGamePatches\SelectPreviousEntryPatch.cs" />
         <Compile Include="src\CustomCampaignSystem\LinkApps\LinkApp.cs" />
         <Compile Include="src\CustomCampaignSystem\LinkApps\LinkAppHelper.cs" />
@@ -305,7 +306,7 @@
         <None Include="build_after.bat" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="src\Audio\EmbeddedAudio\"/>
+        <Folder Include="src\Audio\EmbeddedAudio\" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="src\ImportFiles\EmbeddedImages\"/>

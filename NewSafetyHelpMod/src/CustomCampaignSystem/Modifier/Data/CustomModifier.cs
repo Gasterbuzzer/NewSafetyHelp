@@ -518,6 +518,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Modifier.Data
             Data = 20f
         };
 
+        public VariableChanged<bool> HintIncreaseColor = new VariableChanged<bool>
+        {
+            Data = false
+        };
+
         /*
          * Entry
          */

@@ -15,7 +15,7 @@ namespace NewSafetyHelp.ARG.ARGLogic
                 "Settings about the custom campaign.");
 
             InGameSettingHelper.CreateNewToggle(customCampaignSection, OnDisableDaveToggle,
-                "Disable Dave", GlobalPreferences.DisableDave.Value);
+                "Disable Dave in Arcade Mode", GlobalPreferences.DisableDave.Value);
 
             InGameSettingHelper.CreateButton(customCampaignSection, ResetAchievements,
                 "Reset Achievements", "Resets all the achievements.");

@@ -641,6 +641,11 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 Data = 20f
             };
 
+            VariableChanged<bool> hintIncreaseColor = new VariableChanged<bool>
+            {
+                Data = false
+            };
+
             /*
              * Entry
              */
@@ -1141,6 +1146,9 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
             ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_for_day_font_size",
                 ref hintTitleFontSize);
 
+            ParsingHelper.TryAssignWithChangedBool(jObjectParsed, "hint_increase_box_color",
+                ref hintIncreaseColor);
+
             /*
              * Entry
              */
@@ -1305,6 +1313,7 @@ namespace NewSafetyHelp.JSONParsing.CCParsing
                 HintTitle = hintTitle,
                 HintChances = hintChances,
                 HintForTheDayFontSize = hintForTheDayFontSize,
+                HintIncreaseColor = hintIncreaseColor,
 
                 EntryPlaceholderImage = entryPlaceholderImage,
 

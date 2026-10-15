@@ -11,6 +11,7 @@ using NewSafetyHelp.CustomCampaignSystem.Arcade;
 using NewSafetyHelp.CustomCampaignSystem.ArcadeCallerModule;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.CustomCampaignSystem.Helper.AccuracyHelpers;
+using NewSafetyHelp.CustomCampaignSystem.Hint;
 using NewSafetyHelp.CustomCampaignSystem.Modifier.Data;
 using NewSafetyHelp.CustomDesktop;
 using NewSafetyHelp.InGameSettings;
@@ -520,6 +521,9 @@ namespace NewSafetyHelp.Callers.UI
                         hintRectTransform.offsetMax = new Vector2(170.9825f, -200f);
                         hintRectTransform.offsetMin = new Vector2(-170.9875f, -304f);
 
+                        // Color
+                        hintGameObject.AddComponent<HintStartScript>();
+
                         // Hint Text
                         GameObject hintText = hintGameObject.transform.GetChild(0).gameObject;
                         hintText.name = "HintTextContent";
@@ -639,10 +643,18 @@ namespace NewSafetyHelp.Callers.UI
                             {
                                 hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontSize =
                                     hintTitleFontSize.value.Data;
+
+                                TextSizer hintTitleTextSizer = hintTitleGameObject.GetComponent<TextSizer>();
+
+                                StartingSize.SetValue(hintTitleTextSizer, hintTitleFontSize.value.Data);
                             }
                             else
                             {
                                 hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontSize = 20;
+
+                                TextSizer hintTitleTextSizer = hintTitleGameObject.GetComponent<TextSizer>();
+
+                                StartingSize.SetValue(hintTitleTextSizer, 20);
                             }
 
                             hintTitleGameObject.GetComponent<TextMeshProUGUI>().fontWeight = FontWeight.Bold;
