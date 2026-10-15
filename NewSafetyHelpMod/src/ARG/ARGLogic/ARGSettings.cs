@@ -1,4 +1,5 @@
-﻿using NewSafetyHelp.InGameSettings;
+﻿using NewSafetyHelp.ARG.Achievements;
+using NewSafetyHelp.InGameSettings;
 using UnityEngine;
 
 namespace NewSafetyHelp.ARG.ARGLogic
@@ -15,6 +16,9 @@ namespace NewSafetyHelp.ARG.ARGLogic
 
             InGameSettingHelper.CreateNewToggle(customCampaignSection, OnDisableDaveToggle,
                 "Disable Dave", GlobalPreferences.DisableDave.Value);
+
+            InGameSettingHelper.CreateButton(customCampaignSection, ResetAchievements,
+                "Reset Achievements", "Resets all the achievements.");
         }
 
         /// <summary>
@@ -27,6 +31,23 @@ namespace NewSafetyHelp.ARG.ARGLogic
             GlobalPreferences.DisableDave.Value = toggleValue;
 
             return toggleValue;
+        }
+
+        /// <summary>
+        /// Resets all the achievements.
+        /// </summary>
+        /// <param name="resetButton">Button that is the reset button.</param>
+        /// <returns>GameObjects to be reset.</returns>
+        private static GameObject ResetAchievements(GameObject resetButton)
+        {
+            ARGAchievementSave.ResetAllAchievements();
+
+            GameObject mainMenuCanvas = GameObject.Find("MainMenuCanvas");
+
+            ARGHelper.CreateErrorMessage("All achievements were reset.", mainMenuCanvas.transform,
+                "STATUS INFO");
+
+            return resetButton;
         }
     }
 }

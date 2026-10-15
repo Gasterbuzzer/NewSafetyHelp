@@ -1,4 +1,5 @@
-﻿using MelonLoader;
+﻿using System;
+using MelonLoader;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 
@@ -133,16 +134,20 @@ namespace NewSafetyHelp.ARG.Achievements
         /// </summary>
         public static void ResetAllAchievements()
         {
+            LoggingHelper.InfoLog("All achievements were reset.",
+                consoleColor: ConsoleColor.Green);
+
             // Days
             TheStart.DeleteAchievement();
             TheReturn.DeleteAchievement();
             TheRespite.DeleteAchievement();
             TheChorus.DeleteAchievement();
             TheClimax.DeleteAchievement();
-            
+
+            // Performance in the game
             TheGoldStandard.DeleteAchievement();
             TheWorstOfTheWorst.DeleteAchievement();
-            
+
             // Arcade
             Critter101.DeleteAchievement();
             ClockedIn.DeleteAchievement();
