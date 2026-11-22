@@ -24,12 +24,9 @@ namespace NewSafetyHelp.ARG.Achievements
 
         public static CustomAchievement Critter101;
         public static CustomAchievement ClockedIn;
-        public static CustomAchievement SafetyScholar;
         public static CustomAchievement DrSafety;
 
         public static CustomAchievement EmployeeOfTheMonth;
-
-        public static CustomAchievement Archivist;
 
         public static CustomAchievement FMinus;
         public static CustomAchievement GoAway;
@@ -85,24 +82,18 @@ namespace NewSafetyHelp.ARG.Achievements
                 ARGAchievementCategory);
 
             // Arcade Calls
-            Critter101 = new CustomAchievement("Critter 101", "Complete X calls in Call Training",
+            Critter101 = new CustomAchievement("Critter 101", "Complete 10 calls in Call Training",
                 null, ARGAchievementCategory);
 
-            ClockedIn = new CustomAchievement("Clocked In", "Complete X calls in Call Training.",
+            ClockedIn = new CustomAchievement("Clocked In", "Complete 20 calls in Call Training.",
                 null, ARGAchievementCategory);
 
-            SafetyScholar = new CustomAchievement("Safety Scholar",
-                "Complete X calls in Call Training.", null, ARGAchievementCategory);
-
-            DrSafety = new CustomAchievement("Dr. Safety", "Complete X calls in Call Training.",
+            DrSafety = new CustomAchievement("Dr. Safety", "Complete 30 calls in Call Training.",
                 null, ARGAchievementCategory);
 
             // Completionist
             EmployeeOfTheMonth = new CustomAchievement("Employee Of The Month",
                 "Unlock every standard achievement.", null, ARGAchievementCategory);
-
-            Archivist = new CustomAchievement("Archivist", "Read every email.", null,
-                ARGAchievementCategory);
 
             // In game events
             FMinus = new CustomAchievement("F-", "Upset Detective Horus.", null,
@@ -151,7 +142,6 @@ namespace NewSafetyHelp.ARG.Achievements
             // Arcade
             Critter101.DeleteAchievement();
             ClockedIn.DeleteAchievement();
-            SafetyScholar.DeleteAchievement();
             DrSafety.DeleteAchievement();
         }
     }

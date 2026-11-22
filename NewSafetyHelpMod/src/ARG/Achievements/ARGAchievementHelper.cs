@@ -25,6 +25,25 @@ namespace NewSafetyHelp.ARG.Achievements
                     appearDelay));
             }
         }
+        
+        /// <summary>
+        /// Unlocks the "Complete Summer Support with flawless accuracy." (The Best Of The Best) achievement.
+        /// </summary>
+        public static void UnlockTheBestOfTheBest()
+        {
+            CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+            
+            if (customCampaign.SavedDayScores.Count >= 6 
+                && customCampaign.SavedDayScores[1] >= 99.9f
+                && customCampaign.SavedDayScores[2] >= 99.9f
+                && customCampaign.SavedDayScores[3] >= 99.9f
+                && customCampaign.SavedDayScores[4] >= 99.9f
+                && customCampaign.SavedDayScores[5] >= 99.9f
+                )
+            {
+                UnlockAchievement(ARGAchievementSave.TheBestOfTheBest);
+            }
+        }
 
         /// <summary>
         /// Unlocks the game over achievement.
@@ -51,25 +70,19 @@ namespace NewSafetyHelp.ARG.Achievements
         /// <param name="amountOfArcadeCallers"></param>
         public static void UnlockArcadeAchievement(int amountOfArcadeCallers)
         {
-            if (amountOfArcadeCallers >= 3
+            if (amountOfArcadeCallers >= 10
                 && !ARGAchievementSave.Critter101.AchievementPreference.Value)
             {
                 UnlockAchievement(ARGAchievementSave.Critter101);
             }
 
-            if (amountOfArcadeCallers >= 5
+            if (amountOfArcadeCallers >= 20
                 && !ARGAchievementSave.ClockedIn.AchievementPreference.Value)
             {
                 UnlockAchievement(ARGAchievementSave.ClockedIn);
             }
 
-            if (amountOfArcadeCallers >= 8
-                && !ARGAchievementSave.SafetyScholar.AchievementPreference.Value)
-            {
-                UnlockAchievement(ARGAchievementSave.SafetyScholar);
-            }
-
-            if (amountOfArcadeCallers >= 10
+            if (amountOfArcadeCallers >= 30
                 && !ARGAchievementSave.DrSafety.AchievementPreference.Value)
             {
                 UnlockAchievement(ARGAchievementSave.DrSafety);
@@ -103,12 +116,6 @@ namespace NewSafetyHelp.ARG.Achievements
                 if (!ARGAchievementSave.TheClimax.AchievementPreference.Value)
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-
-                    if (customCampaign == null)
-                    {
-                        LoggingHelper.CampaignNullError();
-                        return;
-                    }
 
                     if (customCampaign.SavedGameFinished == 1)
                     {

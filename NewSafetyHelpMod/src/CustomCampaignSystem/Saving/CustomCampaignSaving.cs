@@ -22,8 +22,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
 
             if (currentCampaign.CampaignSaveCategory == null)
             {
-                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
-                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
+                string categoryName = currentCampaign.CampaignName.Replace("\n", "")
+                                      + currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays;
+
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(categoryName);
             }
 
             if (currentCampaign.CampaignSaveCategory.GetEntry<int>("savedDays") == null)
@@ -100,8 +102,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // We use this painful category name to avoid any conflicts.
             if (currentCampaign.CampaignSaveCategory == null)
             {
-                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
-                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
+                string categoryName = currentCampaign.CampaignName.Replace("\n", "")
+                                      + currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays;
+
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(categoryName);
             }
 
             // Create Campaign Days Save Value
@@ -282,8 +286,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             if (currentCampaign.CampaignSaveCategory == null)
             {
                 // We get the category if not set yet.
-                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(currentCampaign.CampaignName +
-                    currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays);
+                string categoryName = currentCampaign.CampaignName.Replace("\n", "")
+                                      + currentCampaign.CampaignDesktopName + currentCampaign.CampaignDays;
+
+                currentCampaign.CampaignSaveCategory = MelonPreferences.CreateCategory(categoryName);
             }
 
             // Check if it was ever saved before. If yes, load and if not then we call save once.
