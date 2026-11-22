@@ -240,6 +240,10 @@ namespace NewSafetyHelp.ARG.Achievements
             {
                 UnlockAchievement(ARGAchievementSave.GoodRiddance);
             }
+            else if (callerID == 32 && callerName.Contains("�"))
+            {
+                UnlockAchievement(ARGAchievementSave.TWFuIG9uIHRoZSBTY3JlZW4);
+            }
         }
 
         /// <summary>

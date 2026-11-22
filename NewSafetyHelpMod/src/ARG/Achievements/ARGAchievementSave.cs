@@ -32,7 +32,7 @@ namespace NewSafetyHelp.ARG.Achievements
 
         public static CustomAchievement EmployeeOfTheMonth;
 
-        public static CustomAchievement TWFuIG9uIHRoZSBTY3JlZW4; // -
+        public static CustomAchievement TWFuIG9uIHRoZSBTY3JlZW4;
         public static CustomAchievement ArcanaMachinae; // -
 
         public static CustomAchievement EmployeeOfTheCentury;
