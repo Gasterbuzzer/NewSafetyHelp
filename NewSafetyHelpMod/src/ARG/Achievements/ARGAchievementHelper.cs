@@ -223,5 +223,21 @@ namespace NewSafetyHelp.ARG.Achievements
                 UnlockAchievement(ARGAchievementSave.EmployeeOfTheCentury);
             }
         }
+
+        /// <summary>
+        /// Unlocks the FMinus achievement.
+        /// </summary>
+        /// <param name="callerName">Name of the caller.</param>
+        /// <param name="callerID">Order/ID of the caller.</param>
+        public static void UnlockFMinusAchievement(string callerName, int callerID)
+        {
+            if (callerID != 96
+                || !callerName.Equals("Detective Horus"))
+            {
+                return;
+            }
+
+            UnlockAchievement(ARGAchievementSave.FMinus);
+        }
     }
 }

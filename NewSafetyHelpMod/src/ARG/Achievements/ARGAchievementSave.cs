@@ -136,6 +136,10 @@ namespace NewSafetyHelp.ARG.Achievements
             TheChorus.DeleteAchievement();
             TheClimax.DeleteAchievement();
 
+            // Endings
+            TheEndOfEverything.DeleteAchievement();
+            TheDeathOfDave.DeleteAchievement();
+
             // Performance in the game
             TheGoldStandard.DeleteAchievement();
             TheWorstOfTheWorst.DeleteAchievement();
@@ -153,6 +157,10 @@ namespace NewSafetyHelp.ARG.Achievements
 
             // Base Game Achievements
             EmployeeOfTheMonth.DeleteAchievement();
+
+            // ARG
+            TWFuIG9uIHRoZSBTY3JlZW4.DeleteAchievement();
+            ArcanaMachinae.DeleteAchievement();
 
             // All Achievements Achievement
             EmployeeOfTheCentury.DeleteAchievement();

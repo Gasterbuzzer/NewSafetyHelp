@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Callers.CallerModel;
 using NewSafetyHelp.CustomCampaignSystem;
@@ -883,34 +884,41 @@ namespace NewSafetyHelp.Callers
                                 CustomCCaller currentCaller =
                                     CustomCampaignGlobal.GetCustomCallerFromActiveCampaign(__instance.currentCallerID);
 
-                                if (currentCaller != null && currentCaller.IsAccuracyCaller)
+                                if (currentCaller != null)
                                 {
-                                    bool showCaller = AccuracyCallerHelper.CheckIfCallerIsToBeShown(currentCaller);
-
-                                    LoggingHelper.DebugLog($"Should the accuracy caller be shown? '{showCaller}'.");
-
-                                    if (!showCaller)
+                                    if (currentCaller.IsAccuracyCaller)
                                     {
-                                        __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
+                                        bool showCaller = AccuracyCallerHelper.CheckIfCallerIsToBeShown(currentCaller);
 
-                                        // Here we insert a small check to see if this caller wants to end the day.
-                                        if (__instance.IsLastCallOfDay())
+                                        LoggingHelper.DebugLog($"Should the accuracy caller be shown? '{showCaller}'.");
+
+                                        if (!showCaller)
                                         {
-                                            LoggingHelper.DebugLog("Calling end day routine from answer caller " +
-                                                                   "(accuracy caller).");
+                                            __instance.callers[__instance.currentCallerID].answeredCorrectly = true;
 
-                                            GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables
-                                                .mainCanvasScript
-                                                .EndDayRoutine());
-                                            GlobalVariables.mainCanvasScript.NoCallerWindow();
-                                            return false; // Skip original function.
+                                            // Here we insert a small check to see if this caller wants to end the day.
+                                            if (__instance.IsLastCallOfDay())
+                                            {
+                                                LoggingHelper.DebugLog("Calling end day routine from answer caller " +
+                                                                       "(accuracy caller).");
+
+                                                GlobalVariables.mainCanvasScript.StartCoroutine(GlobalVariables
+                                                    .mainCanvasScript
+                                                    .EndDayRoutine());
+                                                GlobalVariables.mainCanvasScript.NoCallerWindow();
+                                                return false; // Skip original function.
+                                            }
+
+                                            // Next caller.
+                                            __instance.AnswerCaller();
+
+                                            return false;
                                         }
-
-                                        // Next caller.
-                                        __instance.AnswerCaller();
-
-                                        return false;
                                     }
+
+                                    // Achievement
+                                    ARGAchievementHelper.UnlockFMinusAchievement(currentCaller.CallerName,
+                                        currentCaller.OrderInCampaign);
                                 }
                             }
                         }
