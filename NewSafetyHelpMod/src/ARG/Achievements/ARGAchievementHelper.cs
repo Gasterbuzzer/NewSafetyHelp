@@ -26,6 +26,8 @@ namespace NewSafetyHelp.ARG.Achievements
 
                 // In case we have all the achievements unlocked, we unlock the "base game achievements" achievement.
                 UnlockEmployeeOfTheMonthAchievement();
+
+                UnlockEmployeeOfTheCenturyAchievement();
             }
         }
 
@@ -127,7 +129,7 @@ namespace NewSafetyHelp.ARG.Achievements
                 }
             }
         }
-        
+
         /// <summary>
         /// Unlocks the bad ending achievement.
         /// </summary>
@@ -177,6 +179,48 @@ namespace NewSafetyHelp.ARG.Achievements
                )
             {
                 UnlockAchievement(ARGAchievementSave.EmployeeOfTheMonth);
+            }
+        }
+
+        /// <summary>
+        /// Unlocks the achievement for having finished all game achievements.
+        /// </summary>
+        private static void UnlockEmployeeOfTheCenturyAchievement()
+        {
+            // If already unlocked.
+            if (ARGAchievementSave.EmployeeOfTheCentury.AchievementPreference.Value)
+            {
+                return;
+            }
+
+            if (ARGAchievementSave.TheStart.AchievementPreference.Value
+                && ARGAchievementSave.TheReturn.AchievementPreference.Value
+                && ARGAchievementSave.TheRespite.AchievementPreference.Value
+                && ARGAchievementSave.TheChorus.AchievementPreference.Value
+                && ARGAchievementSave.TheClimax.AchievementPreference.Value
+                //
+                && ARGAchievementSave.TheEndOfEverything.AchievementPreference.Value
+                && ARGAchievementSave.TheDeathOfDave.AchievementPreference.Value
+                //
+                && ARGAchievementSave.TheGoldStandard.AchievementPreference.Value
+                && ARGAchievementSave.TheWorstOfTheWorst.AchievementPreference.Value
+                && ARGAchievementSave.TheBestOfTheBest.AchievementPreference.Value
+                //
+                && ARGAchievementSave.Critter101.AchievementPreference.Value
+                && ARGAchievementSave.ClockedIn.AchievementPreference.Value
+                && ARGAchievementSave.DrSafety.AchievementPreference.Value
+                //
+                && ARGAchievementSave.FMinus.AchievementPreference.Value
+                && ARGAchievementSave.GoAway.AchievementPreference.Value
+                && ARGAchievementSave.GoodRiddance.AchievementPreference.Value
+                //
+                && ARGAchievementSave.EmployeeOfTheMonth.AchievementPreference.Value
+                //
+                && ARGAchievementSave.TWFuIG9uIHRoZSBTY3JlZW4.AchievementPreference.Value
+                && ARGAchievementSave.ArcanaMachinae.AchievementPreference.Value
+               )
+            {
+                UnlockAchievement(ARGAchievementSave.EmployeeOfTheCentury);
             }
         }
     }

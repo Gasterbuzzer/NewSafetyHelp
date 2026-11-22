@@ -35,7 +35,7 @@ namespace NewSafetyHelp.ARG.Achievements
         public static CustomAchievement TWFuIG9uIHRoZSBTY3JlZW4; // -
         public static CustomAchievement ArcanaMachinae; // -
 
-        public static CustomAchievement EmployeeOfTheCentury; // -
+        public static CustomAchievement EmployeeOfTheCentury;
 
         public static void InitializeARGAchievements()
         {
@@ -153,6 +153,9 @@ namespace NewSafetyHelp.ARG.Achievements
 
             // Base Game Achievements
             EmployeeOfTheMonth.DeleteAchievement();
+
+            // All Achievements Achievement
+            EmployeeOfTheCentury.DeleteAchievement();
         }
     }
 }
