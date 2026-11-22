@@ -917,7 +917,7 @@ namespace NewSafetyHelp.Callers
                                     }
 
                                     // Achievement
-                                    ARGAchievementHelper.UnlockFMinusAchievement(currentCaller.CallerName,
+                                    ARGAchievementHelper.UnlockCallerAchievement(currentCaller.CallerName,
                                         currentCaller.OrderInCampaign);
                                 }
                             }

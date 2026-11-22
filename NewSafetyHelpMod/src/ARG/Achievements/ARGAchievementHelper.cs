@@ -225,19 +225,21 @@ namespace NewSafetyHelp.ARG.Achievements
         }
 
         /// <summary>
-        /// Unlocks the FMinus achievement.
+        /// Unlocks the caller achievements.
         /// </summary>
         /// <param name="callerName">Name of the caller.</param>
         /// <param name="callerID">Order/ID of the caller.</param>
-        public static void UnlockFMinusAchievement(string callerName, int callerID)
+        public static void UnlockCallerAchievement(string callerName, int callerID)
         {
-            if (callerID != 96
-                || !callerName.Equals("Detective Horus"))
+            if (callerID == 96
+                && callerName.Equals("Detective Horus"))
             {
-                return;
+                UnlockAchievement(ARGAchievementSave.FMinus);
             }
-
-            UnlockAchievement(ARGAchievementSave.FMinus);
+            else if (callerID == 14 && callerName.Equals("Supervisor Dave"))
+            {
+                UnlockAchievement(ARGAchievementSave.GoodRiddance);
+            }
         }
     }
 }
