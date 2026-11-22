@@ -16,7 +16,7 @@ namespace NewSafetyHelp.ARG.Achievements
         public static CustomAchievement TheClimax;
 
         public static CustomAchievement TheEndOfEverything;
-        public static CustomAchievement TheDeathOfDave;
+        public static CustomAchievement TheDeathOfDave; // -
 
         public static CustomAchievement TheGoldStandard;
         public static CustomAchievement TheWorstOfTheWorst;
@@ -26,16 +26,16 @@ namespace NewSafetyHelp.ARG.Achievements
         public static CustomAchievement ClockedIn;
         public static CustomAchievement DrSafety;
 
+        public static CustomAchievement FMinus; // -
+        public static CustomAchievement GoAway; // -
+        public static CustomAchievement GoodRiddance; // -
+
         public static CustomAchievement EmployeeOfTheMonth;
 
-        public static CustomAchievement FMinus;
-        public static CustomAchievement GoAway;
-        public static CustomAchievement GoodRiddance;
+        public static CustomAchievement TWFuIG9uIHRoZSBTY3JlZW4; // -
+        public static CustomAchievement ArcanaMachinae; // -
 
-        public static CustomAchievement TWFuIG9uIHRoZSBTY3JlZW4;
-        public static CustomAchievement ArcanaMachinae;
-
-        public static CustomAchievement EmployeeOfTheCentury;
+        public static CustomAchievement EmployeeOfTheCentury; // -
 
         public static void InitializeARGAchievements()
         {
@@ -91,10 +91,6 @@ namespace NewSafetyHelp.ARG.Achievements
             DrSafety = new CustomAchievement("Dr. Safety", "Complete 30 calls in Call Training.",
                 null, ARGAchievementCategory);
 
-            // Completionist
-            EmployeeOfTheMonth = new CustomAchievement("Employee Of The Month",
-                "Unlock every standard achievement.", null, ARGAchievementCategory);
-
             // In game events
             FMinus = new CustomAchievement("F-", "Upset Detective Horus.", null,
                 ARGAchievementCategory);
@@ -104,6 +100,11 @@ namespace NewSafetyHelp.ARG.Achievements
 
             GoodRiddance = new CustomAchievement("Good Riddance", "Get David Baldina killed.",
                 null, ARGAchievementCategory);
+
+            // Completionist
+            EmployeeOfTheMonth = new CustomAchievement("Employee Of The Month",
+                "Unlock every standard achievement.", null, ARGAchievementCategory);
+
 
             // ARG
             TWFuIG9uIHRoZSBTY3JlZW4 = new CustomAchievement("TWFuIG9uIHRoZSBTY3JlZW4",
@@ -138,11 +139,20 @@ namespace NewSafetyHelp.ARG.Achievements
             // Performance in the game
             TheGoldStandard.DeleteAchievement();
             TheWorstOfTheWorst.DeleteAchievement();
+            TheBestOfTheBest.DeleteAchievement();
 
             // Arcade
             Critter101.DeleteAchievement();
             ClockedIn.DeleteAchievement();
             DrSafety.DeleteAchievement();
+
+            // In game Events
+            FMinus.DeleteAchievement();
+            GoAway.DeleteAchievement();
+            GoodRiddance.DeleteAchievement();
+
+            // Base Game Achievements
+            EmployeeOfTheMonth.DeleteAchievement();
         }
     }
 }

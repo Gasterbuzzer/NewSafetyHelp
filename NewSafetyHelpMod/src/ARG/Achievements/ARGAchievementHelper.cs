@@ -23,23 +23,26 @@ namespace NewSafetyHelp.ARG.Achievements
 
                 MelonCoroutines.Start(AchievementPopupGUI.TriggerAchievementPopupDesktop(customAchievement,
                     appearDelay));
+
+                // In case we have all the achievements unlocked, we unlock the "base game achievements" achievement.
+                UnlockEmployeeOfTheMonthAchievement();
             }
         }
-        
+
         /// <summary>
         /// Unlocks the "Complete Summer Support with flawless accuracy." (The Best Of The Best) achievement.
         /// </summary>
         public static void UnlockTheBestOfTheBest()
         {
             CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
-            
-            if (customCampaign.SavedDayScores.Count >= 6 
+
+            if (customCampaign.SavedDayScores.Count >= 6
                 && customCampaign.SavedDayScores[1] >= 99.9f
                 && customCampaign.SavedDayScores[2] >= 99.9f
                 && customCampaign.SavedDayScores[3] >= 99.9f
                 && customCampaign.SavedDayScores[4] >= 99.9f
                 && customCampaign.SavedDayScores[5] >= 99.9f
-                )
+               )
             {
                 UnlockAchievement(ARGAchievementSave.TheBestOfTheBest);
             }
@@ -122,6 +125,58 @@ namespace NewSafetyHelp.ARG.Achievements
                         UnlockAchievement(ARGAchievementSave.TheClimax);
                     }
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Unlocks the bad ending achievement.
+        /// </summary>
+        public static void UnlockBadEndingAchievement()
+        {
+            if (!ARGAchievementSave.TheEndOfEverything.AchievementPreference.Value)
+            {
+                CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
+
+                if (customCampaign.SavedGameFinished == 1)
+                {
+                    UnlockAchievement(ARGAchievementSave.TheEndOfEverything);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Unlocks the achievement for having finished all base game achievements.
+        /// </summary>
+        private static void UnlockEmployeeOfTheMonthAchievement()
+        {
+            // If already unlocked.
+            if (ARGAchievementSave.EmployeeOfTheMonth.AchievementPreference.Value)
+            {
+                return;
+            }
+
+            if (ARGAchievementSave.TheStart.AchievementPreference.Value
+                && ARGAchievementSave.TheReturn.AchievementPreference.Value
+                && ARGAchievementSave.TheRespite.AchievementPreference.Value
+                && ARGAchievementSave.TheChorus.AchievementPreference.Value
+                && ARGAchievementSave.TheClimax.AchievementPreference.Value
+                //
+                && ARGAchievementSave.TheEndOfEverything.AchievementPreference.Value
+                //
+                && ARGAchievementSave.TheGoldStandard.AchievementPreference.Value
+                && ARGAchievementSave.TheWorstOfTheWorst.AchievementPreference.Value
+                && ARGAchievementSave.TheBestOfTheBest.AchievementPreference.Value
+                //
+                && ARGAchievementSave.Critter101.AchievementPreference.Value
+                && ARGAchievementSave.ClockedIn.AchievementPreference.Value
+                && ARGAchievementSave.DrSafety.AchievementPreference.Value
+                //
+                && ARGAchievementSave.FMinus.AchievementPreference.Value
+                && ARGAchievementSave.GoAway.AchievementPreference.Value
+                && ARGAchievementSave.GoodRiddance.AchievementPreference.Value
+               )
+            {
+                UnlockAchievement(ARGAchievementSave.EmployeeOfTheMonth);
             }
         }
     }

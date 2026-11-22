@@ -107,6 +107,9 @@ namespace NewSafetyHelp.ARG
             // Trigger day achievements here.
             ARGAchievementHelper.UnlockDayAchievement();
 
+            // Trigger the endings achievement here.
+            ARGAchievementHelper.UnlockBadEndingAchievement();
+
             // Trigger Game Finished Achievement
             ARGAchievementHelper.UnlockTheBestOfTheBest();
         }
