@@ -241,5 +241,23 @@ namespace NewSafetyHelp.ARG.Achievements
                 UnlockAchievement(ARGAchievementSave.GoodRiddance);
             }
         }
+
+        /// <summary>
+        /// Unlocks the Go Away achievement.
+        /// </summary>
+        public static void UnlockGoAwayAchievement()
+        {
+            if (ARGAchievementSave.GoAway.AchievementPreference.Value)
+            {
+                return;
+            }
+
+            CallerProfile currentCallerProfile = GlobalVariables.callerControllerScript.currentCallerProfile;
+
+            if (currentCallerProfile.callerName.Contains("Supervisor Dave"))
+            {
+                UnlockAchievement(ARGAchievementSave.GoAway);
+            }
+        }
     }
 }

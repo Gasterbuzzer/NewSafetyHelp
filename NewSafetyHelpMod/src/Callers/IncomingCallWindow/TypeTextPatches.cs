@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.CustomCampaignSystem;
 using NewSafetyHelp.CustomCampaignSystem.CustomCampaignModel;
 using NewSafetyHelp.LoggingSystem;
@@ -104,7 +105,8 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                             }
                             else
                             {
-                                LoggingHelper.DebugLog("Custom Campaign only starts timer on hold. Skipping timer start.");
+                                LoggingHelper.DebugLog(
+                                    "Custom Campaign only starts timer on hold. Skipping timer start.");
                             }
                         }
                     }
@@ -112,6 +114,23 @@ namespace NewSafetyHelp.Callers.IncomingCallWindow
                 else
                 {
                     __instance.closeButton.SetActive(true);
+                }
+            }
+        }
+
+        [HarmonyLib.HarmonyPatch(typeof(CallWindowBehavior), "SkipDialog")]
+        public static class SkipDialogPatch
+        {
+            /// <summary>
+            /// Patches the skip dialog function to unlock the ARG achievement if fitting.
+            /// </summary>
+            // ReSharper disable once UnusedMember.Local
+            private static void Postfix()
+            {
+                if (CustomCampaignGlobal.InCustomCampaign
+                    && ARG.ARGHelper.IsInARG)
+                {
+                    ARGAchievementHelper.UnlockGoAwayAchievement();
                 }
             }
         }

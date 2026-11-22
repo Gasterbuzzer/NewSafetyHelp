@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using NewSafetyHelp.ARG;
 using NewSafetyHelp.ARG.Achievements;
 using NewSafetyHelp.Audio;
 using NewSafetyHelp.Callers.CallerModel;
@@ -917,8 +918,11 @@ namespace NewSafetyHelp.Callers
                                     }
 
                                     // Achievement
-                                    ARGAchievementHelper.UnlockCallerAchievement(currentCaller.CallerName,
-                                        currentCaller.OrderInCampaign);
+                                    if (ARGHelper.IsInARG)
+                                    {
+                                        ARGAchievementHelper.UnlockCallerAchievement(currentCaller.CallerName,
+                                            currentCaller.OrderInCampaign);
+                                    }
                                 }
                             }
                         }

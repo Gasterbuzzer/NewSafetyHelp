@@ -26,9 +26,9 @@ namespace NewSafetyHelp.ARG.Achievements
         public static CustomAchievement ClockedIn;
         public static CustomAchievement DrSafety;
 
-        public static CustomAchievement FMinus; // -
-        public static CustomAchievement GoAway; // -
-        public static CustomAchievement GoodRiddance; // -
+        public static CustomAchievement FMinus;
+        public static CustomAchievement GoAway;
+        public static CustomAchievement GoodRiddance;
 
         public static CustomAchievement EmployeeOfTheMonth;
 
