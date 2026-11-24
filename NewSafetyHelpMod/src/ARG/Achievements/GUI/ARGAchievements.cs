@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Reflection;
+using JetBrains.Annotations;
 using NewSafetyHelp.ImportFiles;
 using NewSafetyHelp.LoggingSystem;
 using TMPro;
@@ -9,8 +10,11 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
 {
     public static class ARGAchievements
     {
+        private static readonly FieldInfo MyImage = typeof(AdhereToPalette).GetField("myImage",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+
         private const float AchievementBoxHeight = 80f;
-        private const float AchievementBoxWidth = 340f;
+        private const float AchievementBoxWidth = 345f;
 
         [CanBeNull] private static GameObject contentBox;
 
@@ -101,7 +105,7 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             Object.Destroy(contentBox.transform.GetChild(0).gameObject);
 
             VerticalLayoutGroup contentBoxVerticalLayoutGroup = contentBox.GetComponent<VerticalLayoutGroup>();
-            contentBoxVerticalLayoutGroup.spacing = 20;
+            contentBoxVerticalLayoutGroup.spacing = 10;
 
             contentBoxVerticalLayoutGroup.padding = new RectOffset(10, 10, 10, 10);
             contentBoxVerticalLayoutGroup.childControlHeight = true;
@@ -135,19 +139,43 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             layoutElement.preferredWidth = AchievementBoxWidth;
             layoutElement.preferredHeight = AchievementBoxHeight;
 
-            // Images
-            GameObject backgroundImage = new GameObject("backgroundImage", typeof(RectTransform));
-            backgroundImage.transform.SetParent(achievementBox.transform, false);
+            // Background
+            GameObject backgroundCorner = new GameObject("backgroundCorner", typeof(RectTransform));
+            backgroundCorner.transform.SetParent(achievementBox.transform, false);
 
-            RectTransform backgroundImageRectTransform = backgroundImage.GetComponent<RectTransform>();
-            backgroundImageRectTransform.anchorMin = new Vector2(0, 0);
-            backgroundImageRectTransform.anchorMax = new Vector2(1, 1);
-            backgroundImageRectTransform.offsetMin = Vector2.zero;
-            backgroundImageRectTransform.offsetMax = Vector2.zero;
+            RectTransform backgroundCornerRectTransform = backgroundCorner.GetComponent<RectTransform>();
+            backgroundCornerRectTransform.anchorMin = new Vector2(0, 0);
+            backgroundCornerRectTransform.anchorMax = new Vector2(1, 1);
+            backgroundCornerRectTransform.offsetMin = Vector2.zero;
+            backgroundCornerRectTransform.offsetMax = Vector2.zero;
 
-            Image achievementBoxImage = backgroundImage.AddComponent<Image>();
-            achievementBoxImage.color = new Color32(125, 125, 255, 255);
-            achievementBoxImage.sprite = null;
+            Image backgroundCornerImage = backgroundCorner.AddComponent<Image>();
+            backgroundCornerImage.color = new Color32(125, 125, 255, 255);
+            backgroundCornerImage.sprite = null;
+            
+            AdhereToPalette backgroundCornerAdhereToPalette = backgroundCorner.AddComponent<AdhereToPalette>();
+            backgroundCornerAdhereToPalette.colorSwatchInt = 2;
+            MyImage.SetValue(backgroundCornerAdhereToPalette, backgroundCornerImage);
+            backgroundCornerAdhereToPalette.ChangeColors();
+
+            // Inner Background
+            GameObject innerBackground = new GameObject("innerBackgroundImage", typeof(RectTransform));
+            innerBackground.transform.SetParent(backgroundCorner.transform, false);
+
+            RectTransform innerBackgroundImageRectTransform = innerBackground.GetComponent<RectTransform>();
+            innerBackgroundImageRectTransform.anchorMin = new Vector2(0.01f, 0.05f);
+            innerBackgroundImageRectTransform.anchorMax = new Vector2(0.99f, 0.95f);
+            innerBackgroundImageRectTransform.offsetMin = Vector2.zero;
+            innerBackgroundImageRectTransform.offsetMax = Vector2.zero;
+
+            Image innerBackgroundImage = innerBackground.AddComponent<Image>();
+            innerBackgroundImage.color = new Color32(125, 125, 255, 255);
+            innerBackgroundImage.sprite = null;
+
+            AdhereToPalette innerBackgroundAdhereToPalette = innerBackground.AddComponent<AdhereToPalette>();
+            innerBackgroundAdhereToPalette.colorSwatchInt = 3;
+            MyImage.SetValue(innerBackgroundAdhereToPalette, innerBackgroundImage);
+            innerBackgroundAdhereToPalette.ChangeColors();
 
             // Text
             GameObject textPart = new GameObject("textPart", typeof(RectTransform));
