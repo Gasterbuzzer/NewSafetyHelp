@@ -104,6 +104,8 @@ namespace NewSafetyHelp.ARG
             ARGAchievements.CreateAchievementsIcon();
             AchievementPopupGUI.CreateDesktopAchievementPopup();
 
+            ARGAchievements.AddAllARGAchievements();
+
             // Trigger day achievements here.
             ARGAchievementHelper.UnlockDayAchievement();
 

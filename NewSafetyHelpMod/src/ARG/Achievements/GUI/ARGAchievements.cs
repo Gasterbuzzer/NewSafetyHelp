@@ -1,4 +1,6 @@
-﻿using NewSafetyHelp.ImportFiles;
+﻿using JetBrains.Annotations;
+using NewSafetyHelp.ImportFiles;
+using NewSafetyHelp.LoggingSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,12 +9,17 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
 {
     public static class ARGAchievements
     {
+        private const float AchievementBoxHeight = 80f;
+        private const float AchievementBoxWidth = 340f;
+
+        [CanBeNull] private static GameObject contentBox;
+
         public static void CreateAchievementsIcon()
         {
             GameObject mainMenuCanvas = GameObject.Find("MainMenuCanvas");
 
             /*
-             * Add Keypad, for inputting the code.
+             * Add Achievement Box
              */
 
             GameObject leftHandSide = mainMenuCanvas.transform.Find("Desktop/Programs").gameObject;
@@ -62,10 +69,10 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             programLogo.GetComponent<Image>().sprite = EmbedLoader.AdminIcon;
 
             // Resize the Window
-            RectTransform keypadRectTransform = achievementWindow.GetComponent<RectTransform>();
+            RectTransform achievementWindowRectTransform = achievementWindow.GetComponent<RectTransform>();
 
-            keypadRectTransform.offsetMax = new Vector2(200, 127.645f);
-            keypadRectTransform.offsetMin = new Vector2(-200, -159.165f);
+            achievementWindowRectTransform.offsetMax = new Vector2(200, 127.645f);
+            achievementWindowRectTransform.offsetMin = new Vector2(-200, -159.165f);
 
             // Exit Button
             GameObject closeButton = achievementWindow.transform.GetChild(0).GetChild(0).gameObject;
@@ -89,58 +96,119 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             // Add achievement parts
 
             // Remove text in content
-            GameObject contentBox = scrollView.transform.GetChild(0).GetChild(0).gameObject;
+            contentBox = scrollView.transform.GetChild(0).GetChild(0).gameObject;
 
             Object.Destroy(contentBox.transform.GetChild(0).gameObject);
 
             VerticalLayoutGroup contentBoxVerticalLayoutGroup = contentBox.GetComponent<VerticalLayoutGroup>();
-            contentBoxVerticalLayoutGroup.spacing = 100;
+            contentBoxVerticalLayoutGroup.spacing = 20;
 
-            // Create example box?
-            for (int i = 0; i < 9; i++)
+            contentBoxVerticalLayoutGroup.padding = new RectOffset(10, 10, 10, 10);
+            contentBoxVerticalLayoutGroup.childControlHeight = true;
+            contentBoxVerticalLayoutGroup.childForceExpandHeight = false;
+        }
+
+        /// <summary>
+        /// Adds an achievement element to be rendered in the achievement list.
+        /// </summary>
+        /// <param name="achievement">Achievement to be added.</param>
+        private static void CreateAchievementInAchievementList(CustomAchievement achievement)
+        {
+            if (contentBox == null)
             {
-                GameObject achievementBox = new GameObject($"achievementBox{i}", typeof(RectTransform));
-                achievementBox.transform.SetParent(contentBox.transform, false);
-
-                achievementBox.AddComponent<CanvasRenderer>();
-                achievementBox.AddComponent<CanvasGroup>().blocksRaycasts = false;
-
-                RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
-                achievementBoxRectTransform.sizeDelta = new Vector2(300, 10);
-
-                LayoutElement layoutElement = achievementBox.AddComponent<LayoutElement>();
-                layoutElement.preferredWidth = 300;
-                layoutElement.preferredHeight = 10;
-
-                // Images
-                GameObject backgroundImage = new GameObject("backgroundImage", typeof(RectTransform));
-                backgroundImage.transform.SetParent(achievementBox.transform, false);
-
-                RectTransform backgroundImageRectTransform = backgroundImage.GetComponent<RectTransform>();
-                backgroundImageRectTransform.anchorMin = new Vector2(0, 0);
-                backgroundImageRectTransform.anchorMax = new Vector2(1, 1);
-
-                Image achievementBoxImage = backgroundImage.AddComponent<Image>();
-                achievementBoxImage.color = new Color32(125, 125, 255, 255);
-                achievementBoxImage.sprite = null;
-
-                // Text
-                GameObject textPart = new GameObject("textPart", typeof(RectTransform));
-                textPart.transform.SetParent(achievementBox.transform, false);
-
-                RectTransform textPartRectTransform = textPart.GetComponent<RectTransform>();
-                textPartRectTransform.anchorMin = new Vector2(0, 0);
-                textPartRectTransform.anchorMax = new Vector2(1, 1);
-                textPartRectTransform.offsetMin = new Vector2(0, 0);
-                textPartRectTransform.offsetMax = new Vector2(0, 0);
-
-                TextMeshProUGUI textPartTextMeshProUGUI = textPart.AddComponent<TextMeshProUGUI>();
-                textPartTextMeshProUGUI.fontSize = 36;
-                textPartTextMeshProUGUI.color = Color.black;
-                textPartTextMeshProUGUI.text = $"achievementBox{i}";
-
-                textPart.transform.SetAsLastSibling();
+                LoggingHelper.ErrorLog(
+                    "Attempted to add achievement element to achievement window while it is not created. " +
+                    "Unable to add achievement.");
+                return;
             }
+
+            GameObject achievementBox = new GameObject(achievement.AchievementName, typeof(RectTransform));
+            achievementBox.transform.SetParent(contentBox.transform, false);
+
+            achievementBox.AddComponent<CanvasRenderer>();
+            achievementBox.AddComponent<CanvasGroup>().blocksRaycasts = false;
+
+            RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
+            achievementBoxRectTransform.sizeDelta = new Vector2(AchievementBoxWidth, AchievementBoxHeight);
+
+            LayoutElement layoutElement = achievementBox.AddComponent<LayoutElement>();
+            layoutElement.preferredWidth = AchievementBoxWidth;
+            layoutElement.preferredHeight = AchievementBoxHeight;
+
+            // Images
+            GameObject backgroundImage = new GameObject("backgroundImage", typeof(RectTransform));
+            backgroundImage.transform.SetParent(achievementBox.transform, false);
+
+            RectTransform backgroundImageRectTransform = backgroundImage.GetComponent<RectTransform>();
+            backgroundImageRectTransform.anchorMin = new Vector2(0, 0);
+            backgroundImageRectTransform.anchorMax = new Vector2(1, 1);
+            backgroundImageRectTransform.offsetMin = Vector2.zero;
+            backgroundImageRectTransform.offsetMax = Vector2.zero;
+
+            Image achievementBoxImage = backgroundImage.AddComponent<Image>();
+            achievementBoxImage.color = new Color32(125, 125, 255, 255);
+            achievementBoxImage.sprite = null;
+
+            // Text
+            GameObject textPart = new GameObject("textPart", typeof(RectTransform));
+            textPart.transform.SetParent(achievementBox.transform, false);
+
+            RectTransform textPartRectTransform = textPart.GetComponent<RectTransform>();
+            textPartRectTransform.anchorMin = new Vector2(0, 0);
+            textPartRectTransform.anchorMax = new Vector2(1, 1);
+            textPartRectTransform.offsetMin = new Vector2(10, 0);
+            textPartRectTransform.offsetMax = new Vector2(-10, 0);
+
+            TextMeshProUGUI textPartTextMeshProUGUI = textPart.AddComponent<TextMeshProUGUI>();
+            textPartTextMeshProUGUI.fontSize = 24;
+            textPartTextMeshProUGUI.alignment = TextAlignmentOptions.MidlineLeft;
+            textPartTextMeshProUGUI.color = Color.black;
+
+            // TODO: This should be more than this
+            if (!achievement.AchievementHidden)
+            {
+                textPartTextMeshProUGUI.text = achievement.AchievementName;
+            }
+            else
+            {
+                textPartTextMeshProUGUI.text = "HIDDEN";
+            }
+
+            textPart.transform.SetAsLastSibling();
+        }
+
+        /// <summary>
+        /// Adds all ARG achievements to the achievement list.
+        /// </summary>
+        public static void AddAllARGAchievements()
+        {
+            CreateAchievementInAchievementList(ARGAchievementSave.TheStart);
+            CreateAchievementInAchievementList(ARGAchievementSave.TheReturn);
+            CreateAchievementInAchievementList(ARGAchievementSave.TheRespite);
+            CreateAchievementInAchievementList(ARGAchievementSave.TheChorus);
+            CreateAchievementInAchievementList(ARGAchievementSave.TheClimax);
+
+            CreateAchievementInAchievementList(ARGAchievementSave.TheEndOfEverything);
+            CreateAchievementInAchievementList(ARGAchievementSave.TheDeathOfDave);
+
+            CreateAchievementInAchievementList(ARGAchievementSave.TheGoldStandard);
+            CreateAchievementInAchievementList(ARGAchievementSave.TheWorstOfTheWorst);
+            CreateAchievementInAchievementList(ARGAchievementSave.TheBestOfTheBest);
+
+            CreateAchievementInAchievementList(ARGAchievementSave.Critter101);
+            CreateAchievementInAchievementList(ARGAchievementSave.ClockedIn);
+            CreateAchievementInAchievementList(ARGAchievementSave.DrSafety);
+
+            CreateAchievementInAchievementList(ARGAchievementSave.FMinus);
+            CreateAchievementInAchievementList(ARGAchievementSave.GoAway);
+            CreateAchievementInAchievementList(ARGAchievementSave.GoodRiddance);
+
+            CreateAchievementInAchievementList(ARGAchievementSave.EmployeeOfTheMonth);
+
+            CreateAchievementInAchievementList(ARGAchievementSave.TWFuIG9uIHRoZSBTY3JlZW4);
+            CreateAchievementInAchievementList(ARGAchievementSave.ArcanaMachinae);
+
+            CreateAchievementInAchievementList(ARGAchievementSave.EmployeeOfTheCentury);
         }
     }
 }

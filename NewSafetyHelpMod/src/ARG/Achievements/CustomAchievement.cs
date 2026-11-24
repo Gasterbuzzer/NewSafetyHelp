@@ -12,7 +12,7 @@ namespace NewSafetyHelp.ARG.Achievements
 
         [CanBeNull] public readonly Sprite AchievementIcon;
 
-        private readonly bool AchievementHidden;
+        public readonly bool AchievementHidden;
 
         public MelonPreferences_Entry<bool> AchievementPreference;
 
@@ -58,7 +58,7 @@ namespace NewSafetyHelp.ARG.Achievements
         private void InitializeAchievementPreference(MelonPreferences_Category ARGAchievementCategory)
         {
             string nameToCheck = AchievementName.Trim().Replace(" ", "").Replace(".", "").Replace(",", "")
-                .Replace("=", "").Replace("[", "").Replace("]", "").Replace("#", "").ToLower();
+                .Replace("=", "").Replace("[", "").Replace("]", "").Replace("#", "").ToLowerInvariant();
 
             if (ARGAchievementCategory == null)
             {
@@ -80,11 +80,7 @@ namespace NewSafetyHelp.ARG.Achievements
         /// </summary>
         public void DeleteAchievement()
         {
-            if (AchievementPreference == null)
-            {
-                return;
-            }
-            else
+            if (AchievementPreference != null)
             {
                 AchievementPreference.Value = false;
             }
