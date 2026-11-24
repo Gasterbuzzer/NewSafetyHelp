@@ -18,7 +18,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             {
                 // First we store the slider value in the global SaveManagerScript.
                 GlobalVariables.saveManagerScript.savedMusicVolume = __instance.musicSlider.value;
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -28,10 +28,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedMusicVolume = __instance.musicSlider.value;
                 }
-                
+
                 // Applying the value.
                 if (Mathf.Approximately(__instance.musicSlider.value, __instance.musicSlider.minValue))
                 {
@@ -41,11 +41,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 {
                     __instance.masterMixer.SetFloat("musicVol", Mathf.Log10(__instance.musicSlider.value) * 20f);
                 }
-                
+
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnSFXSliderChange")]
         public static class OnSFXSliderChangePatch
         {
@@ -58,7 +58,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             {
                 // First we store the slider value in the global SaveManagerScript.
                 GlobalVariables.saveManagerScript.savedSFXVolume = __instance.sfxSlider.value;
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -68,10 +68,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedSFXVolume = __instance.sfxSlider.value;
                 }
-                
+
                 // Applying the value.
                 if (Mathf.Approximately(__instance.sfxSlider.value, __instance.sfxSlider.minValue))
                 {
@@ -81,11 +81,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 {
                     __instance.masterMixer.SetFloat("sfxVol", Mathf.Log10(__instance.sfxSlider.value) * 20f);
                 }
-                
+
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnMasterSliderChange")]
         public static class OnMasterSliderChangePatch
         {
@@ -98,7 +98,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             {
                 // First we store the slider value in the global SaveManagerScript.
                 GlobalVariables.saveManagerScript.savedAmbienceVolume = __instance.masterSlider.value;
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -108,10 +108,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedAmbienceVolume = __instance.masterSlider.value;
                 }
-                
+
                 // Applying the value.
                 if (Mathf.Approximately(__instance.masterSlider.value, __instance.masterSlider.minValue))
                 {
@@ -121,11 +121,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 {
                     __instance.masterMixer.SetFloat("masterVol", Mathf.Log10(__instance.masterSlider.value) * 20f);
                 }
-                
+
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "CRTToggle", typeof(bool))]
         public static class CRTTogglePatch
         {
@@ -137,7 +137,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(ref bool value)
             {
                 GlobalVariables.saveManagerScript.savedCRTToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -147,10 +147,10 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedCRTToggle = value;
                 }
-                
+
                 // Applying the value.
                 if (GlobalVariables.crtShader == null)
                 {
@@ -158,11 +158,11 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                 }
 
                 GlobalVariables.crtShader.scanlineIntensity = value ? 8f : 0.0f;
-                
+
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(ScreenResolutions), "FullScreenToggle")]
         public static class FullScreenTogglePatch
         {
@@ -174,7 +174,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(ScreenResolutions __instance)
             {
                 GlobalVariables.isFullScreen = __instance.fullScreenToggle.isOn;
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -184,17 +184,17 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedFullScreenToggle = __instance.fullScreenToggle.isOn;
                 }
-                
+
                 Screen.fullScreen = GlobalVariables.isFullScreen;
                 __instance.SaveResolutionInfo();
-                
+
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "DyslexiaToggle", typeof(bool))]
         public static class DyslexiaTogglePatch
         {
@@ -205,8 +205,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ref bool value)
             {
-                GlobalVariables.saveManagerScript.savedDyslexiaToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+                GlobalVariables.saveManagerScript.savedDyslexiaToggle =
+                    GlobalVariables.saveManagerScript.BoolToInt(value);
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -216,16 +217,16 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedDyslexiaToggle = value;
                 }
-                
+
                 GlobalVariables.dyslexiaMode = value;
-                
+
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "OnTextSizeSliderChange")]
         public static class OnTextSizeSliderChangePatch
         {
@@ -237,7 +238,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(OptionsMenuBehavior __instance)
             {
                 GlobalVariables.textSizeMultiplier = __instance.textSizeSlider.value;
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -247,14 +248,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedTextSizeMultiplier = __instance.textSizeSlider.value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "SpiderToggle", typeof(bool))]
         public static class SpiderTogglePatch
         {
@@ -265,8 +266,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ref bool value)
             {
-                GlobalVariables.saveManagerScript.savedSpiderToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+                GlobalVariables.saveManagerScript.savedSpiderToggle =
+                    GlobalVariables.saveManagerScript.BoolToInt(value);
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -276,14 +278,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedSpiderToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "InsectToggle", typeof(bool))]
         public static class InsectTogglePatch
         {
@@ -294,8 +296,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ref bool value)
             {
-                GlobalVariables.saveManagerScript.savedInsectToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+                GlobalVariables.saveManagerScript.savedInsectToggle =
+                    GlobalVariables.saveManagerScript.BoolToInt(value);
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -305,14 +308,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedInsectToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "DarkToggle", typeof(bool))]
         public static class DarkTogglePatch
         {
@@ -324,7 +327,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(ref bool value)
             {
                 GlobalVariables.saveManagerScript.savedDarkToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -334,14 +337,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedDarkToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "HoleToggle", typeof(bool))]
         public static class HoleTogglePatch
         {
@@ -353,7 +356,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(ref bool value)
             {
                 GlobalVariables.saveManagerScript.savedHoleToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -363,14 +366,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedHoleToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "WatchToggle", typeof(bool))]
         public static class WatchTogglePatch
         {
@@ -382,7 +385,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(ref bool value)
             {
                 GlobalVariables.saveManagerScript.savedWatchToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -392,14 +395,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedWatchToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "TightToggle", typeof(bool))]
         public static class TightTogglePatch
         {
@@ -411,7 +414,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(ref bool value)
             {
                 GlobalVariables.saveManagerScript.savedTightToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -421,14 +424,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedTightToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "DogToggle", typeof(bool))]
         public static class DogTogglePatch
         {
@@ -440,7 +443,7 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             private static bool Prefix(ref bool value)
             {
                 GlobalVariables.saveManagerScript.savedDogToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -450,14 +453,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedDogToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "CallSkipToggle", typeof(bool))]
         public static class CallSkipTogglePatch
         {
@@ -469,8 +472,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(OptionsMenuBehavior __instance, ref bool value)
             {
-                GlobalVariables.saveManagerScript.savedCallSkipToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+                GlobalVariables.saveManagerScript.savedCallSkipToggle =
+                    GlobalVariables.saveManagerScript.BoolToInt(value);
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -480,21 +484,21 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedCallSkipToggle = value;
                 }
-                
+
                 if (__instance.callSkipButton == null)
                 {
                     return false;
                 }
-                
+
                 __instance.callSkipButton.SetActive(value);
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "ImmunityToggle", typeof(bool))]
         public static class ImmunityTogglePatch
         {
@@ -505,8 +509,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(ref bool value)
             {
-                GlobalVariables.saveManagerScript.savedImmunityToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+                GlobalVariables.saveManagerScript.savedImmunityToggle =
+                    GlobalVariables.saveManagerScript.BoolToInt(value);
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -516,14 +521,14 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedImmunityToggle = value;
                 }
 
                 return false; // Skip original function.
             }
         }
-        
+
         [HarmonyLib.HarmonyPatch(typeof(OptionsMenuBehavior), "AccuracyToggle", typeof(bool))]
         public static class AccuracyTogglePatch
         {
@@ -535,8 +540,9 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
             // ReSharper disable once UnusedMember.Local
             private static bool Prefix(OptionsMenuBehavior __instance, ref bool value)
             {
-                GlobalVariables.saveManagerScript.savedAccuracyToggle = GlobalVariables.saveManagerScript.BoolToInt(value);
-                
+                GlobalVariables.saveManagerScript.savedAccuracyToggle =
+                    GlobalVariables.saveManagerScript.BoolToInt(value);
+
                 if (CustomCampaignGlobal.InCustomCampaign) // Custom Campaign saving
                 {
                     CustomCampaign customCampaign = CustomCampaignGlobal.GetActiveCustomCampaign();
@@ -546,15 +552,15 @@ namespace NewSafetyHelp.CustomCampaignSystem.Saving
                         LoggingHelper.CampaignNullError();
                         return true;
                     }
-                    
+
                     customCampaign.SavedAccuracyToggle = value;
                 }
-                
-                if (__instance.accuracyText != null)
+
+                if (__instance.accuracyText == null)
                 {
                     return false;
                 }
-                
+
                 __instance.accuracyText.gameObject.SetActive(value);
 
                 return false; // Skip original function.

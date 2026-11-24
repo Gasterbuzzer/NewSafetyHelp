@@ -152,7 +152,7 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             Image backgroundCornerImage = backgroundCorner.AddComponent<Image>();
             backgroundCornerImage.color = new Color32(125, 125, 255, 255);
             backgroundCornerImage.sprite = null;
-            
+
             AdhereToPalette backgroundCornerAdhereToPalette = backgroundCorner.AddComponent<AdhereToPalette>();
             backgroundCornerAdhereToPalette.colorSwatchInt = 2;
             MyImage.SetValue(backgroundCornerAdhereToPalette, backgroundCornerImage);
@@ -178,31 +178,97 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             innerBackgroundAdhereToPalette.ChangeColors();
 
             // Text
-            GameObject textPart = new GameObject("textPart", typeof(RectTransform));
-            textPart.transform.SetParent(achievementBox.transform, false);
+            GameObject titlePart = new GameObject("titlePart", typeof(RectTransform));
+            titlePart.transform.SetParent(achievementBox.transform, false);
 
-            RectTransform textPartRectTransform = textPart.GetComponent<RectTransform>();
-            textPartRectTransform.anchorMin = new Vector2(0, 0);
-            textPartRectTransform.anchorMax = new Vector2(1, 1);
-            textPartRectTransform.offsetMin = new Vector2(10, 0);
-            textPartRectTransform.offsetMax = new Vector2(-10, 0);
-
-            TextMeshProUGUI textPartTextMeshProUGUI = textPart.AddComponent<TextMeshProUGUI>();
-            textPartTextMeshProUGUI.fontSize = 24;
-            textPartTextMeshProUGUI.alignment = TextAlignmentOptions.MidlineLeft;
+            TextMeshProUGUI textPartTextMeshProUGUI = titlePart.AddComponent<TextMeshProUGUI>();
             textPartTextMeshProUGUI.color = Color.black;
 
-            // TODO: This should be more than this
+            RectTransform textPartRectTransform = titlePart.GetComponent<RectTransform>();
+            textPartRectTransform.anchorMin = new Vector2(0, 0);
+            textPartRectTransform.anchorMax = new Vector2(1, 1);
+
+            if (achievement.AchievementIcon == null)
+            {
+                textPartRectTransform.offsetMin = new Vector2(10, 0);
+                textPartRectTransform.offsetMax = new Vector2(-10, 0);
+
+                textPartTextMeshProUGUI.fontSize = 20;
+                textPartTextMeshProUGUI.alignment = TextAlignmentOptions.MidlineLeft;
+            }
+            else
+            {
+                // Add Achievement Icon
+                GameObject achievementIcon = new GameObject("achievementIcon", typeof(RectTransform));
+                achievementIcon.transform.SetParent(achievementBox.transform, false);
+
+                RectTransform achievementIconRectTransform = achievementIcon.GetComponent<RectTransform>();
+                //achievementIconRectTransform.anchorMin = new Vector2(0, 0);
+                //achievementIconRectTransform.anchorMax = new Vector2(1, 1);
+
+                achievementIconRectTransform.offsetMin = Vector2.zero;
+                achievementIconRectTransform.offsetMax = Vector2.zero;
+
+                achievementIconRectTransform.anchorMin = new Vector2(0, 0.5f);
+                achievementIconRectTransform.anchorMax = new Vector2(0, 0.5f);
+
+                achievementIconRectTransform.sizeDelta = new Vector2(60, 60);
+
+                achievementIconRectTransform.anchoredPosition = new Vector2(40, 0);
+
+                Image achievementIconImage = achievementIcon.AddComponent<Image>();
+                achievementIconImage.color = new Color32(255, 255, 255, 255);
+                achievementIconImage.sprite = achievement.AchievementIcon;
+
+                // Adjust the Title
+                textPartRectTransform.offsetMin = new Vector2(70, 40);
+                textPartRectTransform.offsetMax = new Vector2(-170, 0);
+
+                textPartTextMeshProUGUI.fontSize = 18;
+                textPartTextMeshProUGUI.alignment = TextAlignmentOptions.Center;
+
+                // Adding Description
+                GameObject descriptionPart = new GameObject("descriptionPart", typeof(RectTransform));
+                descriptionPart.transform.SetParent(achievementBox.transform, false);
+
+                TextMeshProUGUI descriptionPartTextMeshProUGUI = descriptionPart.AddComponent<TextMeshProUGUI>();
+                descriptionPartTextMeshProUGUI.color = Color.black;
+
+                descriptionPartTextMeshProUGUI.fontSize = 13;
+                descriptionPartTextMeshProUGUI.alignment = TextAlignmentOptions.Left;
+
+                descriptionPartTextMeshProUGUI.enableWordWrapping = true;
+                descriptionPartTextMeshProUGUI.overflowMode = TextOverflowModes.Truncate;
+                descriptionPartTextMeshProUGUI.verticalAlignment = VerticalAlignmentOptions.Top;
+
+                RectTransform descriptionPartRectTransform = descriptionPart.GetComponent<RectTransform>();
+                descriptionPartRectTransform.anchorMin = new Vector2(0, 0);
+                descriptionPartRectTransform.anchorMax = new Vector2(1, 1);
+
+                descriptionPartRectTransform.pivot = new Vector2(0, 1f);
+                descriptionPartRectTransform.sizeDelta = new Vector2(-75, -25);
+                descriptionPartRectTransform.anchoredPosition = new Vector2(77, -27);
+
+                if (!achievement.AchievementHidden)
+                {
+                    descriptionPartTextMeshProUGUI.text = achievement.AchievementDescription;
+                }
+                else
+                {
+                    descriptionPartTextMeshProUGUI.text = "???";
+                }
+            }
+
             if (!achievement.AchievementHidden)
             {
                 textPartTextMeshProUGUI.text = achievement.AchievementName;
             }
             else
             {
-                textPartTextMeshProUGUI.text = "HIDDEN";
+                textPartTextMeshProUGUI.text = "???";
             }
 
-            textPart.transform.SetAsLastSibling();
+            titlePart.transform.SetAsLastSibling();
         }
 
         /// <summary>
