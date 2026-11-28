@@ -139,6 +139,7 @@
         <Compile Include="src\ARG\Achievements\CustomAchievement.cs" />
         <Compile Include="src\ARG\Achievements\GUI\AchievementPopup\AchievementPopupGUI.cs" />
         <Compile Include="src\ARG\Achievements\GUI\ARGAchievementClickEvent.cs" />
+        <Compile Include="src\ARG\Achievements\GUI\ARGAchievementListElement.cs" />
         <Compile Include="src\ARG\Achievements\GUI\ARGAchievementLogic.cs" />
         <Compile Include="src\ARG\Achievements\GUI\ARGAchievements.cs" />
         <Compile Include="src\ARG\ARGGUI\ARGDesktopVideo.cs" />

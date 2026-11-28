@@ -132,6 +132,9 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
             achievementBox.AddComponent<CanvasRenderer>();
             achievementBox.AddComponent<CanvasGroup>().blocksRaycasts = false;
 
+            // Add for enable
+            achievementBox.AddComponent<ARGAchievementListElement>().Initialize(achievement);
+
             RectTransform achievementBoxRectTransform = achievementBox.GetComponent<RectTransform>();
             achievementBoxRectTransform.sizeDelta = new Vector2(AchievementBoxWidth, AchievementBoxHeight);
 
@@ -248,24 +251,6 @@ namespace NewSafetyHelp.ARG.Achievements.GUI
                 descriptionPartRectTransform.pivot = new Vector2(0, 1f);
                 descriptionPartRectTransform.sizeDelta = new Vector2(-75, -25);
                 descriptionPartRectTransform.anchoredPosition = new Vector2(77, -27);
-
-                if (!achievement.AchievementHidden)
-                {
-                    descriptionPartTextMeshProUGUI.text = achievement.AchievementDescription;
-                }
-                else
-                {
-                    descriptionPartTextMeshProUGUI.text = "???";
-                }
-            }
-
-            if (!achievement.AchievementHidden)
-            {
-                textPartTextMeshProUGUI.text = achievement.AchievementName;
-            }
-            else
-            {
-                textPartTextMeshProUGUI.text = "???";
             }
 
             titlePart.transform.SetAsLastSibling();
